@@ -16,7 +16,7 @@ LOCAL_PRELINK_MODULE := false
 include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_C_INCLUDES := ./include
+LOCAL_C_INCLUDES := ./include jni/libvisual
 LOCAL_MODULE := actor_lv_scope
 LOCAL_SRC_FILES := lv_scope/actor_lv_scope.c
 LOCAL_LDLIBS := -Wall
@@ -25,7 +25,7 @@ LOCAL_SHARED_LIBRARIES := libvisual
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_C_INCLUDES := ./include
+LOCAL_C_INCLUDES := ./include jni/libvisual
 LOCAL_MODULE := input_alsa
 LOCAL_SRC_FILES := alsa/input_alsa.c
 LOCAL_LDLIBS := -Wall
