@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.plasma;
+package com.starlon.froyvisuals;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -34,7 +34,7 @@ public class FroyVisuals extends Activity
 
     /* load our native library */
     static {
-        System.loadLibrary("plasma");
+        System.loadLibrary("froyvisuals");
     }
 }
 

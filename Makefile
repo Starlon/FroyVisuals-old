@@ -17,7 +17,7 @@ debug:
 	@ant debug
 
 debuginstall:
-	@adb -d install -r bin/FroVisuals-debug.apk
+	@adb -d install -r bin/FroyVisuals-debug.apk
 	@make upload
 
 upload:
