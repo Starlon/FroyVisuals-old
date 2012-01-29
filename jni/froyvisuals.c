@@ -165,7 +165,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 	    input = visual_input_new("alsa");
 	    visual_input_realize(input);
 
-	    actor = visual_actor_new("corona");
+	    actor = visual_actor_new("bumpscope");
 	    visual_actor_realize(actor);
     }
 
