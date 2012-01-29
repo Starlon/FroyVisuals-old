@@ -186,20 +186,17 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
 
-    stats_startFrame(&stats);
+    //stats_startFrame(&stats);
 
     actor_video = visual_video_new();
     visual_video_set_attributes(actor_video, info.width, info.height, info.width, visual_video_depth_enum_from_value(8));
     visual_video_allocate_buffer(actor_video);
     visual_actor_set_video(actor, actor_video); 
     visual_actor_video_negotiate(actor, 0, FALSE, FALSE);
-    visual_object_ref(VISUAL_OBJECT(actor_video));
 
     bitmap_video = visual_video_new();
     visual_video_set_attributes(bitmap_video, info.width, info.height, info.width * 2, visual_video_depth_enum_from_value(16));
     visual_video_set_buffer(bitmap_video, pixels);
-    visual_object_ref(VISUAL_OBJECT(bitmap_video));
-
 
     visual_input_run(input);
     visual_actor_run(actor, input->audio);
@@ -212,5 +209,5 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 
     AndroidBitmap_unlockPixels(env, bitmap);
 
-    stats_endFrame(&stats);
+    //stats_endFrame(&stats);
 }
