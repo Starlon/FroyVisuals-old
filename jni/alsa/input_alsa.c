@@ -34,7 +34,7 @@
 
 #include <tinyalsa/asoundlib.h>
 
-#define PCM_BUF_SIZE 4096
+#define PCM_BUF_SIZE 1024
 
 typedef struct {
 	struct pcm *pcmstream;

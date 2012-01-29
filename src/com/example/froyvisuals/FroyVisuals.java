@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.content.Context;
 import android.view.View;
+import android.view.MotionEvent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
@@ -65,5 +66,8 @@ class FroyVisualsView extends View {
         canvas.drawBitmap(mBitmap, 0, 0, null);
         // force a redraw
         invalidate();
+    }
+    @Override public boolean onTouchEvent (MotionEvent event) {
+	return true;	
     }
 }

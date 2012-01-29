@@ -156,18 +156,16 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
         init = 1;
 	    if(!visual_is_initialized())
 	    {
-	            visual_init_path_add( "/data/local/libvisual/plugins/input");
-	            visual_init_path_add( "/data/local/libvisual/plugins/actor");
-	            visual_init_path_add( "/data/local/libvisual/plugins/morph");
-	            visual_init_path_add( "/data/local/libvisual/plugins/transform");
+	            visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
 	            visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
 	            visual_init(0, NULL);
+                    visual_thread_enable(FALSE);
 	    }
 
 	    input = visual_input_new("alsa");
 	    visual_input_realize(input);
 
-	    actor = visual_actor_new("lv_scope");
+	    actor = visual_actor_new("corona");
 	    visual_actor_realize(actor);
     }
 

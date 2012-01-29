@@ -588,7 +588,7 @@ int visual_audio_get_spectrum_for_sample (VisBuffer *buffer, VisBuffer *sample, 
 			visual_buffer_get_size (sample) / sizeof (float));
 
 	/* Fourier analyze the pcm data */
-	visual_dft_perform (&dft, visual_buffer_get_data (buffer), visual_buffer_get_data (sample));
+	//visual_dft_perform (&dft, visual_buffer_get_data (buffer), visual_buffer_get_data (sample));
 
 	if (normalised == TRUE)
 		visual_audio_normalise_spectrum (buffer);
