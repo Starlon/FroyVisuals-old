@@ -1,7 +1,7 @@
 # Android Makefile v0.1 (c) 2011 - Daniel Hiepler <daniel@niftylight.de>
 
-APPNAME = StarVisuals
-ACTIVITY = starvisuals
+APPNAME = FroyVisuals
+ACTIVITY = FroyVisuals
 
 all:
 	@ndk-build
@@ -44,13 +44,11 @@ init:
 	@adb -d shell mkdir /data/local/libvisual/plugins/input
 	@adb -d shell mkdir /data/local/libvisual/plugins/actor
 	@adb -d shell mkdir /data/local/libvisual/plugins/morph
-	@adb -d shell mkdir /sdcard/starvisuals
-	@adb -d push media/bg.bmp /mnt/sdcard/starvisuals/bg.bmp
 log:
-	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libstarvisuals.so > libstarvisuals.asm
+	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libfroyvisuals.so > libfroyvisuals.asm
 	@adb -d shell logcat -d -f /mnt/sdcard/test.log
 	@adb -d pull /mnt/sdcard/test.log
 	#@./stack.py --symbols-dir=lyrical/ ./test.log 
-	@./parse_stack.py ./libstarvisuals.asm ./test.log
+	@./parse_stack.py ./libfroyvisuals.asm ./test.log
 	@adb -d shell dumpsys meminfo -h > meminfo.txt
 	@tail ./test.log
