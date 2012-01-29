@@ -41,25 +41,29 @@ public class FroyVisuals extends Activity
 class FroyVisualsView extends View {
     private Bitmap mBitmap;
     private long mStartTime;
+    private int mH, mW;
 
-    /* implementend by libplasma.so */
     private static native void renderFroyVisuals(Bitmap  bitmap, long time_ms);
 
     public FroyVisualsView(Context context) {
         super(context);
 
-        final int W = 200;//getWidth();
-        final int H = 200;//getHeight();
+        mW = -1;
+        mH = -1;
 
         mStartTime = System.currentTimeMillis();
     }
 
     @Override protected void onDraw(Canvas canvas) {
-        //canvas.drawColor(0xFFCCCCCC);
-        mBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.RGB_565);
+	if( mW != getWidth() || mH != getHeight())
+	{
+		mW = getWidth();
+		mH = getHeight();
+	        mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
+	}
         renderFroyVisuals(mBitmap, System.currentTimeMillis() - mStartTime);
         canvas.drawBitmap(mBitmap, 0, 0, null);
-        // force a redraw, with a different time-based pattern.
+        // force a redraw
         invalidate();
     }
 }
