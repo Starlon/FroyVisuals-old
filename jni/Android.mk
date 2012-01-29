@@ -35,8 +35,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
-LOCAL_MODULE    := plasma
-LOCAL_SRC_FILES := plasma.c
+LOCAL_MODULE    := froyvisuals
+LOCAL_SRC_FILES := froyvisuals.c
 LOCAL_LDLIBS    := -lm -llog -ljnigraphics
 LOCAL_STATIC_LIBRARIES := libvisual tinyalsa
 include $(BUILD_SHARED_LIBRARY)
