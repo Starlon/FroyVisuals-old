@@ -27,6 +27,7 @@
 
 #define  LOG_TAG    "libfroyvisuals"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 /* Set to 1 to enable debug log traces. */
@@ -138,6 +139,38 @@ stats_endFrame( Stats*  s )
     s->lastTime = now;
 }
 
+static void my_info_handler (const char *msg, const char *funcname, void *privdata)
+{
+    LOGI("libvisual INFO: %s: %s\n", __lv_progname, msg);
+}
+        
+static void my_warning_handler (const char *msg, const char *funcname, void *privdata)
+{
+    if (funcname)
+        LOGW("libvisual WARNING: %s: %s(): %s\n",
+        __lv_progname, funcname, msg);
+    else
+	LOGW("libvisual WARNING: %s: %s\n", __lv_progname, msg);
+}
+
+static void my_critical_handler (const char *msg, const char *funcname, void *privdata)
+{
+    if (funcname)
+        LOGW("libvisual CRITICAL: %s: %s(): %s\n",
+        __lv_progname, funcname, msg);
+    else
+	LOGW("libvisual CRITICAL: %s: %s\n", __lv_progname, msg);
+}
+
+static void my_error_handler (const char *msg, const char *funcname, void *privdata)
+{
+    if (funcname)
+        LOGW("libvisual ERROR: %s: %s(): %s\n",
+        __lv_progname, funcname, msg);
+    else
+	LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
+}
+                                                                                        
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap,  jlong  time_ms)
 {
     AndroidBitmapInfo  info;
@@ -157,11 +190,17 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 	    if(!visual_is_initialized())
 	    {
 	            visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
+	            visual_log_set_info_handler (my_info_handler, NULL);
+	            visual_log_set_warning_handler (my_warning_handler, NULL);
+	            visual_log_set_critical_handler (my_critical_handler, NULL);
+	            visual_log_set_error_handler (my_error_handler, NULL);
 	            visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
 	            visual_init(0, NULL);
                     visual_thread_enable(FALSE);
 	    }
 
+	    visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
+	    
 	    input = visual_input_new("alsa");
 	    visual_input_realize(input);
 
