@@ -45,6 +45,34 @@ include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
+LOCAL_MODULE := actor_infinite
+LOCAL_SRC_FILES := actor/infinite/compute.c  actor/infinite/display.c  actor/infinite/file.c  actor/infinite/lv_infinite.c  actor/infinite/renderer.c
+LOCAL_LDLIBS := -Wall
+LOCAL_CFLAGS := -O0 -g
+LOCAL_SHARED_LIBRARIES := libvisual
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include jni/libvisual
+LOCAL_MODULE := actor_jakdaw
+LOCAL_SRC_FILES := actor/jakdaw/actor_jakdaw.c  actor/jakdaw/feedback.c  actor/jakdaw/plotter.c
+LOCAL_LDLIBS := -Wall
+LOCAL_CFLAGS := -O0 -g
+LOCAL_SHARED_LIBRARIES := libvisual
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include jni/libvisual jni/actor/oinksie
+LOCAL_MODULE := actor_oinksie
+LOCAL_SRC_FILES := actor/oinksie/actor_oinksie.c  actor/oinksie/gfx-analyzer.c    actor/oinksie/gfx-misc.c     actor/oinksie/misc.c     actor/oinksie/screen.c actor/oinksie/audio.c          actor/oinksie/gfx-background.c  actor/oinksie/gfx-palette.c  actor/oinksie/oinksie.c  actor/oinksie/table.c actor/oinksie/config.c         actor/oinksie/gfx-blur.c        actor/oinksie/gfx-scope.c    actor/oinksie/scene.c
+
+LOCAL_LDLIBS := -Wall
+LOCAL_CFLAGS := -O0 -g
+LOCAL_SHARED_LIBRARIES := libvisual
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include jni/libvisual
 LOCAL_MODULE := input_alsa
 LOCAL_SRC_FILES := input/alsa/input_alsa.c
 LOCAL_LDLIBS := -Wall
