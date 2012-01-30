@@ -184,7 +184,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     static VisVideo *actor_video = NULL;
     VisVideo *bitmap_video = NULL;
     static VisVideoDepth depth;
-    static int w = -1, h = -1, pitch = -1;
+    static int w = -1, h = -1;
 
     if (!init) {
         stats_init(&stats);
@@ -206,7 +206,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 	    input = visual_input_new("alsa");
 	    visual_input_realize(input);
 
-	    actor = visual_actor_new("lv_scope");
+	    actor = visual_actor_new("infinite");
 	    visual_actor_realize(actor);
             depth = visual_video_depth_get_highest_nogl(visual_actor_get_supported_depth(actor));
     }
@@ -236,7 +236,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             actor_video = visual_video_new();
             w = info.width;
             h = info.height;
-            pitch = visual_video_depth_value_from_enum(depth) / 8 * w * 2;
+            int pitch = visual_video_depth_value_from_enum(depth) / 8 * w;
 	    visual_video_set_attributes(actor_video, w, h, pitch, depth);
 	    visual_video_allocate_buffer(actor_video);
 
@@ -245,7 +245,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     }
 
     bitmap_video = visual_video_new();
-    visual_video_set_attributes(bitmap_video, w, h, pitch, visual_video_depth_enum_from_value(16));
+    visual_video_set_attributes(bitmap_video, w, h, w * 2, visual_video_depth_enum_from_value(16));
     visual_video_set_buffer(bitmap_video, pixels);
     visual_input_run(input);
     visual_actor_run(actor, input->audio);
