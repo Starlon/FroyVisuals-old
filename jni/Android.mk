@@ -87,7 +87,7 @@ LOCAL_SRC_FILES := actor/madspin/madspin.c
 LOCAL_LDLIBS := -Wall -lGLESv2
 LOCAL_CFLAGS := -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual 
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
