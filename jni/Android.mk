@@ -19,7 +19,7 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
 LOCAL_MODULE := actor_lv_scope
-LOCAL_SRC_FILES := lv_scope/actor_lv_scope.c
+LOCAL_SRC_FILES := actor/lv_scope/actor_lv_scope.c
 LOCAL_LDLIBS := -Wall
 LOCAL_CFLAGS := -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual
@@ -28,7 +28,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include ./jni/libvisual
 LOCAL_MODULE := actor_corona
-LOCAL_SRC_FILES := corona/actor_corona.cpp corona/corona.cpp corona/palette.cpp
+LOCAL_SRC_FILES := actor/corona/actor_corona.cpp actor/corona/corona.cpp actor/corona/palette.cpp
 LOCAL_LDLIBS := -Wall
 LOCAL_CFLAGS := -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual
@@ -37,7 +37,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
 LOCAL_MODULE := actor_bumpscope
-LOCAL_SRC_FILES := bumpscope/actor_bumpscope.c bumpscope/bump_scope.c
+LOCAL_SRC_FILES := actor/bumpscope/actor_bumpscope.c actor/bumpscope/bump_scope.c
 LOCAL_LDLIBS := -Wall
 LOCAL_CFLAGS := -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual
@@ -46,7 +46,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
 LOCAL_MODULE := input_alsa
-LOCAL_SRC_FILES := alsa/input_alsa.c
+LOCAL_SRC_FILES := input/alsa/input_alsa.c
 LOCAL_LDLIBS := -Wall
 LOCAL_CFLAGS := -O0 -g
 LOCAL_SHARED_LIBRARIES := libtinyalsa libvisual
