@@ -171,6 +171,7 @@ static void my_error_handler (const char *msg, const char *funcname, void *privd
 	LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
 }
                                                                                         
+
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap,  jlong  time_ms)
 {
     AndroidBitmapInfo  info;
@@ -180,9 +181,10 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     static int         init;
     static VisInput *input;
     static VisActor *actor;
-    VisVideo *actor_video;
-    VisVideo *bitmap_video;
+    static VisVideo *actor_video = NULL;
+    VisVideo *bitmap_video = NULL;
     static VisVideoDepth depth;
+    static int w = -1, h = -1, pitch = -1;
 
     if (!init) {
         stats_init(&stats);
@@ -204,7 +206,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 	    input = visual_input_new("alsa");
 	    visual_input_realize(input);
 
-	    actor = visual_actor_new("corona");
+	    actor = visual_actor_new("lv_scope");
 	    visual_actor_realize(actor);
             depth = visual_video_depth_get_highest_nogl(visual_actor_get_supported_depth(actor));
     }
@@ -225,23 +227,31 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 
     stats_startFrame(&stats);
 
-    actor_video = visual_video_new();
-    int pitch = visual_video_depth_value_from_enum(depth) / 8 * info.width;
-    visual_video_set_attributes(actor_video, info.width, info.height, pitch, depth);
-    visual_video_allocate_buffer(actor_video);
-    visual_actor_set_video(actor, actor_video); 
-    visual_actor_video_negotiate(actor, 0, FALSE, FALSE);
+    if( info.width != w || info.height != h) {
+            if(actor_video)
+            {
+		visual_video_free_buffer(actor_video);
+		visual_object_unref(VISUAL_OBJECT(actor_video));
+            }
+            actor_video = visual_video_new();
+            w = info.width;
+            h = info.height;
+            pitch = visual_video_depth_value_from_enum(depth) / 8 * w * 2;
+	    visual_video_set_attributes(actor_video, w, h, pitch, depth);
+	    visual_video_allocate_buffer(actor_video);
+
+	    visual_actor_set_video(actor, actor_video); 
+	    visual_actor_video_negotiate(actor, 0, FALSE, FALSE);
+    }
 
     bitmap_video = visual_video_new();
-    visual_video_set_attributes(bitmap_video, info.width, info.height, info.width * 2, visual_video_depth_enum_from_value(16));
+    visual_video_set_attributes(bitmap_video, w, h, pitch, visual_video_depth_enum_from_value(16));
     visual_video_set_buffer(bitmap_video, pixels);
     visual_input_run(input);
     visual_actor_run(actor, input->audio);
 
     visual_video_depth_transform(bitmap_video, actor_video);
 
-    visual_video_free_buffer(actor_video);
-    visual_object_unref(VISUAL_OBJECT(actor_video));
     visual_object_unref(VISUAL_OBJECT(bitmap_video));
 
     AndroidBitmap_unlockPixels(env, bitmap);

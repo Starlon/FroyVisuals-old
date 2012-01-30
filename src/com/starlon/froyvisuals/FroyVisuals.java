@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+
 public class FroyVisuals extends Activity
 {
     /** Called when the activity is first created. */
@@ -70,4 +71,16 @@ class FroyVisualsView extends View {
     @Override public boolean onTouchEvent (MotionEvent event) {
 	return true;	
     }
+    public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
+
+	final float densityMultiplier = context.getResources().getDisplayMetrics().density;        
+
+	int h= (int) (newHeight*densityMultiplier);
+	int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
+
+	photo=Bitmap.createScaledBitmap(photo, w, h, true);
+
+	return photo;
+    }
+
 }
