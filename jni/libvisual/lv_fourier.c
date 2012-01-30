@@ -81,7 +81,7 @@ static void range_table_init (LogScaleCacheEntry *lcache, int size);
 static int dft_cache_destroyer (VisObject *object);
 static DFTCacheEntry *dft_cache_get (VisDFT *dft);
 
-static int log_scale_cache_destroy (VisObject *object);
+//static int log_scale_cache_destroy (VisObject *object);
 static LogScaleCacheEntry *log_scale_cache_get (int size);
 
 static void perform_dft_brute_force (VisDFT *fourier, float *output, float *input);
@@ -476,7 +476,7 @@ static void perform_fft_radix2_dit (VisDFT *dft, float *output, float *input)
  */
 int visual_dft_perform (VisDFT *dft, float *output, float *input)
 {
-	unsigned int i;
+	//unsigned int i;
 
 	visual_log_return_val_if_fail (dft != NULL, -VISUAL_ERROR_FOURIER_NULL);
 	visual_log_return_val_if_fail (output != NULL, -VISUAL_ERROR_NULL);
@@ -542,7 +542,7 @@ int visual_dft_log_scale (float *output, float *input, int size)
 
 int visual_dft_log_scale_standard (float *output, float *input, int size)
 {
-	int i;
+	//int i;
 
 	visual_log_return_val_if_fail (output != NULL, -VISUAL_ERROR_NULL);
 	visual_log_return_val_if_fail (input != NULL, -VISUAL_ERROR_NULL);

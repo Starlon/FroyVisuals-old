@@ -240,7 +240,7 @@ int visual_morph_realize (VisMorph *morph)
  */
 int visual_morph_get_supported_depth (VisMorph *morph)
 {
-	VisPluginData *plugin;
+	//VisPluginData *plugin;
 	VisMorphPlugin *morphplugin;
 
 	visual_log_return_val_if_fail (morph != NULL, -VISUAL_ERROR_MORPH_NULL);
@@ -256,7 +256,7 @@ int visual_morph_get_supported_depth (VisMorph *morph)
 
 VisVideoAttributeOptions *visual_morph_get_video_attribute_options (VisMorph *morph)
 {
-	VisPluginData *plugin;
+	//VisPluginData *plugin;
 	VisMorphPlugin *morphplugin;
 
 	visual_log_return_val_if_fail (morph != NULL, NULL);

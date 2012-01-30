@@ -182,7 +182,7 @@ static void check_os_altivec_support( void )
  * and RedHat patched 2.2 kernels that have broken exception handling
  * support for user space apps that do SSE.
  */
-static void check_os_katmai_support( void )
+void check_os_katmai_support( void )
 {
 //	printf ("omg\n");
 #if defined(VISUAL_ARCH_X86)
@@ -285,7 +285,7 @@ static void check_os_katmai_support( void )
 }
 
 
-static int has_cpuid (void)
+int has_cpuid (void)
 {
 #if defined(VISUAL_ARCH_X86)
 	int a, c;
@@ -309,7 +309,7 @@ static int has_cpuid (void)
 #endif
 }
 
-static int cpuid (unsigned int ax, unsigned int *p)
+int cpuid (unsigned int ax, unsigned int *p)
 {
 #if defined(VISUAL_ARCH_X86)
 	uint32_t flags;
@@ -341,12 +341,12 @@ static int cpuid (unsigned int ax, unsigned int *p)
  */
 void visual_cpu_initialize ()
 {
-	uint32_t cpu_flags;
-	unsigned int regs[4];
-	unsigned int regs2[4];
+	//uint32_t cpu_flags;
+	//unsigned int regs[4];
+	//unsigned int regs2[4];
 
-	int mib[2], ncpu;
-	visual_size_t len;
+	//int mib[2], ncpu;
+	//visual_size_t len;
 
 	visual_mem_set (&__lv_cpu_caps, 0, sizeof (VisCPU));
 

@@ -650,7 +650,6 @@ static void thread_yield_win32 ()
 #endif
 }
 
-
 static VisMutex *mutex_new_win32 ()
 {
 #ifdef VISUAL_THREAD_MODEL_WIN32

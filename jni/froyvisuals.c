@@ -204,7 +204,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 	    input = visual_input_new("alsa");
 	    visual_input_realize(input);
 
-	    actor = visual_actor_new("lv_scope");
+	    actor = visual_actor_new("corona");
 	    visual_actor_realize(actor);
             depth = visual_video_depth_get_highest_nogl(visual_actor_get_supported_depth(actor));
     }
@@ -226,10 +226,11 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     stats_startFrame(&stats);
 
     actor_video = visual_video_new();
-    visual_video_set_attributes(actor_video, info.width, info.height, info.width, depth);
+    int pitch = visual_video_depth_value_from_enum(depth) / 8 * info.width;
+    visual_video_set_attributes(actor_video, info.width, info.height, pitch, depth);
     visual_video_allocate_buffer(actor_video);
     visual_actor_set_video(actor, actor_video); 
-    visual_actor_video_negotiate(actor, depth, FALSE, TRUE);
+    visual_actor_video_negotiate(actor, 0, FALSE, FALSE);
 
     bitmap_video = visual_video_new();
     visual_video_set_attributes(bitmap_video, info.width, info.height, info.width * 2, visual_video_depth_enum_from_value(16));

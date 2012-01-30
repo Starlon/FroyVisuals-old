@@ -47,9 +47,9 @@ static int inp_alsa_cleanup (VisPluginData *plugin);
 static int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio);
 
 static const int  inp_alsa_var_btmul      = sizeof (short);
-static const char *inp_alsa_var_cdevice   = "hw:0,0";
-static const int  inp_alsa_var_samplerate = 44100;
-static const int  inp_alsa_var_channels   = 2;
+//static const char *inp_alsa_var_cdevice   = "hw:0,0";
+//static const int  inp_alsa_var_samplerate = 44100;
+//static const int  inp_alsa_var_channels   = 2;
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
@@ -84,10 +84,6 @@ const VisPluginInfo *get_plugin_info (int *count)
 int inp_alsa_init (VisPluginData *plugin)
 {
 	alsaPrivate *priv;
-	int device = 0;
-	int channels = 2;
-	int rate = 44100;
-	int bits = 16;
 /*
 	unsigned int rate = inp_alsa_var_samplerate;
 	unsigned int exact_rate;
@@ -146,7 +142,6 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 {
 	int16_t data[PCM_BUF_SIZE];
 	alsaPrivate *priv = NULL;
-	int i;
 
 	visual_log_return_val_if_fail(audio != NULL, -1);
 	visual_log_return_val_if_fail(plugin != NULL, -1);

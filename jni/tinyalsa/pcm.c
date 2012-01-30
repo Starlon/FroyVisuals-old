@@ -726,7 +726,7 @@ int pcm_set_avail_min(struct pcm *pcm, int avail_min)
 int pcm_wait(struct pcm *pcm, int timeout)
 {
     struct pollfd pfd;
-    unsigned short revents = 0;
+    //unsigned short revents = 0;
     int err;
 
     pfd.fd = pcm->fd;
@@ -849,6 +849,6 @@ int pcm_mmap_write(struct pcm *pcm, void *buffer, unsigned int bytes)
         count -= frames;
     }
 
-_end:
+//_end:
     return 0;
 }

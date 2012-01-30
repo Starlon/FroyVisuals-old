@@ -69,10 +69,10 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "jess",
 		.name = "jess plugin",
-		.author = N_("Original by: Remi Arquier <arquier@crans.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>"),
+		.author = "Original by: Remi Arquier <arquier@crans.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>",
 		.version = "0.1",
-		.about = N_("Jess visual plugin"),
-		.help = N_("This is the libvisual plugin for the jess visual"),
+		.about = "Jess visual plugin",
+		.help = "This is the libvisual plugin for the jess visual",
 		.license = VISUAL_PLUGIN_LICENSE_GPL,
 
 		.init = act_jess_init,

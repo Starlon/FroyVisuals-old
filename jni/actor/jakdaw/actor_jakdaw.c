@@ -59,10 +59,10 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "jakdaw",
 		.name = "Jakdaw plugin",
-		.author = N_("Original by: Christopher Wilson <Jakdaw@usa.net>, Port by: Dennis Smit <ds@nerds-incorporated.org>"),
+		.author = "Original by: Christopher Wilson <Jakdaw@usa.net>, Port by: Dennis Smit <ds@nerds-incorporated.org>",
 		.version = "0.0.1",
-		.about = N_("jakdaw visual plugin"),
-		.help = N_("This is the libvisual port of the xmms Jakdaw plugin"),
+		.about = "jakdaw visual plugin",
+		.help = "This is the libvisual port of the xmms Jakdaw plugin",
 		.license = VISUAL_PLUGIN_LICENSE_GPL,
 
 		.init = act_jakdaw_init,

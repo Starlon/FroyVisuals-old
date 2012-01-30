@@ -64,9 +64,9 @@ static int create_table (VisHashmap *hashmap);
 
 static int hashmap_destroy (VisCollection *collection)
 {
-	VisCollectionDestroyerFunc destroyer;
+	//VisCollectionDestroyerFunc destroyer;
 	VisHashmap *hashmap = VISUAL_HASHMAP (collection);
-	VisHashmapEntry *mentry;
+	//VisHashmapEntry *mentry;
 	int i;
 
 	for (i = 0; i < hashmap->size; i++)
@@ -126,7 +126,7 @@ static VisCollectionIter *hashmap_iter (VisCollection *collection)
 {
 	VisCollectionIter *iter;
 	HashmapIterContext *context;
-	VisHashmap *hashmap = VISUAL_HASHMAP (collection);
+	//VisHashmap *hashmap = VISUAL_HASHMAP (collection);
 
 	context = visual_mem_new0 (HashmapIterContext, 1);
 
@@ -201,7 +201,7 @@ static int hashmap_iter_has_more (VisCollectionIter *iter, VisCollection *collec
 
 static void hashmap_iter_next (VisCollectionIter *iter, VisCollection *collection, VisObject *itercontext)
 {
-	VisHashmap *hashmap = VISUAL_HASHMAP (collection);
+	//VisHashmap *hashmap = VISUAL_HASHMAP (collection);
 	HashmapIterContext *context = HASHMAP_ITERCONTEXT (itercontext);
 
 	if (context->retrieved == FALSE) {
@@ -503,7 +503,7 @@ void *visual_hashmap_get_string (VisHashmap *hashmap, char *key)
 
 int visual_hashmap_set_table_size (VisHashmap *hashmap, int tablesize)
 {
-	int oldsize;
+	//int oldsize;
 
 	visual_log_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
 

@@ -339,8 +339,8 @@ int visual_ui_box_pack (VisUIBox *box, VisUIWidget *widget)
  */
 VisList *visual_ui_box_get_childs (VisUIBox *box)
 {
-	VisUIWidget *next;
-	VisListEntry *le = NULL;
+	//VisUIWidget *next;
+	//VisListEntry *le = NULL;
 
 	visual_log_return_val_if_fail (box != NULL, NULL);
 
@@ -1066,7 +1066,7 @@ int visual_ui_choice_add (VisUIChoice *choice, const char *name, VisParamEntry *
  */
 int visual_ui_choice_add_many (VisUIChoice *choice, VisParamEntry *paramchoices)
 {
-	VisUIChoiceEntry *centry;
+	//VisUIChoiceEntry *centry;
 	int i = 0;
 
 	visual_log_return_val_if_fail (choice != NULL, -VISUAL_ERROR_UI_CHOICE_NULL);
