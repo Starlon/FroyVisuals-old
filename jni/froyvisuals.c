@@ -236,7 +236,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             actor_video = visual_video_new();
             w = info.width;
             h = info.height;
-            int pitch = visual_video_depth_value_from_enum(depth) / 8 * w;
+            int pitch = visual_video_depth_value_from_enum(depth) / 8 * w * 2;
 	    visual_video_set_attributes(actor_video, w, h, pitch, depth);
 	    visual_video_allocate_buffer(actor_video);
 
