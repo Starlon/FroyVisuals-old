@@ -206,7 +206,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 	    input = visual_input_new("alsa");
 	    visual_input_realize(input);
 
-	    actor = visual_actor_new("infinite");
+	    actor = visual_actor_new("lv_scope");
 	    visual_actor_realize(actor);
             depth = visual_video_depth_get_highest_nogl(visual_actor_get_supported_depth(actor));
     }
@@ -236,7 +236,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             actor_video = visual_video_new();
             w = info.width;
             h = info.height;
-            int pitch = visual_video_depth_value_from_enum(depth) / 8 * w * 2;
+            int pitch = visual_video_depth_value_from_enum(depth) / 8 * w;
 	    visual_video_set_attributes(actor_video, w, h, pitch, depth);
 	    visual_video_allocate_buffer(actor_video);
 
