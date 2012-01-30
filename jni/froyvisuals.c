@@ -182,7 +182,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     static VisActor *actor;
     VisVideo *actor_video;
     VisVideo *bitmap_video;
-    static int depth = 8;
+    static VisVideoDepth depth;
 
     if (!init) {
         stats_init(&stats);
@@ -206,6 +206,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 
 	    actor = visual_actor_new("lv_scope");
 	    visual_actor_realize(actor);
+            depth = visual_video_depth_get_highest_nogl(visual_actor_get_supported_depth(actor));
     }
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
@@ -225,10 +226,10 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     stats_startFrame(&stats);
 
     actor_video = visual_video_new();
-    visual_video_set_attributes(actor_video, info.width, info.height, info.width, visual_video_depth_enum_from_value(depth));
+    visual_video_set_attributes(actor_video, info.width, info.height, info.width, depth);
     visual_video_allocate_buffer(actor_video);
     visual_actor_set_video(actor, actor_video); 
-    visual_actor_video_negotiate(actor, visual_video_depth_enum_from_value(depth), FALSE, TRUE);
+    visual_actor_video_negotiate(actor, depth, FALSE, TRUE);
 
     bitmap_video = visual_video_new();
     visual_video_set_attributes(bitmap_video, info.width, info.height, info.width * 2, visual_video_depth_enum_from_value(16));
