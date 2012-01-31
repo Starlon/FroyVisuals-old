@@ -220,7 +220,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             bitmap_video = visual_video_new();
             visual_video_set_depth(bitmap_video, depth);
             visual_video_set_dimension(bitmap_video, w, h);
-            visual_video_set_pitch(bitmap_video, w * (int)depth);
+            visual_video_set_pitch(bitmap_video, w * visual_video_bpp_from_depth(depth));
             visual_bin_set_video(bin, bitmap_video);
             visual_bin_connect_by_names(bin, "lv_scope", "alsa");
             visual_bin_depth_changed(bin);
@@ -242,7 +242,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             w = info.width;
             h = info.height;
             visual_video_set_dimension(bitmap_video, w, h);
-            visual_video_set_pitch(bitmap_video, w * (int)depth);
+            visual_video_set_pitch(bitmap_video, w * visual_video_bpp_from_depth(depth));
             visual_bin_depth_changed(bin);
     }
 
