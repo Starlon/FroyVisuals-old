@@ -499,6 +499,7 @@ VisPalette *visual_actor_get_palette (VisActor *actor)
  */ 
 int visual_actor_video_negotiate (VisActor *actor, int rundepth, int noevent, int forced)
 {
+visual_log(VISUAL_LOG_INFO, "start negotiate");
 	int depthflag;
 
 	visual_log_return_val_if_fail (actor != NULL, -VISUAL_ERROR_ACTOR_NULL);
@@ -531,11 +532,15 @@ int visual_actor_video_negotiate (VisActor *actor, int rundepth, int noevent, in
 	/* Set up depth transformation enviroment */
 	if (visual_video_depth_is_supported (depthflag, actor->video->depth) != TRUE ||
 			(forced == TRUE && actor->video->depth != rundepth))
+	{
 		/* When the depth is not supported, or if we only switch the depth and not
 		 * the size */
+visual_log(VISUAL_LOG_INFO, "negotiate video 1");
 		return negotiate_video_with_unsupported_depth (actor, rundepth, noevent, forced);
-	else
+	} else {
+visual_log(VISUAL_LOG_INFO, "negotiate video 2");
 		return negotiate_video (actor, noevent);
+	}
 
 	return -VISUAL_ERROR_IMPOSSIBLE;
 }
@@ -604,6 +609,7 @@ static int negotiate_video (VisActor *actor, int noevent)
 	/* Pump the resize events and handle all the pending events */
 	actplugin->requisition (visual_actor_get_plugin (actor), &actor->video->width, &actor->video->height);
 
+return 0;
 	if (noevent == FALSE) {
 		visual_event_queue_add_resize (&actor->plugin->eventqueue, actor->video,
 				actor->video->width, actor->video->height);

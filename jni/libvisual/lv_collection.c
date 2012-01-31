@@ -28,9 +28,9 @@
 #include "lv_common.h"
 #include "lv_collection.h"
 
-static int collection_iter_dtor (VisObject *object);
+int collection_iter_dtor (VisObject *object);
 
-static int collection_iter_dtor (VisObject *object)
+int collection_iter_dtor (VisObject *object)
 {
 	VisCollectionIter *iter = VISUAL_COLLECTIONITER (object);
 

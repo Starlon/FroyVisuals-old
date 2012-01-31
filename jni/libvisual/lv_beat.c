@@ -774,7 +774,6 @@ int beat_TC_hist_step(VisBeat *beat, VisBeatType *t, int *_hdPos, clock_t TC, in
 {
     visual_log_return_val_if_fail(beat != NULL, FALSE); 
 
-    int i=0;
     int offI;
     clock_t thisLen;
     int learning = beat_ready_to_learn(beat);
@@ -878,7 +877,6 @@ void beat_calc_bpm(VisBeat *beat)
     double sc=0;
     int mx=0;
     float et;
-    int smSum=0, smN=0;
     
     if (!beat_ready_to_learn(beat))
         return;

@@ -283,7 +283,6 @@ extern "C" int lv_corona_render (VisPluginData *plugin, VisVideo *video, VisAudi
 	visual_video_set_dimension (&vidcorona, video->width, video->height);
 	visual_video_set_buffer (&vidcorona, priv->corona->getSurface());
 
-	//visual_video_blit_overlay(video, &vidcorona, 0, 0, FALSE);
 	visual_video_mirror (video, &vidcorona, VISUAL_VIDEO_MIRROR_Y);
 
 	return 0;

@@ -1701,7 +1701,7 @@ out:
 int visual_video_fill_color (VisVideo *video, VisColor *rcolor)
 {
 	VisColor color;
-	VisRectangle rect;
+	//VisRectangle rect;
 
 	visual_log_return_val_if_fail (video != NULL, -VISUAL_ERROR_VIDEO_NULL);
 
@@ -1763,7 +1763,7 @@ int visual_video_fill_color_rectangle (VisVideo *video, VisColor *color, VisRect
 
 	errret = visual_video_fill_color (&svid, color);
 
-out:
+//out:
 	visual_object_unref (VISUAL_OBJECT (&svid));
 
 	return errret;
@@ -2712,7 +2712,7 @@ static int bgr_to_rgb32 (VisVideo *dest, VisVideo *src)
 {
 	uint8_t *destbuf, *srcbuf;
 	int x, y;
-	int i = 0;
+	//int i = 0;
 	int pitchdiff = dest->pitch - (dest->width * dest->bpp);
 
 	destbuf = visual_video_get_pixels (dest);
@@ -3165,7 +3165,7 @@ static int scale_bilinear_8 (VisVideo *dest, VisVideo *src)
 		u = 0;
 
 		for (x = dest->width - 1; x--; u += du) {
-			uint8_t cul, cll, cur, clr, b;
+			uint8_t cul, cll, cur, clr;
 			uint32_t ul, ll, ur, lr; /* fixed point 16.16 [0,1[   */
 			uint32_t b0; /* fixed point 16.16 [0,255[ */
 
@@ -3228,7 +3228,7 @@ static int scale_bilinear_16 (VisVideo *dest, VisVideo *src)
 		for (x = dest->width - 1; x--; u += du) {
 			_color16 cul, cll, cur, clr, b;
 			uint32_t ul, ll, ur, lr; /* fixed point 16.16 [0,1[   */
-			uint32_t b3, b2, b1, b0; /* fixed point 16.16 [0,255[ */
+			uint32_t b2, b1, b0; /* fixed point 16.16 [0,255[ */
 
 			/* fracU = frac(u) = u & 0xffff */
 			/* fixed point format convertion: fracU >>= 8) */
@@ -3303,7 +3303,7 @@ static int scale_bilinear_24 (VisVideo *dest, VisVideo *src)
 		for (x = dest->width - 1; x--; u += du) {
 			_color24 cul, cll, cur, clr, b;
 			uint32_t ul, ll, ur, lr; /* fixed point 16.16 [0,1[   */
-			uint32_t b3, b2, b1, b0; /* fixed point 16.16 [0,255[ */
+			uint32_t b2, b1, b0; /* fixed point 16.16 [0,255[ */
 
 			/* fracU = frac(u) = u & 0xffff */
 			/* fixed point format convertion: fracU >>= 8) */

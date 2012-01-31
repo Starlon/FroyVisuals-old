@@ -57,10 +57,10 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "infinite",
 		.name = "infinite plugin",
-		.author = N_("Original by: Julien Carme <julien.carme@acm.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>"),
+		.author = "Original by: Julien Carme <julien.carme@acm.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>",
 		.version = "0.1",
-		.about = N_("Infinite visual plugin"),
-		.help = N_("This is the libvisual plugin for the infinite visual"),
+		.about = "Infinite visual plugin",
+		.help = "This is the libvisual plugin for the infinite visual",
 		.license = VISUAL_PLUGIN_LICENSE_GPL,
 
 		.init = act_infinite_init,
@@ -148,6 +148,7 @@ int act_infinite_requisition (VisPluginData *plugin, int *width, int *height)
 	*width = reqw;
 	*height = reqh;
 
+visual_log(VISUAL_LOG_CRITICAL, "req w %d h %d", reqw, reqh);
 	return 0;
 }
 
@@ -207,7 +208,6 @@ int act_infinite_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio
 {
 	VisBuffer buffer;
 	InfinitePrivate *priv;
-	int i;
 
 	visual_log_return_val_if_fail (plugin != NULL, -1);
 	visual_log_return_val_if_fail (video != NULL, -1);
