@@ -181,9 +181,9 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     int                ret;
     static Stats       stats;
     static int         init;
-    static VisVideo *bitmap_video = NULL;
+    static VisVideo *bin_video = NULL;
     static int w = -1, h = -1;
-    VisVideoDepth depth = visual_video_depth_enum_from_value(16);
+    VisVideoDepth depth = visual_video_depth_enum_from_value(8);
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -216,12 +216,13 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             h = info.height;
             bin = visual_bin_new();
             visual_bin_set_supported_depth(bin, VISUAL_VIDEO_DEPTH_ALL);
-            bitmap_video = visual_video_new();
-            visual_video_set_depth(bitmap_video, depth);
-            visual_video_set_dimension(bitmap_video, w, h);
-            visual_video_set_pitch(bitmap_video, w * visual_video_bpp_from_depth(depth));
-            visual_bin_set_video(bin, bitmap_video);
-            visual_bin_connect_by_names(bin, "lv_scope", "alsa");
+            bin_video = visual_video_new();
+            visual_video_set_depth(bin_video, depth);
+            visual_video_set_dimension(bin_video, w, h);
+            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
+            visual_video_allocate_buffer(bin_video);
+            visual_bin_set_video(bin, bin_video);
+            visual_bin_connect_by_names(bin, "infinite", "alsa");
             visual_bin_depth_changed(bin);
             visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_DIRECT);
             visual_bin_realize(bin);
@@ -231,17 +232,20 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 
     if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+        return;
     }
 
     stats_startFrame(&stats);
 
-    visual_video_set_buffer(bitmap_video, pixels);
 
     if( info.width != w || info.height != h) {
             w = info.width;
             h = info.height;
-            visual_video_set_dimension(bitmap_video, w, h);
-            visual_video_set_pitch(bitmap_video, w * visual_video_bpp_from_depth(depth));
+            if(bin_video)
+                visual_video_free_buffer(bin_video);
+            visual_video_set_dimension(bin_video, w, h);
+            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
+            visual_video_allocate_buffer(bin_video);
             visual_bin_sync(bin, FALSE);
     }
 
@@ -250,8 +254,15 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 
     visual_bin_run(bin);
 
-    stats_endFrame(&stats);
+    VisVideo *bitmap_video = visual_video_new();
+    visual_video_set_attributes(bitmap_video, w, h, w * 2, VISUAL_VIDEO_DEPTH_16BIT);
+    visual_video_set_buffer(bitmap_video, pixels);
+
+    visual_video_depth_transform(bitmap_video, bin_video);
+
+    visual_object_unref(VISUAL_OBJECT(bitmap_video));
 
     AndroidBitmap_unlockPixels(env, bitmap);
 
+    stats_endFrame(&stats);
 }
