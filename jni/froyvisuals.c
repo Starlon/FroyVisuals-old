@@ -183,6 +183,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     static int         init;
     static VisVideo *bitmap_video = NULL;
     static int w = -1, h = -1;
+    VisVideoDepth depth = visual_video_depth_enum_from_value(16);
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -215,40 +216,38 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             w = info.width;
             h = info.height;
             bin = visual_bin_new();
-            VisVideoDepth depth = visual_video_depth_enum_from_value(16);
             visual_bin_set_supported_depth(bin, VISUAL_VIDEO_DEPTH_ALL);
             bitmap_video = visual_video_new();
             visual_video_set_depth(bitmap_video, depth);
             visual_video_set_dimension(bitmap_video, w, h);
+            visual_video_set_pitch(bitmap_video, w * (int)depth);
             visual_bin_set_video(bin, bitmap_video);
             visual_bin_connect_by_names(bin, "lv_scope", "alsa");
             visual_bin_depth_changed(bin);
             visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_DIRECT);
             visual_bin_realize(bin);
-            visual_bin_sync(bin, 0);
+            visual_bin_sync(bin, FALSE);
     }
 
-
-
-
-    if( info.width != w || info.height != h) {
-            w = info.width;
-            h = info.height;
-            visual_video_set_dimension(bitmap_video, w, h);
-            visual_bin_depth_changed(bin);
-    }
 
     if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
 
-
     stats_startFrame(&stats);
 
     visual_video_set_buffer(bitmap_video, pixels);
 
+    if( info.width != w || info.height != h) {
+            w = info.width;
+            h = info.height;
+            visual_video_set_dimension(bitmap_video, w, h);
+            visual_video_set_pitch(bitmap_video, w * (int)depth);
+            visual_bin_depth_changed(bin);
+    }
+
     if(visual_bin_depth_changed(bin))
-        visual_bin_sync(bin, 1);
+        visual_bin_sync(bin, TRUE);
 
     visual_bin_run(bin);
 
