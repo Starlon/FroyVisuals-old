@@ -25,7 +25,7 @@
 #include <tinyalsa/asoundlib.h>
 #include <libvisual.h>
 
-#define  LOG_TAG    "libfroyvisuals"
+#define  LOG_TAG    "FroyVisuals"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
@@ -35,6 +35,8 @@
 
 /* Set to 1 to optimize memory stores when generating plasma. */
 #define OPTIMIZE_WRITES  1
+
+static VisBin *bin;
 
 /* Return current time in milliseconds */
 static double now_ms(void)
@@ -171,6 +173,7 @@ static void my_error_handler (const char *msg, const char *funcname, void *privd
 	LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
 }
                                                                                         
+
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap,  jlong  time_ms)
 {
     AndroidBitmapInfo  info;
@@ -178,36 +181,9 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     int                ret;
     static Stats       stats;
     static int         init;
-    static VisInput *input;
-    static VisActor *actor;
-    VisVideo *actor_video;
-    VisVideo *bitmap_video;
-    static VisVideoDepth depth;
-
-    if (!init) {
-        stats_init(&stats);
-        init = 1;
-	    if(!visual_is_initialized())
-	    {
-	            visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
-	            visual_log_set_info_handler (my_info_handler, NULL);
-	            visual_log_set_warning_handler (my_warning_handler, NULL);
-	            visual_log_set_critical_handler (my_critical_handler, NULL);
-	            visual_log_set_error_handler (my_error_handler, NULL);
-	            visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
-	            visual_init(0, NULL);
-                    visual_thread_enable(FALSE);
-	    }
-
-	    visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
-	    
-	    input = visual_input_new("alsa");
-	    visual_input_realize(input);
-
-	    actor = visual_actor_new("lv_scope");
-	    visual_actor_realize(actor);
-            depth = visual_video_depth_get_highest_nogl(visual_actor_get_supported_depth(actor));
-    }
+    static VisVideo *bin_video = NULL;
+    static int w = -1, h = -1;
+    VisVideoDepth depth = visual_video_depth_enum_from_value(8);
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -219,31 +195,75 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
         return;
     }
 
+
+    if (!init) {
+            stats_init(&stats);
+            init = 1;
+	    if(!visual_is_initialized())
+	    {
+	            visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
+	            visual_log_set_info_handler (my_info_handler, NULL);
+	            visual_log_set_warning_handler (my_warning_handler, NULL);
+	            visual_log_set_critical_handler (my_critical_handler, NULL);
+	            visual_log_set_error_handler (my_error_handler, NULL);
+	            visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
+	            visual_init(0, NULL);
+                    visual_thread_enable(FALSE);
+	            visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
+	    }
+
+            w = info.width;
+            h = info.height;
+            bin = visual_bin_new();
+            visual_bin_set_supported_depth(bin, VISUAL_VIDEO_DEPTH_ALL);
+            bin_video = visual_video_new();
+            visual_video_set_depth(bin_video, depth);
+            visual_video_set_dimension(bin_video, w, h);
+            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
+            visual_video_allocate_buffer(bin_video);
+            visual_bin_set_video(bin, bin_video);
+            visual_bin_connect_by_names(bin, "infinite", "alsa");
+            visual_bin_depth_changed(bin);
+            visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_DIRECT);
+            visual_bin_realize(bin);
+            visual_bin_sync(bin, FALSE);
+    }
+
+
     if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+        return;
     }
 
     stats_startFrame(&stats);
 
-    actor_video = visual_video_new();
-    visual_video_set_attributes(actor_video, info.width, info.height, info.width, depth);
-    visual_video_allocate_buffer(actor_video);
-    visual_actor_set_video(actor, actor_video); 
-    visual_actor_video_negotiate(actor, depth, FALSE, TRUE);
 
-    bitmap_video = visual_video_new();
-    visual_video_set_attributes(bitmap_video, info.width, info.height, info.width * 2, visual_video_depth_enum_from_value(16));
+    if( info.width != w || info.height != h) {
+            w = info.width;
+            h = info.height;
+            if(bin_video)
+                visual_video_free_buffer(bin_video);
+            visual_video_set_dimension(bin_video, w, h);
+            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
+            visual_video_allocate_buffer(bin_video);
+            visual_bin_sync(bin, FALSE);
+    }
+
+    if(visual_bin_depth_changed(bin))
+        visual_bin_sync(bin, TRUE);
+
+    visual_bin_run(bin);
+
+    VisVideo *bitmap_video = visual_video_new();
+    visual_video_set_attributes(bitmap_video, w, h, w * 2, VISUAL_VIDEO_DEPTH_16BIT);
     visual_video_set_buffer(bitmap_video, pixels);
-    visual_input_run(input);
-    visual_actor_run(actor, input->audio);
 
-    visual_video_depth_transform(bitmap_video, actor_video);
+    visual_video_depth_transform(bitmap_video, bin_video);
 
-    visual_video_free_buffer(actor_video);
-    visual_object_unref(VISUAL_OBJECT(actor_video));
     visual_object_unref(VISUAL_OBJECT(bitmap_video));
 
     AndroidBitmap_unlockPixels(env, bitmap);
 
     stats_endFrame(&stats);
 }
+
