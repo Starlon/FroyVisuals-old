@@ -209,9 +209,8 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 	            visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
 	            visual_init(0, NULL);
                     visual_thread_enable(FALSE);
+	            visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
 	    }
-
-	    visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
 
             w = info.width;
             h = info.height;
@@ -243,7 +242,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             h = info.height;
             visual_video_set_dimension(bitmap_video, w, h);
             visual_video_set_pitch(bitmap_video, w * visual_video_bpp_from_depth(depth));
-            visual_bin_depth_changed(bin);
+            visual_bin_sync(bin, FALSE);
     }
 
     if(visual_bin_depth_changed(bin))
