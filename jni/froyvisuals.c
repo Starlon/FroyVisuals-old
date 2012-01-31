@@ -36,6 +36,8 @@
 /* Set to 1 to optimize memory stores when generating plasma. */
 #define OPTIMIZE_WRITES  1
 
+static VisBin *bin;
+
 /* Return current time in milliseconds */
 static double now_ms(void)
 {
@@ -179,16 +181,23 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     int                ret;
     static Stats       stats;
     static int         init;
-    static VisInput *input;
-    static VisActor *actor;
-    static VisVideo *actor_video = NULL;
-    VisVideo *bitmap_video = NULL;
-    static VisVideoDepth depth;
+    static VisVideo *bitmap_video = NULL;
     static int w = -1, h = -1;
 
+    if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
+        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
+        return;
+    }
+
+    if (info.format != ANDROID_BITMAP_FORMAT_RGB_565) {
+        LOGE("Bitmap format is not RGB_565 !");
+        return;
+    }
+
+
     if (!init) {
-        stats_init(&stats);
-        init = 1;
+            stats_init(&stats);
+            init = 1;
 	    if(!visual_is_initialized())
 	    {
 	            visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
@@ -202,59 +211,49 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 	    }
 
 	    visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
-	    
-	    input = visual_input_new("alsa");
-	    visual_input_realize(input);
 
-	    actor = visual_actor_new("lv_scope");
-	    visual_actor_realize(actor);
-            depth = visual_video_depth_get_highest_nogl(visual_actor_get_supported_depth(actor));
+            w = info.width;
+            h = info.height;
+            bin = visual_bin_new();
+            VisVideoDepth depth = visual_video_depth_enum_from_value(16);
+            visual_bin_set_supported_depth(bin, VISUAL_VIDEO_DEPTH_ALL);
+            bitmap_video = visual_video_new();
+            visual_video_set_depth(bitmap_video, depth);
+            visual_video_set_dimension(bitmap_video, w, h);
+            visual_bin_set_video(bin, bitmap_video);
+            visual_bin_connect_by_names(bin, "lv_scope", "alsa");
+            visual_bin_depth_changed(bin);
+            visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_DIRECT);
+            visual_bin_realize(bin);
+            visual_bin_sync(bin, 0);
     }
 
-    if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
-        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-        return;
-    }
 
-    if (info.format != ANDROID_BITMAP_FORMAT_RGB_565) {
-        LOGE("Bitmap format is not RGB_565 !");
-        return;
+
+
+    if( info.width != w || info.height != h) {
+            w = info.width;
+            h = info.height;
+            visual_video_set_dimension(bitmap_video, w, h);
+            visual_bin_depth_changed(bin);
     }
 
     if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
 
+
     stats_startFrame(&stats);
 
-    if( info.width != w || info.height != h) {
-            if(actor_video)
-            {
-		visual_video_free_buffer(actor_video);
-		visual_object_unref(VISUAL_OBJECT(actor_video));
-            }
-            actor_video = visual_video_new();
-            w = info.width;
-            h = info.height;
-            int pitch = visual_video_depth_value_from_enum(depth) / 8 * w;
-	    visual_video_set_attributes(actor_video, w, h, pitch, depth);
-	    visual_video_allocate_buffer(actor_video);
-
-	    visual_actor_set_video(actor, actor_video); 
-	    visual_actor_video_negotiate(actor, 0, FALSE, FALSE);
-    }
-
-    bitmap_video = visual_video_new();
-    visual_video_set_attributes(bitmap_video, w, h, w * 2, visual_video_depth_enum_from_value(16));
     visual_video_set_buffer(bitmap_video, pixels);
-    visual_input_run(input);
-    visual_actor_run(actor, input->audio);
 
-    visual_video_depth_transform(bitmap_video, actor_video);
+    if(visual_bin_depth_changed(bin))
+        visual_bin_sync(bin, 1);
 
-    visual_object_unref(VISUAL_OBJECT(bitmap_video));
+    visual_bin_run(bin);
+
+    stats_endFrame(&stats);
 
     AndroidBitmap_unlockPixels(env, bitmap);
 
-    stats_endFrame(&stats);
 }

@@ -148,6 +148,7 @@ int act_infinite_requisition (VisPluginData *plugin, int *width, int *height)
 	*width = reqw;
 	*height = reqh;
 
+visual_log(VISUAL_LOG_CRITICAL, "req w %d h %d", reqw, reqh);
 	return 0;
 }
 
