@@ -33,7 +33,7 @@ LOCAL_SRC_FILES := actor/corona/actor_corona.cpp actor/corona/corona.cpp actor/c
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS := -Wall -O3
 LOCAL_SHARED_LIBRARIES := libvisual
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
@@ -51,7 +51,7 @@ LOCAL_SRC_FILES := actor/infinite/compute.c  actor/infinite/display.c  actor/inf
 LOCAL_LDLIBS := -llog 
 LOCAL_CFLAGS := -Wall -O3
 LOCAL_SHARED_LIBRARIES := libvisual
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
@@ -60,7 +60,7 @@ LOCAL_SRC_FILES := actor/jakdaw/actor_jakdaw.c  actor/jakdaw/feedback.c  actor/j
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS := -Wall -O3
 LOCAL_SHARED_LIBRARIES := libvisual
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual jni/actor/oinksie
@@ -70,7 +70,7 @@ LOCAL_SRC_FILES := actor/oinksie/actor_oinksie.c  actor/oinksie/gfx-analyzer.c  
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS := -Wall -O3
 LOCAL_SHARED_LIBRARIES := libvisual
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
@@ -79,7 +79,7 @@ LOCAL_SRC_FILES := actor/JESS/analyser.c    actor/JESS/draw.c            actor/J
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS := -Wall -O3
 LOCAL_SHARED_LIBRARIES := libvisual
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual

@@ -54,11 +54,13 @@ class FroyVisualsView extends View {
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private static final String APP_TAG = "FroyVisuals";
 
-    private static native void renderFroyVisuals(Bitmap  bitmap);
+    private static native boolean renderFroyVisuals(Bitmap  bitmap);
     private static native void resizePCM(int size, int rate, int channels, int encoding);
     private static native void uploadAudio(short[] data);
     private static native void initApp();
+    private static native void nextActor();
 
+/*
     private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
     public AudioRecord findAudioRecord() {
         for (int rate : mSampleRates) {
@@ -90,8 +92,9 @@ class FroyVisualsView extends View {
         }
         return null;
     }
+*/
     
-    AudioRecord recorder = findAudioRecord();
+    //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
 
@@ -100,34 +103,42 @@ class FroyVisualsView extends View {
         isAvailable = false;
 
         initApp();
+/*
 	mAudio = findAudioRecord();
         if(mAudio != null)
 	{
 		resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 		isAvailable = true;
 	}
+*/
     }
 
     @Override protected void onDraw(Canvas canvas) {
-        if(!isAvailable) 
-		return;
 	if( mW != getWidth() || mH != getHeight())
 	{
 		mW = getWidth();
 		mH = getHeight();
 	        mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
 	}
+/*
 	mAudio.startRecording();
 	short[] data = new short[PCM_SIZE];
         mAudio.read(data, 0, PCM_SIZE);
 	mAudio.stop();
         uploadAudio(data);
-        renderFroyVisuals(mBitmap);
+*/
+        if(!renderFroyVisuals(mBitmap)) return;
+
         canvas.drawBitmap(mBitmap, 0, 0, null);
         // force a redraw
         invalidate();
     }
     @Override public boolean onTouchEvent (MotionEvent event) {
+	int action = event.getAction();
+	float x = event.getX();
+	float y = event.getY();
+	if (action == MotionEvent.ACTION_DOWN)
+		nextActor();
 	return true;	
     }
 }

@@ -40,15 +40,15 @@
 
 struct {
 	VisBin *bin;
-	VisVideo *video;
+        VisVideo *bin_video;
         short *pcm_data;
 	int pcm_size;
 	int rate;
 	int channel;
 	int format;
+        char *plugin;
+        char *morph;
 } v_private;
-
-static VisBin *bin;
 
 /* Return current time in milliseconds */
 static double now_ms(void)
@@ -185,7 +185,7 @@ static void my_error_handler (const char *msg, const char *funcname, void *privd
 	LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
 }
                                                                                         
-
+/*
 static int my_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 {
 	VisBuffer buf;
@@ -200,11 +200,28 @@ static int my_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 		VISUAL_AUDIO_SAMPLE_FORMAT_S16, VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO);
 }
 
+*/
+
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
 {
 	visual_mem_set(&v_private, 0, sizeof(v_private));
+	if(!visual_is_initialized())
+	{
+	        visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
+	        visual_log_set_info_handler (my_info_handler, NULL);
+	        visual_log_set_warning_handler (my_warning_handler, NULL);
+	        visual_log_set_critical_handler (my_critical_handler, NULL);
+	        visual_log_set_error_handler (my_error_handler, NULL);
+	        visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
+	        visual_init(0, NULL);
+	        visual_thread_enable(FALSE);
+	        visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
+	}
+
+	visual_log(VISUAL_LOG_INFO, "FroyVisuals initialized...");
 }
 
+/*
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_resizePCM(JNIEnv * env, jobject  obj, jint size,
 	jint rate, jint channel, jint format)
 {
@@ -229,83 +246,118 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(
 	}
 	(*env)->ReleaseShortArrayElements(env, data, pcm, 0);
 }
+*/
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_nextActor(JNIEnv * env, jobject  obj)
+{
+	static const char *plugin = NULL;
+	const char *old = v_private.bin->actor->plugin->info->plugname;
+	plugin = visual_actor_get_next_by_name(old);
+	if(!plugin)
+	{
+		plugin = visual_actor_get_next_by_name(NULL);
+		if(!plugin) return;
+	}
+/*
+	char *morph = visual_morph_get_next_by_name(v_private.morph);
+	if(!morph)
+	{
+		morph = visual_morph_get_next_by_name(NULL);
+	}
+*/
+/*
+	if(morph && 0)
+	{
+		if(v_private.morph)
+			visual_mem_free(v_private.morph);
+		v_private.morph = strdup(morph);
+		visual_bin_set_morph_by_name(v_private.bin, morph);
+	}
+*/
+	visual_log(VISUAL_LOG_INFO, "New actor: %s", plugin);
+	visual_bin_switch_actor_by_name(v_private.bin, (char *)plugin);
+	visual_bin_depth_changed(v_private.bin);
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_previousActor(JNIEnv * env, jobject  obj)
+{
+
+}
+
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
 {
     AndroidBitmapInfo  info;
     void*              pixels;
     int                ret;
     static Stats       stats;
     static int         init;
-    static VisVideo *bin_video = NULL;
     static int w = -1, h = -1;
-    VisVideoDepth depth = visual_video_depth_enum_from_value(8);
-    VisBin *bin;
+    VisBin *bin = v_private.bin;
+    VisVideo *bin_video = v_private.bin_video;
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-        return;
+        return FALSE;
     }
 
     if (info.format != ANDROID_BITMAP_FORMAT_RGB_565) {
         LOGE("Bitmap format is not RGB_565 !");
-        return;
+        return FALSE;
     }
 
 
     if (!init) {
             stats_init(&stats);
             init = 1;
-	    if(!visual_is_initialized())
-	    {
-	            visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
-	            visual_log_set_info_handler (my_info_handler, NULL);
-	            visual_log_set_warning_handler (my_warning_handler, NULL);
-	            visual_log_set_critical_handler (my_critical_handler, NULL);
-	            visual_log_set_error_handler (my_error_handler, NULL);
-	            visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
-	            visual_init(0, NULL);
-                    visual_thread_enable(FALSE);
-	            visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
-	    }
 
             w = info.width;
             h = info.height;
-            v_private.bin = bin = visual_bin_new();
-            visual_bin_set_supported_depth(bin, VISUAL_VIDEO_DEPTH_ALL);
-            bin_video = visual_video_new();
-            visual_video_set_depth(bin_video, depth);
-            visual_video_set_dimension(bin_video, w, h);
-            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
-            visual_video_allocate_buffer(bin_video);
-            visual_bin_set_video(bin, bin_video);
-            visual_bin_connect_by_names(bin, "lv_scope", NULL);
-            VisInput *input = visual_bin_get_input(bin);
-            visual_input_set_callback(input, my_upload_callback, NULL);
-            visual_bin_depth_changed(bin);
+
+	    if(!(v_private.bin = bin = visual_bin_new())) {
+                visual_log(VISUAL_LOG_CRITICAL, "Could not create VisBin.");
+                return FALSE;
+            }
+
+            visual_bin_set_supported_depth(v_private.bin, VISUAL_VIDEO_DEPTH_ALL);
             visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_DIRECT);
-            visual_bin_realize(bin);
+
+            if(!(v_private.bin_video = bin_video = visual_video_new())) {
+                visual_log(VISUAL_LOG_CRITICAL, "Could not create VisVideo.");
+                visual_object_unref(VISUAL_OBJECT(bin));
+                return FALSE;
+            }
+
+            VisVideoDepth depth_enum = VISUAL_VIDEO_DEPTH_8BIT;
+            visual_video_set_depth(bin_video, depth_enum);
+            visual_video_set_dimension(bin_video, w, h);
+            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth_enum));
+            visual_video_allocate_buffer(bin_video);
+
+            visual_bin_set_video(bin, bin_video);
+            visual_bin_connect_by_names(bin, "bumpscope", "alsa");
+            visual_bin_realize(v_private.bin);
+            visual_bin_depth_changed(bin);
             visual_bin_sync(bin, FALSE);
     }
 
-
     if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
-        return;
+        return FALSE;
     }
 
     stats_startFrame(&stats);
 
-
     if( info.width != w || info.height != h) {
             w = info.width;
             h = info.height;
-            if(bin_video)
-                visual_video_free_buffer(bin_video);
+
+            VisVideoDepth depth = visual_bin_get_depth(bin);
+
+            visual_video_free_buffer(bin_video);
+            visual_video_set_depth(bin_video, depth);
             visual_video_set_dimension(bin_video, w, h);
             visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
             visual_video_allocate_buffer(bin_video);
-            visual_bin_sync(bin, FALSE);
     }
 
     if(visual_bin_depth_changed(bin))
@@ -324,5 +376,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     AndroidBitmap_unlockPixels(env, bitmap);
 
     stats_endFrame(&stats);
+    return TRUE;
 }
 
