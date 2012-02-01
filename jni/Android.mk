@@ -17,6 +17,8 @@ LOCAL_SHARED_LIBRARIES:= libcutils libutils
 LOCAL_PRELINK_MODULE := false
 include $(BUILD_STATIC_LIBRARY)
 
+#### ACTOR PLUGINS
+
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
 LOCAL_MODULE := actor_lv_scope
@@ -89,6 +91,46 @@ LOCAL_LDLIBS := -lGLESv2 -llog
 LOCAL_CFLAGS := -Wall -O3
 LOCAL_SHARED_LIBRARIES := libvisual 
 #include $(BUILD_SHARED_LIBRARY)
+
+#### MORPH PLUGINS
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include jni/libvisual
+LOCAL_MODULE := morph_alphablend
+LOCAL_SRC_FILES := morph/alphablend/morph_alphablend.c
+LOCAL_LDLIBS := -llog
+LOCAL_CFLAGS := -Wall -O3
+LOCAL_SHARED_LIBRARIES := libvisual 
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include jni/libvisual
+LOCAL_MODULE := morph_flash
+LOCAL_SRC_FILES := morph/flash/morph_flash.c
+LOCAL_LDLIBS := -llog
+LOCAL_CFLAGS := -Wall -O3
+LOCAL_SHARED_LIBRARIES := libvisual 
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include jni/libvisual
+LOCAL_MODULE := morph_slide
+LOCAL_SRC_FILES := morph/slide/morph_slide.c
+LOCAL_LDLIBS := --llog
+LOCAL_CFLAGS := -Wall -O3
+LOCAL_SHARED_LIBRARIES := libvisual 
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include jni/libvisual
+LOCAL_MODULE := morph_tentacle
+LOCAL_SRC_FILES := morph/tentacle/morph_tentacle.c
+LOCAL_LDLIBS := -llog
+LOCAL_CFLAGS := -Wall -O3
+LOCAL_SHARED_LIBRARIES := libvisual 
+include $(BUILD_SHARED_LIBRARY)
+
+#### INPUT PLUGINS
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual

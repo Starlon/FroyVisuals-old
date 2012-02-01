@@ -258,22 +258,18 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_nextActor(JN
 		plugin = visual_actor_get_next_by_name(NULL);
 		if(!plugin) return;
 	}
-/*
-	char *morph = visual_morph_get_next_by_name(v_private.morph);
+	const char *morph = visual_morph_get_next_by_name(v_private.morph);
 	if(!morph)
 	{
 		morph = visual_morph_get_next_by_name(NULL);
 	}
-*/
-/*
-	if(morph && 0)
+	if(morph)
 	{
 		if(v_private.morph)
 			visual_mem_free(v_private.morph);
 		v_private.morph = strdup(morph);
-		visual_bin_set_morph_by_name(v_private.bin, morph);
+		visual_bin_set_morph_by_name(v_private.bin, (char *)morph);
 	}
-*/
 	visual_log(VISUAL_LOG_INFO, "New actor: %s", plugin);
 	visual_bin_switch_actor_by_name(v_private.bin, (char *)plugin);
 	visual_bin_depth_changed(v_private.bin);
@@ -319,7 +315,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             }
 
             visual_bin_set_supported_depth(v_private.bin, VISUAL_VIDEO_DEPTH_ALL);
-            visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_DIRECT);
+            visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_MORPH);
 
             if(!(v_private.bin_video = bin_video = visual_video_new())) {
                 visual_log(VISUAL_LOG_CRITICAL, "Could not create VisVideo.");
