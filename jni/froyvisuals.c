@@ -280,6 +280,43 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_previousActo
 
 }
 
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
+{
+	visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
+	VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
+	VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
+	visual_event_queue_add_mousemotion(eventqueue, x, y);
+        visual_plugin_events_pump(plugin);
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
+{
+	visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
+	VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v_private.bin)));
+        VisMouseState state = VISUAL_MOUSE_DOWN;
+	visual_event_queue_add_mousebutton(eventqueue, button, state, x, y);
+}
+
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
+{
+	visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
+	VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v_private.bin)));
+	visual_event_queue_add_resize(eventqueue, v_private.bin_video, w, h);
+	
+}
+
+/*
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
+{
+	VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v_private.bin)));
+	VisKey keysym;
+	int keymod;
+	VisKeyState state;
+	visual_event_queue_add_keyboard(eventqueue, keysym, keymod, state);
+}
+*/
+
 JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
 {
     AndroidBitmapInfo  info;
@@ -330,7 +367,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             visual_video_allocate_buffer(bin_video);
 
             visual_bin_set_video(bin, bin_video);
-            visual_bin_connect_by_names(bin, "lv_scope", "alsa");
+            visual_bin_connect_by_names(bin, "bumpscope", "alsa");
             visual_bin_realize(v_private.bin);
             visual_bin_depth_changed(bin);
             visual_bin_sync(bin, FALSE);
@@ -358,6 +395,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 
     if(visual_bin_depth_changed(bin))
         visual_bin_sync(bin, TRUE);
+
+    visual_plugin_events_pump(bin->actor->plugin);
 
     visual_bin_run(bin);
 

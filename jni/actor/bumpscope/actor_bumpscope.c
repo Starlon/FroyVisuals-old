@@ -267,6 +267,7 @@ int act_bumpscope_events (VisPluginData *plugin, VisEventQueue *events)
 	VisColor *tmp;
 
 	while (visual_event_queue_poll (events, &ev)) {
+visual_log(VISUAL_LOG_CRITICAL, "WTF %d", ev.type);
 		switch (ev.type) {
 			case VISUAL_EVENT_RESIZE:
 				act_bumpscope_dimension (plugin, ev.event.resize.video,
@@ -274,6 +275,7 @@ int act_bumpscope_events (VisPluginData *plugin, VisEventQueue *events)
 				break;
 
 			case VISUAL_EVENT_MOUSEMOTION:
+visual_log(VISUAL_LOG_INFO, "--------------- mouse motion state %d", ev.event.mousemotion.state);
 				if (ev.event.mousemotion.state == VISUAL_MOUSE_DOWN) {
 					priv->light_x = ev.event.mousemotion.x;
 					priv->light_y = ev.event.mousemotion.y;

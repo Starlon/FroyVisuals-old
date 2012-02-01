@@ -59,6 +59,10 @@ class FroyVisualsView extends View {
     private static native void uploadAudio(short[] data);
     private static native void initApp();
     private static native void nextActor();
+    private static native void previousActor();
+    private static native void mouseMotion(float x, float y);
+    private static native void mouseButton(int button, float x, float y);
+    private static native void screenResize(int w, int h);
 
 /*
     private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
@@ -137,8 +141,15 @@ class FroyVisualsView extends View {
 	int action = event.getAction();
 	float x = event.getX();
 	float y = event.getY();
-	if (action == MotionEvent.ACTION_DOWN)
-		nextActor();
+	switch(action)
+	{
+		case MotionEvent.ACTION_DOWN:
+			mouseButton(1, x, y);
+		break;
+		case MotionEvent.ACTION_MOVE:
+			mouseMotion(x, y);
+		break;
+	}
 	return true;	
     }
 }
