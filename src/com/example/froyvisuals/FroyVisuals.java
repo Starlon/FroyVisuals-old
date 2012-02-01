@@ -58,8 +58,7 @@ class FroyVisualsView extends View {
     private static native void resizePCM(int size, int rate, int channels, int encoding);
     private static native void uploadAudio(short[] data);
     private static native void initApp();
-    private static native void nextActor();
-    private static native void previousActor();
+    private static native void switchActor(int direction);
     private static native void mouseMotion(float x, float y);
     private static native void mouseButton(int button, float x, float y);
     private static native void screenResize(int w, int h);
