@@ -30,11 +30,23 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
+#define PCM_SIZE 1024
+
 /* Set to 1 to enable debug log traces. */
 #define DEBUG 0
 
 /* Set to 1 to optimize memory stores when generating plasma. */
 #define OPTIMIZE_WRITES  1
+
+struct {
+	VisBin *bin;
+	VisVideo *video;
+        short *pcm_data;
+	int pcm_size;
+	int rate;
+	int channel;
+	int format;
+} v_private;
 
 static VisBin *bin;
 
@@ -174,7 +186,51 @@ static void my_error_handler (const char *msg, const char *funcname, void *privd
 }
                                                                                         
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap,  jlong  time_ms)
+static int my_upload_callback (VisInput* input, VisAudio *audio, void* unused)
+{
+	VisBuffer buf;
+	visual_buffer_init( &buf, v_private.pcm_data, 1024, 0);
+	int rate, channel, format;
+	switch(v_private.rate)
+	{
+
+	}
+	visual_log(VISUAL_LOG_DEBUG, "audio specs rate %d channel %d format %d", v_private.rate, v_private.channel, v_private.format);
+	visual_audio_samplepool_input(audio->samplepool, &buf, VISUAL_AUDIO_SAMPLE_RATE_44100,
+		VISUAL_AUDIO_SAMPLE_FORMAT_S16, VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO);
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
+{
+	visual_mem_set(&v_private, 0, sizeof(v_private));
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_resizePCM(JNIEnv * env, jobject  obj, jint size,
+	jint rate, jint channel, jint format)
+{
+	if(v_private.pcm_data)
+		visual_mem_free(v_private.pcm_data);
+	v_private.pcm_data = visual_mem_malloc(size * sizeof(short));
+	v_private.pcm_size = size;
+	v_private.rate = rate;
+	v_private.channel = channel;
+	v_private.format = format;
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
+{
+	int i;
+	jshort *pcm;
+	jsize len = (*env)->GetArrayLength(env, data);
+	pcm = (*env)->GetShortArrayElements(env, data, NULL);
+	for(i = 0; i < v_private.pcm_size; i++)
+	{
+		v_private.pcm_data[i] = pcm[i];
+	}
+	(*env)->ReleaseShortArrayElements(env, data, pcm, 0);
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
 {
     AndroidBitmapInfo  info;
     void*              pixels;
@@ -184,6 +240,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
     static VisVideo *bin_video = NULL;
     static int w = -1, h = -1;
     VisVideoDepth depth = visual_video_depth_enum_from_value(8);
+    VisBin *bin;
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -214,7 +271,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
 
             w = info.width;
             h = info.height;
-            bin = visual_bin_new();
+            v_private.bin = bin = visual_bin_new();
             visual_bin_set_supported_depth(bin, VISUAL_VIDEO_DEPTH_ALL);
             bin_video = visual_video_new();
             visual_video_set_depth(bin_video, depth);
@@ -222,7 +279,9 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVi
             visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
             visual_video_allocate_buffer(bin_video);
             visual_bin_set_video(bin, bin_video);
-            visual_bin_connect_by_names(bin, "infinite", "alsa");
+            visual_bin_connect_by_names(bin, "lv_scope", NULL);
+            VisInput *input = visual_bin_get_input(bin);
+            visual_input_set_callback(input, my_upload_callback, NULL);
             visual_bin_depth_changed(bin);
             visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_DIRECT);
             visual_bin_realize(bin);

@@ -107,3 +107,27 @@ LOCAL_LDLIBS    := -lm -llog -ljnigraphics
 LOCAL_CFLAGS    := -Wall -O3
 LOCAL_STATIC_LIBRARIES := libvisual tinyalsa
 include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include
+LOCAL_MODULE := tinycap
+LOCAL_SRC_FILES := tinyalsa/tinycap.c
+LOCAL_CFLAGS := -Wall
+LOCAL_STATIC_LIBRARIES := tinyalsa
+include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include
+LOCAL_MODULE := tinyplay
+LOCAL_SRC_FILES := tinyalsa/tinyplay.c
+LOCAL_CFLAGS := -Wall
+LOCAL_STATIC_LIBRARIES := tinyalsa
+include $(BUILD_EXECUTABLE)
+
+include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := ./include
+LOCAL_MODULE := tinymix
+LOCAL_SRC_FILES := tinyalsa/tinymix.c
+LOCAL_CFLAGS := -Wall
+LOCAL_STATIC_LIBRARIES := tinyalsa
+include $(BUILD_EXECUTABLE)
