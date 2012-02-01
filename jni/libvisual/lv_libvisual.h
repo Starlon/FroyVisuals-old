@@ -32,7 +32,7 @@ VISUAL_BEGIN_DECLS
 /**
  * Indicates at which version the API is.
  */
-#define VISUAL_API_VERSION	4000
+#define VISUAL_API_VERSION	5000
 
 /* prototypes */
 const char *visual_get_version (void);

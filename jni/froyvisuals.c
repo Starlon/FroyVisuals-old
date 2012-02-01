@@ -334,7 +334,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             visual_video_allocate_buffer(bin_video);
 
             visual_bin_set_video(bin, bin_video);
-            visual_bin_connect_by_names(bin, "bumpscope", "alsa");
+            visual_bin_connect_by_names(bin, "lv_scope", "alsa");
             visual_bin_realize(v_private.bin);
             visual_bin_depth_changed(bin);
             visual_bin_sync(bin, FALSE);
