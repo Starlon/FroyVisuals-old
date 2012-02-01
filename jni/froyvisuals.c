@@ -35,9 +35,6 @@
 /* Set to 1 to enable debug log traces. */
 #define DEBUG 0
 
-/* Set to 1 to optimize memory stores when generating plasma. */
-#define OPTIMIZE_WRITES  1
-
 struct {
 	VisBin *bin;
         VisVideo *bin_video;
@@ -379,8 +376,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
                 return FALSE;
             }
 
-            visual_bin_set_supported_depth(v_private.bin, VISUAL_VIDEO_DEPTH_ALL);
-            visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_MORPH);
 
             if(!(v_private.bin_video = bin_video = visual_video_new())) {
                 visual_log(VISUAL_LOG_CRITICAL, "Could not create VisVideo.");
@@ -395,6 +390,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             visual_video_allocate_buffer(bin_video);
 
             visual_bin_set_video(bin, bin_video);
+            visual_bin_set_supported_depth(v_private.bin, VISUAL_VIDEO_DEPTH_ALL);
+            visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_MORPH);
             visual_bin_connect_by_names(bin, "bumpscope", "alsa");
             visual_bin_realize(v_private.bin);
             visual_bin_depth_changed(bin);
