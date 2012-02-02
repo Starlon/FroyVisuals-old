@@ -194,6 +194,7 @@ int act_bumpscope_init (VisPluginData *plugin)
 
 	priv->pcmbuf = visual_buffer_new_allocate (512 * sizeof (float), visual_buffer_destroyer_free);
 
+    visual_log(VISUAL_LOG_INFO, " ::::::::::::: initialized bumpscope :::::::::::::: ");
 	return 0;
 }
 
@@ -276,7 +277,7 @@ int act_bumpscope_events (VisPluginData *plugin, VisEventQueue *events)
 				if (ev.event.mousemotion.state == VISUAL_MOUSE_DOWN) {
 					priv->light_x = ev.event.mousemotion.x;
 					priv->light_y = ev.event.mousemotion.y;
-                    visual_log(VISUAL_INFO, "--------------- mouse motion %d %d", priv->light_x, priv->light_y);
+                    visual_log(VISUAL_LOG_INFO, "--------------- mouse motion %d %d", priv->light_x, priv->light_y);
 				}
 
 				break;

@@ -64,7 +64,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "alsa",
 		.name = "alsa",
-		.author = "Vitaly V. Bursov <vitalyvb@urk.net>",
+		.author = "Scott Sibley <sisibley@gmail.com>",
 		.version = "0.1",
 		.about = ("ALSA capture plugin"),
 		.help = ("Use this plugin to capture PCM data from the ALSA record device"),
