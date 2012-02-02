@@ -239,7 +239,6 @@ int visual_plugin_events_pump (VisPluginData *plugin)
 
 	if (plugin->info->events != NULL) {
 		plugin->info->events (plugin, &plugin->eventqueue);
-
 		return VISUAL_OK;
 	}
 
@@ -896,6 +895,8 @@ VisPluginRef **visual_plugin_get_references (const char *pluginpath, int *count)
 
 		return NULL;
 	}
+    
+    visual_log(VISUAL_LOG_INFO, "Plugin loaded: %s %s (%s) %s <%s>", plug_info->name, plug_info->version, plug_info->about, plug_info->help, plug_info->author);
 
 	ref = visual_mem_new0 (VisPluginRef *, cnt);
 

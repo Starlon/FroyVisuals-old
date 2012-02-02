@@ -36,15 +36,15 @@
 #define DEBUG 0
 
 struct {
-	VisBin *bin;
-        VisVideo *bin_video;
-        short *pcm_data;
-	int pcm_size;
-	int rate;
-	int channel;
-	int format;
-        char *plugin;
-        char *morph;
+    VisBin *bin;
+    VisVideo *bin_video;
+    short *pcm_data;
+    int pcm_size;
+    int rate;
+    int channel;
+    int format;
+    char *plugin;
+    char *morph;
 } v_private;
 
 /* Return current time in milliseconds */
@@ -161,7 +161,7 @@ static void my_warning_handler (const char *msg, const char *funcname, void *pri
         LOGW("libvisual WARNING: %s: %s(): %s\n",
         __lv_progname, funcname, msg);
     else
-	LOGW("libvisual WARNING: %s: %s\n", __lv_progname, msg);
+    LOGW("libvisual WARNING: %s: %s\n", __lv_progname, msg);
 }
 
 static void my_critical_handler (const char *msg, const char *funcname, void *privdata)
@@ -170,7 +170,7 @@ static void my_critical_handler (const char *msg, const char *funcname, void *pr
         LOGW("libvisual CRITICAL: %s: %s(): %s\n",
         __lv_progname, funcname, msg);
     else
-	LOGW("libvisual CRITICAL: %s: %s\n", __lv_progname, msg);
+    LOGW("libvisual CRITICAL: %s: %s\n", __lv_progname, msg);
 }
 
 static void my_error_handler (const char *msg, const char *funcname, void *privdata)
@@ -179,166 +179,160 @@ static void my_error_handler (const char *msg, const char *funcname, void *privd
         LOGW("libvisual ERROR: %s: %s(): %s\n",
         __lv_progname, funcname, msg);
     else
-	LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
+    LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
 }
                                                                                         
 /*
 static int my_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 {
-	VisBuffer buf;
-	visual_buffer_init( &buf, v_private.pcm_data, 1024, 0);
-	int rate, channel, format;
-	switch(v_private.rate)
-	{
+    VisBuffer buf;
+    visual_buffer_init( &buf, v_private.pcm_data, 1024, 0);
+    int rate, channel, format;
+    switch(v_private.rate)
+    {
 
-	}
-	visual_log(VISUAL_LOG_DEBUG, "audio specs rate %d channel %d format %d", v_private.rate, v_private.channel, v_private.format);
-	visual_audio_samplepool_input(audio->samplepool, &buf, VISUAL_AUDIO_SAMPLE_RATE_44100,
-		VISUAL_AUDIO_SAMPLE_FORMAT_S16, VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO);
+    }
+    visual_log(VISUAL_LOG_DEBUG, "audio specs rate %d channel %d format %d", v_private.rate, v_private.channel, v_private.format);
+    visual_audio_samplepool_input(audio->samplepool, &buf, VISUAL_AUDIO_SAMPLE_RATE_44100,
+        VISUAL_AUDIO_SAMPLE_FORMAT_S16, VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO);
 }
 
 */
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
 {
-	visual_mem_set(&v_private, 0, sizeof(v_private));
-	if(!visual_is_initialized())
-	{
-	        visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
-	        visual_log_set_info_handler (my_info_handler, NULL);
-	        visual_log_set_warning_handler (my_warning_handler, NULL);
-	        visual_log_set_critical_handler (my_critical_handler, NULL);
-	        visual_log_set_error_handler (my_error_handler, NULL);
-	        visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
-	        visual_init(0, NULL);
-	        visual_thread_enable(FALSE);
-	        visual_log(VISUAL_LOG_INFO, "Initialized libvisual");
-	}
+    visual_mem_set(&v_private, 0, sizeof(v_private));
+    if(!visual_is_initialized())
+    {
+            visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
+            visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
+            visual_log_set_info_handler (my_info_handler, NULL);
+            visual_log_set_warning_handler (my_warning_handler, NULL);
+            visual_log_set_critical_handler (my_critical_handler, NULL);
+            visual_log_set_error_handler (my_error_handler, NULL);
+            visual_init(0, NULL);
+            visual_thread_enable(FALSE);
+            visual_log(VISUAL_LOG_INFO, "LibVisual intialized...");
+    }
 
-	visual_log(VISUAL_LOG_INFO, "FroyVisuals initialized...");
+    visual_log(VISUAL_LOG_INFO, "FroyVisuals initialized...");
 }
 
 /*
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_resizePCM(JNIEnv * env, jobject  obj, jint size,
-	jint rate, jint channel, jint format)
+    jint rate, jint channel, jint format)
 {
-	if(v_private.pcm_data)
-		visual_mem_free(v_private.pcm_data);
-	v_private.pcm_data = visual_mem_malloc(size * sizeof(short));
-	v_private.pcm_size = size;
-	v_private.rate = rate;
-	v_private.channel = channel;
-	v_private.format = format;
+    if(v_private.pcm_data)
+        visual_mem_free(v_private.pcm_data);
+    v_private.pcm_data = visual_mem_malloc(size * sizeof(short));
+    v_private.pcm_size = size;
+    v_private.rate = rate;
+    v_private.channel = channel;
+    v_private.format = format;
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
 {
-	int i;
-	jshort *pcm;
-	jsize len = (*env)->GetArrayLength(env, data);
-	pcm = (*env)->GetShortArrayElements(env, data, NULL);
-	for(i = 0; i < v_private.pcm_size; i++)
-	{
-		v_private.pcm_data[i] = pcm[i];
-	}
-	(*env)->ReleaseShortArrayElements(env, data, pcm, 0);
+    int i;
+    jshort *pcm;
+    jsize len = (*env)->GetArrayLength(env, data);
+    pcm = (*env)->GetShortArrayElements(env, data, NULL);
+    for(i = 0; i < v_private.pcm_size; i++)
+    {
+        v_private.pcm_data[i] = pcm[i];
+    }
+    (*env)->ReleaseShortArrayElements(env, data, pcm, 0);
 }
 */
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint direction)
 {
-	static const char *plugin = NULL;
-	const char *old = v_private.bin->actor->plugin->info->plugname;
+    static const char *plugin = NULL;
+    const char *old = v_private.bin->actor->plugin->info->plugname;
 
         switch(direction)
         {
-	    case 0:
-		plugin = visual_actor_get_next_by_name(old);
-		if(!plugin)
-		{
-			plugin = visual_actor_get_next_by_name(NULL);
-			if(!plugin) return;
-		}
-		break;
+            case 0:
+                plugin = visual_actor_get_next_by_name(old);
+                if(!plugin)
+                {
+                    plugin = visual_actor_get_next_by_name(NULL);
+                    if(!plugin) return;
+                }
+            break;
             case 1:
-		plugin = visual_actor_get_prev_by_name(old);
-		if(!plugin)
-		{
-			plugin = visual_actor_get_prev_by_name(NULL);
-			if(!plugin) return;
-		}
-		break;
-	}
+                plugin = visual_actor_get_prev_by_name(old);
+                if(!plugin)
+                {
+                    plugin = visual_actor_get_prev_by_name(NULL);
+                    if(!plugin) return;
+                }
+            break;
+    }
 
-	const char *morph = visual_morph_get_next_by_name(v_private.morph);
-	if(!morph)
-	{
-		morph = visual_morph_get_next_by_name(NULL);
-	}
-	if(morph)
-	{
-		if(v_private.morph)
-			visual_mem_free(v_private.morph);
-		v_private.morph = strdup(morph);
-		visual_bin_set_morph_by_name(v_private.bin, (char *)morph);
-	}
-	visual_log(VISUAL_LOG_INFO, "New actor: %s", plugin);
-	visual_bin_switch_actor_by_name(v_private.bin, (char *)plugin);
-	visual_bin_depth_changed(v_private.bin);
-}
-
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_previousActor(JNIEnv * env, jobject  obj)
-{
-
+    const char *morph = visual_morph_get_next_by_name(v_private.morph);
+    if(!morph)
+    {
+        morph = visual_morph_get_next_by_name(NULL);
+    }
+    if(morph)
+    {
+        if(v_private.morph)
+            visual_mem_free(v_private.morph);
+        v_private.morph = strdup(morph);
+        visual_bin_set_morph_by_name(v_private.bin, (char *)morph);
+    }
+    visual_log(VISUAL_LOG_INFO, "New actor: %s", plugin);
+    visual_bin_switch_actor_by_name(v_private.bin, (char *)plugin);
+    visual_bin_depth_changed(v_private.bin);
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
-	visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
-	VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
-	VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
-	visual_event_queue_add_mousemotion(eventqueue, x, y);
-        visual_plugin_events_pump(plugin);
+    visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
+    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
+    VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
+    visual_event_queue_add_mousemotion(eventqueue, x, y);
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
 {
-	visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
-	VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
-	VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
+    visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
+    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
+    VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
         VisMouseState state = VISUAL_MOUSE_DOWN;
-	visual_event_queue_add_mousebutton(eventqueue, button, state, x, y);
+    visual_event_queue_add_mousebutton(eventqueue, button, state, x, y);
 }
 
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
-	visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
-	VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
-	VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
+    visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
+    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
+    VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
 
-	visual_event_queue_add_resize(eventqueue, v_private.bin_video, w, h);
-	
+    visual_event_queue_add_resize(eventqueue, v_private.bin_video, w, h);
+    
 }
 
 /*
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
 {
-	VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v_private.bin)));
-	VisKey keysym;
-	int keymod;
-	VisKeyState state;
-	visual_event_queue_add_keyboard(eventqueue, keysym, keymod, state);
+    VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v_private.bin)));
+    VisKey keysym;
+    int keymod;
+    VisKeyState state;
+    visual_event_queue_add_keyboard(eventqueue, keysym, keymod, state);
 }
 */
 
 // Is this even needed? What happens when the app is quietly discarded?
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_visualsQuit(JNIEnv * env, jobject  obj)
 {
-	visual_video_free_buffer(v_private.bin_video);
-	visual_object_unref(VISUAL_OBJECT(v_private.bin_video));
-	visual_object_unref(VISUAL_OBJECT(v_private.bin));
-	visual_quit();
+    visual_video_free_buffer(v_private.bin_video);
+    visual_object_unref(VISUAL_OBJECT(v_private.bin_video));
+    visual_object_unref(VISUAL_OBJECT(v_private.bin));
+    visual_quit();
 }
 
 
@@ -371,7 +365,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             w = info.width;
             h = info.height;
 
-	    if(!(v_private.bin = bin = visual_bin_new())) {
+        if(!(v_private.bin = bin = visual_bin_new())) {
                 visual_log(VISUAL_LOG_CRITICAL, "Could not create VisBin.");
                 return FALSE;
             }
@@ -388,15 +382,15 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             visual_video_set_dimension(bin_video, w, h);
             visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth_enum));
             visual_video_allocate_buffer(bin_video);
-
             visual_bin_set_video(bin, bin_video);
             visual_bin_set_supported_depth(v_private.bin, VISUAL_VIDEO_DEPTH_ALL);
             visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_MORPH);
             visual_bin_connect_by_names(bin, "bumpscope", "alsa");
             visual_bin_realize(v_private.bin);
-            visual_bin_depth_changed(bin);
             visual_bin_sync(bin, FALSE);
+            visual_bin_depth_changed(bin);
     }
+
 
     if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
@@ -417,7 +411,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
             visual_video_allocate_buffer(bin_video);
     }
-
     if(visual_bin_depth_changed(bin))
         visual_bin_sync(bin, TRUE);
 

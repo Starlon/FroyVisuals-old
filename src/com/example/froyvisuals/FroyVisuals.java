@@ -80,7 +80,7 @@ class FroyVisualsView extends View {
     
                             if (recorder.getState() == AudioRecord.STATE_INITIALIZED)
                             {
-				PCM_SIZE = bufferSize;
+                PCM_SIZE = bufferSize;
                                 RECORDER_SAMPLERATE = rate;
                                 RECORDER_CHANNELS = channelConfig;
                                 RECORDER_AUDIO_ENCODING = audioFormat;
@@ -107,27 +107,27 @@ class FroyVisualsView extends View {
 
         initApp();
 /*
-	mAudio = findAudioRecord();
+    mAudio = findAudioRecord();
         if(mAudio != null)
-	{
-		resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
-		isAvailable = true;
-	}
+    {
+        resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+        isAvailable = true;
+    }
 */
     }
 
     @Override protected void onDraw(Canvas canvas) {
-	if( mW != getWidth() || mH != getHeight())
-	{
-		mW = getWidth();
-		mH = getHeight();
-	        mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
-	}
+    if( mW != getWidth() || mH != getHeight())
+    {
+        mW = getWidth();
+        mH = getHeight();
+        mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
+    }
 /*
-	mAudio.startRecording();
-	short[] data = new short[PCM_SIZE];
+    mAudio.startRecording();
+    short[] data = new short[PCM_SIZE];
         mAudio.read(data, 0, PCM_SIZE);
-	mAudio.stop();
+    mAudio.stop();
         uploadAudio(data);
 */
         if(!renderFroyVisuals(mBitmap)) return;
@@ -136,19 +136,20 @@ class FroyVisualsView extends View {
         // force a redraw
         invalidate();
     }
+
     @Override public boolean onTouchEvent (MotionEvent event) {
-	int action = event.getAction();
-	float x = event.getX();
-	float y = event.getY();
-	switch(action)
-	{
-		case MotionEvent.ACTION_DOWN:
-			mouseButton(1, x, y);
-		break;
-		case MotionEvent.ACTION_MOVE:
-			mouseMotion(x, y);
-		break;
-	}
-	return true;	
+        int action = event.getAction();
+        float x = event.getX();
+        float y = event.getY();
+        switch(action)
+        {
+            case MotionEvent.ACTION_DOWN:
+                mouseButton(1, x, y);
+            break;
+            case MotionEvent.ACTION_MOVE:
+                mouseMotion(x, y);
+            break;
+        }
+        return true;    
     }
 }
