@@ -119,7 +119,7 @@ int inp_alsa_init (VisPluginData *plugin)
 	if(!priv->pcmstream)
 		visual_log(VISUAL_LOG_WARNING, "Couldn't open pcm stream.");
 	if(!pcm_is_ready(priv->pcmstream))
-		visual_log(VISUAL_LOG_WARNING, "Could not read from pcm stream.");
+		visual_log(VISUAL_LOG_WARNING, "Could not read from pcm stream: \"%s\"", pcm_get_error(priv->pcmstream));
 
 	priv->loaded = 1;
 

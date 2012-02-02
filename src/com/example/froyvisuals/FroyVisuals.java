@@ -144,6 +144,7 @@ class FroyVisualsView extends View {
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
+                switchActor(0);
                 mouseButton(1, x, y);
             break;
             case MotionEvent.ACTION_MOVE:
