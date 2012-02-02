@@ -385,7 +385,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             visual_bin_set_video(bin, bin_video);
             visual_bin_set_supported_depth(v_private.bin, VISUAL_VIDEO_DEPTH_ALL);
             visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_MORPH);
-            visual_bin_connect_by_names(bin, "bumpscope", "alsa");
+            visual_bin_connect_by_names(bin, "infinite", "alsa");
             visual_bin_realize(v_private.bin);
             visual_bin_sync(bin, FALSE);
             visual_bin_depth_changed(bin);

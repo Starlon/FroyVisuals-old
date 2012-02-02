@@ -26,7 +26,7 @@ LOCAL_SRC_FILES := actor/lv_scope/actor_lv_scope.c
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS := -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include ./jni/libvisual
@@ -53,7 +53,7 @@ LOCAL_SRC_FILES := actor/infinite/compute.c  actor/infinite/display.c  actor/inf
 LOCAL_LDLIBS := -llog 
 LOCAL_CFLAGS := -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
@@ -100,7 +100,7 @@ LOCAL_SRC_FILES := morph/alphablend/morph_alphablend.c
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS := -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual 
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
@@ -109,7 +109,7 @@ LOCAL_SRC_FILES := morph/flash/morph_flash.c
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS := -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual 
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
@@ -118,7 +118,7 @@ LOCAL_SRC_FILES := morph/slide/morph_slide.c
 LOCAL_LDLIBS := --llog
 LOCAL_CFLAGS := -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual 
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual
@@ -127,7 +127,7 @@ LOCAL_SRC_FILES := morph/tentacle/morph_tentacle.c
 LOCAL_LDLIBS := -llog
 LOCAL_CFLAGS := -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual 
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
 #### INPUT PLUGINS
 
