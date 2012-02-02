@@ -122,7 +122,7 @@ class FroyVisualsView extends View {
         mW = getWidth();
         mH = getHeight();
         mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
-        //screenResize(mW, mH);
+        screenResize(mW, mH);
     }
 /*
     mAudio.startRecording();
