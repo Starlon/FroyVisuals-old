@@ -1,0 +1,21 @@
+You'll need to build a custom system image with the changes.
+
+To run Valgrind on the system server:
+
+adb root
+adb shell setprop wrap.system_server "logwrapper valgrind"
+adb shell stop && adb shell start
+
+To run Valgrind on an application:
+
+adb root
+adb shell setprop wrap.<process_name> "logwrapper valgrind"
+
+Truncate the combined property name "wrap." + the process name to 31 chars if
+needed.  The system property server has a maximum length limit on property
+names.
+
+Of course you can pass other arguments to valgrind or run other tools instead.
+
+You MUST have root for this to work.
+
