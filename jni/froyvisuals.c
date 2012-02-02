@@ -367,7 +367,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             w = info.width;
             h = info.height;
 
-        if(!(v_private.bin = bin = visual_bin_new())) {
+            if(!(v_private.bin = bin = visual_bin_new())) {
                 visual_log(VISUAL_LOG_CRITICAL, "Could not create VisBin.");
                 return FALSE;
             }
@@ -412,7 +412,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             visual_video_set_dimension(bin_video, w, h);
             visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
             visual_video_allocate_buffer(bin_video);
-            visual_bin_depth_changed(bin);
+            visual_bin_sync(bin, FALSE);
     }
     if(visual_bin_depth_changed(bin))
         visual_bin_sync(bin, TRUE);
