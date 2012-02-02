@@ -45,7 +45,6 @@ int act_bumpscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
-const VisPluginInfo *get_plugin_info (int *count);
 const VisPluginInfo *get_plugin_info (int *count)
 {
 	static VisActorPlugin actor[] = {{
@@ -60,7 +59,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "bumpscope",
 		.name = "Bumpscope plugin",
-		.author = N_("Original by: Zinx Verituse <zinx@xmms.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>"),
+		.author = "Original by: Zinx Verituse <zinx@xmms.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>",
 		.version = "0.0.1",
 		.about = "Bumpscope visual plugin",
 		.help = "This is the libvisual port of the xmms Bumpscope plugin",
@@ -195,6 +194,7 @@ int act_bumpscope_init (VisPluginData *plugin)
 
 	priv->pcmbuf = visual_buffer_new_allocate (512 * sizeof (float), visual_buffer_destroyer_free);
 
+    visual_log(VISUAL_LOG_INFO, " ::::::::::::: initialized bumpscope :::::::::::::: ");
 	return 0;
 }
 
@@ -277,6 +277,7 @@ int act_bumpscope_events (VisPluginData *plugin, VisEventQueue *events)
 				if (ev.event.mousemotion.state == VISUAL_MOUSE_DOWN) {
 					priv->light_x = ev.event.mousemotion.x;
 					priv->light_y = ev.event.mousemotion.y;
+                    visual_log(VISUAL_LOG_INFO, "--------------- mouse motion %d %d", priv->light_x, priv->light_y);
 				}
 
 				break;
