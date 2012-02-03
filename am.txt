@@ -38,3 +38,5 @@ for example we have android program with Manifest like below:
                             com.iftitah.android.contact/com.iftitah.android.contact.Contact
 
                             ok, Have a nice try!
+adb shell am start -n com.starlon.froyvisuals/.FroyVisuals
+

@@ -41,5 +41,17 @@ log:
 
 gdb:
 	@ndk-gdb --start --force --verbose
-	@/opt/android-ndk-r7/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-gdb -x obj/local/armeabi-v7a/gdb.setup -e obj/local/armeabi-v7a/app_process 
+	#@/opt/android-ndk-r7/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-gdb -x obj/local/armeabi-v7a/gdb.setup -e obj/local/armeabi-v7a/app_process 
 
+mem:
+	@adb shell setprop dalvik.vm.checkjni true
+	@adb shell setprop libc.debug.malloc 10
+	@adb shell setprop dalvik.vm.jniopts forcecopy
+	@adb shell start
+	@adb shell stop
+
+start:
+	@adb shell am start -n com.starlon.froyvisuals/.FroyVisuals
+
+valgrind:
+	@adb shell setprop wrap.com.starlon.froyvisuals "logwrapper valgrind"
