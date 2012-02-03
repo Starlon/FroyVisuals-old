@@ -11,7 +11,7 @@ install:
 	@adb install -r bin/FroyVisuals.apk
 
 debug:
-	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
+	@MALLOC_DEBUG=1 ndk-build APP_OPTIM=debug NDK_DEBUG=1
 	@ant clean
 	@ant debug
 
@@ -41,7 +41,7 @@ log:
 
 gdb:
 	@ndk-gdb --start --force --verbose
-	#@/opt/android-ndk-r7/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-gdb -x obj/local/armeabi-v7a/gdb.setup -e obj/local/armeabi-v7a/app_process 
+	#This is performed in ndk-gdb, so commenting out. @/opt/android-ndk-r7/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-gdb -x obj/local/armeabi-v7a/gdb.setup -e obj/local/armeabi-v7a/app_process 
 
 mem:
 	@adb shell setprop dalvik.vm.checkjni true
@@ -55,3 +55,8 @@ start:
 
 valgrind:
 	@adb shell setprop wrap.com.starlon.froyvisuals "logwrapper valgrind"
+
+redirect:
+	@adb shell setprop log.redirect-stdio true
+	@adb shell stop
+	@adb shell start

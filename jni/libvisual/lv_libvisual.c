@@ -41,6 +41,7 @@
 #include "lv_thread.h"
 #include "lv_cpu.h"
 #include "config.h"
+#include <rmalloc/rmalloc.h>
 
 
 /** Set when libvisual is initialized. */

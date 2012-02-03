@@ -24,6 +24,7 @@
 #include <math.h>
 #include <tinyalsa/asoundlib.h>
 #include <libvisual.h>
+#include <rmalloc/rmalloc.h>
 
 #define  LOG_TAG    "FroyVisuals"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -210,9 +211,11 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
             visual_log_set_critical_handler (my_critical_handler, NULL);
             visual_log_set_error_handler (my_error_handler, NULL);
             visual_init(0, NULL);
+/*
             visual_thread_enable(FALSE);
             visual_log(VISUAL_LOG_INFO, "LibVisual intialized...");
             visual_mem_set(&v_private, 0, sizeof(v_private));
+*/
     }
 
     visual_log(VISUAL_LOG_INFO, "FroyVisuals initialized...");
@@ -343,6 +346,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_visualsQuit(
 
 JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
 {
+return 0;
     AndroidBitmapInfo  info;
     void*              pixels;
     int                ret;

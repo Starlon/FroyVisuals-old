@@ -32,6 +32,8 @@
 #include "lv_log.h"
 #include "lv_error.h"
 #include "lv_cpu.h"
+#define MALLOC_DEBUG 1
+#include <rmalloc/rmalloc.h>
 
 /* FIXME sse, altivec versions, optionally with prefetching and such
  * with checking for optimal scan lines */

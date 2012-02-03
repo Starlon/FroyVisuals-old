@@ -1,0 +1,724 @@
+<html>
+<!-- #subject label="C Malloc Debugging" -->
+<!-- $Revision: 1.19 $ -->
+<!--
+	$Log: rmdebug.html,v $
+	Revision 1.19  2010/10/08 09:41:18  rammi
+	Clarified license to ISC license
+
+	Revision 1.18  2009/07/06 12:30:17  rammi
+	And another version update...
+
+	Revision 1.17  2009/07/06 12:29:15  rammi
+	Updated version
+
+	Revision 1.16  2009/07/06 12:09:54  rammi
+	Updated to 1.21
+
+	Revision 1.15  2008/12/28 13:06:00  rammi
+	Added missing thanks.
+
+	Revision 1.14  2008/12/28 13:02:40  rammi
+	Changed to V 1.20
+
+	Revision 1.13  2008/12/27 16:44:30  rammi
+	Added warnung to 'others' section.
+
+	Revision 1.12  2008/12/27 16:35:23  rammi
+	Added info on undef macros.
+
+	Revision 1.11  2008/12/27 16:16:16  rammi
+	Added section Releases to praise F. Culot
+
+	Revision 1.10  2008/09/30 12:42:58  rammi
+	Added info on version 1.18
+
+	Revision 1.9  2006/01/29 19:03:23  rammi
+	Further garbling...
+
+	Revision 1.8  2006/01/29 19:01:54  rammi
+	Garbled email addresses. I receive already enough spam.
+
+	Revision 1.7  2006/01/29 18:58:49  rammi
+	Increased version number.
+
+	Revision 1.6  2003/01/31 15:57:08  rammi
+	Added more examples to RM_RETAG explanation
+
+	Revision 1.5  2003/01/31 14:51:26  rammi
+	Updated version to 1.16
+
+	Revision 1.4  2002/05/02 16:56:25  rammi
+	Added missing # to generations link.
+
+	Revision 1.3  2002/04/22 17:54:44  rammi
+	Change format of flags and macros section.
+
+	Revision 1.2  2002/04/22 16:31:32  rammi
+	Added generations feature in version 1.15
+
+-->
+  <head>
+    <title>Malloc Debug Library</title>
+    <meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />
+  </head>
+  <body>
+    <bodytext>
+      <DIV ALIGN=right><I><FONT SIZE=-1>Latest change on $Date: 2010/10/08 09:41:18 $.</FONT></I></DIV>
+      <h1 align="center">Malloc Debug Library for C on Unix</h1>
+      <h4 align="center">by
+<a href="m&#97;&#105;&#108;&#116;o:&#114;&#97;&#109;&#109;&#105;&#64;&#104;&#101;&#120;&#99;&#111;&#46;&#100;&#101;">Rammi</a></h4>
+      <h4 align="center"><tt>Version 1.21</tt></h4>
+
+      <h1>Content</h1>
+      <ul>
+	<li><a href="#intro">What for?</a></li>
+	<li><a href="#work">How it works</a></li>
+	<li><a href="#install">Installation Guide</a></li>
+	<li><a href="#details">Detailed Information</a></li>
+	<li><a href="#rely">Reliability</a></li>
+	<li><a href="#others">Other malloc debug libraries</a></li>
+	<li><a href="#releases">Releases</a></li>
+	<li><a href="#license">License</a></li>
+	<li><a href="#more">Further Information</a></li>
+      </ul>
+
+      <h1><a name="intro">What for?</a></h1>
+      <p>
+	When writing <b>C</b> programs many of the bugs are memory related.
+	They may result in strange behaviour which can arouse far away
+	from the erroneous position.
+      </p>
+      <p>
+	I once spent about thirty hours hunting for an annoying bug. The setting
+	was bad. In a big project where a program (for which we don't had the
+	source) read in libraries (written by us) at runtime and then used them
+	a segmentation fault occured my part when allocating memory. I had
+	just written some arcane stuff concerning binary file i/o and wasn't
+	surprised that much. Of course it was not possible to use a debugger
+	and we had to switch to good old <code>printf</code> and visual trace
+	(step the code in wetware memory line by line) debugging. But I did
+	not find nothing, everything seemed wonderful -- except that the program
+	still kept crashing.
+      </p>
+      <p>
+	It was a weekend and I hadn't had Internet access that time (it's
+	seems so long ago that I remember dinosaurs stamping by my window).
+	So I wrote the first version of the <em>malloc debug library</em> to
+	see what happened. I linked it to my library and -- did not find
+	anything. So at	last (it was a weekend) I linked it to the libraries
+	of my coworkers	and indeed there was a off-by-one error in someone
+	else's library. We love <b>C</b>, don't we?
+      </p>
+      <p>
+	Since then I always use it in my projects from the very beginning and
+	do only switch it off for release versions. It's an unrenouncable
+	improvement to find memory bugs as early as possible without doing
+	any more extra work than including a header and setting a command
+	line switch in the <tt>Makefile</tt>.
+      </p>
+
+      <h1><a name="work">How it works</a></h1>
+      <p>
+	It's a simple thing. The <em>malloc debug library</em> implements
+	wrappers for the normal heap handling functions:
+      </p>
+      <ul>
+	<li><code>malloc</code></li>
+	<li><code>calloc</code></li>
+	<li><code>realloc</code></li>
+	<li><code>free</code></li>
+	<li><code>strdup</code></li>
+	<li><code>getcwd</code>
+	  (this is thought as an example how to wrap other library functions
+	  returning malloc'd memory)
+	</li>
+      </ul>
+      <p>
+	When allocating memory the wrapper functions demand some more memory
+	from the system and use this extra space to write some special
+	bytefields before and after the buffer they finally return to the user.
+	Some of the extra space before the buffer is used for extra information
+	e.g. about the file position where the allocation took place. When
+	freeing the buffer (and maybe more often) the bytefields are controlled
+	whether they are unchanged. If there is a changed the program is aborted
+	immediately with an error message indicating the position where the
+	erroneous buffer was allocated and where the error was detected. E.g. a
+	common error:
+      </p>
+      <pre>
+&lt;MALLOC_DEBUG&gt;  Corrupted block end (possibly written past the end)
+        should be: a5a5a5a5 5b5b5b5b abababab aa55aa55
+        is:        00a5a5a5 5b5b5b5b abababab aa55aa55
+        block was allocated in rtest.c:181 [4 Bytes, generation 1]
+        error was detected in  rtest.c:185
+        Looks like string allocated one byte too short
+                (missing the closing zero)
+      </pre>
+      <p>
+	The abort allows you to switch on your debugger and inspect things more
+	closely.
+      </p>
+
+      <h1>Getting it</h1>
+      <p>
+	The archive <tt>rmdebug.tgz</tt> is a gzipped tar archive, has about 15k
+	and contains the files:
+      </p>
+      <ul>
+	<li><tt>rmalloc.c</tt> (malloc debug code)</li>
+	<li><tt>rmalloc.h</tt> (malloc debug header)</li>
+	<li><tt>rtest.c</tt> (test cases)</li>
+	<li><tt>Makefile</tt> (test cases build)</li>
+	<li><tt>rmdebug.html</tt> (this file)</li>
+      </ul>
+      <p>
+	Get <a href="rmalloc.tgz"><tt>rmalloc.tgz</tt> over HTTP</a>
+      </p>
+      <p><font color="#800000">REMINDER:<br>You may download/use/change/redistribute this
+	  utility as you like but you do this at your own risk without any
+	  warranty.</font>
+      </p>
+
+
+      <h1><a name="install">Installation Guide</a></h1>
+      <p>
+	Get <tt>rmalloc.c</tt> and <tt>rmalloc.h</tt> from downloading
+	<tt>rmalloc.tgz</tt> from above. Compile <tt>rmalloc.c</tt> to <tt>rmalloc.o</tt>
+	and include <tt>rmalloc.h</tt> in each of your files <it>after</it>
+	the standard includes. Recompile your stuff with
+	<code>MALLOC_DEBUG</code> defined and link <tt>rmalloc.o</tt> to it.
+	That's all to use it.
+      </p>
+
+      <h1><a name="details">Detailed Information</a></h1>
+      <p>
+	First follow the <em>Installation Guide</em>.
+      </p>
+      <h2>Switching it on/off</h2>
+      <p>
+	If your sources are compiled with <code>MALLOC_DEBUG</code> the calls
+	to the standard malloc library are exchanged by the debug malloc library
+	functions. If you don't define <code>MALLOC_DEBUG</code> the calls stay
+	as they are. Be sure that you have included <tt>rmalloc.h</tt> everywhere!
+	Also be sure that you recompile everything after adding or removing
+	<code>MALLOC_DEBUG</code> in your <tt>Makefile</tt>.
+      </p>
+
+      <h2>Testing it</h2>
+      <p>
+	The package includes a <tt>Makefile</tt> and a file <tt>rtest.c</tt>. Just
+	say <tt>make</tt> and you can run <tt>rtest</tt> which should give you some
+	output similar to this:
+      </p>
+      <pre>
+------------------
+Running test  0...
+------------------
+&lt;MALLOC_DEBUG&gt;	rmalloc -- malloc wrapper V 1.21
+	by Rammi &lt;m&#97;&#105;&#108;&#116;o:&#114;&#97;&#109;&#109;&#105;&#64;&#104;&#101;&#120;&#99;&#111;&#46;&#100;&#101;&gt;
+	Compiled with following options:
+		testing:	only actual block
+		generations:	ON
+		eloquence:	OFF
+		realloc(0):	NOT ALLOWED
+		free(0):	NOT ALLOWED
+		flags:	USED
+		alignment:	8
+		pre space:	32
+		post space:	16
+		hash tab size:	257
+
+&lt;MALLOC_STATS&gt;	============ STATISTICS (rtest.c:90) =============
+&lt;MALLOC_STATS&gt;	  1000 x        8 Bytes in rtest.c:84, generations: 1 2 3 ...
+&lt;MALLOC_STATS&gt;	*Variable*	        8000 Bytes
+&lt;MALLOC_STATS&gt;	*Static*	           0 Bytes
+&lt;MALLOC_STATS&gt;	*Total*	        8000 Bytes
+&lt;MALLOC_STATS&gt;	============ END OF STATISTICS =============
+&lt;MALLOC_STATS&gt;	============ STATISTICS (rtest.c:96) =============
+&lt;MALLOC_STATS&gt;	  1000 x        8 Bytes in rtest.c:84, generations: 1 2 3 ...
+&lt;MALLOC_STATS&gt;	    20 x        8 Bytes in rtest.c:93, generations: 1001 1002 1003 ...
+&lt;MALLOC_STATS&gt;	*Variable*	        8160 Bytes
+&lt;MALLOC_STATS&gt;	*Static*	           0 Bytes
+&lt;MALLOC_STATS&gt;	*Total*	        8160 Bytes
+&lt;MALLOC_STATS&gt;	============ END OF STATISTICS =============
+&lt;MALLOC_STATS&gt;	============ STATISTICS (rtest.c:105) =============
+&lt;MALLOC_STATS&gt;	    20 x        8 Bytes in rtest.c:93, generations: 1001 1002 1003 ...
+&lt;MALLOC_STATS&gt;	  1000 x       16 Bytes in rtest.c:100, generations: 1021 1022 1023 ...
+&lt;MALLOC_STATS&gt;	*Variable*	       16160 Bytes
+&lt;MALLOC_STATS&gt;	*Static*	           0 Bytes
+&lt;MALLOC_STATS&gt;	*Total*	       16160 Bytes
+&lt;MALLOC_STATS&gt;	============ END OF STATISTICS =============
+&lt;MALLOC_DEBUG&gt;	Corrupted block end (possibly written past the end)
+	should be: a5a5a5a5 5b5b5b5b abababab aa55aa55
+	is:        a5a5a53f 5b5b5b5b abababab aa55aa55
+	block was allocated in rtest.c:100 [16 Bytes, generation 2020]
+	error was detected in rtest.c:119
+
+
+------------------
+Running test  1...
+------------------
+&lt;MALLOC_DEBUG&gt;	Corrupted block end (possibly written past the end)
+	should be: a5a5a5a5 5b5b5b5b abababab aa55aa55
+	is:        00a5a5a5 5b5b5b5b abababab aa55aa55
+	block was allocated in rtest.c:144 [3 Bytes, generation 1]
+	error was detected in rtest.c:146
+	Looks like string allocated one byte too short
+		(forgetting the nul byte)
+
+
+------------------
+Running test  2...
+------------------
+&lt;MALLOC_DEBUG&gt;	Corrupted block end (possibly written past the end)
+	should be: a5a5a5a5 5b5b5b5b abababab aa55aa55
+	is:        326c6f6e 67005b5b abababab aa55aa55
+	block was allocated in rtest.c:163 [2 Bytes, generation 1]
+	error was detected in rtest.c:165
+	Looks somewhat like a too long string,
+		ending with "2long"
+
+
+------------------
+Running test  3...
+------------------
+&lt;MALLOC_DEBUG&gt;	Corrupted block end (possibly written past the end)
+	should be: a5a5a5a5 5b5b5b5b abababab aa55aa55
+	is:        e8530508 5b5b5b5b abababab aa55aa55
+	block was allocated in rtest.c:183 [4 Bytes, generation 1]
+	error was detected in rtest.c:187
+	First 4 bytes of overwritten memory can be interpreted
+		as a pointer to a block  allocated in:
+		rtest.c:184 [8 Bytes, generation 2]
+
+
+------------------
+Running test  4...
+------------------
+&lt;MALLOC_DEBUG&gt;	Double or false delete
+	Heap adress of block: 0x80560f0
+	Detected in rtest.c:242
+	Trying identification (may be incorrect!):
+		Allocated in rtest.c:227 [2 Bytes]
+
+
+------------------
+Running test  5...
+------------------
+&lt;MALLOC_DEBUG&gt;	Double or false delete
+	Heap adress of block: 0x12345678
+	Detected in rtest.c:260
+
+
+------------------
+Running test  6...
+------------------
+&lt;MALLOC_DEBUG&gt;	WARNING: calloc() overflow! Returning NULL (in rtest.c:276)
+&lt;MALLOC_DEBUG&gt;	Trying to free NULL pointer (in rtest.c:277)
+
+
+------------------------------
+All tests passed successfully.
+------------------------------
+      </pre>
+
+      <h2>Changing the behaviour</h2>
+      <p>
+	You can tweak the behaviour of the library in two ways:
+      </p>
+      <ol>
+	<li>Change some switches in <tt>rmalloc.c</tt></li>
+	<li>Add some macros to your code</li>
+      </ol>
+
+      <h3>Switches in <tt>rmalloc.c</tt></h3>
+      <p>
+	You can change the overall behaviour by setting different switches in
+	<tt>rmalloc.c</tt>. Doing this has the advantage that you only have to
+	recompile and relink <tt>rmalloc.c</tt> without touching anything else.
+      </p>
+
+      <ul>
+      <li><tt><a name="test_depth">RM_TEST_DEPTH</a></tt>
+      <p>
+	Set this to one of the following three values: 0, 1, or 2.
+      </p>
+      <p>
+	With <b>0</b> only a minimum type of malloc debugging is included. Each
+	allocated block is only tested when you free it, there is no statistics
+	available. Even if this uses the least memory overhead I never use it.
+      </p>
+      <p>
+	With <b>1</b> you will get a statistic of memory in use when you leave
+	your program or when you use a special macro in your code. Each block is
+	only tested automatically when you free it. You can test every block by
+	using special macros. For me this is the optimum of performance deterioration
+	versus available information. This is the default.
+      </p>
+      <p>
+	<b>2</b> is the same as 1 with the addition that every allocated block
+	will be checked on every access of any of the malloc functions. This will
+	really slow down your program. I sometimes use this when I cannot get
+	a grip on an error and want to reduce the place to look for the error fast.
+      </p>
+      </li>
+
+      <li><tt><a name="generations">GENERATIONS</a></tt>
+      <p>
+        Introduced in version 1.15.
+      </p>
+      <p>
+        This switch is based on an enhancement and code from <name>Karl Brace</name>
+        especially useful for memory leak hunting.
+        It is either set or unset. If set, each allocated block will get an unique
+        number which is useful if you have a memory leak and don't like to use the
+	RM_RETAG feature described below. Assuming that your program internally
+	takes the same path on each call each block will get the same number on
+        subsequent calls.
+      </p>
+      <p>
+        The statistics of used blocks will print some of the numbers of blocks
+        allocated at a given file position which is not always useful if the code
+	uses generic allocation functions. In that case you can set the environment
+        variable <tt>BREAK_GENERATION</tt> to one of these numbers, start your
+	preferred debugger and set a breakpoint to the function
+	<code>rmalloc_generation()</code>. This function will be called exactly
+	when the block with the number you're interested in is allocated
+	so you can use the callstack feature of you're debugger to see where
+	the leaking allocation occured.
+      </p>
+      <p>
+        In the default configuration this feature is switched on.
+      </p>
+      </li>
+
+      <li><tt><a name="eloquent">ELOQUENT</a></tt>
+      <p>
+	If defined every action of the library (allocating, freeing) will be
+	outputtet. This can really get a lot. When I have a
+	<em>Double or false delete</em> error I pipe the output into a file
+	and look if (and where) the given pointer is already freed before.
+      </p>
+      </li>
+
+      <li><tt><a name="silent">SILENT</a></tt>
+      <p>
+        Thanks to <name>Peter Wehrfritz</name>.<br>
+        If defined only errors are printed, the startup message and the final
+        statistic are not printed.
+      </p>
+      </li>
+
+      <li><tt><a name="with_flags">WITH_FLAGS</a></tt>
+      <p>
+	Defining this allows the setting of special flags for every allocated
+	block. I always use it but it needs extra heap space. See
+	<a href="#flags"><tt>RM_SET</tt> section below</a> for details.
+      </p>
+      </li>
+
+      <li><tt>ALLOW_REALLOC_NULL</tt>
+      <p>
+	Define this to allow <code>realloc(NULL, ...)</code>.
+	To achieve high portability of my programs I don't allow
+	this in my programs.
+      </p>
+      </li>
+
+      <li><tt>ALLOW_FREE_NULL</tt>
+      <p>
+	Define this if you don't consider <code>free(NULL)</code> an error.
+	I have this undefined because I use <code>NULL</code> always as a special
+	value.
+      </p>
+      </li>
+
+      <li><tt>BREAK_GENERATION_COND</tt>
+      <p>
+        Only used if <a href="#generations"><tt>GENERATIONS</tt></a> is set.
+      </p>
+      <p>
+	This defines the condition to be fulfilled so the debug breakpoint
+	<code>rmalloc_generation()</code> function is called.
+	The given default (if generation
+	is the number given in the <tt>BREAK_GENERATION</tt> environment variable)
+	should work in most cases, see code for more possibilities.
+      </p>
+      </li>
+
+      <li><tt>MAX_STAT_GENERATIONS</tt>
+      <p>
+	Only used if <a href="#generations"><tt>GENERATIONS</tt></a> is set.
+      </p>
+      <p>
+	This defines the maximum number of generations printed for a given file
+	position/size combination in the statistics. Normally only the 1st should
+	be of interest, so the default of 3 is quite enough.
+      </p>
+      </li>
+      </ul>
+
+      <h3>Additional macros</h3>
+      <p>
+	To use this macros you have to make changes to your code. I agree that this
+	is ugly but you will get something for it. All these macros expand to nothing
+	when <code>MALLOC_DEBUG</code> is undefined.
+      </p>
+
+      <ul>
+      <li><tt>RM_TEST</tt></li>
+      <p>
+	Invokes a complete test of all allocated blocks. It has only effect when
+	<code><a href="#test_depth">RM_TEST_DEPTH</a></code> is at least set to 1.<br>
+	Example:
+      </p>
+      <pre>
+    <b>RM_TEST</b>;    /* tests ALL memory chunks on heap */
+      </pre>
+      </li>
+
+      <li><tt>RM_STAT</tt>
+      <p>
+	Invokes a complete test of all allocated blocks. Prints out a statistic
+	of allocated blocks to <code>stderr</code>. It has only effect when
+	<code><a href="#test_depth">RM_TEST_DEPTH</a></code> is at least set to 1.<br>
+	Example:
+      </p>
+      <pre>
+    <b>RM_STAT</b>;    /* shows allocated memory */
+      </pre>
+      </li>
+
+      <li><tt>RM_RETAG</tt>
+      <p>
+	Sometimes you have a functions which gets a chunk of memory, initializes
+	it to some default values and returns this to the user. For the malloc
+	debug library only the place of the allocation counts which makes it
+	difficult to track down memory leaks because all the structures allocated
+	in a function like that will have the same file position. With this macro
+	you can set the file position to the position where the macro was invoked.<br>
+	Example:
+      </p>
+      <pre>
+    struct complicated *cpointer = get_new_complicated_struct(any_arg);
+    <b>RM_RETAG</b>(cpointer);    /* file pos is now set to here */
+      </pre>
+      <p>
+	or, since version 1.16 even simpler:
+      </p>
+      <pre>
+    /* RM_RETAG will set file pos to the next line */
+    struct complicated *cpointer = <b>RM_RETAG</b>(get_new_complicated_struct(any_arg));
+      </pre>
+      <p>
+	Packing everything into a macro makes it even easier:
+      </p>
+      <pre>
+    /* RM_RETAG will set file pos to the line where this macro is invoked */
+    #define GET_NEW_COMPLICATED_STRUCT(arg) \
+            <b>RM_RETAG</b>(get_new_complicated_struct(arg))
+    /* ... later ... */
+    struct complicated *cpointer = GET_NEW_COMPLICATED_STRUCT(any_arg);
+      </pre>
+      <p>
+       If you have memory leak problems with a setting similar to the one given
+	above and know how to use a debugger Karl's
+	<a href="#generations"><b>generations</b></a> feature may be more useful
+	for a quick shot.
+      </p>
+      </li>
+
+      <li><tt><a name="flags">RM_SET</a></tt>
+      <p>
+	Set a special flag for the allocated memory. You have to define
+	<code>WITH_FLAGS</code> in <tt>rmalloc.c</tt> or this macro will
+	have no effect. For the moment there are two flags defined:
+      </p>
+      <dd>
+	<b><tt>RM_STATIC</tt></b>
+	<dd>
+	  Used for memory which is not meant to be freed. Static memory will be reported
+	  in the statistics only as a sum. Example:
+	  <pre>
+        static char *buffer = NULL;
+        static int   length = 0;
+
+        [...]
+        if (newlength > length) {
+            if (buffer == NULL) {
+                buffer = malloc(length = newlength);
+                <b>RM_SET</b>(buffer, <b>RM_STATIC</b>);    /* this is never freed */
+            }
+            else {
+                buffer = realloc(buffer, length = newlength);
+                /* RM_SET(buffer, RM_STATIC); not necessary because flags are kept! */
+            }
+            if (buffer == NULL) {
+                error(NOMEM);
+            }
+        }
+	  </pre>
+	</dd>
+      </dd>
+      <dd>
+	<b><tt>RM_STRING</tt></b>
+	<dd>
+	  Used for memory which is meant to hold a string. The strings will be shown
+	  in <code><a href="#eloquent">ELOQUENT</a></code> mode.
+	  <code>strdup</code> sets this flag automatically. Example:
+	  <pre>
+        struct numstr {
+            int    number;
+            char  *name;
+        };
+
+        [...]
+        struct numstr *foo = malloc(sizeof(struct numstr));
+        foo->name    = calloc(1, 2);
+        foo->name[0] = 'X';    /* sheer nonsense */
+        <b>RM_SET</b>(foo->name, <b>RM_STRING</b>);
+	  </pre>
+	</dd>
+      </dd>
+      </li>
+      </ul>
+
+      <h1><a name="rely">Reliability</a></h1>
+      <p>
+	This library was used on several platforms (at least Irix, Solaris, HPUX,
+	Digital Unix, and Linux) by different users. It can help you find common
+	errors like (moderate) overwriting of memory bounds or memory leaks. No problem
+	using it with debuggers or other tools with different implementations of
+	the standard malloc library because it internally uses it.
+      </p>
+      <p>
+	It is by no means perfect. Writing to dangling pointers may or may not
+	be found. Fat overwrite (more than 16 bytes) may cause a crash of the
+	library itself.	Mixing the library with calls to the standard malloc
+	library (because you don't include <tt>rmalloc.h</tt> everywhere or have
+	compiled parts of your program with <code>MALLOC_DEBUG</code> defined and
+	others not) will cause problems (e.g. when you use standard free with
+	rmalloc'ed stuff and vice versa).
+      </p>
+      <p>
+	<em>This is especially true when you use other library functions returning
+	memory from heap than the wrapped ones.</em> You will get a <tt>Double or
+	false delete</tt> error when you free that memory. It is simple to write a
+	wrapper yourself for that functons. Just look how I handled the
+        <code>getcwd</code> library function.<br><b>Attention!</b> The code was
+	broken in version 1.13 which was fixed in 1.14.
+      </p>
+      <p>
+	Despite of the warnings above I use it always (except for releases) and
+	haven't had these problems. But of course I know what I am doing.
+      </p>
+
+      <h1><a name="others">Other malloc debug libraries</a></h1>
+      <p>
+        <b>WARNING</b>: Please note that I wrote this section in 1996 and have never updated it.
+      </p>
+      <p>
+	There are lots of other libraries which do a similar thing (it's a common
+	problem). If you have already used another library and you are content with
+	it, there is possibly no need to switch. If this is your first encounter
+	with something like this you should give it a try.
+      </p>
+      <p>
+	I haven't had much need to use other malloc debug libraries, of course. I used
+	a very early release of <em>Purify</em> and I have tested <em>electric fence</em>
+	some time ago.
+      </p>
+      <h2>Purify</h2>
+      <p>
+	I liked Purify a lot but it is incredible expensive and makes your program
+	slow because every memory access is monitored. So it is probably only used
+	if you really <em>know</em> that you have problems. So if the problems don't
+	show during test phase it's not used. But as we all know the problem <em>will</em>
+	show when we present our program to the customer.
+      </p>
+      <p>
+	If your boss listens to you tell him to buy Purify anyway (it's not
+	your money and you will be glad to have	it when you need it). But until
+	then you should use something else.
+      </p>
+      <h2>Electric Fence</h2>
+      <p>
+	Electric fence is freeware, too, but it uses a different concept compared
+	to my stuff. It is programming your machine's MMU to protect the space behind
+	the allocated blocks. If you access that space you will immediately get a
+	segmentation fault. This is neat because you are really lead to the place where
+	you actually write over the bounds. It will even react on <em>reading</em>
+	beyond bounds. And it is fast because it uses hardware. But it uses more
+	heap space (which tends to make it slower on big programs) and it doesn't
+	find all errors when writing over the bounds because of alignment problems.
+	Especially the problem of Test 1 of <tt>rtest</tt> is not found.
+      </p>
+
+      <h1><a name="releases">Releases</a></h1>
+      <p>
+        Some info on the various releases. Check here if you use older versions
+        to see whether it is useful to update (of course it nearly always
+        should). The most recent version appears at the top. Not all versions
+        are described here because I was too lazy to start this section from
+        the beginning.
+      </p>
+      <ul>
+        <li>
+          Version <b>1.21</b> (2009/07/06):<br/>
+          Avoided abort when RM_STAT was used before anything was allocated.
+          Thanks are going out to Matthias Bilger for pointing out the problem.
+          Added some aborts when functions are called on allocated blocks
+          although nothing was ever allocated via the lib.
+        </li>
+        <li>
+          Version <b>1.20</b> (2008/12/28):<br/>
+          Fixed typo in <tt>rmalloc.h</tt> introduced in 1.19.
+          Thanks are going once again to Frédéric Culot.
+        </li>
+        <li>
+          Version <b>1.19</b> (2008/12/27):<br/>
+          Added patch from Frédéric Culot to avoid <tt>size_t</tt> overflow
+          in <tt>calloc()</tt> wrapper <tt>Rcalloc()</tt>.<br/>
+          Furthermore I took care to <tt>#undef</tt> overwritten functions if
+          the underlying system is already defining them as macros.
+        </li>
+        <li>
+          Version <b>1.18</b> (2008/09/30):<br/>
+          New <tt>SILENT</tt> mode and patch against compiler warning
+          if <tt>TEST_DEPTH==0</tt>. Thanks for this are going to Peter Wehrfritz.
+        </li>
+      </ul>
+      <h1><a name="license">License</a></h1>
+      <p>
+	Because I was asked to clarify the license of rmalloc from
+	October&nbsp;8&nbsp;2010 it is coming under the 
+	<a href="http://en.wikipedia.org/wiki/ISC_license">ISC license</a>
+	(the main difference to the relaxed state before is that you'll have to
+	keep the license text after modifications, which before was not
+	required; otherwise you are free to do what you like):
+      </p>
+      <pre>
+Copyright © 2010  Andreas M. Rammelt <&#114;&#97;&#109;&#109;&#105;&#64;&#104;&#101;&#120;&#99;&#111;&#46;&#100;&#101;>
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+      </pre>
+      <h1><a name="more">Further Information</a></h1>
+      <p>
+	If you need further information feel free to ask
+	<a href="m&#97;&#105;&#108;&#116;o:&#114;&#97;&#109;&#109;&#105;&#64;&#104;&#101;&#120;&#99;&#111;&#46;&#100;&#101;">me</a>.
+      </p>
+    </bodytext>
+  </body>
+</html>
+
