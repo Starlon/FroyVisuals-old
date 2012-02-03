@@ -289,6 +289,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
+    return;
     visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
@@ -297,6 +298,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
 {
+    return;
     visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
@@ -307,6 +309,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
+    return;
     if(v_private.bin)
     {
         visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);

@@ -53,7 +53,7 @@ LOCAL_SRC_FILES := actor/infinite/compute.c  actor/infinite/display.c  actor/inf
 LOCAL_LDLIBS := -llog 
 LOCAL_CFLAGS := -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include jni/libvisual

@@ -11,7 +11,7 @@ install:
 	@adb install -r bin/FroyVisuals.apk
 
 debug:
-	@ndk-build APP_OPTIM=debug
+	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
 	@ant clean
 	@ant debug
 
@@ -34,9 +34,12 @@ sign:
 
 log:
 	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libfroyvisuals.so > libfroyvisuals.asm
-	@adb shell logcat -d -f /mnt/sdcard/test.log
-	@adb pull /mnt/sdcard/test.log
-	#@./stack.py --symbols-dir=lyrical/ ./test.log 
+	@adb shell logcat -d > test.log
+	@./stack.py --symbols-dir=lyrical/ ./test.log 
 	@./parse_stack.py ./libfroyvisuals.asm ./test.log
 	@adb shell dumpsys meminfo -h > meminfo.txt
-	@tail ./test.log
+
+gdb:
+	@ndk-gdb --start --force --verbose
+	@/opt/android-ndk-r7/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-gdb -x obj/local/armeabi-v7a/gdb.setup -e obj/local/armeabi-v7a/app_process 
+

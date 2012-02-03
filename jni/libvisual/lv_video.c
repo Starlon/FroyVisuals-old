@@ -2164,6 +2164,7 @@ int visual_video_depth_transform (VisVideo *dest, VisVideo *src)
 	if (dest->depth == VISUAL_VIDEO_DEPTH_8BIT || src->depth == VISUAL_VIDEO_DEPTH_8BIT) {
 		visual_log_return_val_if_fail (src->pal != NULL, -VISUAL_ERROR_PALETTE_NULL);
 		visual_log_return_val_if_fail (src->pal->ncolors == 256, -VISUAL_ERROR_PALETTE_SIZE);
+        int *txt = NULL;
 	}
 
 	if (src->depth == VISUAL_VIDEO_DEPTH_8BIT) {
