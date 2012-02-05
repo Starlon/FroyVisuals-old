@@ -38,6 +38,7 @@
 /* LIBVISUAL */
 struct {
 	VisVideo   *video;
+    VisPalette  *pal;
 	VisBin     *bin;
 	const char *plugin;
     const char *morph;
@@ -300,9 +301,9 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 
     v.plugin = "lv_scope";
 
-	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_ALL);
+	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_8BIT);
     visual_bin_set_depth(v.bin, VISUAL_VIDEO_DEPTH_8BIT);
-    visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_32BIT);
+    visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_8BIT);
 
 	v.video = visual_video_new ();
     visual_video_set_attributes(v.video, 32, 32, 32, VISUAL_VIDEO_DEPTH_8BIT);
@@ -326,6 +327,8 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 	visual_bin_depth_changed (v.bin);
 	visual_bin_realize (v.bin);
 	visual_bin_sync (v.bin, 0);
+
+    v.pal = visual_bin_get_palette(v.bin);
 
 	printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));
 }
