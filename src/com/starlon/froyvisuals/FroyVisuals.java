@@ -140,7 +140,6 @@ class FroyVisualsView extends View {
     }
 
     @Override public boolean onTouchEvent (MotionEvent event) {
-/*
         int action = event.getAction();
         float x = event.getX();
         float y = event.getY();
@@ -154,7 +153,6 @@ class FroyVisualsView extends View {
                 mouseMotion(x, y);
             break;
         }
-*/
         return true;    
     }
     public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {

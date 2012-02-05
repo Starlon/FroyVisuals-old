@@ -194,22 +194,27 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(
     (*env)->ReleaseShortArrayElements(env, data, pcm, 0);
 }
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint prev)
+static void v_cycleActor (int prev)
 {
-	v.plugin = (prev ? visual_actor_get_prev_by_name_nogl (v.plugin)
-	                 : visual_actor_get_next_by_name_nogl (v.plugin));
-	if (!v.plugin) {
-		v.plugin = (prev ? visual_actor_get_prev_by_name (0)
-						 : visual_actor_get_next_by_name (0));
-	}
+    v.plugin = (prev ? visual_actor_get_prev_by_name (v.plugin)
+                     : visual_actor_get_next_by_name (v.plugin));
+    if (!v.plugin) {
+        v.plugin = (prev ? visual_actor_get_prev_by_name (0)
+                         : visual_actor_get_next_by_name (0));
+    }
+
     v.morph = visual_morph_get_next_by_name(v.morph);
     if(!v.morph) {
         v.morph = visual_morph_get_next_by_name(0);
     }
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint prev)
+{
+    v_cycleActor(prev);
 
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.plugin);
-	visual_video_set_depth (v.video, visual_bin_get_depth(v.bin));
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
