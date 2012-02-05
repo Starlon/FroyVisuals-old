@@ -29,7 +29,7 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-#define DEPTH = VISUAL_VIDEO_DEPTH_16BIT
+#define DEPTH VISUAL_VIDEO_DEPTH_16BIT
 
 #define x_exit(msg) \
 	printf ("Error: %s\n", msg); \
@@ -206,11 +206,14 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
     if(!v.morph) {
         v.morph = visual_morph_get_next_by_name(0);
     }
+
+    visual_bin_set_morph_by_name (v.bin, (char *)v.morph);
+    visual_bin_switch_actor_by_name(v.bin, (char *)v.plugin);
+	visual_video_set_depth (v.video, visual_bin_get_depth(v.bin));
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
-    return;
     visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
@@ -219,7 +222,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
 {
-    return;
     visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
@@ -230,11 +232,10 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
-    
     visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
 
 	visual_video_set_dimension (v.video, w, h);
-    visual_video_set_pitch(v.video, w * 2);
+    visual_video_set_pitch(v.video, w * visual_video_bpp_from_depth(VISUAL_VIDEO_DEPTH_8BIT));
 
 	visual_bin_sync( v.bin, 0 );
 
@@ -264,7 +265,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_visualsQuit(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
 {
-	VisVideoDepth depth;
 
 	visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
 
@@ -277,7 +277,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 	visual_init (LOG_TAG);
 
 	v.bin    = visual_bin_new ();
-	depth  = visual_video_depth_enum_from_value( 16 );
 
 	v.plugin = visual_actor_get_next_by_name(0);
 
@@ -292,26 +291,17 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
         return;
 	}
 
-	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_8BIT);
+    v.plugin = "lv_scope";
 
-	if (!(v.video = visual_video_new ())) {
-		visual_log(VISUAL_LOG_CRITICAL, ("Cannot create a video surface"));
-        x_exit("Exiting...");
-        return;
-	}
-	if (visual_video_set_depth (v.video, depth) < 0) {
-		visual_log (VISUAL_LOG_CRITICAL, "Cannot set video depth");
-        x_exit("Exiting...");
-        return;
-	}
+	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_ALL);
+    visual_bin_set_depth(v.bin, VISUAL_VIDEO_DEPTH_8BIT);
+    visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_32BIT);
 
-
-	if (visual_bin_set_video (v.bin, v.video)) {
-		x_exit ("Cannot set video...");
-	}
+	v.video = visual_video_new ();
+    visual_video_set_attributes(v.video, 32, 32, 32, VISUAL_VIDEO_DEPTH_8BIT);
+	visual_bin_set_video (v.bin, v.video);
 
     v.plugin = "lv_scope";
-	visual_bin_connect_by_names (v.bin, (char*)v.plugin, "alsa");
 
 	if (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL)
 	{
@@ -319,13 +309,13 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 		v.pluginIsGL = 1;
 	}
 
-	/* Called so the flag is set to false, seen we create the initial environment here */
-	visual_bin_depth_changed (v.bin);
+	visual_bin_connect_by_names (v.bin, (char*)v.plugin, "alsa");
 
 	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
 	visual_bin_switch_set_automatic (v.bin, 1);
 	visual_bin_switch_set_steps (v.bin, 10);
 
+	visual_bin_depth_changed (v.bin);
 	visual_bin_realize (v.bin);
 	visual_bin_sync (v.bin, 0);
 
@@ -352,6 +342,9 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 
     stats_startFrame(&stats);
 
+    VisVideo vid;
+    visual_video_init(&vid);
+    visual_video_set_attributes(&vid, info.width, info.height, info.width * visual_video_depth_value_from_enum(DEPTH) / 8, DEPTH);
     visual_video_set_buffer(v.video, pixels);
 
 	/* On depth change */
@@ -371,9 +364,11 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 
     }
 
+    //visual_video_depth_transform(&vid, v.video);
+
     AndroidBitmap_unlockPixels(env, bitmap);
 
     stats_endFrame(&stats);
 
-	return 0;
+	return TRUE;
 }
