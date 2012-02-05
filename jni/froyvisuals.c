@@ -24,8 +24,6 @@
 #include <android/bitmap.h>
 #include <libvisual/libvisual.h>
 
-#include <tinyalsa/asound.h>
-
 #define x_exit(msg) \
 	printf ("Error: %s\n", msg); \
 	exit (EXIT_FAILURE);
@@ -45,23 +43,6 @@ static void v_init (int, char**);
 static uint v_render (void);
 static void v_resize (int, int);
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint direction)
-/
-{
-	v.plugin = (prev ? visual_actor_get_prev_by_name_nogl (v.plugin)
-	                 : visual_actor_get_next_by_name_nogl (v.plugin));
-	if (!v.plugin) {
-		v.plugin = (prev ? visual_actor_get_prev_by_name (0)
-						 : visual_actor_get_next_by_name (0));
-	}
-	if (!strcmp (v.plugin, "gstreamer") || !strcmp (v.plugin, "gdkpixbuf")) {
-		v_cycleActor (prev);
-	}
-    v.morph = visual_morph_get_next_by_name(v.morph);
-    if(!v.morph) {
-        v.morph = visual_morph_get_next_by_name(0);
-    }
-}
 
 /* Return current time in milliseconds */
 static double now_ms(void)
@@ -198,11 +179,6 @@ static void my_error_handler (const char *msg, const char *funcname, void *privd
     LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
 }
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_resizePCM(JNIEnv * env, jobject  obj, jint size,
-    jint rate, jint channel, jint format)
-{
-}
-
 // For fallback audio source.
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
 {
@@ -261,6 +237,24 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
 }
 */
 
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint direction)
+/
+{
+	v.plugin = (prev ? visual_actor_get_prev_by_name_nogl (v.plugin)
+	                 : visual_actor_get_next_by_name_nogl (v.plugin));
+	if (!v.plugin) {
+		v.plugin = (prev ? visual_actor_get_prev_by_name (0)
+						 : visual_actor_get_next_by_name (0));
+	}
+	if (!strcmp (v.plugin, "gstreamer") || !strcmp (v.plugin, "gdkpixbuf")) {
+		v_cycleActor (prev);
+	}
+    v.morph = visual_morph_get_next_by_name(v.morph);
+    if(!v.morph) {
+        v.morph = visual_morph_get_next_by_name(0);
+    }
+}
+
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
     return;
@@ -283,15 +277,14 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
-    return;
-    if(v_private.bin)
-    {
-        visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
-        VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
-        VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
-        visual_event_queue_add_resize(eventqueue, v_private.bin_video, w, h);
-    }
-    
+	visual_video_set_dimension( v.video, width, height );
+
+	visual_bin_sync( v.bin, 0 );
+
+    visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
+    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
+    VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
+    visual_event_queue_add_resize(eventqueue, v.video, w, h);
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
@@ -331,13 +324,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
     return EXIT_SUCCESS;
 }
 
-void
-v_resize( int width, int height )
-{
-	visual_video_set_dimension( v.video, width, height );
-
-	visual_bin_sync( v.bin, 0 );
-}
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
 {
