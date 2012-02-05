@@ -29,6 +29,8 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
+#define DEPTH = VISUAL_VIDEO_DEPTH_16BIT
+
 #define x_exit(msg) \
 	printf ("Error: %s\n", msg); \
 	exit (EXIT_FAILURE);
@@ -228,16 +230,14 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
-    return; // FIXME
-    visual_video_free_buffer(v.video);
-	visual_video_set_dimension( v.video, w, h );
-    visual_video_set_depth(v.video, VISUAL_VIDEO_DEPTH_16BIT);
+    
+    visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
+
+	visual_video_set_dimension (v.video, w, h);
     visual_video_set_pitch(v.video, w * 2);
-    visual_video_allocate_buffer(v.video);
 
 	visual_bin_sync( v.bin, 0 );
 
-    visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
     visual_event_queue_add_resize(eventqueue, v.video, w, h);
@@ -292,7 +292,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
         return;
 	}
 
-	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_ALL);
+	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_8BIT);
 
 	if (!(v.video = visual_video_new ())) {
 		visual_log(VISUAL_LOG_CRITICAL, ("Cannot create a video surface"));
@@ -305,12 +305,12 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
         return;
 	}
 
-	visual_video_set_dimension (v.video, 640, 480);
 
 	if (visual_bin_set_video (v.bin, v.video)) {
 		x_exit ("Cannot set video...");
 	}
 
+    v.plugin = "lv_scope";
 	visual_bin_connect_by_names (v.bin, (char*)v.plugin, "alsa");
 
 	if (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL)
@@ -345,6 +345,15 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
         return FALSE;
     }
 
+    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+        return FALSE;
+    }
+
+    stats_startFrame(&stats);
+
+    visual_video_set_buffer(v.video, pixels);
+
 	/* On depth change */
 	if (visual_bin_depth_changed (v.bin)) {
 		v.pluginIsGL = (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL);
@@ -352,20 +361,14 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 		visual_bin_sync (v.bin, 1);
 	}
 
-	if (v.pluginIsGL) {
+
+	if (0 && v.pluginIsGL) {
         //FIXME
 		//visual_bin_run (v.bin);
 	} else {
 
 		visual_bin_run (v.bin);
 
-        VisVideo *bitmap_video;
-        visual_video_set_attributes(bitmap_video, v.video->width, v.video->height, v.video->width * 2, VISUAL_VIDEO_DEPTH_16BIT);
-        visual_video_set_buffer(bitmap_video, pixels);
-
-        visual_video_depth_transform(bitmap_video, visual_bin_get_actor(v.bin)->video);
-
-        visual_object_unref(VISUAL_OBJECT(bitmap_video));
     }
 
     AndroidBitmap_unlockPixels(env, bitmap);
