@@ -286,8 +286,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
     else
         visual_log(VISUAL_LOG_CRITICAL, "==================yes plugin %s", v.plugin);
 
-    return;
-
 	if (!visual_actor_valid_by_name (v.plugin)) {
 		visual_log(VISUAL_LOG_CRITICAL, ("Actor plugin not found!"));
         x_exit("Exiting...");
@@ -324,13 +322,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 	/* Called so the flag is set to false, seen we create the initial environment here */
 	visual_bin_depth_changed (v.bin);
 
-/*
-	VisInput *input = visual_bin_get_input (v.bin);
-	if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
-		x_exit ("Cannot set input plugin callback");
-	}
-*/
-
 	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
 	visual_bin_switch_set_automatic (v.bin, 1);
 	visual_bin_switch_set_steps (v.bin, 10);
@@ -344,16 +335,10 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
 {
     
-    return;
     AndroidBitmapInfo  info;
     void*              pixels;
     int                ret;
     static Stats       stats;
-
-    if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
-        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-        return FALSE;
-    }
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -371,20 +356,21 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
         //FIXME
 		//visual_bin_run (v.bin);
 	} else {
-        VisVideo video;
-        visual_video_init(&video);
-        visual_video_set_buffer(&video, bitmap);
-        visual_video_set_depth(&video, VISUAL_VIDEO_DEPTH_16BIT);
-        visual_video_set_dimension(&video, info.width, info.height);
-        visual_video_set_depth(&video, VISUAL_VIDEO_DEPTH_16BIT);
-        visual_video_set_pitch(&video, info.width * visual_video_bpp_from_depth(VISUAL_VIDEO_DEPTH_16BIT));
 
 		visual_bin_run (v.bin);
 
-        VisVideo *vid = v.bin->actor->video;
+        VisVideo *bitmap_video;
+        visual_video_set_attributes(bitmap_video, v.video->width, v.video->height, v.video->width * 2, VISUAL_VIDEO_DEPTH_16BIT);
+        visual_video_set_buffer(bitmap_video, pixels);
 
-        visual_video_depth_transform(&video, vid);
-	}
+        visual_video_depth_transform(bitmap_video, visual_bin_get_actor(v.bin)->video);
+
+        visual_object_unref(VISUAL_OBJECT(bitmap_video));
+    }
+
+    AndroidBitmap_unlockPixels(env, bitmap);
+
+    stats_endFrame(&stats);
 
 	return 0;
 }
