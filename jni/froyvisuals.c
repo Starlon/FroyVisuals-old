@@ -24,6 +24,11 @@
 #include <android/bitmap.h>
 #include <libvisual/libvisual.h>
 
+#define  LOG_TAG    "FroyVisuals"
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
+#define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
 #define x_exit(msg) \
 	printf ("Error: %s\n", msg); \
 	exit (EXIT_FAILURE);
@@ -65,7 +70,6 @@ typedef struct {
     double  firstTime;
     double  lastTime;
     double  frameTime;
-
     int         firstFrame;
     int         numFrames;
     FrameStats  frames[ MAX_FRAME_STATS ];
@@ -186,68 +190,20 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(
     jshort *pcm;
     jsize len = (*env)->GetArrayLength(env, data);
     pcm = (*env)->GetShortArrayElements(env, data, NULL);
-    for(i = 0; i < v.pcm_size; i++)
+    for(i = 0; i < len && i < sizeof(v.pcm_data); i++)
     {
         v.pcm_data[i] = pcm[i];
     }
     (*env)->ReleaseShortArrayElements(env, data, pcm, 0);
 }
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint direction)
-/*
-{
-    static const char *plugin = NULL;
-    const char *old = v_private.bin->actor->plugin->info->plugname;
-
-        switch(direction)
-        {
-            case 0:
-                plugin = visual_actor_get_next_by_name(old);
-                if(!plugin)
-                {
-                    plugin = visual_actor_get_next_by_name(NULL);
-                    if(!plugin) return;
-                }
-            break;
-            case 1:
-                plugin = visual_actor_get_prev_by_name(old);
-                if(!plugin)
-                {
-                    plugin = visual_actor_get_prev_by_name(NULL);
-                    if(!plugin) return;
-                }
-            break;
-    }
-
-    const char *morph = visual_morph_get_next_by_name(v_private.morph);
-    if(!morph)
-    {
-        morph = visual_morph_get_next_by_name(NULL);
-    }
-    if(morph)
-    {
-        if(v_private.morph)
-            visual_mem_free(v_private.morph);
-        v_private.morph = strdup(morph);
-        visual_bin_set_morph_by_name(v_private.bin, (char *)morph);
-    }
-    visual_log(VISUAL_LOG_INFO, "New actor: %s", plugin);
-    visual_bin_switch_actor_by_name(v_private.bin, (char *)plugin);
-    visual_bin_depth_changed(v_private.bin);
-}
-*/
-
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint direction)
-/
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint prev)
 {
 	v.plugin = (prev ? visual_actor_get_prev_by_name_nogl (v.plugin)
 	                 : visual_actor_get_next_by_name_nogl (v.plugin));
 	if (!v.plugin) {
 		v.plugin = (prev ? visual_actor_get_prev_by_name (0)
 						 : visual_actor_get_next_by_name (0));
-	}
-	if (!strcmp (v.plugin, "gstreamer") || !strcmp (v.plugin, "gdkpixbuf")) {
-		v_cycleActor (prev);
 	}
     v.morph = visual_morph_get_next_by_name(v.morph);
     if(!v.morph) {
@@ -259,7 +215,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(
 {
     return;
     visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
-    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
+    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
     visual_event_queue_add_mousemotion(eventqueue, x, y);
 }
@@ -268,7 +224,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 {
     return;
     visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
-    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
+    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
         VisMouseState state = VISUAL_MOUSE_DOWN;
     visual_event_queue_add_mousebutton(eventqueue, button, state, x, y);
@@ -277,7 +233,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
-	visual_video_set_dimension( v.video, width, height );
+	visual_video_set_dimension( v.video, w, h );
 
 	visual_bin_sync( v.bin, 0 );
 
@@ -289,7 +245,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
 {
-    VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v_private.bin)));
+    VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v.bin)));
     VisKey keysym;
     int keymod;
     VisKeyState state;
@@ -303,34 +259,16 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_visualsQuit(
     visual_quit();
 }
 
-
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
 {
-    if(!visual_is_initialized())
-    {
-            visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
-            visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
-            visual_log_set_info_handler (my_info_handler, NULL);
-            visual_log_set_warning_handler (my_warning_handler, NULL);
-            visual_log_set_critical_handler (my_critical_handler, NULL);
-            visual_log_set_error_handler (my_error_handler, NULL);
-            visual_init(0, NULL);
-            visual_thread_enable(FALSE);
-            visual_log(VISUAL_LOG_INFO, "LibVisual intialized...");
-            visual_mem_set(&v, 0, sizeof(v));
-    }
+    static int loaded = 0;
+    visual_log_return_if_fail(loaded != 0);
+    loaded++;
 
-    visual_log(VISUAL_LOG_INFO, "FroyVisuals initialized...");
-    return EXIT_SUCCESS;
-}
-
-
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
-{
 	VisVideoDepth depth;
 
 	visual_init (0, NULL);
-	visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_VERBOSE);
+	visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
 
 	v.bin    = visual_bin_new ();
 	depth  = visual_video_depth_enum_from_value( 16 );
@@ -339,24 +277,27 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 
 	if (!visual_actor_valid_by_name (v.plugin)) {
 		visual_log(VISUAL_LOG_CRITICAL, ("Actor plugin not found!"));
-        return 0;
+        x_exit("Exiting...");
+        return;
 	}
 
 	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_ALL);
 
 	if (!(v.video = visual_video_new ())) {
-		libvisual_log(VISUAL_LOG_CRITICAL, ("Cannot create a video surface"));
-        return o;
+		visual_log(VISUAL_LOG_CRITICAL, ("Cannot create a video surface"));
+        x_exit("Exiting...");
+        return;
 	}
 	if (visual_video_set_depth (v.video, depth) < 0) {
-		libvisual_log (VISUAL_LOG_CRITICAL, "Cannot set video depth");
-        return 0;
+		visual_log (VISUAL_LOG_CRITICAL, "Cannot set video depth");
+        x_exit("Exiting...");
+        return;
 	}
 
 	visual_video_set_dimension (v.video, 640, 480);
 
 	if (visual_bin_set_video (v.bin, v.video)) {
-		x_exit ("Cannot set video");
+		x_exit ("Cannot set video...");
 	}
 
 	visual_bin_connect_by_names (v.bin, (char*)v.plugin, "alsa");
@@ -394,10 +335,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
     void*              pixels;
     int                ret;
     static Stats       stats;
-    static int         init;
-    static int w = -1, h = -1;
-    VisBin *bin = v_private.bin;
-    VisVideo *bin_video = v_private.bin_video;
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -416,23 +353,23 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 		visual_bin_sync (v.bin, 1);
 	}
 
-	long ticks = -SDL_GetTicks ();
-
 	if (v.pluginIsGL) {
-		visual_bin_run (v.bin);
-		//SDL_GL_SwapBuffers ();
+        //FIXME
+		//visual_bin_run (v.bin);
 	} else {
-        visual_video_set_buffer(v.video, pixels);
-        visual_video_set_depth(v.video, VISUAL_VIDEO_DEPTH_16BIT);
-        visual_video_set_dimension(v.video, bitmap->width, bitmap->height);
-        visual_video_set_depth(v.video, VISUAL_VIDEO_DEPTH_16BIT);
-        visual_video_set_pitch(v.video, bitmap->width * bitmap->bpp);
+        VisVideo video;
+        visual_video_init(&video);
+        visual_video_set_buffer(&video, bitmap);
+        visual_video_set_depth(&video, VISUAL_VIDEO_DEPTH_16BIT);
+        visual_video_set_dimension(&video, info.width, info.height);
+        visual_video_set_depth(&video, VISUAL_VIDEO_DEPTH_16BIT);
+        visual_video_set_pitch(&video, info.width * visual_video_bpp_from_depth(VISUAL_VIDEO_DEPTH_16BIT));
 
 		visual_bin_run (v.bin);
 
-        VisVideo *vid = visual_bin_get_video(v.bin);
+        VisVideo *vid = v.bin->actor->video;
 
-        visual_video_blit_overlay(v.video, v.video);
+        visual_video_depth_transform(&video, vid);
 	}
 
 	return 0;
