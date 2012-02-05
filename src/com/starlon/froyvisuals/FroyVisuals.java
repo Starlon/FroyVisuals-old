@@ -50,7 +50,7 @@ class FroyVisualsView extends View {
     private int mH, mW;
     private boolean isAvailable;
     private int PCM_SIZE;
-    private static int RECORDER_SAMPLERATE = 44100;
+    private static int RECORDER_SAMPLERATE = 48000;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private static final String APP_TAG = "FroyVisuals";
@@ -140,6 +140,7 @@ class FroyVisualsView extends View {
     }
 
     @Override public boolean onTouchEvent (MotionEvent event) {
+/*
         int action = event.getAction();
         float x = event.getX();
         float y = event.getY();
@@ -153,18 +154,19 @@ class FroyVisualsView extends View {
                 mouseMotion(x, y);
             break;
         }
+*/
         return true;    
     }
     public static Bitmap scaleDownBitmap(Bitmap photo, int newHeight, Context context) {
 
-	final float densityMultiplier = context.getResources().getDisplayMetrics().density;        
+        final float densityMultiplier = context.getResources().getDisplayMetrics().density;        
 
-	int h= (int) (newHeight*densityMultiplier);
-	int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
+        int h= (int) (newHeight*densityMultiplier);
+        int w= (int) (h * photo.getWidth()/((double) photo.getHeight()));
 
-	photo=Bitmap.createScaledBitmap(photo, w, h, true);
+        photo=Bitmap.createScaledBitmap(photo, w, h, true);
 
-	return photo;
+    return photo;
     }
 
 }

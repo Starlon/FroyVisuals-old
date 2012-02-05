@@ -9,7 +9,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <sys/types.h>  //this must be _before_ sys/socket on freebsd
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
@@ -43,11 +43,6 @@ struct {
 	int16_t     pcm_data[1024];
     int      pcm_size;
 } v;
-
-static void v_init (int, char**);
-static uint v_render (void);
-static void v_resize (int, int);
-
 
 /* Return current time in milliseconds */
 static double now_ms(void)
@@ -233,7 +228,12 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
+    return; // FIXME
+    visual_video_free_buffer(v.video);
 	visual_video_set_dimension( v.video, w, h );
+    visual_video_set_depth(v.video, VISUAL_VIDEO_DEPTH_16BIT);
+    visual_video_set_pitch(v.video, w * 2);
+    visual_video_allocate_buffer(v.video);
 
 	visual_bin_sync( v.bin, 0 );
 
@@ -256,24 +256,37 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEven
 // Seems in Android 4.0 you can kill an app by swiping it.
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_visualsQuit(JNIEnv * env, jobject  obj)
 {
+    visual_video_free_buffer(v.video);
+    visual_object_unref(VISUAL_OBJECT(v.video));
+    visual_object_unref(VISUAL_OBJECT(v.bin));
     visual_quit();
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
 {
-    static int loaded = 0;
-    visual_log_return_if_fail(loaded != 0);
-    loaded++;
-
 	VisVideoDepth depth;
 
-	visual_init (0, NULL);
 	visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
+
+    visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
+    visual_log_set_info_handler (my_info_handler, NULL);
+    visual_log_set_warning_handler (my_warning_handler, NULL);
+    visual_log_set_critical_handler (my_critical_handler, NULL);
+    visual_log_set_error_handler (my_error_handler, NULL);
+
+	visual_init (LOG_TAG);
 
 	v.bin    = visual_bin_new ();
 	depth  = visual_video_depth_enum_from_value( 16 );
 
-	v.plugin = visual_actor_get_next_by_name_nogl (0);
+	v.plugin = visual_actor_get_next_by_name(0);
+
+    if(!v.plugin)
+        visual_log(VISUAL_LOG_CRITICAL, "-----------------------no plugin");
+    else
+        visual_log(VISUAL_LOG_CRITICAL, "==================yes plugin %s", v.plugin);
+
+    return;
 
 	if (!visual_actor_valid_by_name (v.plugin)) {
 		visual_log(VISUAL_LOG_CRITICAL, ("Actor plugin not found!"));
@@ -331,6 +344,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
 {
     
+    return;
     AndroidBitmapInfo  info;
     void*              pixels;
     int                ret;
