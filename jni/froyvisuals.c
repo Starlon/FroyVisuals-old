@@ -236,6 +236,8 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize
 
 	visual_video_set_dimension (v.video, w, h);
     visual_video_set_pitch(v.video, w * visual_video_bpp_from_depth(VISUAL_VIDEO_DEPTH_8BIT));
+    visual_video_free_buffer(v.video);
+    visual_video_allocate_buffer(v.video);
 
 	visual_bin_sync( v.bin, 0 );
 
@@ -299,6 +301,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 
 	v.video = visual_video_new ();
     visual_video_set_attributes(v.video, 32, 32, 32, VISUAL_VIDEO_DEPTH_8BIT);
+    visual_video_allocate_buffer(v.video);
 	visual_bin_set_video (v.bin, v.video);
 
     v.plugin = "lv_scope";
@@ -345,7 +348,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
     VisVideo vid;
     visual_video_init(&vid);
     visual_video_set_attributes(&vid, info.width, info.height, info.width * visual_video_depth_value_from_enum(DEPTH) / 8, DEPTH);
-    visual_video_set_buffer(v.video, pixels);
+    visual_video_set_buffer(&vid, pixels);
 
 	/* On depth change */
 	if (visual_bin_depth_changed (v.bin)) {
@@ -354,6 +357,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 		visual_bin_sync (v.bin, 1);
 	}
 
+    visual_video_depth_transform(&vid, v.video);
 
 	if (0 && v.pluginIsGL) {
         //FIXME
@@ -364,7 +368,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 
     }
 
-    //visual_video_depth_transform(&vid, v.video);
+    visual_video_depth_transform(&vid, v.video);
 
     AndroidBitmap_unlockPixels(env, bitmap);
 
