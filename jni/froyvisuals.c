@@ -24,7 +24,6 @@
 #include <math.h>
 #include <tinyalsa/asoundlib.h>
 #include <libvisual.h>
-#include <rmalloc/rmalloc.h>
 
 #define  LOG_TAG    "FroyVisuals"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -346,7 +345,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_visualsQuit(
 
 JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
 {
-return 0;
     AndroidBitmapInfo  info;
     void*              pixels;
     int                ret;
@@ -412,12 +410,13 @@ return 0;
             w = info.width;
             h = info.height;
 
-            VisVideoDepth depth = visual_bin_get_depth(bin);
+            int depth = visual_bin_get_depth(bin);
+            VisVideoDepth depth_enum = visual_video_depth_get_highest(depth);
 
             visual_video_free_buffer(bin_video);
-            visual_video_set_depth(bin_video, depth);
+            visual_video_set_depth(bin_video, depth_enum);
             visual_video_set_dimension(bin_video, w, h);
-            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
+            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth_enum));
             visual_video_allocate_buffer(bin_video);
             visual_bin_sync(bin, FALSE);
     }
