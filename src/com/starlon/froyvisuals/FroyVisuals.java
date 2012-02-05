@@ -123,6 +123,7 @@ class FroyVisualsView extends View {
         mW = getWidth();
         mH = getHeight();
         mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
+        screenResize(mW, mH);
     }
 /*
     mAudio.startRecording();
@@ -145,6 +146,7 @@ class FroyVisualsView extends View {
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
+                switchActor(0);
                 mouseButton(1, x, y);
             break;
             case MotionEvent.ACTION_MOVE:

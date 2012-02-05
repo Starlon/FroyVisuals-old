@@ -231,10 +231,33 @@ VisMorph *visual_bin_get_morph (VisBin *bin)
 
 int visual_bin_connect (VisBin *bin, VisActor *actor, VisInput *input)
 {
+    int depthflag;
+    int depth;
+
 	visual_log_return_val_if_fail (bin != NULL, -1);
+    visual_log_return_val_if_fail(actor != NULL, -1);
+    visual_log_return_val_if_fail(input != NULL, -1);
 
 	visual_bin_set_actor (bin, actor);
 	visual_bin_set_input (bin, input);
+
+    depthflag = visual_actor_get_supported_depth(actor);
+
+    if(depthflag == VISUAL_VIDEO_DEPTH_GL)
+        visual_bin_set_depth(bin, VISUAL_VIDEO_DEPTH_GL);
+    else
+    {
+        depth = bin_get_depth_using_preferred(bin, depthflag);
+        
+        if((bin->depthflag & depth) > 0)
+            visual_bin_set_depth(bin, depth);
+        else {
+            visual_bin_set_depth(bin,
+                visual_video_depth_get_highest_nogl(bin->depthflag));
+        }
+    }
+
+	bin->depthforcedmain = bin->depth;
 
 	return 0;
 }
@@ -279,7 +302,8 @@ int visual_bin_connect_by_names (VisBin *bin, char *actname, char *inname)
 	visual_log_return_val_if_fail (input != NULL, -1);
 
 	/* Connect */
-	visual_bin_connect (bin, actor, input);
+	visual_bin_set_actor (bin, actor);
+	visual_bin_set_input (bin, input);
 
 	bin->managed = TRUE;
 	bin->inputmanaged = TRUE;

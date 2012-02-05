@@ -1,0 +1,33 @@
+Debugging Android application memory usage
+
+See an excellent article by Dianne Hackborn at: http://stackoverflow.com/questions/2298208/how-to-discover-memory-usage-of-my-application-in-android/2299813#2299813
+How to debug native process memory allocations
+
+setprop dalvik.vm.checkjni true
+setprop libc.debug.malloc 10   
+setprop setprop dalvik.vm.jniopts forcecopy
+start
+stop
+
+libc.debug.malloc
+
+The C library (bionic) in the system supports the ability to utilize a different, debug, version of the malloc code at runtime in the system.
+
+If the system property libc.debug.malloc has a value other than 0, then when a process is instantiated, the C library uses functions for allocating and freeing memory, for that process.
+
+(Note that there are other ways that the debug shared library malloc code ends up being used as well. That is, if you are running in the emulator, and the value of the system property ro.kernel.memcheck is not '0', then you get a debug level of 20. Note that debug level 20 can only be used in the emulator.)
+
+By default, the standard malloc/free/calloc/realloc/memalign routines are used. By setting libc.debug.malloc, different routines are used, which check for certain kinds of memory errors (such as leaks and overruns). This is done by loading a separate shared library (.so) with these different routines.
+
+The shared libraries are named: /system/lib/libc_malloc_debug_leak.so and /system/lib/libc_malloc_debug_qemu.so
+
+(Information was obtained by looking at <android-source-root>/bionic/libc/bionic/malloc_debug_common.c)
+
+Supported values for libc.debug.malloc (debug level values) are:
+
+    1 - perform leak detection
+    5 - fill allocated memory to detect overruns
+    10 - fill memory and add sentinels to detect overruns
+    20 - use special instrumented malloc/free routines for the emulator 
+
+I'm not sure whether these shared libraries are shipped in production devices. 

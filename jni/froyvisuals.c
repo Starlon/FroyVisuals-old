@@ -201,7 +201,6 @@ static int my_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIEnv * env, jobject  obj)
 {
-    visual_mem_set(&v_private, 0, sizeof(v_private));
     if(!visual_is_initialized())
     {
             visual_log_set_verboseness(VISUAL_LOG_VERBOSENESS_HIGH);
@@ -211,8 +210,11 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
             visual_log_set_critical_handler (my_critical_handler, NULL);
             visual_log_set_error_handler (my_error_handler, NULL);
             visual_init(0, NULL);
+/*
             visual_thread_enable(FALSE);
             visual_log(VISUAL_LOG_INFO, "LibVisual intialized...");
+            visual_mem_set(&v_private, 0, sizeof(v_private));
+*/
     }
 
     visual_log(VISUAL_LOG_INFO, "FroyVisuals initialized...");
@@ -289,6 +291,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
+    return;
     visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
@@ -297,6 +300,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
 {
+    return;
     visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
@@ -307,11 +311,14 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
-    visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
-    VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
-    VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
-
-    visual_event_queue_add_resize(eventqueue, v_private.bin_video, w, h);
+    return;
+    if(v_private.bin)
+    {
+        visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
+        VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v_private.bin));
+        VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
+        visual_event_queue_add_resize(eventqueue, v_private.bin_video, w, h);
+    }
     
 }
 
@@ -365,7 +372,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             w = info.width;
             h = info.height;
 
-        if(!(v_private.bin = bin = visual_bin_new())) {
+            if(!(v_private.bin = bin = visual_bin_new())) {
                 visual_log(VISUAL_LOG_CRITICAL, "Could not create VisBin.");
                 return FALSE;
             }
@@ -385,7 +392,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             visual_bin_set_video(bin, bin_video);
             visual_bin_set_supported_depth(v_private.bin, VISUAL_VIDEO_DEPTH_ALL);
             visual_bin_switch_set_style(bin, VISUAL_SWITCH_STYLE_MORPH);
-            visual_bin_connect_by_names(bin, "infinite", "alsa");
+            visual_bin_connect_by_names(bin, "lv_scope", "alsa");
             visual_bin_realize(v_private.bin);
             visual_bin_sync(bin, FALSE);
             visual_bin_depth_changed(bin);
@@ -403,13 +410,15 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
             w = info.width;
             h = info.height;
 
-            VisVideoDepth depth = visual_bin_get_depth(bin);
+            int depth = visual_bin_get_depth(bin);
+            VisVideoDepth depth_enum = visual_video_depth_get_highest(depth);
 
             visual_video_free_buffer(bin_video);
-            visual_video_set_depth(bin_video, depth);
+            visual_video_set_depth(bin_video, depth_enum);
             visual_video_set_dimension(bin_video, w, h);
-            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth));
+            visual_video_set_pitch(bin_video, w * visual_video_bpp_from_depth(depth_enum));
             visual_video_allocate_buffer(bin_video);
+            visual_bin_sync(bin, FALSE);
     }
     if(visual_bin_depth_changed(bin))
         visual_bin_sync(bin, TRUE);
