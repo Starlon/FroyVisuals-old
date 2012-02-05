@@ -92,6 +92,14 @@ LOCAL_CFLAGS := -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual 
 #include $(BUILD_SHARED_LIBRARY)
 
+LOCAL_C_INCLUDES := ./include jni/libvisual
+LOCAL_MODULE := actor_projectM
+LOCAL_SRC_FILES := actor/projectM/actor_projectM.cpp actor/projectM/ConfigFile.cpp
+LOCAL_LDLIBS := -lGLESv2 -llog
+LOCAL_CFLAGS := -Wall -O0 -g
+LOCAL_SHARED_LIBRARIES := libvisual 
+#include $(BUILD_SHARED_LIBRARY)
+
 #### MORPH PLUGINS
 
 include $(CLEAR_VARS)
