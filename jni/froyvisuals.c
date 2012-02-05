@@ -22,8 +22,9 @@
 #include <time.h>
 #include <android/log.h>
 #include <android/bitmap.h>
-#include <tinyalsa/asound.h>
 #include <libvisual/libvisual.h>
+
+#include <tinyalsa/asound.h>
 
 #define x_exit(msg) \
 	printf ("Error: %s\n", msg); \
@@ -37,14 +38,15 @@ struct {
     const char *morph;
 	int         pluginIsGL;
 	int16_t     pcm_data[1024];
+    int      pcm_size;
 } v;
 
 static void v_init (int, char**);
 static uint v_render (void);
 static void v_resize (int, int);
 
-static void
-v_cycleActor (int prev)
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint direction)
+/
 {
 	v.plugin = (prev ? visual_actor_get_prev_by_name_nogl (v.plugin)
 	                 : visual_actor_get_next_by_name_nogl (v.plugin));
@@ -136,7 +138,7 @@ stats_endFrame( Stats*  s )
             avgRender /= s->numFrames;
             avgFrame  /= s->numFrames;
 
-            LOGI("frame/s (avg,min,max) = (%.1f,%.1f,%.1f) "
+            visual_log(VISUAL_LOG_INFO, "frame/s (avg,min,max) = (%.1f,%.1f,%.1f) "
                  "render time ms (avg,min,max) = (%.1f,%.1f,%.1f)\n",
                  1000./avgFrame, 1000./maxFrame, 1000./minFrame,
                  avgRender, minRender, maxRender);
@@ -196,34 +198,27 @@ static void my_error_handler (const char *msg, const char *funcname, void *privd
     LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
 }
 
-/*
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_resizePCM(JNIEnv * env, jobject  obj, jint size,
     jint rate, jint channel, jint format)
 {
-    if(v_private.pcm_data)
-        visual_mem_free(v_private.pcm_data);
-    v_private.pcm_data = visual_mem_malloc(size * sizeof(short));
-    v_private.pcm_size = size;
-    v_private.rate = rate;
-    v_private.channel = channel;
-    v_private.format = format;
 }
 
+// For fallback audio source.
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
 {
     int i;
     jshort *pcm;
     jsize len = (*env)->GetArrayLength(env, data);
     pcm = (*env)->GetShortArrayElements(env, data, NULL);
-    for(i = 0; i < v_private.pcm_size; i++)
+    for(i = 0; i < v.pcm_size; i++)
     {
-        v_private.pcm_data[i] = pcm[i];
+        v.pcm_data[i] = pcm[i];
     }
     (*env)->ReleaseShortArrayElements(env, data, pcm, 0);
 }
-*/
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint direction)
+/*
 {
     static const char *plugin = NULL;
     const char *old = v_private.bin->actor->plugin->info->plugname;
@@ -264,6 +259,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
     visual_bin_switch_actor_by_name(v_private.bin, (char *)plugin);
     visual_bin_depth_changed(v_private.bin);
 }
+*/
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
