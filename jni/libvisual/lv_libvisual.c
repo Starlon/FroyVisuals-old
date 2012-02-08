@@ -273,7 +273,7 @@ int visual_init_path_add (char *pathadd)
  * @return VISUAL_OK on succes, -VISUAL_ERROR_LIBVISUAL_ALREADY_INITIALIZED,
  *	-VISUAL_ERROR_LIBVISUAL_NO_REGISTRY or error values returned by visual_init_path_add () on failure.
  */
-int visual_init (char *app)
+int visual_init (int *argc, char ***argv)
 {
 	char temppluginpath[FILENAME_MAX+1];
 	char *homedir = NULL;
@@ -289,12 +289,15 @@ int visual_init (char *app)
                 return -VISUAL_ERROR_LIBVISUAL_ALREADY_INITIALIZED;
         }
 
-	if (app == NULL) {
+	if (argc == NULL || argv == NULL) {
+		if (argc == NULL && argv == NULL) {
 			__lv_progname = strdup (_("no progname"));
 
 
 			if (__lv_progname == NULL)
 				visual_log (VISUAL_LOG_WARNING, _("Could not set program name"));
+		} else
+			visual_log (VISUAL_LOG_ERROR, _("Initialization failed, bad argv, argc"));
 
 	} else {
                 /*
@@ -302,9 +305,9 @@ int visual_init (char *app)
                  * call this method from any context.
                  */
 #ifdef __USE_GNU
-                __lv_progname = strndup (app, 1024);
+                __lv_progname = strndup (*argv[0], 1024);
 #else
-                __lv_progname = strdup (app);
+                __lv_progname = strdup (*argv[0]);
 #endif
                 if (__lv_progname == NULL)
                         visual_log (VISUAL_LOG_WARNING, _("Could not set program name"));
@@ -321,19 +324,6 @@ int visual_init (char *app)
 
 	/* Initialize FFT system */
 	visual_fourier_initialize ();
-
-	/* Add the standard plugin paths */
-	ret = visual_init_path_add ("plugins/actor");
-	visual_log_return_val_if_fail (ret == VISUAL_OK, ret);
-
-	ret = visual_init_path_add ("plugins/input");
-	visual_log_return_val_if_fail (ret == VISUAL_OK, ret);
-
-	ret = visual_init_path_add ("plugins/morph");
-	visual_log_return_val_if_fail (ret == VISUAL_OK, ret);
-
-	ret = visual_init_path_add ("plugins/transform");
-	visual_log_return_val_if_fail (ret == VISUAL_OK, ret);
 
 #if !defined(VISUAL_OS_WIN32)
 	/* Add homedirectory plugin paths */

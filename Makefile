@@ -8,7 +8,7 @@ all:
 	@ant clean
 	@ant release
 install:
-	@adb install -r bin/FroyVisuals.apk
+	@ant release install
 
 debug:
 	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
@@ -16,7 +16,7 @@ debug:
 	@ant debug
 
 debuginstall:
-	@adb install -r bin/FroyVisuals-debug.apk
+	@ant debug install
 
 clean:
 	@ndk-build clean

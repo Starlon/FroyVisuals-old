@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := froyvisuals
+LOCAL_MODULE := main
 
 SDL_PATH := ../SDL
 
@@ -19,11 +19,9 @@ LOCAL_CFLAGS := \
 
 # Add your application source files here...
 LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.cpp \
-	aliens.c
+	libvisual.c
 
-LOCAL_SHARED_LIBRARIES := SDL SDL_image SDL_mixer SDL_ttf
-LOCAL_STATIC_LIBRARIES := tinyalsa libvisual
-LOCAL_C_INCLUDES := ./include
+LOCAL_SHARED_LIBRARIES := SDL SDL_image SDL_mixer SDL_ttf libvisual
 
 LOCAL_LDLIBS := -lGLESv1_CM -llog
 

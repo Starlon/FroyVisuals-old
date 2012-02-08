@@ -44,11 +44,11 @@
 #endif
 #define DATAFILE(X)	DIR_CUR "data" DIR_SEP X
 
-#ifdef __ANDROID__
+#ifdef __ANDROIDBLAH__
 #define SCREEN_WIDTH 	320
 #define SCREEN_HEIGHT	430
 #else
-#define SCREEN_WIDTH 	640
+#define SCREEN_WIDTH    800
 #define SCREEN_HEIGHT	480
 #endif
 #define	FRAMES_PER_SEC	50
@@ -537,6 +537,8 @@ main(int argc, char *argv[])
 		fprintf(stderr, "Couldn't initialize SDL: %s\n",SDL_GetError());
 		exit(2);
 	}
+    //SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
 	atexit(SDL_Quit);
 
 	/* Open the audio device */
@@ -546,8 +548,9 @@ main(int argc, char *argv[])
 							SDL_GetError());
 	}
 
+    
 	/* Open the display device */
-	screen = SDL_SetVideoMode(SCREEN_WIDTH, SCREEN_HEIGHT, 0, SDL_SWSURFACE|SDL_FULLSCREEN);
+	screen = SDL_SetVideoMode(256, 64, 16, SDL_SWSURFACE);
 	if ( screen == NULL ) {
 		fprintf(stderr, "Couldn't set %dx%d video mode: %s\n",
 				SCREEN_WIDTH, SCREEN_HEIGHT, SDL_GetError());

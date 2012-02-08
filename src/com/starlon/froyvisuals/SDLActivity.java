@@ -39,7 +39,7 @@ public class SDLActivity extends Activity {
         System.loadLibrary("mikmod");
         System.loadLibrary("SDL_mixer");
         System.loadLibrary("SDL_ttf");
-        System.loadLibrary("froyvisuals");
+        System.loadLibrary("main");
     }
 
     // Setup
