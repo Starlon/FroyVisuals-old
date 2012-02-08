@@ -284,8 +284,7 @@ v_cycleActor (int prev)
     }
 }
 
-int
-main (int argc, char** argv)
+main (int argc, char* argv[])
 {
 int *t = NULL;
 *t = 0xf;

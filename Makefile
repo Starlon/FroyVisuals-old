@@ -6,21 +6,17 @@ ACTIVITY = SDLActivity
 all:
 	@ndk-build
 	@ant clean
-	@ant release
-install:
 	@ant release install
 
 debug:
 	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
 	@ant clean
-	@ant debug
-
-debuginstall:
 	@ant debug install
 
 clean:
 	@ndk-build clean
 	@ant clean
+	@rm -rf bin libs obj gen
 
 update:
 	@android update project --path . --target android-10
