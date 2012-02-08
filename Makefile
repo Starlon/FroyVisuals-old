@@ -1,7 +1,7 @@
 # Android Makefile v0.1 (c) 2011 - Daniel Hiepler <daniel@niftylight.de>
 
 APPNAME = FroyVisuals
-ACTIVITY = FroyVisuals
+ACTIVITY = SDLActivity
 
 all:
 	@ndk-build
@@ -11,7 +11,7 @@ install:
 	@adb install -r bin/FroyVisuals.apk
 
 debug:
-	@MALLOC_DEBUG=1 ndk-build APP_OPTIM=debug NDK_DEBUG=1
+	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
 	@ant clean
 	@ant debug
 
@@ -57,6 +57,6 @@ valgrind:
 	@adb shell setprop wrap.com.starlon.froyvisuals "logwrapper valgrind"
 
 redirect:
-	@adb shell setprop log.redirect-stdio true
 	@adb shell stop
+	@adb shell setprop log.redirect-stdio true
 	@adb shell start

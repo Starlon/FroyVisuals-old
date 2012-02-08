@@ -23,17 +23,14 @@
 #include <android/log.h>
 #include <android/bitmap.h>
 #include <libvisual/libvisual.h>
+#include <SDL.h>
 
 #define  LOG_TAG    "FroyVisuals"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-#define DEPTH VISUAL_VIDEO_DEPTH_16BIT
-
-#define x_exit(msg) \
-	printf ("Error: %s\n", msg); \
-	exit (EXIT_FAILURE);
+#define DEPTH VISUAL_VIDEO_DEPTH_8BIT
 
 /* LIBVISUAL */
 struct {
@@ -240,8 +237,9 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize
 {
     visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
 
+/*
 	visual_video_set_dimension (v.video, w, h);
-    visual_video_set_pitch(v.video, w * visual_video_bpp_from_depth(VISUAL_VIDEO_DEPTH_8BIT));
+    visual_video_set_pitch(v.video, w * visual_video_bpp_from_depth(DEPTH));
     visual_video_free_buffer(v.video);
     visual_video_allocate_buffer(v.video);
 
@@ -250,6 +248,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
     visual_event_queue_add_resize(eventqueue, v.video, w, h);
+*/
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
@@ -295,22 +294,17 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 
 	if (!visual_actor_valid_by_name (v.plugin)) {
 		visual_log(VISUAL_LOG_CRITICAL, ("Actor plugin not found!"));
-        x_exit("Exiting...");
         return;
 	}
 
-    v.plugin = "lv_scope";
-
-	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_8BIT);
-    visual_bin_set_depth(v.bin, VISUAL_VIDEO_DEPTH_8BIT);
-    visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_8BIT);
+	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_ALL);
+    //visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_32BIT);
 
 	v.video = visual_video_new ();
     visual_video_set_attributes(v.video, 32, 32, 32, VISUAL_VIDEO_DEPTH_8BIT);
     visual_video_allocate_buffer(v.video);
 	visual_bin_set_video (v.bin, v.video);
 
-    v.plugin = "lv_scope";
 
 	if (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL)
 	{
@@ -318,6 +312,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 		v.pluginIsGL = 1;
 	}
 
+    v.plugin = "lv_scope";
 	visual_bin_connect_by_names (v.bin, (char*)v.plugin, "alsa");
 
 	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
@@ -355,8 +350,17 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 
     VisVideo vid;
     visual_video_init(&vid);
-    visual_video_set_attributes(&vid, info.width, info.height, info.width * visual_video_depth_value_from_enum(DEPTH) / 8, DEPTH);
+    visual_video_set_attributes(&vid, info.width, info.height, info.width * visual_video_bpp_from_depth(VISUAL_VIDEO_DEPTH_16BIT), VISUAL_VIDEO_DEPTH_16BIT);
     visual_video_set_buffer(&vid, pixels);
+
+    if(v.video->width != info.width || v.video->height != info.height)
+    {
+        visual_video_free_buffer(v.video);
+        visual_video_set_attributes(v.video, info.width, info.height, info.width * visual_video_bpp_from_depth(visual_bin_get_depth(v.bin)), DEPTH);
+        visual_bin_set_depth(v.bin, DEPTH);
+        visual_video_allocate_buffer(v.video);
+        visual_bin_set_video(v.bin, v.video);
+    }
 
 	/* On depth change */
 	if (visual_bin_depth_changed (v.bin)) {
@@ -365,18 +369,15 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 		visual_bin_sync (v.bin, 1);
 	}
 
-    visual_video_depth_transform(&vid, v.video);
-
 	if (0 && v.pluginIsGL) {
         //FIXME
 		//visual_bin_run (v.bin);
 	} else {
 
-		visual_bin_run (v.bin);
-
+		//visual_bin_run (v.bin);
     }
 
-    visual_video_depth_transform(&vid, v.video);
+    //visual_video_depth_transform(&vid, v.video);
 
     AndroidBitmap_unlockPixels(env, bitmap);
 

@@ -29,8 +29,8 @@
 #include <stdarg.h>
 #include <assert.h>
 
-#include "lv_defines.h"
-#include "lvconfig.h"
+#include <libvisual/lv_defines.h>
+#include <libvisual/lvconfig.h>
 
 VISUAL_BEGIN_DECLS
 
