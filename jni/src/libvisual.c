@@ -31,6 +31,9 @@
     printf ("Error: %s\n", msg); \
     exit (EXIT_FAILURE);
 
+#define WIDTH 256
+#define HEIGHT 64
+
 static void my_info_handler (const char *msg, const char *funcname, void *privdata)
 {
     LOGI("libvisual INFO: %s: %s\n", __lv_progname, msg);
@@ -262,8 +265,11 @@ struct {
     VisPalette *pal;
     VisBin     *bin;
     const char *plugin;
+    const char *morph;
     int         pluginIsGL;
     int16_t     pcm_data[1024];
+    int width;
+    int height;
 } v;
 
 static void v_init (int, char**);
@@ -286,8 +292,7 @@ v_cycleActor (int prev)
 
 main (int argc, char* argv[])
 {
-int *t = NULL;
-*t = 0xf;
+/*
     puts ("Controls: Arrow keys switch between plugins, TAB toggles fullscreen, ESC quits.");
     puts ("          Each plugin can has its own mouse/key bindings, too.");
     if (argc > 1) {
@@ -295,6 +300,10 @@ int *t = NULL;
     } else {
         puts ("Note: you can give your favourite libvisual plugin as command line argument.");
     }
+*/
+    v.plugin = "lv_scope";
+    v.morph = "alphablend";
+
     v.pluginIsGL = 0;
 
     sdl_init ();
@@ -302,12 +311,10 @@ int *t = NULL;
 
     static Stats       stats;
 
-    int render_time = 0;
+    int render_time;
 
-    while (1) {
-        stats_startFrame(&stats);
-        render_time = v_render();
-        stats_endFrame(&stats);
+    while (sdl_event_handler()) {
+		//render_time = v_render();
     }
 
     return EXIT_SUCCESS;
@@ -316,9 +323,11 @@ int *t = NULL;
 void
 sdl_init (void)
 {
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     if (SDL_Init(SDL_INIT_VIDEO))
     {
-        x_exit (SDL_GetError());
+        LOGI (SDL_GetError());
     }
     atexit (sdl_quit);
 }
@@ -352,7 +361,7 @@ static void
 sdl_create (int width, int height) {
     SDL_FreeSurface (screen);
 
-    if (v.pluginIsGL)
+    if (v.pluginIsGL && 0)
     {
         const SDL_VideoInfo *videoinfo = SDL_GetVideoInfo();
         int videoflags;
@@ -368,7 +377,7 @@ sdl_create (int width, int height) {
         SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
         screen = SDL_SetVideoMode (width, height, 16, videoflags);
     } else {
-        screen = SDL_SetVideoMode (width, height, v.video->bpp * 8, SDL_RESIZABLE);
+        screen = SDL_SetVideoMode (width, height, v.video->bpp * 8, SDL_RESIZABLE | SDL_SWSURFACE);
     }
     visual_video_set_buffer (v.video, screen->pixels);
     visual_video_set_pitch (v.video, screen->pitch);
@@ -415,7 +424,7 @@ sdl_event_handler(void)
 
             morph:
                 sdl_lock();
-                  visual_bin_set_morph_by_name (v.bin, (char*)"flash");
+                  visual_bin_set_morph_by_name (v.bin, (char*)v.morph);
                   visual_bin_switch_actor_by_name (v.bin, (char*)v.plugin);
                 sdl_unlock();
 
@@ -496,8 +505,7 @@ v_init (int argc, char **argv)
     visual_log_set_warning_handler (my_warning_handler, NULL);
     visual_log_set_critical_handler (my_critical_handler, NULL);
     visual_log_set_error_handler (my_error_handler, NULL);
-    visual_init (&argc, &argv);
-    visual_thread_enable(FALSE);
+    visual_init (0, NULL);
 
     v.bin    = visual_bin_new ();
     depth  = visual_video_depth_enum_from_value( 16 );
@@ -522,7 +530,7 @@ v_init (int argc, char **argv)
         x_exit ("Cannot set video depth");
     }
 
-    visual_video_set_dimension (v.video, 640, 480);
+    visual_video_set_dimension (v.video, v.width, v.height);
 
     if (visual_bin_set_video (v.bin, v.video)) {
         x_exit ("Cannot set video");
@@ -537,7 +545,7 @@ v_init (int argc, char **argv)
         v.pluginIsGL = 1;
     }
 
-    sdl_create (256, 64);
+    sdl_create (v.width, v.height);
 
     SDL_WM_SetCaption (v.plugin, 0);
 
@@ -552,8 +560,8 @@ v_init (int argc, char **argv)
 */
 
     visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_DIRECT);
-    /*visual_bin_switch_set_automatic (v.bin, 1);
-    visual_bin_switch_set_steps (v.bin, 10);*/
+    visual_bin_switch_set_automatic (v.bin, 1);
+    visual_bin_switch_set_steps (v.bin, 10);
 
     visual_bin_realize (v.bin);
     visual_bin_sync (v.bin, 0);
@@ -618,8 +626,8 @@ v_render(void)
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_nativeInit
   (JNIEnv *env, jclass class)
 {
+    main(0, NULL);
 }
-
 /*
  * Class:     com_starlon_froyvisuals_SDLActivity
  * Method:    nativeQuit
@@ -628,7 +636,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_nativeInit
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_nativeQuit
   (JNIEnv *env, jclass class)
 {
-
+    sdl_quit();
 }
 
 /*
@@ -639,7 +647,14 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_nativeQuit
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_onNativeResize
   (JNIEnv *env, jclass class, jint w, jint h, jint format)
 {
-	//v_resize(w, h);
+    static int init = 1;
+    v.width = w;
+    v.height = h;
+    if(!init)
+    {
+        v_resize(w, h);
+    }
+    init = 0;
 }
 
 

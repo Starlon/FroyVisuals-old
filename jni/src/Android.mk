@@ -15,13 +15,14 @@ LOCAL_C_INCLUDES := \
 
 # Add any compilation flags for your project here...
 LOCAL_CFLAGS := \
-	-DPLAY_MOD
+	-DPLAY_MOD -g -O0
 
 # Add your application source files here...
 LOCAL_SRC_FILES := $(SDL_PATH)/src/main/android/SDL_android_main.cpp \
-	aliens.c
+	libvisual.c
 
 LOCAL_SHARED_LIBRARIES := SDL SDL_image SDL_mixer SDL_ttf libvisual
+
 
 LOCAL_LDLIBS := -lGLESv1_CM -llog
 

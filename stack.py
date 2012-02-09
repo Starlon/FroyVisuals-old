@@ -53,7 +53,7 @@ def CallAddr2Line(lib, addr):
       uname = "darwin-ppc"
   if lib != "":
     #cmd = "./prebuilt/" + uname + "/toolchain-eabi-4.2.1/bin/arm-eabi-addr2line" \
-    cmd = "/opt/android-ndk-r7/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-addr2line" \
+    cmd = "/opt/android-ndk-r6b/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-addr2line" \
         + " -f -e " + SYMBOLS_DIR + lib \
         + " 0x" + addr
     stream = os.popen(cmd)

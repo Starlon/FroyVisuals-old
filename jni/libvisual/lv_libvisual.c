@@ -325,6 +325,19 @@ int visual_init (int *argc, char ***argv)
 	/* Initialize FFT system */
 	visual_fourier_initialize ();
 
+	/* Add the standard plugin paths */
+	ret = visual_init_path_add ("plugins/actor");
+	visual_log_return_val_if_fail (ret == VISUAL_OK, ret);
+
+	ret = visual_init_path_add ("plugins/input");
+	visual_log_return_val_if_fail (ret == VISUAL_OK, ret);
+
+	ret = visual_init_path_add ("plugins/morph");
+	visual_log_return_val_if_fail (ret == VISUAL_OK, ret);
+
+	ret = visual_init_path_add ("plugins/transform");
+	visual_log_return_val_if_fail (ret == VISUAL_OK, ret);
+
 #if !defined(VISUAL_OS_WIN32)
 	/* Add homedirectory plugin paths */
 	homedir = getenv ("HOME");
