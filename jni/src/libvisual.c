@@ -323,8 +323,6 @@ main (int argc, char* argv[])
 void
 sdl_init (void)
 {
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     if (SDL_Init(SDL_INIT_VIDEO))
     {
         LOGI (SDL_GetError());
@@ -379,6 +377,7 @@ sdl_create (int width, int height) {
     } else {
         screen = SDL_SetVideoMode (width, height, v.video->bpp * 8, SDL_RESIZABLE | SDL_SWSURFACE);
     }
+
     visual_video_set_buffer (v.video, screen->pixels);
     visual_video_set_pitch (v.video, screen->pitch);
 }

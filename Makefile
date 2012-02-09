@@ -29,7 +29,7 @@ sign:
 	@zipalign -v 4 bin/$(ACTIVITY)-release-unsigned.apk bin/$(APPNAME).apk
 
 log:
-	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libSDL.so > libfroyvisuals.asm
+	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libmain.so > libfroyvisuals.asm
 	@adb shell logcat -d > test.log
 	@./stack.py --symbols-dir=lyrical/ ./test.log 
 	@./parse_stack.py ./libfroyvisuals.asm ./test.log
@@ -37,7 +37,6 @@ log:
 
 gdb:
 	@ndk-gdb --start --force --verbose
-	#This is performed in ndk-gdb, so commenting out. @/opt/android-ndk-r7/toolchains/arm-linux-androideabi-4.4.3/prebuilt/linux-x86/bin/arm-linux-androideabi-gdb -x obj/local/armeabi-v7a/gdb.setup -e obj/local/armeabi-v7a/app_process 
 
 mem:
 	@adb shell setprop dalvik.vm.checkjni true
