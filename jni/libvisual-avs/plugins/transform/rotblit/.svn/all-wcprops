@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/rotblit
+END
+r_rotblit.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/rotblit/r_rotblit.cpp
+END
+transform_avs_rotblit.c
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/rotblit/transform_avs_rotblit.c
+END

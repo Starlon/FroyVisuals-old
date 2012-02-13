@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/colorreplace
+END
+transform_avs_colorreplace.c
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/colorreplace/transform_avs_colorreplace.c
+END
+r_colorreplace.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/colorreplace/r_colorreplace.cpp
+END

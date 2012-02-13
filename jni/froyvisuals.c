@@ -374,10 +374,10 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFr
 		//visual_bin_run (v.bin);
 	} else {
 
-		//visual_bin_run (v.bin);
+		visual_bin_run (v.bin);
     }
 
-    //visual_video_depth_transform(&vid, v.video);
+    visual_video_depth_transform(&vid, v.video);
 
     AndroidBitmap_unlockPixels(env, bitmap);
 

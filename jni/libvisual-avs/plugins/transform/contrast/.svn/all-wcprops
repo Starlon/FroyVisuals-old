@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/contrast
+END
+r_contrast.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/contrast/r_contrast.cpp
+END
+transform_avs_contrast.c
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/contrast/transform_avs_contrast.c
+END

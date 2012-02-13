@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/libvisual/!svn/ver/1575/trunk/libvisual-avs/plugins/transform/movement
+END
+transform_avs_movement.c
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/movement/transform_avs_movement.c
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/libvisual/!svn/ver/1575/trunk/libvisual-avs/plugins/transform/movement/Makefile.am
+END
+r_trans.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/movement/r_trans.cpp
+END

@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/fadeout
+END
+r_fadeout.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/fadeout/r_fadeout.cpp
+END
+transform_avs_fadeout.c
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/fadeout/transform_avs_fadeout.c
+END

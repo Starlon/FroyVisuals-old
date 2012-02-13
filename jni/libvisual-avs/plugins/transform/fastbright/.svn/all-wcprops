@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/fastbright
+END
+r_fastbright.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/fastbright/r_fastbright.cpp
+END
+transform_avs_fastbright.c
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/fastbright/transform_avs_fastbright.c
+END

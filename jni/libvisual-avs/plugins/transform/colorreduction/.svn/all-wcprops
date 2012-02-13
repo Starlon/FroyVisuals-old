@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/colorreduction
+END
+transform_avs_colorreduction.c
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/colorreduction/transform_avs_colorreduction.c
+END
+r_colorreduction.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/colorreduction/r_colorreduction.cpp
+END

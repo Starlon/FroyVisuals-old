@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/bump
+END
+r_bump.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/bump/r_bump.cpp
+END
+transform_avs_bump.c
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/bump/transform_avs_bump.c
+END

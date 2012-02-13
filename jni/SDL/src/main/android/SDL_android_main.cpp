@@ -17,7 +17,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 }
 
 // Start up the SDL app
-extern "C" void Java_org_libsdl_app_SDLActivity_nativeInit(JNIEnv* env, jclass cls, jobject obj)
+extern "C" void Java_com_starlon_froyvisuals_SDLActivity_nativeInit(JNIEnv* env, jclass cls, jobject obj)
 {
     /* This interface could expand with ABI negotiation, calbacks, etc. */
     SDL_Android_Init(env, cls);

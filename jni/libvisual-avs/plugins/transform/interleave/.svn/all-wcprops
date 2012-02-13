@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/interleave
+END
+r_interleave.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/interleave/r_interleave.cpp
+END
+transform_avs_interleave.c
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/interleave/transform_avs_interleave.c
+END

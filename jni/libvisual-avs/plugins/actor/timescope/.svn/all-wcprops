@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libvisual/!svn/ver/1575/trunk/libvisual-avs/plugins/actor/timescope
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/libvisual/!svn/ver/1575/trunk/libvisual-avs/plugins/actor/timescope/Makefile.am
+END
+actor_avs_timescope.c
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/actor/timescope/actor_avs_timescope.c
+END
+r_timescope.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/actor/timescope/r_timescope.cpp
+END

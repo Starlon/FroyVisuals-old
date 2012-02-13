@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common
+END
+avs_config.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_config.c
+END
+avs_globals.h
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_globals.h
+END
+avs_sound.c
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_sound.c
+END
+avs_blend.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_blend.h
+END
+avs_gfx.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_gfx.h
+END
+avs_matrix.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_matrix.h
+END
+avs_config.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_config.h
+END
+avs_common.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_common.h
+END
+avs_sound.h
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_sound.h
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/Makefile.am
+END
+avs_globals.c
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_globals.c
+END
+avs_blend.c
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_blend.c
+END
+avs_gfx.c
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_gfx.c
+END
+avs_matrix.c
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/common/avs_matrix.c
+END

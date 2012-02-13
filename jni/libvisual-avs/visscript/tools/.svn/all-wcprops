@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/visscript/tools
+END
+genparsertable.c
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/visscript/tools/genparsertable.c
+END
+switchtable.h
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/visscript/tools/switchtable.h
+END
+avs_grammar.y.bak2
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/visscript/tools/avs_grammar.y.bak2
+END
+genlextable.pl
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/visscript/tools/genlextable.pl
+END
+avs_grammar.y
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/visscript/tools/avs_grammar.y
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/visscript/tools/Makefile
+END
+avs_grammar.output
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/visscript/tools/avs_grammar.output
+END

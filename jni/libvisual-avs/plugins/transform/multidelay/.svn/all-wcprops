@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/multidelay
+END
+r_multidelay.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/multidelay/r_multidelay.cpp
+END
+transform_avs_multidelay.c
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/multidelay/transform_avs_multidelay.c
+END

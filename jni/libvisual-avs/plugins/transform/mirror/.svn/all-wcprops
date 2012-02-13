@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/mirror
+END
+transform_avs_mirror.c
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/mirror/transform_avs_mirror.c
+END
+r_mirror.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/mirror/r_mirror.cpp
+END

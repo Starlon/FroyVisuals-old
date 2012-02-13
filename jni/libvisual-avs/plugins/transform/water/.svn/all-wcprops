@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svnroot/libvisual/!svn/ver/1575/trunk/libvisual-avs/plugins/transform/water
+END
+r_water.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/water/r_water.cpp
+END
+transform_avs_water.c
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/water/transform_avs_water.c
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svnroot/libvisual/!svn/ver/1575/trunk/libvisual-avs/plugins/transform/water/Makefile.am
+END

@@ -290,7 +290,7 @@ v_cycleActor (int prev)
     }
 }
 
-main (int argc, char* argv[])
+void main (int argc, char* argv[])
 {
 /*
     puts ("Controls: Arrow keys switch between plugins, TAB toggles fullscreen, ESC quits.");
@@ -301,7 +301,7 @@ main (int argc, char* argv[])
         puts ("Note: you can give your favourite libvisual plugin as command line argument.");
     }
 */
-    v.plugin = "lv_scope";
+    v.plugin = "bumpscope";
     v.morph = "alphablend";
 
     v.pluginIsGL = 0;
@@ -314,7 +314,7 @@ main (int argc, char* argv[])
     int render_time;
 
     while (sdl_event_handler()) {
-		//render_time = v_render();
+		render_time = v_render();
     }
 
     return EXIT_SUCCESS;
@@ -605,108 +605,4 @@ v_render(void)
     return ticks;
 }
 
-/*
-   public static native void nativeInit();
-    public static native void nativeQuit();
-    public static native void onNativeResize(int x, int y, int format);
-    public static native void onNativeKeyDown(int keycode);
-    public static native void onNativeKeyUp(int keycode);
-    public static native void onNativeTouch(int action, float x,
-                                            float y, float p);
-    public static native void onNativeAccel(float x, float y, float z);
-    public static native void nativeRunAudioThread();
-*/
 
-/*
- * Class:     com_starlon_froyvisuals_SDLActivity
- * Method:    nativeInit
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_nativeInit
-  (JNIEnv *env, jclass class)
-{
-    main(0, NULL);
-}
-/*
- * Class:     com_starlon_froyvisuals_SDLActivity
- * Method:    nativeQuit
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_nativeQuit
-  (JNIEnv *env, jclass class)
-{
-    sdl_quit();
-}
-
-/*
- * Class:     com_starlon_froyvisuals_SDLActivity
- * Method:    onNativeResize
- * Signature: (III)V
- */
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_onNativeResize
-  (JNIEnv *env, jclass class, jint w, jint h, jint format)
-{
-    static int init = 1;
-    v.width = w;
-    v.height = h;
-    if(!init)
-    {
-        v_resize(w, h);
-    }
-    init = 0;
-}
-
-
-/*
- * Class:     com_starlon_froyvisuals_SDLActivity
- * Method:    onNativeKeyDown
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_onNativeKeyDown
-  (JNIEnv * env, jclass class, jint keycode)
-{
-
-}
-
-/*
- * Class:     com_starlon_froyvisuals_SDLActivity
- * Method:    onNativeKeyUp
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_onNativeKeyUp
-  (JNIEnv *env, jclass class, jint keycode)
-{
-}
-
-/*
- * Class:     com_starlon_froyvisuals_SDLActivity
- * Method:    onNativeTouch
- * Signature: (IFFF)V
- */
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_onNativeTouch
-  (JNIEnv *env, jclass class, jint action, jfloat x, jfloat y, jfloat p)
-{
-
-}
-
-/*
- * Class:     com_starlon_froyvisuals_SDLActivity
- * Method:    onNativeAccel
- * Signature: (FFF)V
- */
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_onNativeAccel
-  (JNIEnv *env, jclass class, jfloat x, jfloat y, jfloat z)
-{
-
-}
-
-/*
- * Class:     com_starlon_froyvisuals_SDLActivity
- * Method:    nativeRunAudioThread
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_SDLActivity_nativeRunAudioThread
-  (JNIEnv *env, jclass class)
-{
-
-}

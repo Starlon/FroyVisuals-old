@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/dcolormod
+END
+r_dcolormod.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/dcolormod/r_dcolormod.cpp
+END
+transform_avs_dcolormod.c
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/dcolormod/transform_avs_dcolormod.c
+END

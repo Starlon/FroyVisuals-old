@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/scat
+END
+transform_avs_scat.c
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/scat/transform_avs_scat.c
+END
+r_scat.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/transform/scat/r_scat.cpp
+END

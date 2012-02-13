@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/actor/stars
+END
+Makefile.am
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/actor/stars/Makefile.am
+END
+actor_avs_stars.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/actor/stars/actor_avs_stars.c
+END
+r_stars.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svnroot/libvisual/!svn/ver/1572/trunk/libvisual-avs/plugins/actor/stars/r_stars.cpp
+END
