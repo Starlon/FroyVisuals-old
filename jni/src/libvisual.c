@@ -290,7 +290,7 @@ v_cycleActor (int prev)
     }
 }
 
-void main (int argc, char* argv[])
+main (int argc, char **argv)
 {
 /*
     puts ("Controls: Arrow keys switch between plugins, TAB toggles fullscreen, ESC quits.");

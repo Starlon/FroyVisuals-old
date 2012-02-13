@@ -27,10 +27,10 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <glib.h>
+/*#include <glib.h>
 #include <libxml/parser.h>
 #include <libxml/xmlmemory.h>
-
+*/
 #include <libvisual/libvisual.h>
 
 #include "lvavs_preset.h"
@@ -99,7 +99,7 @@ static int lvavs_preset_dtor (VisObject *object);
 static int lvavs_preset_element_dtor (VisObject *object);
 static int lvavs_preset_container_dtor (VisObject *object);
 
-LVAVSPresetContainer *lvavs_preset_container_from_xml_node(LVAVSPresetContainer *cont, xmlNodePtr node);
+//LVAVSPresetContainer *lvavs_preset_container_from_xml_node(LVAVSPresetContainer *cont, xmlNodePtr node);
 
 /*static int preset_convert_from_wavs (LVAVSPresetContainer *presetcont, AVSContainer *cont);
 
@@ -171,6 +171,7 @@ LVAVSPreset *lvavs_preset_new ()
 }
 
 /* cur->name should be the element name */
+/*
 static int parse_element (xmlNodePtr cur, LVAVSPresetElement *element)
 {
   char *content;
@@ -231,9 +232,11 @@ static int parse_element (xmlNodePtr cur, LVAVSPresetElement *element)
     }
     return TRUE;
 }
+*/
 
 LVAVSPreset *lvavs_preset_new_from_preset (char *filename)
 {
+/*
 	LVAVSPreset *preset = NULL;
 	LVAVSPresetElement *element;
 	LVAVSPresetContainer *cont;
@@ -284,8 +287,10 @@ LVAVSPreset *lvavs_preset_new_from_preset (char *filename)
 	xmlFreeDoc (doc);
 
   return preset;
+*/
 }
 
+/*
 LVAVSPresetContainer *lvavs_preset_container_from_xml_node(LVAVSPresetContainer *cont, xmlNodePtr node) {
 	xmlNodePtr child;
 	LVAVSPresetElement *element;
@@ -316,6 +321,7 @@ LVAVSPresetContainer *lvavs_preset_container_from_xml_node(LVAVSPresetContainer 
 	return cont;
 
 }
+*/
 
 LVAVSPresetElement *lvavs_preset_element_new (LVAVSPresetElementType type, const char *name)
 {

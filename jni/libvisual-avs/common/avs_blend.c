@@ -190,10 +190,6 @@ __inline int  BLEND_SUB(int a, int b)
 	return t|max(r,0);
 }
 
-#ifdef NO_MMX
-#define BLEND_ADJ BLEND_ADJ_NOMMX
-#endif
-
 __inline int  BLEND_ADJ_NOMMX(unsigned char blendtable[256][256], int a, int b, int v)
 {
 	register int t;
@@ -231,7 +227,7 @@ __inline void BLEND_LINE(int *fb, int color, unsigned char blendtable[256][256],
 
 __inline int BLEND4(unsigned char blendtable[256][256], int *p1, int w, int xp, int yp)
 {
-#ifdef NO_MMX
+#if 1
   register int t;
   unsigned char a1,a2,a3,a4;
   a1=blendtable[255-xp][255-yp];
@@ -315,7 +311,7 @@ __inline int BLEND4(unsigned char blendtable[256][256], int *p1, int w, int xp, 
 
 __inline int BLEND4_16(unsigned char blendtable[256][256], int *p1, int w, int xp, int yp)
 {
-#ifdef NO_MMX
+#if 1
   register int t;
   unsigned char a1,a2,a3,a4;
   xp=(xp>>8)&0xff;
@@ -403,7 +399,7 @@ __inline int BLEND4_16(unsigned char blendtable[256][256], int *p1, int w, int x
 
 __inline void mmx_avgblend_block(int *output, int *input, int l)
 {
-#ifdef NO_MMX
+#if 1
   while (l--)
   {
     *output=BLEND_AVG(*input++,*output);
@@ -454,7 +450,7 @@ mmx_avgblend_loop:
 
 __inline void mmx_addblend_block(int *output, int *input, int l)
 {
-#ifdef NO_MMX
+#if 1
   while (l--)
   {
     *output=BLEND(*input++,*output);
@@ -491,7 +487,7 @@ mmx_addblend_loop:
 
 __inline void mmx_mulblend_block(unsigned char blendtable[256][256], int *output, int *input, int l)
 {
-#ifdef NO_MMX
+#if 1
   while (l--)
   {
     *output=BLEND_MUL(blendtable, *input++,*output);
@@ -536,7 +532,7 @@ mmx_mulblend_loop:
 
 void __inline mmx_adjblend_block(unsigned char blendtable[256][256], int *o, int *in1, int *in2, int len, int v)
 {
-#ifdef NO_MMX
+#if 1
   while (len--)
   {
     *o++=BLEND_ADJ(blendtable, *in1++,*in2++,v);

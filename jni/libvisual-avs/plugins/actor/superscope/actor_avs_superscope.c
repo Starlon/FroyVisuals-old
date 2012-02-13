@@ -33,12 +33,11 @@
 #include <fcntl.h>
 #include <string.h>
 #include <limits.h>
-#include <omp.h>
 
 #include <libvisual/libvisual.h>
 
 #include "avs_common.h"
-#include "avs.h"
+#include "evaluator.h"
 #include "lvavs_pipeline.h"
 
 AvsNumber PI = M_PI;
