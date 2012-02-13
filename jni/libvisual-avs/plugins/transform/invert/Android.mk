@@ -6,5 +6,5 @@ LOCAL_MODULE	:= transform_avs_invert
 LOCAL_SRC_FILES := transform_avs_invert.c
 LOCAL_CFLAGS	:= -Wall -O0 -g
 LOCAL_STATIC_LIBRARIES := libvisual common
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 

@@ -8,7 +8,8 @@ LOCAL_LDFLAGS :=
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../common/\
 	$(LOCAL_PATH)/../include/\
-	$(LOCAL_PATH)/../evaluator/
-LOCAL_STATIC_LIBRARIES := libvisual common -llibxml2
+	$(LOCAL_PATH)/../evaluator/\
+	$(LOCAL_PATH)/../../libxml2/
+LOCAL_STATIC_LIBRARIES := libvisual common libxml2
 include $(BUILD_SHARED_LIBRARY)
 

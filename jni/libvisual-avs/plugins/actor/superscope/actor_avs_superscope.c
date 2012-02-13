@@ -40,8 +40,6 @@
 #include "evaluator.h"
 #include "lvavs_pipeline.h"
 
-AvsNumber PI = M_PI;
-
 typedef enum scope_runnable ScopeRunnable;
 
 enum scope_runnable {
@@ -52,10 +50,14 @@ enum scope_runnable {
 };
 
 typedef struct {
-    AvsRunnableContext      *ctx;
-    AvsRunnableVariableManager  *vm;
-    AvsRunnable         *runnable[4];
-    AvsNumber           n, b, x, y, i, v, w, h, red, green, blue, linesize, skip, drawmode, t, d; 
+    //AvsRunnableContext      *ctx;
+    //AvsRunnableVariableManager  *vm;
+    //AvsRunnable         *runnable[4];
+    void *init;
+    void *frame;
+    void *beat;
+    void *point;
+    double n, b, x, y, i, v, w, h, red, green, blue, linesize, skip, drawmode, t, d; 
     LVAVSPipeline *pipeline;
 
 
@@ -114,16 +116,96 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 int scope_load_runnable(SuperScopePrivate *priv, ScopeRunnable runnable, char *buf)
 {
-    AvsRunnable *obj = avs_runnable_new(priv->ctx);
-    avs_runnable_set_variable_manager(obj, priv->vm);
-    priv->runnable[runnable] = obj;
-    avs_runnable_compile(obj, (unsigned char *)buf, strlen(buf));
+    switch(runnable) {
+        case SCOPE_RUNNABLE_INIT:
+            if(priv->init) DelTree(priv->init);
+            Compile(buf, &priv->init);
+        break;
+        case SCOPE_RUNNABLE_FRAME:
+            if(priv->frame) DelTree(priv->frame);
+            Compile(buf, &priv->frame);
+        break;
+        case SCOPE_RUNNABLE_BEAT:
+            if(priv->beat) DelTree(priv->beat);
+            Compile(buf, &priv->beat);
+        break;
+        case SCOPE_RUNNABLE_POINT:
+            if(priv->point) DelTree(priv->point);
+            Compile(buf, &priv->point);
+        break;
+
+    }
     return 0;
 }
 
 int scope_run(SuperScopePrivate *priv, ScopeRunnable runnable)
 {
-    avs_runnable_execute(priv->runnable[runnable]);
+    
+    SetVariableNumeric("n", priv->n);
+    SetVariableNumeric("b", priv->b);
+    SetVariableNumeric("x", priv->x);
+    SetVariableNumeric("y", priv->y);
+    SetVariableNumeric("i", priv->i);
+    SetVariableNumeric("v", priv->v);
+    SetVariableNumeric("w", priv->w);
+    SetVariableNumeric("h", priv->h);
+    SetVariableNumeric("t", priv->t);
+    SetVariableNumeric("d", priv->d);
+    SetVariableNumeric("red", priv->red);
+    SetVariableNumeric("green", priv->green);
+    SetVariableNumeric("blue", priv->blue);
+    SetVariableNumeric("linesize", priv->linesize);
+    SetVariableNumeric("skip", priv->skip);
+    SetVariableNumeric("drawmode", priv->drawmode);
+
+    RESULT result;
+    switch(runnable) {
+        case SCOPE_RUNNABLE_INIT:
+            Eval(priv->init, &result);
+        break;
+        case SCOPE_RUNNABLE_FRAME:
+            Eval(priv->frame, &result);
+        break;
+        case SCOPE_RUNNABLE_BEAT:
+            Eval(priv->beat, &result);
+        break;
+        case SCOPE_RUNNABLE_POINT:
+            Eval(priv->point, &result);
+        break;
+
+    }
+
+    RESULT *res = GetVariable("n");
+    priv->n = R2N(res);
+    res = GetVariable("b");
+    priv->b = R2N(res);
+    res = GetVariable("x");
+    priv->x = R2N(res);
+    res = GetVariable("y");
+    priv->y = R2N(res);
+    res = GetVariable("i");
+    priv->i = R2N(res);
+    res = GetVariable("v");
+    priv->v = R2N(res);
+    res = GetVariable("w");
+    priv->w = R2N(res);
+    res = GetVariable("h");
+    priv->h = R2N(res);
+    res = GetVariable("t");
+    priv->t = R2N(res);
+    res = GetVariable("d");
+    priv->d = R2N(res);
+    res = GetVariable("red");
+    priv->red = R2N(res);
+    res = GetVariable("green");
+    priv->green = R2N(res);
+    res = GetVariable("linesize");
+    priv->linesize = R2N(res);
+    res = GetVariable("skip");
+    priv->skip = R2N(res);
+    res = GetVariable("drawmode");
+    priv->drawmode = R2N(res);
+
     return 0;
 }
 
@@ -166,10 +248,12 @@ int lv_superscope_init (VisPluginData *plugin)
     visual_palette_free_colors (&priv->pal);
 
     /* Init super scope */
+/*
     priv->ctx = avs_runnable_context_new();
     priv->vm = avs_runnable_variable_manager_new();
-
+*/
     /* Bind variables to context */
+/*
     avs_runnable_variable_bind(priv->vm, "n", &priv->n);
     avs_runnable_variable_bind(priv->vm, "b", &priv->b);
     avs_runnable_variable_bind(priv->vm, "x", &priv->x);
@@ -187,6 +271,24 @@ int lv_superscope_init (VisPluginData *plugin)
     avs_runnable_variable_bind(priv->vm, "linesize", &priv->linesize);
     avs_runnable_variable_bind(priv->vm, "skip", &priv->skip);
     avs_runnable_variable_bind(priv->vm, "drawmode", &priv->drawmode);
+*/
+
+    SetVariableNumeric("n", 0);
+    SetVariableNumeric("b", 0);
+    SetVariableNumeric("x", 0);
+    SetVariableNumeric("y", 0);
+    SetVariableNumeric("i", 0);
+    SetVariableNumeric("v", 0);
+    SetVariableNumeric("w", 0);
+    SetVariableNumeric("h", 0);
+    SetVariableNumeric("t", 0);
+    SetVariableNumeric("d", 0);
+    SetVariableNumeric("red", 0);
+    SetVariableNumeric("green", 0);
+    SetVariableNumeric("blue", 0);
+    SetVariableNumeric("linesize", 0);
+    SetVariableNumeric("skip", 0);
+    SetVariableNumeric("drawmode", 0);
 
     return 0;
 }
@@ -385,6 +487,8 @@ int lv_superscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
     l = priv->n;
     if (l >= 128*size)
         l = 128*size - 1;
+    if(l < 2) 
+        l = 2;
 
     for (a=0; a < l; a++) 
     {
@@ -394,12 +498,12 @@ int lv_superscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
         int val2 = (pcmbuf[(int)r+1] + 1) / 2.0  * 128;
         double yr=(val1^xorv)*(1.0-s1)+(val2^xorv)*(s1);
         priv->v = yr/128.0;
-        priv->i = (AvsNumber)a/(AvsNumber)(l-1);
+        priv->i = a/(double)(l-1);
         priv->skip = 0.0;
         scope_run(priv, SCOPE_RUNNABLE_POINT);
 
-        x = (int)((priv->x + 1.0) * (AvsNumber)video->width * 0.5);
-        y = (int)((priv->y + 1.0) * (AvsNumber)video->height * 0.5);
+        x = (int)((priv->x + 1.0) * video->width * 0.5);
+        y = (int)((priv->y + 1.0) * video->height * 0.5);
 
 
         if (priv->skip >= 0.00001)

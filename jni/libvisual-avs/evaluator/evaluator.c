@@ -1357,4 +1357,3 @@ static void function_rand(RESULT * result, RESULT * arg1, RESULT * arg2)
 
         SetResult(&result, R_NUMBER, &val);
 }
-

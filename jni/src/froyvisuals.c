@@ -312,7 +312,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 		v.pluginIsGL = 1;
 	}
 
-    v.plugin = "lv_scope";
+    v.plugin = "avs";
 	visual_bin_connect_by_names (v.bin, (char*)v.plugin, "alsa");
 
 	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);

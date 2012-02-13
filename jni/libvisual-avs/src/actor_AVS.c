@@ -260,17 +260,17 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 					} else {
 						LVAVSPreset *preset;
 						LVAVSPresetElement *sscope;
-						LVAVSPresetElement *move;
-						LVAVSPresetElement *blur1;
+						//LVAVSPresetElement *move;
+						//LVAVSPresetElement *blur;
 						sscope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
-						move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
-						blur = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
+						//move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
+						//blur = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
 						preset = lvavs_preset_new ();
 						preset->main = lvavs_preset_container_new ();
 
-						visual_list_add (preset->main->members, move);
+						//visual_list_add (preset->main->members, move);
                         visual_list_add(preset->main->members, sscope);
-                        visual_list_add(preset->main->members, sblur);
+                        //visual_list_add(preset->main->members, blur);
 
 						static VisParamEntry params[] = {
 							VISUAL_PARAM_LIST_ENTRY_STRING("init", init),
@@ -279,7 +279,7 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 							VISUAL_PARAM_LIST_ENTRY_STRING("point", point),
 							VISUAL_PARAM_LIST_END
 						};
-						visual_param_container_add_many(sscope1->pcont, params);
+						visual_param_container_add_many(sscope->pcont, params);
 
 
 						priv->lvtree = preset;
