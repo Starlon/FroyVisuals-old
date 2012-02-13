@@ -5,7 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := main
 
 LOCAL_C_INCLUDES := \
-    $(LOCAL_PATH)/../include
+    ./include
 
 # Add any compilation flags for your project here...
 LOCAL_CFLAGS := \
@@ -16,6 +16,7 @@ LOCAL_SRC_FILES := froyvisuals.c
 
 LOCAL_SHARED_LIBRARIES := libvisual
 
-LOCAL_LDLIBS := -lGLESv1_CM -llog
+LOCAL_LDLIBS := -lGLESv1_CM -lm -llog -ljnigraphics
 
 include $(BUILD_SHARED_LIBRARY)
+

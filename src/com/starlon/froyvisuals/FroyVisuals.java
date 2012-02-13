@@ -21,15 +21,18 @@ import android.content.Context;
 import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
 
-public class Plasma extends Activity
+public class FroyVisuals extends Activity
 {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(new PlasmaView(this));
+        setContentView(new FroyVisualsView(this));
     }
 
     /* load our native library */
@@ -38,12 +41,15 @@ public class Plasma extends Activity
     }
 }
 
-class PlasmaView extends View {
+class FroyVisualsView extends View {
     private Bitmap mBitmap;
+    private Context mCtx;
     private long mStartTime;
-
+    private int width = -1;
+    private int height = -1;
     /* implementend by libplasma.so */
     private static native void render(Bitmap  bitmap, long time_ms);
+    private static native void resize(int w, int y);
     //private static native void uploadAudio(short data);
     private static native void switchActor(int prev);
     private static native void mouseMotion(float x, float y);
@@ -52,18 +58,31 @@ class PlasmaView extends View {
     private static native void visualsQuit();
     private static native void initApp(int w, int h);
 
-    public PlasmaView(Context context) {
+    public FroyVisualsView(Context context) {
         super(context);
 
-        final int W = 200;
-        final int H = 200;
+        mCtx = context;
 
-        mBitmap = Bitmap.createBitmap(W, H, Bitmap.Config.RGB_565);
+        width = 32;
+        height = 32;
+
+        mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         mStartTime = System.currentTimeMillis();
-        initApp(W, H);
+        initApp(width, height);
     }
 
     @Override protected void onDraw(Canvas canvas) {
+        WindowManager mWinMgr = (WindowManager)mCtx.getSystemService(Context.WINDOW_SERVICE);
+        int W = mWinMgr.getDefaultDisplay().getWidth();
+        int H = mWinMgr.getDefaultDisplay().getHeight();
+
+        if(width != W || height != H) {
+            width = W;
+            height = H;
+            mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            //resize(width, height);
+        }
+
         //canvas.drawColor(0xFFCCCCCC);
         render(mBitmap, System.currentTimeMillis() - mStartTime);
         canvas.drawBitmap(mBitmap, 0, 0, null);

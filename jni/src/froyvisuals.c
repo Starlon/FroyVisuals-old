@@ -328,7 +328,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 	printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_renderFroyVisuals(JNIEnv * env, jobject  obj, jobject bitmap)
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(JNIEnv * env, jobject  obj, jobject bitmap)
 {
     
     AndroidBitmapInfo  info;
