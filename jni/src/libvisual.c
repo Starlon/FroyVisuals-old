@@ -301,7 +301,7 @@ main (int argc, char **argv)
         puts ("Note: you can give your favourite libvisual plugin as command line argument.");
     }
 */
-    v.plugin = "bumpscope";
+    v.plugin = "lv_scope";
     v.morph = "alphablend";
 
     v.pluginIsGL = 0;
@@ -535,7 +535,7 @@ v_init (int argc, char **argv)
         x_exit ("Cannot set video");
     }
 
-    v.plugin = "lv_scope";
+    v.plugin = "avs";
     visual_bin_connect_by_names (v.bin, (char*)v.plugin, "alsa");
 
     if (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL)

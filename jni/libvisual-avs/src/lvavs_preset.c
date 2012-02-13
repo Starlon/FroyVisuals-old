@@ -27,10 +27,9 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-/*#include <glib.h>
+//#include <glib.h>
 #include <libxml/parser.h>
 #include <libxml/xmlmemory.h>
-*/
 #include <libvisual/libvisual.h>
 
 #include "lvavs_preset.h"

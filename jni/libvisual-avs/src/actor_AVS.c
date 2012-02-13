@@ -31,6 +31,15 @@
 #include "lvavs_preset.h"
 #include "lvavs_pipeline.h"
 
+char init[] = "n=32;t=0;";
+char beat[] = "n=n+5";
+char frame[] = "t = t - 5;";
+char point[] = ""\
+"d=i+v*0.02;"\
+"r=t+i*PI*20;"\
+"x=cos(r)*d*0.8;"\
+"y=sin(r)*d*0.8";
+
 typedef struct {
 	AVSTree		*wtree;		/* The winamp AVS tree */
 
@@ -250,25 +259,24 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 						priv->lvtree = lvavs_preset_new_from_preset (filename);
 					} else {
 						LVAVSPreset *preset;
-						LVAVSPresetElement *sscope1;
-						LVAVSPresetElement *sscope2;
-						LVAVSPresetElement *sscope3;
-						LVAVSPresetElement *sscope4;
+						LVAVSPresetElement *sscope;
 						LVAVSPresetElement *move;
 						LVAVSPresetElement *blur1;
-						LVAVSPresetElement *blur2;
-						LVAVSPresetElement *blur3;
-						LVAVSPresetElement *blur4;
-						sscope1 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
+						sscope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
 						move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
+						blur = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
 						preset = lvavs_preset_new ();
 						preset->main = lvavs_preset_container_new ();
 
 						visual_list_add (preset->main->members, move);
-                                                visual_list_add(preset->main->members, sscope1);
+                        visual_list_add(preset->main->members, sscope);
+                        visual_list_add(preset->main->members, sblur);
 
 						static VisParamEntry params[] = {
-							VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 1000;"),
+							VISUAL_PARAM_LIST_ENTRY_STRING("init", init),
+							VISUAL_PARAM_LIST_ENTRY_STRING("frame", frame),
+							VISUAL_PARAM_LIST_ENTRY_STRING("beat", beat),
+							VISUAL_PARAM_LIST_ENTRY_STRING("point", point),
 							VISUAL_PARAM_LIST_END
 						};
 						visual_param_container_add_many(sscope1->pcont, params);
