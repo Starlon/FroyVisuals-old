@@ -22,6 +22,7 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -42,11 +43,12 @@ public class FroyVisuals extends Activity
 }
 
 class FroyVisualsView extends View {
+    private WindowManager mWinMgr;
     private Bitmap mBitmap;
     private Context mCtx;
     private long mStartTime;
-    private int width = -1;
-    private int height = -1;
+    private int mWidth = -1;
+    private int mHeight = -1;
     /* implementend by libplasma.so */
     private static native void render(Bitmap  bitmap, long time_ms);
     private static native void screenResize(int w, int y);
@@ -61,25 +63,23 @@ class FroyVisualsView extends View {
         super(context);
 
         mCtx = context;
-
-        width = 32;
-        height = 32;
-
-        mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        mWinMgr = (WindowManager)mCtx.getSystemService(Context.WINDOW_SERVICE);
+        mWidth = mWinMgr.getDefaultDisplay().getWidth();
+        mHeight = mWinMgr.getDefaultDisplay().getHeight();
+        mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
         mStartTime = System.currentTimeMillis();
-        initApp(width, height);
+        initApp(mWidth, mHeight);
     }
 
     @Override protected void onDraw(Canvas canvas) {
-        WindowManager mWinMgr = (WindowManager)mCtx.getSystemService(Context.WINDOW_SERVICE);
         int W = mWinMgr.getDefaultDisplay().getWidth();
         int H = mWinMgr.getDefaultDisplay().getHeight();
 
-        if(width != W || height != H) {
-            width = W;
-            height = H;
-            mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-            screenResize(width, height);
+        if(mWidth != W || mHeight != H) {
+            mWidth = W;
+            mHeight = H;
+            mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
+            screenResize(mWidth, mHeight);
         }
 
         //canvas.drawColor(0xFFCCCCCC);
@@ -88,4 +88,5 @@ class FroyVisualsView extends View {
         // force a redraw, with a different time-based pattern.
         invalidate();
     }
+
 }

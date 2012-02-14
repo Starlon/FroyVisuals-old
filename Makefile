@@ -33,7 +33,7 @@ log:
 	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libmain.so > libfroyvisuals.asm
 	@adb shell logcat -d > test.log
 	@./stack.py --symbols-dir=lyrical/ ./test.log 
-	@./parse_stack.py ./libfroyvisuals.asm ./test.log
+	#This seems to suck. @./parse_stack.py ./libfroyvisuals.asm ./test.log
 	@adb shell dumpsys meminfo -h > meminfo.txt
 
 gdb:

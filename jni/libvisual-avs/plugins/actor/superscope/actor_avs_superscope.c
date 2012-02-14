@@ -86,9 +86,7 @@ const VisPluginInfo *get_plugin_info (int *count)
         .requisition = lv_superscope_requisition,
         .palette = lv_superscope_palette,
         .render = lv_superscope_render,
-        .vidoptions.depth =
-            VISUAL_VIDEO_DEPTH_8BIT |
-            VISUAL_VIDEO_DEPTH_32BIT
+        .vidoptions.depth = VISUAL_VIDEO_DEPTH_32BIT
 
     }};
 
@@ -273,19 +271,19 @@ int lv_superscope_init (VisPluginData *plugin)
     avs_runnable_variable_bind(priv->vm, "drawmode", &priv->drawmode);
 */
 
-    SetVariableNumeric("n", 0);
+    SetVariableNumeric("n", 32);
     SetVariableNumeric("b", 0);
     SetVariableNumeric("x", 0);
     SetVariableNumeric("y", 0);
-    SetVariableNumeric("i", 0);
-    SetVariableNumeric("v", 0);
+    SetVariableNumeric("i", 1);
+    SetVariableNumeric("v", 1);
     SetVariableNumeric("w", 0);
     SetVariableNumeric("h", 0);
-    SetVariableNumeric("t", 0);
-    SetVariableNumeric("d", 0);
-    SetVariableNumeric("red", 0);
-    SetVariableNumeric("green", 0);
-    SetVariableNumeric("blue", 0);
+    SetVariableNumeric("t", 1);
+    SetVariableNumeric("d", 1);
+    SetVariableNumeric("red", 77/256);
+    SetVariableNumeric("green", 177/256);
+    SetVariableNumeric("blue", 77/256);
     SetVariableNumeric("linesize", 0);
     SetVariableNumeric("skip", 0);
     SetVariableNumeric("drawmode", 0);

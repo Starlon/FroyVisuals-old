@@ -260,12 +260,13 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 						LVAVSPresetElement *blur3;
 						LVAVSPresetElement *blur4;
 						sscope1 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
-						move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
+						//move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
+						blur1 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
 						preset = lvavs_preset_new ();
 						preset->main = lvavs_preset_container_new ();
 
-						visual_list_add (preset->main->members, move);
-                                                visual_list_add(preset->main->members, sscope1);
+						visual_list_add (preset->main->members, blur1);
+                        visual_list_add(preset->main->members, sscope1);
 
 						static VisParamEntry params[] = {
 							VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 1000;"),
