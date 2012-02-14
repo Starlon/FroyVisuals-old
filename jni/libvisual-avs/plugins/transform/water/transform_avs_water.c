@@ -33,7 +33,9 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <math.h>
-#include <omp.h>
+#if __OPENMP
+#   include <omp.h>
+#endif
 
 #include <libvisual/libvisual.h>
 
@@ -187,10 +189,16 @@ int lv_water_video (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 
     if(isBeat & 0x80000000) return 0;
 
-//#pragma omp parallel
+#if __OPENMP
+#   pragma omp parallel
+#endif
 {
+#ifdef __OPENMP
     int i = 0, num_threads = omp_get_num_threads();
-//    #pragma omp for
+    #pragma omp for
+#else
+    int i = 0, num_threads = 1;
+#endif
     for(i = num_threads - 1; i>=0; i--)
        trans_render(i, num_threads, priv, priv->pipeline->audiodata, isBeat, framebuffer, fbout, w, h);
 }

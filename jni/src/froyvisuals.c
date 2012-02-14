@@ -30,8 +30,6 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-#define DEPTH VISUAL_VIDEO_DEPTH_8BIT
-
 /* LIBVISUAL */
 struct {
 	VisVideo   *video;
@@ -351,11 +349,12 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(J
     visual_video_set_attributes(&vid, info.width, info.height, info.width * visual_video_bpp_from_depth(VISUAL_VIDEO_DEPTH_16BIT), VISUAL_VIDEO_DEPTH_16BIT);
     visual_video_set_buffer(&vid, pixels);
 
-    if(v.video->width != info.width || v.video->height != info.height)
+    if(v.video->width != info.width || v.video->height != info.height || visual_bin_depth_changed(v.bin))
     {
         visual_video_free_buffer(v.video);
-        visual_video_set_attributes(v.video, info.width, info.height, info.width * visual_video_bpp_from_depth(visual_bin_get_depth(v.bin)), DEPTH);
-        visual_bin_set_depth(v.bin, DEPTH);
+        VisVideoDepth depth = visual_bin_get_depth(v.bin);
+        visual_video_set_attributes(v.video, info.width, info.height, info.width * visual_video_bpp_from_depth(depth), depth);
+        visual_bin_set_depth(v.bin, depth);
         visual_video_allocate_buffer(v.video);
         visual_bin_set_video(v.bin, v.video);
     }

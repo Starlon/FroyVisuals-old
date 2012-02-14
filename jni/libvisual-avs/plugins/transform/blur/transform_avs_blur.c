@@ -33,7 +33,11 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <math.h>
-#include <omp.h>
+#ifdef __OPENMP
+# include <omp.h>
+#endif
+
+#define NO_MMX
 
 #include <libvisual/libvisual.h>
 
@@ -175,10 +179,16 @@ int lv_blur_video (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
 	BlurPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
     	uint8_t isBeat = priv->pipeline->isBeat;
-#pragma omp parallel 
+#if __OPENMP
+#   pragma omp parallel 
+#endif
 {
+#if __OPENMP
 	int i = 0, num_threads = omp_get_num_threads();
-	#pragma omp for
+#else
+    int i = 0, num_threads = 1;
+#   pragma omp for
+#endif
         for(i = num_threads - 1; i>=0; i--)
 		smp_render(i, num_threads, priv, priv->pipeline->audiodata, priv->pipeline->isBeat, priv->pipeline->framebuffer, priv->pipeline->fbout, video->width, video->height);
 	priv->pipeline->swap = 1;

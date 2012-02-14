@@ -205,7 +205,7 @@ int visual_param_container_add_with_defaults (VisParamContainer *paramcontainer,
     visual_mem_copy(&param->defaultnum, &param->numeric, sizeof(param->defaultnum));
 
     if(param->type == VISUAL_PARAM_ENTRY_TYPE_STRING)
-        param->defaultstring = strdup(param->string);
+        ;//param->defaultstring = strdup(param->string); FIXME
 
 /*
     if(param->type == VISUAL_PARAM_ENTRY_TYPE_COLOR)
@@ -1346,7 +1346,7 @@ int visual_param_entry_default_set_string(VisParamEntry *param, char *str)
     visual_log_return_val_if_fail(param != NULL, -VISUAL_ERROR_PARAM_NULL);
 
     if(param->defaultstring)
-        visual_mem_free(param->defaultstring);
+        ;//visual_mem_free(param->defaultstring);
 
     param->defaultstring = strdup(str);
 

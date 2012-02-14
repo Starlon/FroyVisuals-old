@@ -29,6 +29,7 @@ sign:
 	@zipalign -v 4 bin/$(ACTIVITY)-release-unsigned.apk bin/$(APPNAME).apk
 
 log:
+	@cd lyrical/data/data/com.starlon.froyvisuals/lib;./pull.sh; cd ../../../../../
 	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libmain.so > libfroyvisuals.asm
 	@adb shell logcat -d > test.log
 	@./stack.py --symbols-dir=lyrical/ ./test.log 
