@@ -31,6 +31,9 @@
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+#define MORPH "alphablend"
+#define ACTOR "lv_scope"
+#define INPUT "dummy"
 
 /* LIBVISUAL */
 struct {
@@ -220,9 +223,13 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(
 }
 
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jint prev)
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jboolean prev)
 {
-    v_cycleActor(prev);
+    const char *morph = v.morph_name;
+
+    v_cycleActor((int)prev);
+
+    visual_log(VISUAL_LOG_INFO, "Switching actors %s <-> %s", morph, v.morph_name);
 
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
@@ -304,9 +311,9 @@ void app_main(int w, int h)
 
 	visual_init (0, NULL);
 
-    v.morph_name = "alphablend";
-    v.actor_name = "lv_scope";
-    v.input_name = "alsa";
+    v.morph_name = MORPH;
+    v.actor_name = ACTOR;
+    v.input_name = INPUT;
 
 	v.bin    = visual_bin_new ();
 

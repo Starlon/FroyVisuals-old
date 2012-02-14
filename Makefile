@@ -7,11 +7,13 @@ all:
 	@ndk-build
 	@ant clean
 	@ant release install
+	@adb push media/sound.au /sdcard/
 
 debug:
 	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
 	@ant clean
 	@ant debug install
+	@adb push media/sound.au /sdcard/
 
 clean:
 	@ndk-build clean

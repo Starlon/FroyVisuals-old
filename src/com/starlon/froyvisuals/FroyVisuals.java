@@ -17,14 +17,21 @@ package com.starlon.froyvisuals;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.content.Context;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.view.Display;
 import android.view.WindowManager;
+import android.view.MotionEvent;
+//import android.widget.Button;
+//import android.widget.TextView;
 
 public class FroyVisuals extends Activity
 {
@@ -42,7 +49,7 @@ public class FroyVisuals extends Activity
     }
 }
 
-class FroyVisualsView extends View {
+class FroyVisualsView extends View implements OnClickListener, OnLongClickListener, OnTouchListener {
     private WindowManager mWinMgr;
     private Bitmap mBitmap;
     private Context mCtx;
@@ -53,7 +60,7 @@ class FroyVisualsView extends View {
     private static native void render(Bitmap  bitmap, long time_ms);
     private static native void screenResize(int w, int y);
     //private static native void uploadAudio(short data);
-    private static native void switchActor(int prev);
+    private static native void switchActor(boolean prev);
     private static native void mouseMotion(float x, float y);
     private static native void mouseButton(int button, float x, float y);
     private static native void visualsQuit();
@@ -89,4 +96,16 @@ class FroyVisualsView extends View {
         invalidate();
     }
 
+    @Override public boolean onLongClick(View view) {
+        return false;
+    }
+
+    @Override public boolean onTouch(View v, MotionEvent event) {
+        switchActor(true);
+        return false;
+    }
+
+    @Override public void onClick(View view) {
+
+    }
 }
