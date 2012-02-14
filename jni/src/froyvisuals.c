@@ -258,8 +258,8 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
-/*
     visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
+/*
 
     int depthflag = visual_bin_get_depth(v.bin);
     VisVideoDepth depth = visual_video_depth_get_highest(depthflag);
@@ -268,13 +268,12 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize
     visual_video_set_depth(v.video, depth);
     visual_video_free_buffer(v.video);
     visual_video_allocate_buffer(v.video);
-
+*/
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
     visual_event_queue_add_resize(eventqueue, v.video, w, h);
 
 	visual_bin_sync( v.bin, 1 );
-*/
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
@@ -302,14 +301,18 @@ void app_main(int w, int h)
     int depthflag;
     VisVideoDepth depth;
 
-    visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
-	visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
-    visual_log_set_info_handler (my_info_handler, NULL);
-    visual_log_set_warning_handler (my_warning_handler, NULL);
-    visual_log_set_critical_handler (my_critical_handler, NULL);
-    visual_log_set_error_handler (my_error_handler, NULL);
-
-	visual_init (0, NULL);
+    if(!visual_is_initialized())
+    {
+        visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
+    	visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
+        visual_log_set_info_handler (my_info_handler, NULL);
+        visual_log_set_warning_handler (my_warning_handler, NULL);
+        visual_log_set_critical_handler (my_critical_handler, NULL);
+        visual_log_set_error_handler (my_error_handler, NULL);
+    
+    	visual_init (0, NULL);
+        memset(&v, 0, sizeof(v));
+    }
 
     v.morph_name = MORPH;
     v.actor_name = ACTOR;
@@ -386,7 +389,9 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(J
 
     VisVideo *vid = new_video(info.width, info.height, DEVICE_DEPTH, pixels);
 
-    if(visual_bin_depth_changed(v.bin))
+    if(visual_bin_depth_changed(v.bin) || 
+        (info.width != v.video->width || 
+        info.height != v.video->height) ) 
     {
 		v.pluginIsGL = (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL);
         depthflag = visual_bin_get_depth(v.bin);
@@ -398,10 +403,9 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(J
         {
             visual_video_set_depth(v.video, depth);
         }
-        if(v.video)
-            visual_video_free_buffer(v.video);
         visual_video_set_dimension(v.video, info.width, info.height);
         visual_video_set_pitch(v.video, info.width * visual_video_bpp_from_depth(depth));
+        visual_video_free_buffer(v.video);
         visual_video_allocate_buffer(v.video);
         visual_bin_sync(v.bin, TRUE);
     }
