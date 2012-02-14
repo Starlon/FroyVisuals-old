@@ -312,7 +312,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 		v.pluginIsGL = 1;
 	}
 
-    v.plugin = "avs";
+    v.plugin = "lv_scope";
 	visual_bin_connect_by_names (v.bin, (char*)v.plugin, "alsa");
 
 	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
@@ -323,12 +323,10 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_initApp(JNIE
 	visual_bin_realize (v.bin);
 	visual_bin_sync (v.bin, 0);
 
-    v.pal = visual_bin_get_palette(v.bin);
-
 	printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(JNIEnv * env, jobject  obj, jobject bitmap)
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(JNIEnv * env, jobject  obj, jobject bitmap, jint dur)
 {
     
     AndroidBitmapInfo  info;
@@ -381,7 +379,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(J
 
     AndroidBitmap_unlockPixels(env, bitmap);
 
-    stats_endFrame(&stats);
+    //stats_endFrame(&stats);
 
 	return TRUE;
 }

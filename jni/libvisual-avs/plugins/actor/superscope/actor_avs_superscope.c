@@ -217,10 +217,10 @@ int lv_superscope_init (VisPluginData *plugin)
     int i;
 
     static VisParamEntry params[] = {
-        VISUAL_PARAM_LIST_ENTRY_STRING ("point", "d=i+v*0.2; r=t+i*PI*4*count; x = cos(r)*d; y = sin(r) * d;"),
-        VISUAL_PARAM_LIST_ENTRY_STRING ("frame", "t=t-0.01;count=count+1;"),
+        VISUAL_PARAM_LIST_ENTRY_STRING ("point", "d=i+v*0.2; r=t+i*PI*4*count; x = cos(r)*d; y = sin(r) * d"),
+        VISUAL_PARAM_LIST_ENTRY_STRING ("frame", "t=t-0.01;count=count+1"),
         VISUAL_PARAM_LIST_ENTRY_STRING ("beat", ""),
-        VISUAL_PARAM_LIST_ENTRY_STRING ("init", "n=800;"),
+        VISUAL_PARAM_LIST_ENTRY_STRING ("init", "n=800"),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("channel_source", 0),
         VISUAL_PARAM_LIST_ENTRY ("palette"),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("drawmode", 1),

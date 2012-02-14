@@ -49,12 +49,11 @@ class FroyVisualsView extends View {
     private int height = -1;
     /* implementend by libplasma.so */
     private static native void render(Bitmap  bitmap, long time_ms);
-    private static native void resize(int w, int y);
+    private static native void screenResize(int w, int y);
     //private static native void uploadAudio(short data);
     private static native void switchActor(int prev);
     private static native void mouseMotion(float x, float y);
     private static native void mouseButton(int button, float x, float y);
-    private static native void screenResize(int w, int h);
     private static native void visualsQuit();
     private static native void initApp(int w, int h);
 
@@ -80,7 +79,7 @@ class FroyVisualsView extends View {
             width = W;
             height = H;
             mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-            //resize(width, height);
+            screenResize(width, height);
         }
 
         //canvas.drawColor(0xFFCCCCCC);
