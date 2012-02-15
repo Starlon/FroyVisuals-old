@@ -32,7 +32,7 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MORPH "alphablend"
-#define ACTOR "lv_scope"
+#define ACTOR "bumpscope"
 #define INPUT "dummy"
 
 /* LIBVISUAL */
@@ -225,8 +225,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jboolean prev)
 {
-    visual_log(VISUAL_LOG_CRITICAL, "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhm");
-
     const char *morph = v.morph_name;
 
     v_cycleActor((int)prev);
@@ -235,7 +233,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
 
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
-    visual_bin_sync( v.bin, 1);
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
@@ -244,7 +241,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
     visual_event_queue_add_mousemotion(eventqueue, x, y);
-    visual_bin_sync( v.bin, 1);
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
@@ -254,7 +250,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
         VisMouseState state = VISUAL_MOUSE_DOWN;
     visual_event_queue_add_mousebutton(eventqueue, button, state, x, y);
-    visual_bin_sync( v.bin, 1);
 }
 
 
@@ -265,8 +260,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
     visual_event_queue_add_resize(eventqueue, v.video, w, h);
-
-	visual_bin_sync( v.bin, 1 );
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
@@ -276,7 +269,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEven
     int keymod;
     VisKeyState state;
     visual_event_queue_add_keyboard(eventqueue, keysym, keymod, state);
-    visual_bin_sync( v.bin, 1);
 }
 
 // Is this even needed? What happens when the app is quietly discarded?
@@ -319,7 +311,7 @@ void app_main(int w, int h)
 	}
 
 	visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_ALL);
-    visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_32BIT);
+    visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_8BIT);
 
     VisActor *actor = visual_actor_new((char*)v.actor_name);
     VisInput *input = visual_input_new((char*)v.input_name);
