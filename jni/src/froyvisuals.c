@@ -23,7 +23,6 @@
 #include <android/log.h>
 #include <android/bitmap.h>
 #include <libvisual/libvisual.h>
-#include <SDL.h>
 
 #define DEVICE_DEPTH VISUAL_VIDEO_DEPTH_16BIT
 
