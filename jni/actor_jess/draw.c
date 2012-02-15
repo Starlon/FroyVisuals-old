@@ -551,7 +551,7 @@ void stars_manage(JessPrivate *priv, uint8_t *buffer, int new,  float alpha, flo
 		float gamma, int persp, int dist_cam)
 {
 	float x[STARS_MAX], y[STARS_MAX], z[STARS_MAX], xres2 = (float) (priv->resx >> 1), yres2 = (float) (priv->resy >> 1);
-	float x_t, y_t, z_t;
+	float x_t = 0, y_t = 0, z_t = 0;
 	float mult;
 	int ix, iy, i, color, taille;
 
