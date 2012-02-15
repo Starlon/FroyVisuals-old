@@ -33,7 +33,7 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MORPH "alphablend"
-#define ACTOR "lv_scope"
+#define ACTOR "bumpscope"
 #define INPUT "dummy"
 
 /* LIBVISUAL */
@@ -232,12 +232,13 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
 
     visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
-    visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+    //visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
 }
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
+    return;
     visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
@@ -246,6 +247,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
 {
+    return;
     visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
@@ -265,6 +267,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
 {
+    return;
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v.bin)));
     VisKey keysym;
     int keymod;
@@ -327,7 +330,7 @@ void app_main(int w, int h)
     visual_video_allocate_buffer(v.video);
     visual_bin_set_video(v.bin, v.video);
 
-	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
+	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_DIRECT);
 	visual_bin_switch_set_automatic (v.bin, 1);
 	visual_bin_switch_set_steps (v.bin, 10);
 

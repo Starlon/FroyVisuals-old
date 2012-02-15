@@ -116,14 +116,15 @@ class FroyVisualsView extends View {
 */
     }
 
-    @Override protected void onDraw(Canvas canvas) {
-    if( mW != getWidth() || mH != getHeight())
+    @Override protected void onDraw(Canvas canvas) 
     {
-        mW = getWidth();
-        mH = getHeight();
-        mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
-        screenResize(mW, mH);
-    }
+        if( mW != getWidth() || mH != getHeight())
+        {
+            mW = getWidth();
+            mH = getHeight();
+            mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
+            screenResize(mW, mH);
+        }
 /*
     mAudio.startRecording();
     short[] data = new short[PCM_SIZE];
@@ -138,7 +139,8 @@ class FroyVisualsView extends View {
         invalidate();
     }
 
-    @Override public boolean onTouchEvent (MotionEvent event) {
+    @Override public boolean onTouchEvent (MotionEvent event) 
+    {
         int action = event.getAction();
         float x = event.getX();
         float y = event.getY();
