@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2012 Scott Sibley <sisibley@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import android.graphics.Rect;
 import android.view.Display;
 import android.view.WindowManager;
 import android.view.MotionEvent;
-//import android.widget.Button;
-//import android.widget.TextView;
 
 public class FroyVisuals extends Activity
 {
@@ -59,7 +57,7 @@ class FroyVisualsView extends View implements OnClickListener, OnLongClickListen
     /* implementend by libplasma.so */
     private static native void render(Bitmap  bitmap, long time_ms);
     private static native void screenResize(int w, int y);
-    //private static native void uploadAudio(short data);
+    private static native void uploadAudio(short data);
     private static native void switchActor(boolean prev);
     private static native void mouseMotion(float x, float y);
     private static native void mouseButton(int button, float x, float y);
@@ -101,11 +99,10 @@ class FroyVisualsView extends View implements OnClickListener, OnLongClickListen
     }
 
     @Override public boolean onTouch(View v, MotionEvent event) {
-        switchActor(true);
-        return false;
+        return true;
     }
 
     @Override public void onClick(View view) {
-
+        switchActor(true);
     }
 }

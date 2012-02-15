@@ -32,7 +32,7 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MORPH "alphablend"
-#define ACTOR "lv_scope"
+#define ACTOR "avs"
 #define INPUT "dummy"
 
 /* LIBVISUAL */
@@ -225,11 +225,13 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jboolean prev)
 {
+    visual_log(VISUAL_LOG_CRITICAL, "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhm");
+
     const char *morph = v.morph_name;
 
     v_cycleActor((int)prev);
 
-    visual_log(VISUAL_LOG_INFO, "Switching actors %s <-> %s", morph, v.morph_name);
+    visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
@@ -259,16 +261,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseButton(
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
     visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
-/*
 
-    int depthflag = visual_bin_get_depth(v.bin);
-    VisVideoDepth depth = visual_video_depth_get_highest(depthflag);
-    visual_video_set_pitch(v.video, w * visual_video_bpp_from_depth(depth));
-	visual_video_set_dimension (v.video, w, h);
-    visual_video_set_depth(v.video, depth);
-    visual_video_free_buffer(v.video);
-    visual_video_allocate_buffer(v.video);
-*/
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
     visual_event_queue_add_resize(eventqueue, v.video, w, h);
