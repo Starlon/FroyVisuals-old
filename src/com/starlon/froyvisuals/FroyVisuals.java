@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Scott Sibley <sisibley@gmail.com>
+ * Copyright (C) 2010 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,19 +17,15 @@ package com.starlon.froyvisuals;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.content.Context;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
+import android.view.MotionEvent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.view.Display;
-import android.view.WindowManager;
-import android.view.MotionEvent;
+import android.media.AudioRecord;
+import android.media.AudioFormat;
+import android.media.MediaRecorder;
+import android.util.Log;
 
 public class FroyVisuals extends Activity
 {
@@ -47,62 +43,115 @@ public class FroyVisuals extends Activity
     }
 }
 
-class FroyVisualsView extends View implements OnClickListener, OnLongClickListener, OnTouchListener {
-    private WindowManager mWinMgr;
+class FroyVisualsView extends View {
     private Bitmap mBitmap;
-    private Context mCtx;
-    private long mStartTime;
-    private int mWidth = -1;
-    private int mHeight = -1;
-    /* implementend by libplasma.so */
-    private static native void render(Bitmap  bitmap, long time_ms);
-    private static native void screenResize(int w, int y);
-    private static native void uploadAudio(short data);
-    private static native void switchActor(boolean prev);
+    private AudioRecord mAudio;
+    private int mH, mW;
+    private boolean isAvailable;
+    private int PCM_SIZE;
+    private static int RECORDER_SAMPLERATE = 44100;
+    private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
+    private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+    private static final String APP_TAG = "FroyVisuals";
+
+    private static native boolean render(Bitmap  bitmap);
+    private static native void resizePCM(int size, int rate, int channels, int encoding);
+    private static native void uploadAudio(short[] data);
+    private static native void initApp(int w, int h);
+    private static native void switchActor(int direction);
     private static native void mouseMotion(float x, float y);
     private static native void mouseButton(int button, float x, float y);
-    private static native void visualsQuit();
-    private static native void initApp(int w, int h);
+    private static native void screenResize(int w, int h);
 
+/*
+    private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
+    public AudioRecord findAudioRecord() {
+        for (int rate : mSampleRates) {
+            for (short audioFormat : new short[] { AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT }) {
+                for (short channelConfig : new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO }) {
+                    try {
+                        Log.d(APP_TAG, "Attempting rate " + rate + "Hz, bits: " + audioFormat + ", channel: "
+                                + channelConfig);
+                        int bufferSize = AudioRecord.getMinBufferSize(rate, channelConfig, audioFormat);
+    
+                        if (bufferSize != AudioRecord.ERROR_BAD_VALUE) {
+                            // check if we can instantiate and have a success
+                            AudioRecord recorder = new AudioRecord(MediaRecorder.AudioSource.DEFAULT, rate, channelConfig, audioFormat, bufferSize);
+    
+                            if (recorder.getState() == AudioRecord.STATE_INITIALIZED)
+                            {
+                PCM_SIZE = bufferSize;
+                                RECORDER_SAMPLERATE = rate;
+                                RECORDER_CHANNELS = channelConfig;
+                                RECORDER_AUDIO_ENCODING = audioFormat;
+                                return recorder;
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e(APP_TAG, rate + " Exception, keep trying.",e);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+*/
+    
+    //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
 
-        mCtx = context;
-        mWinMgr = (WindowManager)mCtx.getSystemService(Context.WINDOW_SERVICE);
-        mWidth = mWinMgr.getDefaultDisplay().getWidth();
-        mHeight = mWinMgr.getDefaultDisplay().getHeight();
-        mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
-        mStartTime = System.currentTimeMillis();
-        initApp(mWidth, mHeight);
+        mW = -1;
+        mH = -1;
+        isAvailable = false;
+
+        initApp(getWidth(), getHeight());
+/*
+    mAudio = findAudioRecord();
+        if(mAudio != null)
+    {
+        resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+        isAvailable = true;
+    }
+*/
     }
 
     @Override protected void onDraw(Canvas canvas) {
-        int W = mWinMgr.getDefaultDisplay().getWidth();
-        int H = mWinMgr.getDefaultDisplay().getHeight();
+    if( mW != getWidth() || mH != getHeight())
+    {
+        mW = getWidth();
+        mH = getHeight();
+        mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
+        screenResize(mW, mH);
+    }
+/*
+    mAudio.startRecording();
+    short[] data = new short[PCM_SIZE];
+        mAudio.read(data, 0, PCM_SIZE);
+    mAudio.stop();
+        uploadAudio(data);
+*/
+        if(!render(mBitmap)) return;
 
-        if(mWidth != W || mHeight != H) {
-            mWidth = W;
-            mHeight = H;
-            mBitmap = Bitmap.createBitmap(mWidth, mHeight, Bitmap.Config.RGB_565);
-            screenResize(mWidth, mHeight);
-        }
-
-        //canvas.drawColor(0xFFCCCCCC);
-        render(mBitmap, System.currentTimeMillis() - mStartTime);
         canvas.drawBitmap(mBitmap, 0, 0, null);
-        // force a redraw, with a different time-based pattern.
+        // force a redraw
         invalidate();
     }
 
-    @Override public boolean onLongClick(View view) {
-        return false;
-    }
-
-    @Override public boolean onTouch(View v, MotionEvent event) {
-        return true;
-    }
-
-    @Override public void onClick(View view) {
-        switchActor(true);
+    @Override public boolean onTouchEvent (MotionEvent event) {
+        int action = event.getAction();
+        float x = event.getX();
+        float y = event.getY();
+        switch(action)
+        {
+            case MotionEvent.ACTION_DOWN:
+                switchActor(0);
+                mouseButton(1, x, y);
+            break;
+            case MotionEvent.ACTION_MOVE:
+                mouseMotion(x, y);
+            break;
+        }
+        return true;    
     }
 }

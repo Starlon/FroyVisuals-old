@@ -27,6 +27,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <gettext.h>
+#include <math.h>
 #include <libvisual/libvisual.h>
 
 #define PCM_BUF_SIZE 2048
@@ -74,17 +75,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 int inp_alsa_init (VisPluginData *plugin)
 {
-    size_t sz;
-    FILE *file;
     alsaPrivate *priv = visual_mem_new0 (alsaPrivate, 1);
-
-    file = fopen ( "/mnt/sdcard/sound.au" , "r" );
-    fseek (file , 0 , SEEK_END );
-    priv->size = ftell(file);  
-    rewind(file);
-    priv->data = visual_mem_malloc(priv->size);
-    fread(priv->data, priv->size, 1, file);
-    fclose ( file );
 
     visual_log_return_val_if_fail(priv != NULL, -1);
     visual_log_return_val_if_fail(plugin != NULL, -1);
@@ -115,8 +106,8 @@ int inp_alsa_cleanup (VisPluginData *plugin)
 int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 {
     VisBuffer buffer;
-    uint16_t data[PCM_BUF_SIZE];
-    uint16_t val;
+    int16_t data[PCM_BUF_SIZE], i;
+    float val;
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
     visual_log_return_val_if_fail(audio != NULL, -1);
@@ -125,14 +116,14 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
     visual_log_return_val_if_fail(priv != NULL, -1);
 
     visual_random_context_set_seed(&priv->rContext, visual_timer_elapsed_msecs(&priv->timer));
-/*
+
     for(i = 0; i < PCM_BUF_SIZE; i++)
     {
-        data[i] = visual_random_context_float(&priv->rContext) * 16384;
+        data[i] = 
+        val = visual_random_context_float(&priv->rContext);
+        data[i] = sin(((int)(val  * 16384)% 360)*M_PI/180) * 116384/2;
     }
-*/
-    val = ((long)(visual_random_context_float(&priv->rContext) * 16384) % priv->size);
-    visual_mem_copy(data, priv->data + val, PCM_BUF_SIZE * sizeof(int16_t));
+
     visual_buffer_init (&buffer, data, PCM_BUF_SIZE/2, NULL);
     visual_audio_samplepool_input (audio->samplepool, &buffer, 
         VISUAL_AUDIO_SAMPLE_RATE_48000,
