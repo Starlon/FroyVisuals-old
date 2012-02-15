@@ -249,6 +249,11 @@ VisVideo *visual_video_new_with_buffer (int width, int height, VisVideoDepth dep
 int visual_video_free_buffer (VisVideo *video)
 {
 	visual_log_return_val_if_fail (video != NULL, -VISUAL_ERROR_VIDEO_NULL);
+    if(!visual_video_get_pixels(video))
+    {
+        int *tmp = NULL;
+        *tmp = 0;
+    }
 	visual_log_return_val_if_fail (visual_video_get_pixels (video) != NULL, -VISUAL_ERROR_VIDEO_PIXELS_NULL);
 
 	if (video->pixel_rows != NULL)
@@ -2164,7 +2169,6 @@ int visual_video_depth_transform (VisVideo *dest, VisVideo *src)
 	if (dest->depth == VISUAL_VIDEO_DEPTH_8BIT || src->depth == VISUAL_VIDEO_DEPTH_8BIT) {
 		visual_log_return_val_if_fail (src->pal != NULL, -VISUAL_ERROR_PALETTE_NULL);
 		visual_log_return_val_if_fail (src->pal->ncolors == 256, -VISUAL_ERROR_PALETTE_SIZE);
-        int *txt = NULL;
 	}
 
 	if (src->depth == VISUAL_VIDEO_DEPTH_8BIT) {

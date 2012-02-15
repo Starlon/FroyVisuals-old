@@ -393,6 +393,7 @@ static void perform_dft_brute_force (VisDFT *dft, float *output, float *input)
 			xr += input[j] * wr;
 			xi += input[j] * wi;
 
+visual_log(VISUAL_LOG_CRITICAL, "WHAT WHAT WHAT %d", j);
 			wtemp = wr;
 			wr = wr * fcache->costable[i] - wi * fcache->sintable[i];
 			wi = wtemp * fcache->sintable[i] + wi * fcache->costable[i];

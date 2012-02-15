@@ -391,7 +391,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(J
         }
         visual_video_set_dimension(v.video, info.width, info.height);
         visual_video_set_pitch(v.video, info.width * visual_video_bpp_from_depth(depth));
-        visual_video_free_buffer(v.video);
+        if(visual_video_get_pixels(v.video))
+            visual_video_free_buffer(v.video);
         visual_video_allocate_buffer(v.video);
         visual_bin_sync(v.bin, TRUE);
     }

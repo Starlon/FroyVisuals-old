@@ -354,6 +354,9 @@ int lv_analyzer_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 	/* no value configured? */
 	if(bars < 0)
 		bars = video->width/2;
+
+    if(!visual_utils_is_power_of_2(bars))
+        bars--;
 		
 	float freq[bars];
 	float pcm[bars * 2];
@@ -361,14 +364,16 @@ int lv_analyzer_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 
 	visual_video_fill_color (video, NULL);
 
-	visual_buffer_set_data_pair (&buffer, freq, sizeof (freq));
-	visual_buffer_set_data_pair (&pcmb, pcm, sizeof (pcm));
+	visual_buffer_set_data_pair (&buffer, freq, sizeof(freq));
+	visual_buffer_set_data_pair (&pcmb, pcm, sizeof(pcm));
 
-	visual_audio_get_sample_mixed_simple (audio, &pcmb, 2,
+	visual_audio_get_sample_mixed (audio, &pcmb, TRUE, 2,
 			VISUAL_AUDIO_CHANNEL_LEFT,
-			VISUAL_AUDIO_CHANNEL_RIGHT);
+			VISUAL_AUDIO_CHANNEL_RIGHT,
+            1.0,
+            1.0);
 
-	visual_audio_get_spectrum_for_sample (&buffer, &pcmb, TRUE);
+	visual_audio_get_spectrum_for_sample (&buffer, &pcmb, FALSE);
 
 	for (i = 0; i < bars; i++)
 		draw_bar (video, i, bars, freq[i]);
