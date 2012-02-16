@@ -285,6 +285,7 @@ void check_os_katmai_support( void )
 }
 
 
+/*
 int has_cpuid (void)
 {
 #if defined(VISUAL_ARCH_X86)
@@ -308,7 +309,9 @@ int has_cpuid (void)
 	return 0;
 #endif
 }
+*/
 
+/* FIXME
 int cpuid (unsigned int ax, unsigned int *p)
 {
 #if defined(VISUAL_ARCH_X86)
@@ -327,6 +330,7 @@ int cpuid (unsigned int ax, unsigned int *p)
 	return -VISUAL_ERROR_CPU_INVALID_CODE;
 #endif
 }
+*/
 
 /**
  * @defgroup VisCPU VisCPU

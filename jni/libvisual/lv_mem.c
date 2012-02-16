@@ -376,6 +376,7 @@ static void *mem_copy_3dnow (void *dest, const void *src, visual_size_t n)
 static void *mem_copy_altivec (void *dest, const void *src, visual_size_t n)
 {
 
+    return NULL;
 }
 
 /* Memset functions, 1 byte memset */
@@ -526,6 +527,7 @@ static void *mem_set8_mmx2 (void *dest, int c, visual_size_t n)
 static void *mem_set8_altivec (void *dest, int c, visual_size_t n)
 {
 
+    return NULL;
 }
 
 /* Memset functions, 2 byte memset */
@@ -670,6 +672,7 @@ static void *mem_set16_mmx2 (void *dest, int c, visual_size_t n)
 static void *mem_set16_altivec (void *dest, int c, visual_size_t n)
 {
 
+    return NULL;
 }
 
 /* Memset functions, 4 byte memset */
@@ -781,6 +784,7 @@ static void *mem_set32_mmx2 (void *dest, int c, visual_size_t n)
 static void *mem_set32_altivec (void *dest, int c, visual_size_t n)
 {
 
+    return NULL;
 }
 
 /**

@@ -262,6 +262,8 @@ int act_bumpscope_dimension (VisPluginData *plugin, VisVideo *video, int width, 
 int act_bumpscope_events (VisPluginData *plugin, VisEventQueue *events)
 {
 	BumpscopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    if(priv->video == 0x0)
+        visual_log(VISUAL_LOG_CRITICAL, "wtf it's NULL --------------------- %p", priv);
 	VisEvent ev;
 	VisParamEntry *param;
 	VisColor *tmp;
@@ -328,7 +330,6 @@ VisPalette *act_bumpscope_palette (VisPluginData *plugin)
 int act_bumpscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
 	BumpscopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
-	int i;
 
 	priv->video = video;
 

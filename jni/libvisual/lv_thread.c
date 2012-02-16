@@ -655,6 +655,7 @@ static VisMutex *mutex_new_win32 ()
 #ifdef VISUAL_THREAD_MODEL_WIN32
 
 #endif
+    return NULL;
 }
 
 static int mutex_free_win32 (VisMutex *mutex)
@@ -662,6 +663,7 @@ static int mutex_free_win32 (VisMutex *mutex)
 #ifdef VISUAL_THREAD_MODEL_WIN32
 
 #endif
+    return 0;
 }
 
 static int mutex_init_win32 (VisMutex *mutex)
@@ -669,6 +671,7 @@ static int mutex_init_win32 (VisMutex *mutex)
 #ifdef VISUAL_THREAD_MODEL_WIN32
 
 #endif
+    return 0;
 }
 
 static int mutex_lock_win32 (VisMutex *mutex)
@@ -676,6 +679,7 @@ static int mutex_lock_win32 (VisMutex *mutex)
 #ifdef VISUAL_THREAD_MODEL_WIN32
 
 #endif
+    return 0;
 }
 
 static int mutex_trylock_win32 (VisMutex *mutex)
@@ -683,6 +687,7 @@ static int mutex_trylock_win32 (VisMutex *mutex)
 #ifdef VISUAL_THREAD_MODEL_WIN32
 
 #endif
+    return 0;
 }
 
 static int mutex_unlock_win32 (VisMutex *mutex)
@@ -690,6 +695,7 @@ static int mutex_unlock_win32 (VisMutex *mutex)
 #ifdef VISUAL_THREAD_MODEL_WIN32
 
 #endif
+    return 0;
 }
 
 /* GThread implementation */
