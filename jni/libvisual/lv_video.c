@@ -1425,8 +1425,8 @@ static int blit_overlay_colorkey (VisVideo *dest, VisVideo *src)
 static int blit_overlay_surfacealpha (VisVideo *dest, VisVideo *src)
 {
 	int x, y;
-	uint8_t *destbuf = visual_video_get_pixels (dest);
-	uint8_t *srcbuf = visual_video_get_pixels (src);
+	uint8_t *destbuf __attribute__ ((__aligned__(4))) = visual_video_get_pixels (dest);
+	uint8_t *srcbuf __attribute__ ((__aligned__(4))) = visual_video_get_pixels (src);
 	uint8_t alpha = src->density;
 
 	if (dest->depth == VISUAL_VIDEO_DEPTH_8BIT) {
@@ -1500,9 +1500,10 @@ static int blit_overlay_surfacealpha (VisVideo *dest, VisVideo *src)
 
 static int blit_overlay_surfacealphacolorkey (VisVideo *dest, VisVideo *src)
 {
+    visual_log(VISUAL_LOG_DEBUG, "blit_overlay_surfacealphacolorkey");
 	int x, y;
-	uint8_t *destbuf = visual_video_get_pixels (dest);
-	uint8_t *srcbuf = visual_video_get_pixels (src);
+	uint8_t *destbuf __attribute__ ((__aligned__(4)))  = visual_video_get_pixels (dest);
+	uint8_t *srcbuf __attribute__ ((__aligned__(4))) = visual_video_get_pixels (src);
 	uint8_t alpha = src->density;
 
 	if (dest->depth == VISUAL_VIDEO_DEPTH_8BIT) {
@@ -1811,6 +1812,8 @@ static int fill_color16 (VisVideo *video, VisColor *color)
 
 static int fill_color24 (VisVideo *video, VisColor *color)
 {
+    visual_log(VISUAL_LOG_DEBUG, "fill_color24 ------------------------------------------ ");
+
 	int x, y;
 	uint32_t *buf;
 	uint8_t *rbuf = visual_video_get_pixels (video);

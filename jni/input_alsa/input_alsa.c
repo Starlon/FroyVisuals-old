@@ -132,7 +132,7 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 	
 			visual_buffer_init (&buffer, data, PCM_BUF_SIZE/2, NULL);
 	
-			visual_audio_samplepool_input (audio->samplepool, &buffer, VISUAL_AUDIO_SAMPLE_RATE_48000,
+			visual_audio_samplepool_input (audio->samplepool, &buffer, VISUAL_AUDIO_SAMPLE_RATE_44100,
 				VISUAL_AUDIO_SAMPLE_FORMAT_S16, VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO);
 		}
 	}

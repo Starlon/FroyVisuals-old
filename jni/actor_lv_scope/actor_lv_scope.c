@@ -32,7 +32,7 @@
 
 #include <libvisual/libvisual.h>
 
-#define PCM_SIZE	1024
+#define PCM_SIZE	2048
 
 typedef struct {
 	VisPalette	pal;

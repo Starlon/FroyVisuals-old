@@ -148,6 +148,7 @@ int act_bumpscope_init (VisPluginData *plugin)
 
 	separator = visual_ui_separator_new (VISUAL_ORIENT_TYPE_HORIZONTAL);
 
+/*
 	numeric = visual_ui_numeric_new ();
 	visual_ui_widget_set_tooltip (numeric, _("The size of the light"));
 	visual_ui_mutator_set_param (VISUAL_UI_MUTATOR (numeric), visual_param_container_get (paramcontainer, "light size"));
@@ -191,6 +192,7 @@ int act_bumpscope_init (VisPluginData *plugin)
 	visual_ui_box_pack (VISUAL_UI_BOX (vbox), check3);
 
 	visual_plugin_set_userinterface (plugin, vbox);
+*/
 
 	priv->pcmbuf = visual_buffer_new_allocate (512 * sizeof (float), visual_buffer_destroyer_free);
 

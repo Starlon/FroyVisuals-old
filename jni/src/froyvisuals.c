@@ -10,8 +10,8 @@
  ***************************************************************************/
 
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/un.h>
+//#include <sys/socket.h>
+//#include <sys/un.h>
 #include <unistd.h>
 
 #include <stdlib.h>
@@ -409,6 +409,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(J
     }
 
     visual_video_blit_overlay(vid, v.video, 0, 0, FALSE);
+    //visual_video_depth_transform(vid, v.video);
 
     visual_object_unref(VISUAL_OBJECT(vid));
 

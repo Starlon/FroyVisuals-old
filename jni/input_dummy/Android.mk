@@ -5,6 +5,6 @@ LOCAL_STATIC_LIBRARIES := libvisual
 LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= input_dummy
 LOCAL_SRC_FILES := input_dummy.c
-LOCAL_CFLAGS	:= -Wall -O0 -g
+LOCAL_CFLAGS	:= -Wall -O0 -g -Wstrict-aliasing -Wcast-align -Wpointer-arith -Waddress
 include $(BUILD_SHARED_LIBRARY)
 

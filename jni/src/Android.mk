@@ -9,7 +9,7 @@ LOCAL_C_INCLUDES := \
 
 # Add any compilation flags for your project here...
 LOCAL_CFLAGS := \
-	-DPLAY_MOD -g -O0
+	-DPLAY_MOD -g -O0 -Wstrict-aliasing -Wcast-align -Waddress
 
 # Add your application source files here...
 LOCAL_SRC_FILES := froyvisuals.c
