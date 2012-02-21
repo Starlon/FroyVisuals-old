@@ -609,7 +609,6 @@ static int negotiate_video (VisActor *actor, int noevent)
 	/* Pump the resize events and handle all the pending events */
 	actplugin->requisition (visual_actor_get_plugin (actor), &actor->video->width, &actor->video->height);
 
-return 0;
 	if (noevent == FALSE) {
 		visual_event_queue_add_resize (&actor->plugin->eventqueue, actor->video,
 				actor->video->width, actor->video->height);

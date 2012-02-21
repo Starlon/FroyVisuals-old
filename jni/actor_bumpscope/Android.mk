@@ -6,5 +6,5 @@ LOCAL_MODULE	:= actor_bumpscope
 LOCAL_SRC_FILES := actor_bumpscope.c bump_scope.c
 LOCAL_CFLAGS	:= -Wstrict-aliasing -Wcast-align -Wpointer-arith -Waddress -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
