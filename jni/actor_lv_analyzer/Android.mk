@@ -5,6 +5,6 @@ LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= actor_lv_analyzer
 LOCAL_SRC_FILES := actor_lv_analyzer.c
 LOCAL_CFLAGS	:= -Wall -O0 -g -Wstrict-aliasing -Wcast-align -Wpointer-arith -Waddress
-LOCAL_STATIC_LIBRARIES := libvisual
-#include $(BUILD_SHARED_LIBRARY)
+LOCAL_SHARED_LIBRARIES := libvisual
+include $(BUILD_SHARED_LIBRARY)
 
