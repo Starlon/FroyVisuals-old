@@ -1,158 +1,0 @@
-10
-
-dir
-1575
-https://libvisual.svn.sourceforge.net/svnroot/libvisual/trunk/libvisual-avs/plugins/transform
-https://libvisual.svn.sourceforge.net/svnroot/libvisual
-
-
-
-2011-07-01T00:04:34.477537Z
-1575
-starlon
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1b7088b0-ff3c-0410-bcd9-ae3b15bb3c64
-
-rotblit
-dir
-
-dcolormod
-dir
-
-videodelay
-dir
-
-fadeout
-dir
-
-blit
-dir
-
-dmovement
-dir
-
-bump
-dir
-
-blur
-dir
-
-mirror
-dir
-
-colorreplace
-dir
-
-mosaic
-dir
-
-shift
-dir
-
-bright
-dir
-
-water
-dir
-
-clear
-dir
-
-multiplier
-dir
-
-trans
-dir
-
-interf
-dir
-
-scat
-dir
-
-movement
-dir
-
-colorreduction
-dir
-
-contrast
-dir
-
-fastbright
-dir
-
-interleave
-dir
-
-colorfade
-dir
-
-grain
-dir
-
-ddm
-dir
-
-channelshift
-dir
-
-waterbump
-dir
-
-onetone
-dir
-
-invert
-dir
-
-multidelay
-dir
-
-Makefile.am
-file
-
-
-
-
-2011-12-16T14:26:56.722849Z
-a0274f5f3df48ddf37287f006000cf80
-2011-06-30T23:45:13.306385Z
-1573
-starlon
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-49
-

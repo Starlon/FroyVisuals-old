@@ -1,122 +1,0 @@
-10
-
-dir
-1575
-https://libvisual.svn.sourceforge.net/svnroot/libvisual/trunk/libvisual-avs/plugins/actor
-https://libvisual.svn.sourceforge.net/svnroot/libvisual
-
-
-
-2011-07-01T00:04:34.477537Z
-1575
-starlon
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1b7088b0-ff3c-0410-bcd9-ae3b15bb3c64
-
-avi
-dir
-
-text
-dir
-
-clear
-dir
-
-superscope
-dir
-
-timescope
-dir
-
-simple
-dir
-
-parts
-dir
-
-stars
-dir
-
-dotgrid
-dir
-
-rotstar
-dir
-
-dotfnt
-dir
-
-ring
-dir
-
-dotpln
-dir
-
-oscring
-dir
-
-nfclr
-dir
-
-svp
-dir
-
-Makefile.am
-file
-
-
-
-
-2011-12-16T14:26:55.190849Z
-9678d01e52b44f4b09e7155a99b106d0
-2011-05-11T01:29:54.984610Z
-1473
-starlon
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-44
-
-picture
-dir
-
-bspin
-dir
-
-unkn
-dir
-
-oscstar
-dir
-
