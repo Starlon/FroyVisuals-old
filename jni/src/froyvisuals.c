@@ -33,7 +33,7 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MORPH "alphablend"
-#define ACTOR "oinksie"
+#define ACTOR "jakdaw"
 #define INPUT "dummy"
 
 /* LIBVISUAL */
@@ -408,8 +408,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_render(J
 		visual_bin_run (v.bin);
     }
 
-    visual_video_blit_overlay(vid, v.video, 0, 0, FALSE);
-    //visual_video_depth_transform(vid, v.video);
+    //visual_video_blit_overlay(vid, v.video, 0, 0, FALSE);
+    visual_video_depth_transform(vid, v.video);
 
     visual_object_unref(VISUAL_OBJECT(vid));
 

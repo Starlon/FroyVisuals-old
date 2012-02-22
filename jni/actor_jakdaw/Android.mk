@@ -6,5 +6,5 @@ LOCAL_MODULE	:= actor_jakdaw
 LOCAL_SRC_FILES := actor_jakdaw.c  feedback.c  plotter.c
 LOCAL_CFLAGS	:= -Wall -O0 -g -Wstrict-aliasing -Wcast-align -Wpointer-arith -Waddress
 LOCAL_STATIC_LIBRARIES := libvisual
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 

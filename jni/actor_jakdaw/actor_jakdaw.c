@@ -304,11 +304,9 @@ int act_jakdaw_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 	visual_audio_get_spectrum_for_sample (priv->freqbuf, priv->pcmbuf, TRUE);
 
 	_jakdaw_feedback_render (priv, vscr);
-/*
 	_jakdaw_plotter_draw (priv,
 			visual_buffer_get_data (priv->pcmbuf),
 			visual_buffer_get_data (priv->freqbuf), vscr);
-*/
 	return 0;
 }
 
