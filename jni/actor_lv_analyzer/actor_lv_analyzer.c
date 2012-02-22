@@ -355,9 +355,6 @@ int lv_analyzer_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 	if(bars < 0)
 		bars = video->width/2;
 
-    if(!visual_utils_is_power_of_2(bars))
-        bars--;
-		
 	float freq[bars];
 	float pcm[bars * 2];
 	int i;
