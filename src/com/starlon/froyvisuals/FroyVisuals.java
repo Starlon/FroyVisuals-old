@@ -40,6 +40,8 @@ public class FroyVisuals extends Activity
     /* load our native library */
     static {
         System.loadLibrary("visual");
+        //System.loadLibrary("common");
+        //System.loadLibrary("actor_avs");
         System.loadLibrary("main");
     }
 }

@@ -10,6 +10,7 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../include/\
 	$(LOCAL_PATH)/../evaluator/\
 	$(LOCAL_PATH)/../../libxml2/
-LOCAL_STATIC_LIBRARIES := libvisual common libxml2
+LOCAL_SHARED_LIBRARIES := libvisual common
+LOCAL_STATIC_LIBRARIES := xmms2
 include $(BUILD_SHARED_LIBRARY)
 

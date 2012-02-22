@@ -57,7 +57,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 		.requisition = act_avs_requisition,
 		.palette = act_avs_palette,
 		.render = act_avs_render,
-		.vidoptions.depth = VISUAL_VIDEO_DEPTH_16BIT,
+		.vidoptions.depth = VISUAL_VIDEO_DEPTH_32BIT,
 	}};
 
 	static const VisPluginInfo info[] = {{
@@ -155,7 +155,6 @@ int act_avs_requisition (VisPluginData *plugin, int *width, int *height)
 
 int act_avs_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
 {
-return;
 	AVSPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	
 	visual_video_set_dimension (video, width, height);
@@ -232,13 +231,15 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 					priv->pipeline->blendmode = visual_param_entry_get_integer(param);
 				}
 				if (visual_param_entry_is (param, "filename")) {
-					char *filename = NULL;//visual_param_entry_get_string (param);
+					char *filename = visual_param_entry_get_string (param);
+					//AVSTree *tree;
 
+		                        printf("event filename %s\n", filename);
 					if (priv->wtree != NULL)
 						visual_object_unref (VISUAL_OBJECT (priv->wtree));
 
 					if (priv->lvtree != NULL)
-						visual_object_unref (VISUAL_OBJECT (priv->lvtree));
+						;//visual_object_unref (VISUAL_OBJECT (priv->lvtree));
 
 					if (priv->pipeline != NULL)
 						visual_object_unref (VISUAL_OBJECT (priv->pipeline));
@@ -259,12 +260,10 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 						LVAVSPresetElement *blur3;
 						LVAVSPresetElement *blur4;
 						sscope1 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
-						//move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
-						blur1 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
+						move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
 						preset = lvavs_preset_new ();
 						preset->main = lvavs_preset_container_new ();
 
-						visual_list_add (preset->main->members, blur1);
                         visual_list_add(preset->main->members, sscope1);
 
 						static VisParamEntry params[] = {
@@ -328,7 +327,7 @@ int act_avs_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 	}
 */
 
-	//lvavs_pipeline_run (priv->pipeline, video, audio);
+	lvavs_pipeline_run (priv->pipeline, video, audio);
 
 	return 0;
 }

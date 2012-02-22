@@ -5,6 +5,6 @@ LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= common
 LOCAL_SRC_FILES := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
 LOCAL_CFLAGS	:= -Wall -O0 -g
-LOCAL_STATIC_LIBRARIES := libvisual
-include $(BUILD_STATIC_LIBRARY)
+LOCAL_SHARED_LIBRARIES := libvisual
+include $(BUILD_SHARED_LIBRARY)
 

@@ -246,47 +246,25 @@ int lv_superscope_init (VisPluginData *plugin)
     visual_palette_free_colors (&priv->pal);
 
     /* Init super scope */
-/*
-    priv->ctx = avs_runnable_context_new();
-    priv->vm = avs_runnable_variable_manager_new();
-*/
-    /* Bind variables to context */
-/*
-    avs_runnable_variable_bind(priv->vm, "n", &priv->n);
-    avs_runnable_variable_bind(priv->vm, "b", &priv->b);
-    avs_runnable_variable_bind(priv->vm, "x", &priv->x);
-    avs_runnable_variable_bind(priv->vm, "y", &priv->y);
-    avs_runnable_variable_bind(priv->vm, "i", &priv->i);
-    avs_runnable_variable_bind(priv->vm, "v", &priv->v);
-    avs_runnable_variable_bind(priv->vm, "w", &priv->w);
-    avs_runnable_variable_bind(priv->vm, "h", &priv->h);
-    avs_runnable_variable_bind(priv->vm, "t", &priv->t);
-    avs_runnable_variable_bind(priv->vm, "d", &priv->d);
-    avs_runnable_variable_bind(priv->vm, "$PI", &PI);
-    avs_runnable_variable_bind(priv->vm, "red", &priv->red);
-    avs_runnable_variable_bind(priv->vm, "green", &priv->green);
-    avs_runnable_variable_bind(priv->vm, "blue", &priv->blue);
-    avs_runnable_variable_bind(priv->vm, "linesize", &priv->linesize);
-    avs_runnable_variable_bind(priv->vm, "skip", &priv->skip);
-    avs_runnable_variable_bind(priv->vm, "drawmode", &priv->drawmode);
-*/
 
     SetVariableNumeric("n", 32);
-    SetVariableNumeric("b", 0);
-    SetVariableNumeric("x", 0);
-    SetVariableNumeric("y", 0);
+    SetVariableNumeric("b", 1);
+    SetVariableNumeric("x", 1);
+    SetVariableNumeric("y", 1);
     SetVariableNumeric("i", 1);
     SetVariableNumeric("v", 1);
-    SetVariableNumeric("w", 0);
-    SetVariableNumeric("h", 0);
+    SetVariableNumeric("w", 1);
+    SetVariableNumeric("h", 1);
     SetVariableNumeric("t", 1);
     SetVariableNumeric("d", 1);
     SetVariableNumeric("red", 77/256);
     SetVariableNumeric("green", 177/256);
     SetVariableNumeric("blue", 77/256);
-    SetVariableNumeric("linesize", 0);
-    SetVariableNumeric("skip", 0);
-    SetVariableNumeric("drawmode", 0);
+    SetVariableNumeric("linesize", 1);
+    SetVariableNumeric("skip", 1);
+    SetVariableNumeric("drawmode", 1);
+
+    priv->needs_init = TRUE;
 
     return 0;
 }
@@ -509,7 +487,7 @@ int lv_superscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
 
         uint32_t this_color = makeint(priv->blue) | (makeint(priv->green) << 8) | (makeint(priv->red) << 16) | (255 << 24);
 
-        if (priv->drawmode < 0.00001) {
+        if (0 && priv->drawmode < 0.00001) {
             if (y >= 0 && y < video->height && x >= 0 && x < video->width) {
                 BLEND_LINE(buf+x+y*video->width, this_color, pipeline->blendtable, pipeline->blendmode);
             }
