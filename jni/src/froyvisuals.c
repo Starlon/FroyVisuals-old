@@ -33,8 +33,16 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MORPH "alphablend"
-#define ACTOR "oinksie"
+#define ACTOR "lv_scope"
 #define INPUT "dummy"
+
+struct {
+    int16_t *pcm_data;
+    int size;
+    VisAudioSampleRateType rate;
+    VisAudioSampleChannelType channels;
+    VisAudioSampleFormatType encoding;
+} pcm_ref;
 
 /* LIBVISUAL */
 struct {
@@ -45,8 +53,6 @@ struct {
     const char *morph_name;
     const char *input_name;
 	int         pluginIsGL;
-	int16_t     pcm_data[1024];
-    int      pcm_size;
 } v;
 
 /* Return current time in milliseconds */
@@ -209,6 +215,20 @@ static void v_cycleActor (int prev)
     }
 }
 
+v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
+{
+    visual_log_return_if_fail(input != NULL);
+    visual_log_return_if_fail(audio != NULL);
+    visual_log_return_if_fail(pcm_ref.pcm_data != NULL);
+
+    VisBuffer buf;
+
+    visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size, 0 );
+    visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
+
+    return 0;
+}
+
 // For fallback audio source.
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
 {
@@ -216,23 +236,62 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_uploadAudio(
     jshort *pcm;
     jsize len = (*env)->GetArrayLength(env, data);
     pcm = (*env)->GetShortArrayElements(env, data, NULL);
-    for(i = 0; i < len && i < sizeof(v.pcm_data); i++)
+    for(i = 0; i < len && i < pcm_ref.size; i++)
     {
-        v.pcm_data[i] = pcm[i];
+        pcm_ref.pcm_data[i] = pcm[i];
     }
     (*env)->ReleaseShortArrayElements(env, data, pcm, 0);
 }
 
 
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_resizePCM(jint size, jint samplerate, jint channels, jint encoding)
+{
+    if(pcm_ref.pcm_data)
+        visual_mem_free(pcm_ref.pcm_data);
+    pcm_ref.pcm_data = visual_mem_malloc(sizeof(int16_t) * size);
+    pcm_ref.size = size;
+    switch(samplerate)
+    {
+        case 8000:
+            pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_8000;
+        break;
+        case 11250:
+            pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_11250;
+        break;
+        case 22500:
+            pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_22500;
+        break;
+        case 32000:
+            pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_32000;
+        break;
+        case 44100:
+            pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_44100;
+        break;
+        case 48000:
+            pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_48000;
+        break;
+        case 96000:
+            pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_96000;
+        break;
+    }
+    pcm_ref.channels = VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO;
+    pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S16;
+}
+
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(JNIEnv * env, jobject  obj, jboolean prev)
 {
+    VisMorph *bin_morph = visual_bin_get_morph(v.bin);
     const char *morph = v.morph_name;
+
+    
+    if(bin_morph && !visual_morph_is_done(bin_morph))
+        return;
 
     v_cycleActor((int)prev);
 
     visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
-    //visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+    visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
 }
 
@@ -301,6 +360,7 @@ void app_main(int w, int h)
     
     	visual_init (0, NULL);
         memset(&v, 0, sizeof(v));
+        memset(&pcm_ref, 0, sizeof(pcm_ref));
     }
 
     v.morph_name = MORPH;
@@ -320,6 +380,17 @@ void app_main(int w, int h)
     VisActor *actor = visual_actor_new((char*)v.actor_name);
     VisInput *input = visual_input_new((char*)v.input_name);
 
+//FIXME For mic input
+/*
+    VisInput *input = visual_mem_malloc(sizeof( VisInput));
+    input->audio = visual_audio_new();
+    visual_audio_init(input->audio);
+
+    if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
+        visual_log (VISUAL_LOG_CRITICAL, "Cannot set input plugin callback");
+    }
+*/
+
     depthflag = visual_actor_get_supported_depth(actor);
     depth = visual_video_depth_get_highest(depthflag);
 
@@ -330,7 +401,7 @@ void app_main(int w, int h)
     visual_video_allocate_buffer(v.video);
     visual_bin_set_video(v.bin, v.video);
 
-	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_DIRECT);
+	visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
 	visual_bin_switch_set_automatic (v.bin, 1);
 	visual_bin_switch_set_steps (v.bin, 10);
 
@@ -344,6 +415,7 @@ void app_main(int w, int h)
 	visual_bin_realize (v.bin);
 	visual_bin_sync (v.bin, 0);
     visual_bin_depth_changed(v.bin);
+
 
 
 	printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));

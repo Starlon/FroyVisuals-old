@@ -66,7 +66,6 @@ class FroyVisualsView extends View {
     private static native void mouseButton(int button, float x, float y);
     private static native void screenResize(int w, int h);
 
-/*
     private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
     public AudioRecord findAudioRecord() {
         for (int rate : mSampleRates) {
@@ -83,7 +82,7 @@ class FroyVisualsView extends View {
     
                             if (recorder.getState() == AudioRecord.STATE_INITIALIZED)
                             {
-                PCM_SIZE = bufferSize;
+                                PCM_SIZE = bufferSize;
                                 RECORDER_SAMPLERATE = rate;
                                 RECORDER_CHANNELS = channelConfig;
                                 RECORDER_AUDIO_ENCODING = audioFormat;
@@ -98,9 +97,8 @@ class FroyVisualsView extends View {
         }
         return null;
     }
-*/
     
-    //AudioRecord recorder = findAudioRecord();
+    AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
 
@@ -109,14 +107,24 @@ class FroyVisualsView extends View {
         isAvailable = false;
 
         initApp(getWidth(), getHeight());
-/*
-    mAudio = findAudioRecord();
+        mAudio = findAudioRecord();
         if(mAudio != null)
-    {
-        resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
-        isAvailable = true;
-    }
-*/
+        {
+            resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+	        new Thread(new Runnable() {
+	            public void run() {
+                    while(true)
+                    {
+					    mAudio.startRecording();
+					    short[] data = new short[PCM_SIZE];
+					    mAudio.read(data, 0, PCM_SIZE);
+					    mAudio.stop();
+					    uploadAudio(data);
+                    }
+	            }
+	        }).start();
+        }
+
     }
 
     @Override protected void onDraw(Canvas canvas) 
@@ -128,17 +136,12 @@ class FroyVisualsView extends View {
             mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
             screenResize(mW, mH);
         }
-/*
-    mAudio.startRecording();
-    short[] data = new short[PCM_SIZE];
-        mAudio.read(data, 0, PCM_SIZE);
-    mAudio.stop();
-        uploadAudio(data);
-*/
+
+
         if(!render(mBitmap)) return;
 
         canvas.drawBitmap(mBitmap, 0, 0, null);
-        // force a redraw
+
         invalidate();
     }
 

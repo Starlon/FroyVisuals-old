@@ -12,5 +12,6 @@
             </intent-filter>
         </activity>
     </application>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-sdk android:minSdkVersion="8"/>
 </manifest> 
