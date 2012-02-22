@@ -37,7 +37,7 @@
 #include "lv_utils.h"
 #include "lv_math.h"
 #include "lv_fourier.h"
-#include "fix_fft.c"
+#include "kiss_fft129/kiss_fft.h"
 
 /* Log scale settings */
 #define AMP_LOG_SCALE_THRESHOLD0	0.001f
@@ -46,13 +46,6 @@
 
 #define DFT_CACHE_ENTRY(obj)				(VISUAL_CHECK_CAST ((obj), DFTCacheEntry))
 #define LOG_SCALE_CACHE_ENTRY(obj)			(VISUAL_CHECK_CAST ((obj), LogScaleCacheEntry))
-
-#define FFT_SIZE  2048
-#define log2FFT   7
-#define N         (2 * FFT_SIZE)
-#define log2N     (log2FFT + 1)
-#define FREQUENCY 5
-#define AMPLITUDE 12288
 
 typedef struct _DFTCacheEntry DFTCacheEntry;
 typedef struct _LogScaleCacheEntry LogScaleCacheEntry;
@@ -89,7 +82,7 @@ static void range_table_init (LogScaleCacheEntry *lcache, int size);
 static int dft_cache_destroyer (VisObject *object);
 static DFTCacheEntry *dft_cache_get (VisDFT *dft);
 
-//static int log_scale_cache_destroy (VisObject *object);
+static int log_scale_cache_destroy (VisObject *object);
 static LogScaleCacheEntry *log_scale_cache_get (int size);
 
 static void perform_dft_brute_force (VisDFT *fourier, float *output, float *input);
@@ -401,7 +394,6 @@ static void perform_dft_brute_force (VisDFT *dft, float *output, float *input)
 			xr += input[j] * wr;
 			xi += input[j] * wi;
 
-visual_log(VISUAL_LOG_CRITICAL, "WHAT WHAT WHAT %d", j);
 			wtemp = wr;
 			wr = wr * fcache->costable[i] - wi * fcache->sintable[i];
 			wi = wtemp * fcache->sintable[i] + wi * fcache->costable[i];
@@ -483,37 +475,58 @@ static void perform_fft_radix2_dit (VisDFT *dft, float *output, float *input)
  *
  * @return VISUAL_OK on succes, -VISUAL_ERROR_FOURIER_NULL or -VISUAL_ERROR_NULL on failure.
  */
+#define NUMFFTS 128
+
 int visual_dft_perform (VisDFT *dft, float *output, float *input)
 {
-	unsigned int i;
-    short x[dft->spectrum_size], fx[dft->spectrum_size];
-
 	visual_log_return_val_if_fail (dft != NULL, -VISUAL_ERROR_FOURIER_NULL);
 	visual_log_return_val_if_fail (output != NULL, -VISUAL_ERROR_NULL);
 	visual_log_return_val_if_fail (input != NULL, -VISUAL_ERROR_NULL);
 
-    for(i = 0; i < dft->spectrum_size; i++) 
-    {
-        x[i] = AMPLITUDE* cos(i * FREQUENCY * (2*FOURIER_PI)/dft->spectrum_size);
-        if(i & 0x01)
-            fx[(N+i)>>1] = x[i];//input[i] * 32767;
-        else
-            fx[i>>1] = x[i];//input[i] * 32767;
-    }
-
 /*
+    int nfft=kiss_fft_next_fast_size(dft->spectrum_size);
+    int nbytes = sizeof(kiss_fft_cpx) * nfft;
+    int isinverse = FALSE, i;
+    kiss_fft_cpx *buf = (kiss_fft_cpx*)KISS_FFT_MALLOC(nbytes);
+    kiss_fft_cpx *bufout=(kiss_fft_cpx*)KISS_FFT_MALLOC(nbytes);
+    kiss_fft_cfg state = kiss_fft_alloc(nfft, isinverse, 0, 0);
+*/
+
 	if (dft->brute_force)
 		perform_dft_brute_force (dft, output, input);
 	else
 		perform_fft_radix2_dit (dft, output, input);
+
+/*
+    memset(buf, 0, nbytes);
+
+
+    for(i=0; i < nfft; ++i) 
+    {
+        buf[i].r = input[i>>1];
+        buf[i].i = input[(i+nfft)>>1];
+    }
+
+    for(i = 0; i < NUMFFTS; i++)
+        kiss_fft(state, buf, bufout);
+
+    for(i = 0; i < nfft; i++)
+    {
+        dft->real[i] = bufout[i].r;
+        dft->imag[i] = bufout[i].i;
+        visual_log(VISUAL_LOG_CRITICAL, "%d: %f - %f\n", i, dft->real[i], dft->imag[i]);
+    }
 */
-    fix_fftr(dft, fx, log2N, 0);
 
-    
 	visual_math_vectorized_complex_to_norm_scale (output, dft->real, dft->imag,
-			dft->spectrum_size / 2,
-			1.0 / dft->spectrum_size);
+			dft->spectrum_size / 2, 1.0 / dft->spectrum_size);
 
+/*
+    free(state);
+    free(buf);
+    free(bufout);
+    kiss_fft_cleanup();
+*/
 	return VISUAL_OK;
 }
 
@@ -565,7 +578,7 @@ int visual_dft_log_scale (float *output, float *input, int size)
 
 int visual_dft_log_scale_standard (float *output, float *input, int size)
 {
-	//int i;
+	int i;
 
 	visual_log_return_val_if_fail (output != NULL, -VISUAL_ERROR_NULL);
 	visual_log_return_val_if_fail (input != NULL, -VISUAL_ERROR_NULL);
