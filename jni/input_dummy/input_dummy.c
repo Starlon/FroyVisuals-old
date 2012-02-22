@@ -31,6 +31,8 @@
 #include <libvisual/libvisual.h>
 
 #define PCM_BUF_SIZE 2048
+#define FREQUENCY 5
+#define AMPLITUDE 12288
 
 typedef struct {
     VisRandomContext rContext;
@@ -105,9 +107,11 @@ int inp_alsa_cleanup (VisPluginData *plugin)
 
 int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 {
+    int freq = FREQUENCY;
+    int amp = AMPLITUDE;
     VisBuffer buffer;
     int16_t data[PCM_BUF_SIZE], i;
-    float val;
+    int val1, val2;
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
     visual_log_return_val_if_fail(audio != NULL, -1);
@@ -119,9 +123,12 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 
     for(i = 0; i < PCM_BUF_SIZE; i++)
     {
-        data[i] = 
-        val = visual_random_context_float(&priv->rContext);
-        data[i] = sin(((int)(val  * 16384)% 360)*M_PI/180) * 116384/2;
+        if(!(i % 5))
+            val1 = visual_random_context_int(&priv->rContext);
+        if(!(i % 15))
+            val2 = visual_random_context_int(&priv->rContext);
+            
+        data[i] = amp*val2*cos(val1*freq*(2*M_PI)/PCM_BUF_SIZE);
     }
 
     visual_buffer_init (&buffer, data, PCM_BUF_SIZE/2, NULL);
