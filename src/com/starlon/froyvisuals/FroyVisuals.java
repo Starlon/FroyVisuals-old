@@ -113,6 +113,7 @@ class FroyVisualsView extends View {
             resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 	        new Thread(new Runnable() {
 	            public void run() {
+/*
                     while(true)
                     {
 					    mAudio.startRecording();
@@ -121,6 +122,7 @@ class FroyVisualsView extends View {
 					    mAudio.stop();
 					    uploadAudio(data);
                     }
+*/
 	            }
 	        }).start();
         }
