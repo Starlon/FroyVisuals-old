@@ -403,8 +403,12 @@ static void *mem_copy_arm (void *dest, const void *src, visual_size_t n)
         __asm __volatile(
         "\n\t ldmia %[source]!, {r4-r7}"
         "\n\t stmia %[dest]!, {r4-r7}"
-        "\n\t ldmia %[source], {r4-r7}"
-        "\n\t stmia %[dest], {r4-r7}"
+        "\n\t ldmia %[source]!, {r4-r7}"
+        "\n\t stmia %[dest]!, {r4-r7}"
+        "\n\t ldmia %[source]!, {r4-r7}"
+        "\n\t stmia %[dest]!, {r4-r7}"
+        "\n\t ldmia %[source]!, {r4-r7}"
+        "\n\t stmia %[dest]!, {r4-r7}"
         :: [dest] "r" (d), [source] "r" (s) : "r4", "r5", "r6", "r7" );
 
         d+=16;
@@ -576,6 +580,9 @@ static void *mem_set8_altivec (void *dest, int c, visual_size_t n)
 /* Memset functions, 1 byte memset */
 static void *mem_set8_arm (void *dest, int c, visual_size_t n)
 {
+
+    memset(dest, c, n);
+    return;
 	uint32_t *d = dest;
 	uint8_t *dc = dest;
 	uint32_t setflag32 =
@@ -584,6 +591,26 @@ static void *mem_set8_arm (void *dest, int c, visual_size_t n)
 		((c << 16) & 0xff0000) |
 		((c << 24) & 0xff000000);
 	uint8_t setflag8 = c & 0xff;
+
+#if defined(VISUAL_ARCH_ARM)
+
+	while (n >= 32) {
+		__asm __volatile
+        (
+            "\n\t mov r4, %[flag]"
+            "\n\t mov r5, r4"
+            "\n\t mov r6, r4"
+            "\n\t mov r7, r4"
+            "\n\t stmia %[dst]!,{r4-r7}"
+            "\n\t stmia %[dst]!,{r4-r7}"
+        :: [dst] "r" (d), [flag] "r" (&setflag32) : "r4", "r5", "r6", "r7");
+
+		d += 8;
+
+		n -= 32;
+	}
+
+#endif /* VISUAL_ARCH_ARM */
 
 	while (n >= 4) {
 		*d++ = setflag32;
@@ -754,10 +781,6 @@ static void *mem_set16_arm (void *dest, int c, visual_size_t n)
 		((c << 16) & 0xffff0000);
 	uint16_t setflag16 = c & 0xffff;
 
-	while (n >= 2) {
-		*d++ = setflag32;
-		n -= 2;
-	}
 
 	dc = (uint16_t *) d;
 

@@ -19,5 +19,6 @@ ifeq ($(TARGET_ARCH_ABI),x86)
     LOCAL_CFLAGS += -DVISUAL_ARCH_X86=1
 endif
 
+
 include $(BUILD_SHARED_LIBRARY)
 
