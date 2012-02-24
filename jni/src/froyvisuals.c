@@ -33,8 +33,8 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MORPH "alphablend"
-#define ACTOR "jakdaw"
-#define INPUT "alsa"
+#define ACTOR "lv_scope"
+#define INPUT "dummy"
 
 struct {
     int16_t *pcm_data;
