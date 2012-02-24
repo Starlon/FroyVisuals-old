@@ -220,7 +220,7 @@ class FroyVisualsView extends View {
             break;
             case MotionEvent.ACTION_UP:
                 if(direction >= 0) {
-                    //switchActor(direction);
+                    switchActor(direction);
                 }
             break;
             case MotionEvent.ACTION_MOVE:
