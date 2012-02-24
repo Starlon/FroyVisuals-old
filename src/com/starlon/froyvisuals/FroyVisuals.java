@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.content.Context;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.MotionEvent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -34,6 +35,16 @@ public class FroyVisuals extends Activity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+/*
+        View v = new FroyVisualsView(this);
+        v.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View v)
+            {
+                switchActor(0);
+                return false;
+            }
+        });
+*/
         setContentView(new FroyVisualsView(this));
     }
 
@@ -57,11 +68,11 @@ class FroyVisualsView extends View {
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private static final String APP_TAG = "FroyVisuals";
 
+    private static native void switchActor(int direction);
     private static native boolean render(Bitmap  bitmap);
     private static native void resizePCM(int size, int rate, int channels, int encoding);
     private static native void uploadAudio(short[] data);
     private static native void initApp(int w, int h);
-    private static native void switchActor(int direction);
     private static native void mouseMotion(float x, float y);
     private static native void mouseButton(int button, float x, float y);
     private static native void screenResize(int w, int h);
@@ -107,13 +118,13 @@ class FroyVisualsView extends View {
         isAvailable = false;
 
         initApp(getWidth(), getHeight());
+/*
         mAudio = findAudioRecord();
         if(mAudio != null)
         {
             resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 	        new Thread(new Runnable() {
 	            public void run() {
-/*
                     while(true)
                     {
 					    mAudio.startRecording();
@@ -122,11 +133,10 @@ class FroyVisualsView extends View {
 					    mAudio.stop();
 					    uploadAudio(data);
                     }
-*/
 	            }
 	        }).start();
         }
-
+*/
     }
 
     @Override protected void onDraw(Canvas canvas) 
@@ -147,6 +157,7 @@ class FroyVisualsView extends View {
         invalidate();
     }
 
+    private int direction = -1;
     @Override public boolean onTouchEvent (MotionEvent event) 
     {
         int action = event.getAction();
@@ -155,11 +166,27 @@ class FroyVisualsView extends View {
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
-                switchActor(0);
-                mouseButton(1, x, y);
+                direction = -1;
+            break;
+            case MotionEvent.ACTION_UP:
+                if(direction >= 0) {
+                    switchActor(direction);
+                }
             break;
             case MotionEvent.ACTION_MOVE:
                 mouseMotion(x, y);
+                int size = event.getHistorySize();
+                if(size > 1)
+                {
+                    if(event.getHistoricalX(0, 0) < event.getHistoricalX(0, 1))
+                    {
+                        direction = 0;
+                    }
+                    else
+                    {
+                        direction = 1;
+                    }
+                }
             break;
         }
         return true;    

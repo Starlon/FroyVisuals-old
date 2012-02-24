@@ -291,7 +291,13 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
 
     visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
-    visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+    if(prev == 0)
+        visual_bin_set_morph_by_name (v.bin, (char *)"slide_left");
+    else if(prev == 1)
+        visual_bin_set_morph_by_name (v.bin, (char *)"slide_right");
+    else
+        visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
 }
 
