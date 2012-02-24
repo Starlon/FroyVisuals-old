@@ -393,6 +393,9 @@ static void *mem_copy_altivec (void *dest, const void *src, visual_size_t n)
 
 static void *mem_copy_arm (void *dest, const void *src, visual_size_t n)
 {
+    memcpy(dest, src, n);
+    return dest;
+#if 0
 	uint32_t *d = dest;
 	const uint32_t *s = src;
 	uint8_t *dc = dest;
@@ -424,6 +427,7 @@ static void *mem_copy_arm (void *dest, const void *src, visual_size_t n)
 		*dc++ = *sc++;
 
 	return dest;
+#endif
 }
 
 /* Memset functions, 1 byte memset */
@@ -582,7 +586,8 @@ static void *mem_set8_arm (void *dest, int c, visual_size_t n)
 {
 
     memset(dest, c, n);
-    return;
+    return dest;
+#if 0
 	uint32_t *d = dest;
 	uint8_t *dc = dest;
 	uint32_t setflag32 =
@@ -623,6 +628,7 @@ static void *mem_set8_arm (void *dest, int c, visual_size_t n)
 		*dc++ = setflag8;
 
 	return dest;
+#endif
 }
 
 
@@ -774,6 +780,9 @@ static void *mem_set16_altivec (void *dest, int c, visual_size_t n)
 /* Memset functions, 2 byte memset */
 static void *mem_set16_arm (void *dest, int c, visual_size_t n)
 {
+    memset(dest, c, n);
+    return dest;
+#if 0
 	uint32_t *d = dest;
 	uint16_t *dc = dest;
 	uint32_t setflag32 =
@@ -788,6 +797,7 @@ static void *mem_set16_arm (void *dest, int c, visual_size_t n)
 		*dc++ = setflag16;
 
 	return dest;
+#endif
 }
 
 /* Memset functions, 4 byte memset */
@@ -905,6 +915,9 @@ static void *mem_set32_altivec (void *dest, int c, visual_size_t n)
 /* Memset functions, 4 byte memset */
 static void *mem_set32_arm (void *dest, int c, visual_size_t n)
 {
+    memset(dest, c, n);
+    return dest;
+#if 0
 	uint32_t *d = dest;
 	uint32_t setflag32 = c;
 
@@ -912,6 +925,7 @@ static void *mem_set32_arm (void *dest, int c, visual_size_t n)
 		*d++ = setflag32;
 
 	return dest;
+#endif
 }
 
 /**
