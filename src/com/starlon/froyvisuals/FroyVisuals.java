@@ -18,8 +18,11 @@ package com.starlon.froyvisuals;
 import android.app.Activity;
 import android.os.Bundle;
 import android.content.Context;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.MotionEvent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -30,11 +33,16 @@ import android.util.Log;
 
 public class FroyVisuals extends Activity
 {
+    private final static String TAG = "FroyVisuals/FroyVisualsActivity";
+    private static Settings mSettings;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        mSettings = new Settings(this);
 /*
         View v = new FroyVisualsView(this);
         v.setOnLongClickListener(new View.OnLongClickListener() {
@@ -48,6 +56,44 @@ public class FroyVisuals extends Activity
         setContentView(new FroyVisualsView(this));
     }
 
+    public void onResume()
+    {
+        super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.birthroid, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch(item.getItemId())
+        {
+            case R.id.about:
+            {
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+            }
+
+            case R.id.settings:
+            {
+                startActivity(new Intent(this, PreferencesActivity));
+                return true;
+            }
+            
+            default:
+            {
+                Log.w(TAG, "Unhandled menu-item. This is a bug!")
+                break;
+            }
+        }
+        return false;
+    }
     /* load our native library */
     static {
         System.loadLibrary("visual");
@@ -170,7 +216,7 @@ class FroyVisualsView extends View {
             break;
             case MotionEvent.ACTION_UP:
                 if(direction >= 0) {
-                    switchActor(direction);
+                    //switchActor(direction);
                 }
             break;
             case MotionEvent.ACTION_MOVE:

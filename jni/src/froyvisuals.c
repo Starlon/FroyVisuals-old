@@ -33,7 +33,7 @@
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 #define MORPH "alphablend"
-#define ACTOR "lv_scope"
+#define ACTOR "bumpscope"
 #define INPUT "dummy"
 
 struct {
@@ -303,7 +303,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_switchActor(
 
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_FroyVisualsView_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
-    return;
     visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(plugin);
