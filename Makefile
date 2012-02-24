@@ -1,7 +1,7 @@
 # Android Makefile v0.1 (c) 2011 - Daniel Hiepler <daniel@niftylight.de>
 
 APPNAME = FroyVisuals
-ACTIVITY = SDLActivity
+ACTIVITY = FroyVisualsActivity
 
 all:
 	@ndk-build

@@ -18,6 +18,8 @@ package com.starlon.froyvisuals;
 import android.app.Activity;
 import android.os.Bundle;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,6 +32,7 @@ import android.media.AudioRecord;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.util.Log;
+import android.util.TypedValue;
 
 public class FroyVisuals extends Activity
 {
@@ -65,7 +68,7 @@ public class FroyVisuals extends Activity
     public boolean onCreateOptionsMenu(Menu menu)
     {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.birthroid, menu);
+        inflater.inflate(R.menu.froyvisuals, menu);
         return true;
     }
 
@@ -80,15 +83,16 @@ public class FroyVisuals extends Activity
                 return true;
             }
 
+/*
             case R.id.settings:
             {
                 startActivity(new Intent(this, PreferencesActivity));
                 return true;
             }
-            
+*/            
             default:
             {
-                Log.w(TAG, "Unhandled menu-item. This is a bug!")
+                Log.w(TAG, "Unhandled menu-item. This is a bug!");
                 break;
             }
         }

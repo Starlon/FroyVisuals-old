@@ -33,10 +33,11 @@ public class PreferencesActivity extends PreferenceActivity
         public void onPause()
         {
                 /** update widget */
+/*
                 Intent i = new Intent(this, BirthdroidWidget.class);
                 i.setAction("com.starlon.froyvisuals.PREFS_UPDATE");
                 sendBroadcast(i);
-
+*/
                 super.onPause();
         }
         

@@ -4,16 +4,16 @@
         <PreferenceCategory
                 android:title="@string/prefs_title_general">
                 
-                <EditTextPreference
-                        android:key="birthdays_scan_interval"
-                        android:summary="@string/prefs_summary_scan"
-                        android:title="@string/prefs_title_scan"
-                        android:inputType="number"
-                        android:defaultValue="24"
-                        android:enabled="false"/>
+                <CheckBoxPreference
+                    android:key="froyvisuals_morph_enabled"
+                    android:title="@string/prefs_morph_enabled"
+                    android:summary="@string/prefs_summary_morph_enabled"
+                    android:defaultValue="@string/morph_enabled"
+                    android:enabled="true"/>
+                 
                 
         </PreferenceCategory>
-        
+<!--    
         <PreferenceCategory
                 android:title="@string/prefs_title_app">
                 
@@ -40,61 +40,6 @@
                 </PreferenceScreen>
                 
         </PreferenceCategory>
-        
-        <PreferenceCategory
-                android:title="@string/prefs_title_widget">
-                                        
-                <EditTextPreference
-                        android:key="widget_future_days" 
-                        android:title="@string/prefs_title_days"
-                        android:summary="@string/prefs_summary_days"
-                        android:defaultValue="@integer/widget_future_days"
-                        android:inputType="number"/>       
-
-                <PreferenceScreen
-                        android:key="widget_layout_screen"
-                        android:title="@string/prefs_title_layout_settings"
-                        android:summary="@string/prefs_summary_layout_settings">
-
-                        <CheckBoxPreference
-                                android:key="widget_avartars" 
-                                android:title="@string/prefs_title_avartar"
-                                android:summary="@string/prefs_summary_avartar"
-                                android:defaultValue="@string/widget_avartars"
-                                android:enabled="false"/>
-                                
-                        <EditTextPreference
-                                android:key="widget_flip_interval" 
-                                android:title="@string/prefs_title_flip_interval"
-                                android:summary="@string/prefs_summary_flip_interval"
-                                android:defaultValue="@integer/widget_flip_interval"
-                                android:inputType="number"/> 
-                                
-                        <ListPreference
-                                android:key="widget_sort_method"
-                                android:title="@string/prefs_title_sort_method"
-                                android:summary="@string/prefs_summary_sort_method"
-                                android:entries="@array/sort_method_entries"
-                                android:entryValues="@array/sort_method_values"
-                                android:defaultValue="@string/widget_sort_method"/>
-                        
-                        <!--<ListPreference
-                                android:title="Flip animation"
-                                android:summary="Choose animation when flipping to next contact"
-                                android:key="widget_flip_anim"
-                                android:defaultValue="1"
-                                android:entries="@array/widget_flip_anim_entries"
-                                android:entryValues="@array/widget_flip_anim_values" />
-                                
-                        <EditTextPreference
-                                android:summary="Fontsize of widget-message"
-                                android:defaultValue="14"
-                                android:title="Fontsize"
-                                android:key="widget_fontsize" 
-                                android:inputType="number"
-                                android:enabled="false"/> -->
-                        
-                </PreferenceScreen>
-                
-        </PreferenceCategory>
+-->
+    
 </PreferenceScreen>
