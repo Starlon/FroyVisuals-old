@@ -10,6 +10,7 @@ public class NativeHelper
     // VisInput native calls
     public static native int inputCount();
     public static native int inputGetCurrent();
+    public static native boolean inputSetCurrent(int index);
     public static native String inputGetName(int index);
     public static native String inputGetLongName(int index);
     public static native String inputGetAuthor(int index);
@@ -21,6 +22,7 @@ public class NativeHelper
     // VisMorph native calls
     public static native int morphCount();
     public static native int morphGetCurrent();
+    public static native boolean morphSetCurrent(int index);
     public static native String morphGetName(int index);
     public static native String morphGetLongName(int index);
     public static native String morphGetAuthor(int index);
@@ -32,6 +34,7 @@ public class NativeHelper
     // VisActor native calls
     public static native int actorCount();
     public static native int actorGetCurrent();
+    public static native boolean actorSetCurrent(int index);
     public static native String actorGetName(int index);
     public static native String actorGetLongName(int index);
     public static native String actorGetAuthor(int index);
@@ -41,6 +44,8 @@ public class NativeHelper
     public static native String actorGetLicense(int index);
 
     public static native void switchActor(int direction);
+    public static native void updatePlugins();
+    public static native void setMorphStyle(boolean style);
     public static native boolean render(Bitmap  bitmap);
     public static native void resizePCM(int size, int rate, int channels, int encoding);
     public static native void uploadAudio(short[] data);

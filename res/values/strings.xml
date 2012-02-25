@@ -8,6 +8,15 @@
     <string name="prefs_morph_enabled">Enable Morphs</string>
     <string name="prefs_summary_morph_enabled">Check to enable morphs.</string>
 
+    <!-- Input -->
+    <string name="input_name">Input Plugin</string>
+
+    <!-- Morph -->
+    <string name="morph_name">Morph Plugin</string>
+
+    <!-- Actor -->
+    <string name="actor_name">Actor Plugin</string>
+
     <!-- Plugin header titles -->
     <string name="title_plugin_name">Name</string>
     <string name="title_plugin_long_name">Long Name</string>

@@ -91,13 +91,12 @@ public class FroyVisuals extends Activity
                 return true;
             }
 
-/*
             case R.id.about_actor:
             {
-                startActivity(new Intent(this, AboutActorActivity.class));
+                startActivity(new Intent(this, ActorActivity.class));
                 return true;
             }
-*/
+
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");
@@ -174,6 +173,7 @@ class FroyVisualsView extends View {
 
         mNativeHelper.initApp(getWidth(), getHeight());
 
+/*
         mAudio = findAudioRecord();
         if(mAudio != null)
         {
@@ -191,6 +191,7 @@ class FroyVisualsView extends View {
 	            }
 	        }).start();
         }
+*/
     }
 
     @Override protected void onDraw(Canvas canvas) 

@@ -5,10 +5,11 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import android.util.Log;
 
 public class ActorActivity extends Activity
 {
+    private final static String TAG = "FroyVisuals/ActorActivity";
     private NativeHelper mHelper;
     private LinearLayout mLayout;
 
@@ -37,6 +38,7 @@ public class ActorActivity extends Activity
         super.onCreate(savedInstanceState);
 
         mLayout = new LinearLayout(this);
+        mLayout.setOrientation(LinearLayout.VERTICAL);
 
         // Headers
         mHeaderName = new TextView(this);
@@ -47,6 +49,14 @@ public class ActorActivity extends Activity
         mHeaderHelp = new TextView(this);
         mHeaderLicense = new TextView(this);
    
+        mHeaderName.setTextSize(20);
+        mHeaderLongName.setTextSize(20);
+        mHeaderAuthor.setTextSize(20);
+        mHeaderVersion.setTextSize(20);
+        mHeaderAbout.setTextSize(20);
+        mHeaderHelp.setTextSize(20);
+        mHeaderLicense.setTextSize(20);
+
            // Values
         mName = new TextView(this);
         mLongName = new TextView(this);
@@ -55,6 +65,15 @@ public class ActorActivity extends Activity
         mAbout = new TextView(this);
         mHelp = new TextView(this);
         mLicense = new TextView(this);
+
+        mName.setTextSize(15);
+        mLongName.setTextSize(15);
+        mAuthor.setTextSize(15);
+        mVersion.setTextSize(15);
+        mAbout.setTextSize(15);
+        mHelp.setTextSize(15);
+        mLicense.setTextSize(15);
+    
 
         // Static text views on layout
         mLayout.addView(mHeaderName);
@@ -84,6 +103,7 @@ public class ActorActivity extends Activity
         int current = mHelper.actorGetCurrent();
 
         String name_string = mHelper.actorGetName(current);
+
         String long_name_string = mHelper.actorGetLongName(current);
         String author_string = mHelper.actorGetAuthor(current);
         String version_string = mHelper.actorGetVersion(current);
@@ -118,7 +138,8 @@ public class ActorActivity extends Activity
         len = license_string.length();
         char[] license_chars = license_string.toCharArray();
         mVersion.setText(license_chars, 0, len);
-        
+
         setContentView(mLayout);
+        
     }
 }
