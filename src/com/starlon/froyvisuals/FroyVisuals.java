@@ -91,6 +91,18 @@ public class FroyVisuals extends Activity
                 return true;
             }
 
+            case R.id.about_input:
+            {
+                startActivity(new Intent(this, InputActivity.class));
+                return true;
+            }
+
+            case R.id.about_morph:
+            {
+                startActivity(new Intent(this, MorphActivity.class));
+                return true;
+            }
+
             case R.id.about_actor:
             {
                 startActivity(new Intent(this, ActorActivity.class));

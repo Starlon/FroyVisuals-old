@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical">
+    
+    <LinearLayout 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:orientation="vertical" 
+        android:baselineAligned="false"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dip">
+<!--
+        <ImageView 
+            android:src="@drawable/icon" 
+            android:layout_gravity="left" 
+            android:layout_height="wrap_content" 
+            android:layout_width="wrap_content" 
+            android:layout_marginRight="15dip">
+        </ImageView>
+    -->    
+        <TextView 
+            android:textAppearance="?android:attr/textAppearanceLarge" 
+            android:layout_gravity="center" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/input_name">
+        </TextView>
+
+    </LinearLayout>
+    
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip">
+                
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" 
+                android:orientation="vertical"
+                android:paddingBottom="25dip">
+                
+                <TextView 
+                    android:text="@string/title_plugin_long_name" 
+                    android:textAppearance="?android:attr/textAppearanceLarge" 
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"/>
+
+                <TextView 
+                    android:id="@+id/input_long_name"
+                    android:paddingBottom="15dip"
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"/>
+              
+                <TextView 
+                    android:text="@string/title_plugin_author" 
+                    android:textAppearance="?android:attr/textAppearanceLarge" 
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content" 
+                    android:linksClickable="true"
+                    android:layout_gravity="left"
+                    android:layout_weight="0"
+                    android:autoLink="all"/>
+
+                <TextView 
+                    android:id="@+id/input_author"
+                    android:paddingBottom="15dip"
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"/>
+
+                <TextView 
+                    android:text="@string/title_plugin_version" 
+                    android:textAppearance="?android:attr/textAppearanceLarge" 
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content" 
+                    android:linksClickable="true"
+                    android:layout_gravity="left"
+                    android:layout_weight="0"
+                    android:autoLink="all"/>
+
+                <TextView 
+                    android:id="@+id/input_version"
+                    android:paddingBottom="15dip"
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"/>
+
+                <TextView 
+                    android:text="@string/title_plugin_about" 
+                    android:textAppearance="?android:attr/textAppearanceLarge" 
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content" 
+                    android:linksClickable="true"
+                    android:layout_gravity="left"
+                    android:layout_weight="0"
+                    android:autoLink="all"/>
+
+                <TextView 
+                    android:id="@+id/input_about"
+                    android:paddingBottom="15dip"
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"/>
+
+                <TextView 
+                    android:text="@string/title_plugin_help" 
+                    android:textAppearance="?android:attr/textAppearanceLarge" 
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content" 
+                    android:linksClickable="true"
+                    android:layout_gravity="left"
+                    android:layout_weight="0"
+                    android:autoLink="all"/>
+
+                <TextView 
+                    android:id="@+id/input_help"
+                    android:paddingBottom="15dip"
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"/>
+
+                <TextView 
+                    android:text="@string/title_plugin_license" 
+                    android:textAppearance="?android:attr/textAppearanceLarge" 
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content" 
+                    android:linksClickable="true"
+                    android:layout_gravity="left"
+                    android:layout_weight="0"
+                    android:autoLink="all"/>
+
+                <TextView 
+                    android:id="@+id/input_license"
+                    android:paddingBottom="15dip"
+                    android:layout_height="wrap_content" 
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_weight="1"/>
+                    
+            </LinearLayout>
+    </ScrollView>
+</LinearLayout>
+
+

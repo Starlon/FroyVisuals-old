@@ -235,16 +235,16 @@ v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 // ---------- INPUT ----------
 
 // Get the VisInput at the requested index.
-VisInput *get_input(int index)
+VisPluginRef *get_input(int index)
 {
-    VisInput *input = NULL;
     VisList *list = visual_input_get_list();
+
     int count = visual_list_count(list);
-    if(count <= index)
-    {
-        input = visual_list_get(list, index);
-    }
-    return input;
+
+    visual_log_return_val_if_fail(index < count, NULL);
+
+
+    return visual_list_get(list, index);
 }
 
 // Get the count of available input plugins.
@@ -257,19 +257,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputCount(JNIE
 // Note that this index may change as new plugins are added.
 JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetCurrent(JNIEnv *env)
 {
-    VisList *list = visual_input_get_list();
-    VisInput *input;
-    int count = visual_list_count(list);
-    int index = count - 1;
-
-    while(index-- >= 0)
-    {
-        input = visual_list_get(list, index);
-        if(strcmp(v.input_name, input->plugin->info->plugname))
-            return index;
-    }
-    
-    return -1;
+    return v.bin->input->plugin->ref->index;
 }
 
 // Set the current input plugin to that at the provided index.
@@ -284,8 +272,9 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCur
     if(index >= count)
         return FALSE;
     
-    VisInput *input = visual_list_get(list, index);
-    v.input_name = input->plugin->info->plugname;
+    VisPluginRef *ref = visual_list_get(list, index);
+
+    v.input_name = ref->info->plugname;
 
     return TRUE;
 }
@@ -293,85 +282,72 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCur
 // Get the input's plugin name.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetName(JNIEnv *env, jobject obj, jint index)
 {
-    VisInput *input = get_input(index);
-    char *plugname = NULL;
-    if(input)
-    {
-        plugname = input->plugin->info->plugname;
-    }
-    return plugname;
+    VisPluginRef *ref = get_input(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->plugname));
 }
 
 // Get the input's plugin longname.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLongName(JNIEnv *env, jobject obj, jint index)
 {
-    VisInput *input = get_input(index);
-    char *plugname = NULL;
-    if(input)
-    {
-        plugname = input->plugin->info->name;
-    }
-    return plugname;
+    VisPluginRef *ref = get_input(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->name));
 }
 
 // Get the input's plugin author.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetAuthor(JNIEnv *env, jobject obj, jint index)
 {
-    VisInput *input = get_input(index);
-    char *author = NULL;
-    if(input)
-    {
-        author = input->plugin->info->author;
-    }
-    return author;
+    VisPluginRef *ref = get_input(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->author));
 }
 
 // Get the input's plugin version.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetVersion(JNIEnv *env, jobject obj, jint index)
 {
-    VisInput *input = get_input(index);
-    char *version = NULL;
-    if(input)
-    {
-        version = input->plugin->info->version;
-    }
-    return version;
+    VisPluginRef *ref = get_input(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->version));
 }
 
 // Get the input's plugin about string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetAbout(JNIEnv *env, jobject obj, jint index)
 {
-    VisInput *input = get_input(index);
-    char *about = NULL;
-    if(input)
-    {
-        about = input->plugin->info->about;
-    }
-    return about;
+    VisPluginRef *ref = get_input(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->about));
 }
 
 // Get the input's plugin help string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetHelp(JNIEnv *env, jobject obj, jint index)
 {
-    VisInput *input = get_input(index);
-    char *help = NULL;
-    if(input)
-    {
-        help = input->plugin->info->help;
-    }
-    return help;
+    VisPluginRef *ref = get_input(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->help));
 }
 
 // Get the input's plugin license string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLicense(JNIEnv *env, jobject obj, jint index)
 {
-    VisInput *input = get_input(index);
-    char *license = NULL;
-    if(input)
-    {
-        license = input->plugin->info->license;
-    }
-    return license;
+    VisPluginRef *ref = get_input(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->name));
+
 }
 
 
@@ -379,16 +355,15 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLice
 // ------ MORPH ------
 
 // Get the VisMorph at the requested index.
-VisMorph *get_morph(int index)
+VisPluginRef *get_morph(int index)
 {
-    VisMorph *morph = NULL;
     VisList *list = visual_morph_get_list();
+
     int count = visual_list_count(list);
-    if(count <= index)
-    {
-        morph = visual_list_get(list, index);
-    }
-    return morph;
+
+    visual_log_return_val_if_fail(index < count, NULL);
+
+    return visual_list_get(list, index);
 }
 
 
@@ -402,18 +377,9 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphCount(JNIE
 // Note that this index may change as new plugins are added.
 JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetCurrent(JNIEnv *env)
 {
-    VisList *list = visual_input_get_list();
-    VisMorph *morph;
-    int count = visual_list_count(list);
-    int index = count - 1;
-
-    while(index-- >= 0)
-    {
-        morph = visual_list_get(list, index);
-        if(strcmp(v.morph_name, morph->plugin->info->plugname))
-            return index;
-    }
-    
+    VisMorph *morph = visual_bin_get_morph(v.bin);
+    if(morph)
+        return morph->plugin->ref->index;
     return -1;
 }
 
@@ -424,12 +390,15 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetCurrent
 JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCurrent(JNIEnv *env, jint index)
 {
     VisList *list = visual_morph_get_list();
+
     int count = visual_list_count(list);
+
     if(index >= count)
         return FALSE;
     
-    VisMorph *morph = visual_list_get(list, index);
-    v.morph_name = morph->plugin->info->plugname;
+    VisPluginRef *ref = visual_list_get(list, index);
+
+    v.morph_name = ref->info->plugname;
 
     return TRUE;
 }
@@ -437,85 +406,72 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCur
 // Get the morph plugin's name string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetName(JNIEnv *env, jobject obj, jint index)
 {
-    VisMorph *morph = get_morph(index);
-    char *plugname = NULL;
-    if(morph)
-    {
-        plugname = morph->plugin->info->plugname;
-    }
-    return plugname;
+    VisPluginRef *ref = get_morph(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->plugname));
 }
 
 // Get the morph plugin's long name string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLongName(JNIEnv *env, jobject obj, jint index)
 {
-    VisMorph *morph = get_morph(index);
-    char *name = NULL;
-    if(morph)
-    {
-        name = morph->plugin->info->name;
-    }
-    return name;
+    VisPluginRef *ref = get_morph(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->name));
 }
 
 // Get the morph plugin's author string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetAuthor(JNIEnv *env, jobject obj, jint index)
 {
-    VisMorph *morph = get_morph(index);
-    char *author = NULL;
-    if(morph)
-    {
-        author = morph->plugin->info->author;
-    }
-    return author;
+    VisPluginRef *ref = get_morph(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->author));
 }
 
 // Get the morph plugin's version string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetVersion(JNIEnv *env, jobject obj, jint index)
 {
-    VisMorph *morph = get_morph(index);
-    char *version = NULL;
-    if(morph)
-    {
-        version = morph->plugin->info->version;
-    }
-    return version;
+    VisPluginRef *ref = get_morph(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->version));
+
 }
 
 // Get the morph plugin's about string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetAbout(JNIEnv *env, jobject obj, jint index)
 {
-    VisMorph *morph = get_morph(index);
-    char *about = NULL;
-    if(morph)
-    {
-        about = morph->plugin->info->about;
-    }
-    return about;
+    VisPluginRef *ref = get_morph(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->about));
 }
 
 // Get the morph plugin's help string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetHelp(JNIEnv *env, jobject obj, jint index)
 {
-    VisMorph *morph = get_morph(index);
-    char *help = NULL;
-    if(morph)
-    {
-        help = morph->plugin->info->help;
-    }
-    return help;
+    VisPluginRef *ref = get_morph(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->help));
 }
 
 // Get the morph plugin's license string.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLicense(JNIEnv *env, jobject obj, jint index)
 {
-    VisMorph *morph = get_morph(index);
-    char *license = NULL;
-    if(morph)
-    {
-        license = morph->plugin->info->license;
-    }
-    return license;
+    VisPluginRef *ref = get_morph(index);
+
+    visual_log_return_val_if_fail(ref != NULL, NULL);
+
+    return ((*env)->NewStringUTF(env, ref->info->license));
 }
 
 
@@ -525,11 +481,11 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLice
 // Get the VisActor at the requested index.
 VisPluginRef *get_actor(int index)
 {
-    int count = visual_list_count(visual_actor_get_list());
+    VisList *list = visual_actor_get_list();
+
+    int count = visual_list_count(list);
 
     visual_log_return_val_if_fail(index < count, NULL);
-
-    VisList *list = visual_actor_get_list();
 
     return visual_list_get(list, index);
 }
@@ -560,8 +516,9 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCur
     if(index >= count)
         return FALSE;
     
-    VisActor *actor = visual_list_get(list, index);
-    v.actor_name = actor->plugin->info->plugname;
+    VisPluginRef *ref = visual_list_get(list, index);
+
+    v.actor_name = ref->info->plugname;
 
     return TRUE;
 }
