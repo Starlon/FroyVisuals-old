@@ -202,7 +202,6 @@ VisVideo *new_video(int w, int h, VisVideoDepth depth, void *pixels)
 
 static void v_cycleActor (int prev)
 {
-    return;
     v.actor_name = (prev ? visual_actor_get_prev_by_name (v.actor_name)
                      : visual_actor_get_next_by_name (v.actor_name));
     if (!v.actor_name) {
