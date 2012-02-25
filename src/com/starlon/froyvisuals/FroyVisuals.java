@@ -38,6 +38,7 @@ public class FroyVisuals extends Activity
 {
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private static Settings mSettings;
+    private NativeHelper mNativeHelper;
 
 
     /** Called when the activity is first created. */
@@ -125,6 +126,7 @@ class FroyVisualsView extends View {
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private static final String APP_TAG = "FroyVisuals";
+    private NativeHelper mNativeHelper;
 
 
     private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
@@ -170,12 +172,12 @@ class FroyVisualsView extends View {
         mH = -1;
         mActive = true;
 
-        initApp(getWidth(), getHeight());
+        mNativeHelper.initApp(getWidth(), getHeight());
 
         mAudio = findAudioRecord();
         if(mAudio != null)
         {
-            resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+            mNativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 	        new Thread(new Runnable() {
 	            public void run() {
 					mAudio.startRecording();
@@ -183,7 +185,7 @@ class FroyVisualsView extends View {
                     {
 					    short[] data = new short[PCM_SIZE];
 					    mAudio.read(data, 0, PCM_SIZE);
-					    uploadAudio(data);
+					    mNativeHelper.uploadAudio(data);
                     }
 					mAudio.stop();
 	            }
@@ -198,11 +200,11 @@ class FroyVisualsView extends View {
             mW = getWidth();
             mH = getHeight();
             mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
-            screenResize(mW, mH);
+            mNativeHelper.screenResize(mW, mH);
         }
 
 
-        if(!render(mBitmap)) return;
+        if(!mNativeHelper.render(mBitmap)) return;
 
         canvas.drawBitmap(mBitmap, 0, 0, null);
 
@@ -222,11 +224,11 @@ class FroyVisualsView extends View {
             break;
             case MotionEvent.ACTION_UP:
                 if(direction >= 0) {
-                    switchActor(direction);
+                    mNativeHelper.switchActor(direction);
                 }
             break;
             case MotionEvent.ACTION_MOVE:
-                mouseMotion(x, y);
+                mNativeHelper.mouseMotion(x, y);
                 int size = event.getHistorySize();
                 if(size > 1)
                 {

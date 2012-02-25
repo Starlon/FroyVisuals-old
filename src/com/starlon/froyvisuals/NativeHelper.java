@@ -1,6 +1,7 @@
 package com.starlon.froyvisuals;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 
 
@@ -8,6 +9,7 @@ public class NativeHelper
 {
     // VisInput native calls
     public static native int inputCount();
+    public static native int inputGetCurrent();
     public static native String inputGetName(int index);
     public static native String inputGetLongName(int index);
     public static native String inputGetAuthor(int index);
@@ -18,6 +20,7 @@ public class NativeHelper
 
     // VisMorph native calls
     public static native int morphCount();
+    public static native int morphGetCurrent();
     public static native String morphGetName(int index);
     public static native String morphGetLongName(int index);
     public static native String morphGetAuthor(int index);
@@ -28,6 +31,7 @@ public class NativeHelper
 
     // VisActor native calls
     public static native int actorCount();
+    public static native int actorGetCurrent();
     public static native String actorGetName(int index);
     public static native String actorGetLongName(int index);
     public static native String actorGetAuthor(int index);
