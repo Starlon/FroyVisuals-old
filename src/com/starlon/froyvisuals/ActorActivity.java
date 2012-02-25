@@ -36,27 +36,26 @@ public class ActorActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 
-//        mLayout = new LinearLayout();
+        mLayout = new LinearLayout(this);
 
-/*
         // Headers
-        mHeaderName = new TextView();
-        mHeaderLongName = new TextView();
-        mHeaderAuthor = new TextView();
-        mHeaderVersion = new TextView();
-        mHeaderAbout = new TextView();
-        mHeaderHelp = new TextView();
-        mHeaderLicense = new TextView();
+        mHeaderName = new TextView(this);
+        mHeaderLongName = new TextView(this);
+        mHeaderAuthor = new TextView(this);
+        mHeaderVersion = new TextView(this);
+        mHeaderAbout = new TextView(this);
+        mHeaderHelp = new TextView(this);
+        mHeaderLicense = new TextView(this);
    
            // Values
-        mName = new TextView();
-        mLongName = new TextView();
-        mAuthor = new TextView();
-        mVersion = new TextView();
-        mAbout = new TextView();
-        mHelp = new TextView();
-        mLicense = new TextView();
-*/
+        mName = new TextView(this);
+        mLongName = new TextView(this);
+        mAuthor = new TextView(this);
+        mVersion = new TextView(this);
+        mAbout = new TextView(this);
+        mHelp = new TextView(this);
+        mLicense = new TextView(this);
+
         // Static text views on layout
         mLayout.addView(mHeaderName);
         mLayout.addView(mName);
