@@ -53,29 +53,47 @@ public class ActorActivity extends Activity
         String help_string = mHelper.actorGetHelp(current);
         String license_string = mHelper.actorGetLicense(current);
 
-        int len =long_name_string.length();
-        char[]long_name_chars =long_name_string.toCharArray();
-        mLongName.setText(long_name_chars, 0, len);
+        if(long_name_string != null)
+        {
+            int len =long_name_string.length();
+            char[]long_name_chars =long_name_string.toCharArray();
+            mLongName.setText(long_name_chars, 0, len);
+        }
 
-        len = author_string.length();
-        char[] author_chars = author_string.toCharArray();
-        mAuthor.setText(author_chars, 0, len);
+        if(author_string != null)
+        {
+            int len = author_string.length();
+            char[] author_chars = author_string.toCharArray();
+            mAuthor.setText(author_chars, 0, len);
+        }
 
-        len = version_string.length();
-        char[] version_chars = version_string.toCharArray();
-        mVersion.setText(version_chars, 0, len);
+        if(version_string != null)
+        {
+            int len = version_string.length();
+            char[] version_chars = version_string.toCharArray();
+            mVersion.setText(version_chars, 0, len);
+        }
 
-        len = about_string.length();
-        char[] about_chars = about_string.toCharArray();
-        mAbout.setText(about_chars, 0, len);
+        if(about_string != null)
+        {
+            int len = about_string.length();
+            char[] about_chars = about_string.toCharArray();
+            mAbout.setText(about_chars, 0, len);
+        }
 
-        len = help_string.length();
-        char[] help_chars = help_string.toCharArray();
-        mHelp.setText(help_chars, 0, len);
+        if(help_string != null)
+        {
+            int len = help_string.length();
+            char[] help_chars = help_string.toCharArray();
+            mHelp.setText(help_chars, 0, len);
+        }
 
-        len = license_string.length();
-        char[] license_chars = license_string.toCharArray();
-        mVersion.setText(license_chars, 0, len);
+        if(license_string != null)
+        {
+            int len = license_string.length();
+            char[] license_chars = license_string.toCharArray();
+            mVersion.setText(license_chars, 0, len);
+        }
 
         setContentView(view);
         

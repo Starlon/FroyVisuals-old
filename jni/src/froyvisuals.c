@@ -217,7 +217,6 @@ static void v_cycleActor (int prev)
 
 v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 {
-    return;
     visual_log_return_if_fail(input != NULL);
     visual_log_return_if_fail(audio != NULL);
     visual_log_return_if_fail(pcm_ref.pcm_data != NULL);
@@ -499,8 +498,16 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorCount(JNIE
 // Note that this index may change as new plugins are added.
 JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetCurrent(JNIEnv *env)
 {
-
-    return v.bin->actor->plugin->ref->index;
+    VisList *list = visual_actor_get_list();
+    int count = visual_list_count(list), i;
+    for(i = 0; i < count; i++)
+    {
+        VisPluginRef *ref = visual_list_get(list, i);
+        visual_log(VISUAL_LOG_DEBUG, "LOLOLAHAHAHA %s %s", v.actor_name, ref->info->plugname);
+        if(!strcmp(v.actor_name, ref->info->plugname))
+            return i;
+    }
+    return -1;
 }
 
 // Set the current actor plugin to that at the provided index.
