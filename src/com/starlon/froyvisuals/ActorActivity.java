@@ -3,8 +3,10 @@ package com.starlon.froyvisuals;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.ViewGroup;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ScrollView;
 import android.util.Log;
 
 public class ActorActivity extends Activity
@@ -12,9 +14,9 @@ public class ActorActivity extends Activity
     private final static String TAG = "FroyVisuals/ActorActivity";
     private NativeHelper mHelper;
     private LinearLayout mLayout;
+    private ScrollView mScrollView;
 
     // Header views
-    private TextView mHeaderName;
     private TextView mHeaderLongName;
     private TextView mHeaderAuthor;
     private TextView mHeaderVersion;
@@ -23,7 +25,6 @@ public class ActorActivity extends Activity
     private TextView mHeaderLicense;
     
     // Actor field views
-    private TextView mName;
     private TextView mLongName;
     private TextView mAuthor;
     private TextView mVersion;
@@ -37,11 +38,15 @@ public class ActorActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 
+        mScrollView = new ScrollView(this);
+
         mLayout = new LinearLayout(this);
         mLayout.setOrientation(LinearLayout.VERTICAL);
+        mLayout.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+
+        mScrollView.addView(mLayout);
 
         // Headers
-        mHeaderName = new TextView(this);
         mHeaderLongName = new TextView(this);
         mHeaderAuthor = new TextView(this);
         mHeaderVersion = new TextView(this);
@@ -49,16 +54,14 @@ public class ActorActivity extends Activity
         mHeaderHelp = new TextView(this);
         mHeaderLicense = new TextView(this);
    
-        mHeaderName.setTextSize(20);
-        mHeaderLongName.setTextSize(20);
-        mHeaderAuthor.setTextSize(20);
-        mHeaderVersion.setTextSize(20);
-        mHeaderAbout.setTextSize(20);
-        mHeaderHelp.setTextSize(20);
-        mHeaderLicense.setTextSize(20);
+        mHeaderLongName.setTextSize(40);
+        mHeaderAuthor.setTextSize(40);
+        mHeaderVersion.setTextSize(40);
+        mHeaderAbout.setTextSize(40);
+        mHeaderHelp.setTextSize(40);
+        mHeaderLicense.setTextSize(40);
 
            // Values
-        mName = new TextView(this);
         mLongName = new TextView(this);
         mAuthor = new TextView(this);
         mVersion = new TextView(this);
@@ -66,18 +69,32 @@ public class ActorActivity extends Activity
         mHelp = new TextView(this);
         mLicense = new TextView(this);
 
-        mName.setTextSize(15);
-        mLongName.setTextSize(15);
-        mAuthor.setTextSize(15);
-        mVersion.setTextSize(15);
-        mAbout.setTextSize(15);
-        mHelp.setTextSize(15);
-        mLicense.setTextSize(15);
+        mLongName.setTextSize(30);
+        mLongName.setHeight(45);
+        mLongName.setSingleLine(false);
+
+        mAuthor.setTextSize(30);
+        mAuthor.setHeight(45);
+        mAuthor.setSingleLine(false);
+
+        mVersion.setTextSize(30);
+        mVersion.setHeight(45);
+        mVersion.setSingleLine(false);
+
+        mAbout.setTextSize(30);
+        mAbout.setHeight(45);
+        mAbout.setSingleLine(false);
+
+        mHelp.setTextSize(30);
+        mHelp.setHeight(45);
+        mHelp.setSingleLine(false);
+
+        mLicense.setTextSize(30);
+        mLicense.setHeight(45);
+        mLicense.setSingleLine(false);
     
 
-        // Static text views on layout
-        mLayout.addView(mHeaderName);
-        mLayout.addView(mName);
+        // Stack text views on layout
         mLayout.addView(mHeaderLongName);
         mLayout.addView(mLongName);
         mLayout.addView(mHeaderAuthor);
@@ -92,7 +109,6 @@ public class ActorActivity extends Activity
         mLayout.addView(mLicense);
 
         // Set headers
-        mHeaderName.setText(R.string.title_plugin_name);
         mHeaderLongName.setText(R.string.title_plugin_long_name);
         mHeaderAuthor.setText(R.string.title_plugin_author);
         mHeaderVersion.setText(R.string.title_plugin_version);
@@ -102,8 +118,6 @@ public class ActorActivity extends Activity
 
         int current = mHelper.actorGetCurrent();
 
-        String name_string = mHelper.actorGetName(current);
-
         String long_name_string = mHelper.actorGetLongName(current);
         String author_string = mHelper.actorGetAuthor(current);
         String version_string = mHelper.actorGetVersion(current);
@@ -111,11 +125,7 @@ public class ActorActivity extends Activity
         String help_string = mHelper.actorGetHelp(current);
         String license_string = mHelper.actorGetLicense(current);
 
-        int len = name_string.length();
-        char[] name_chars = name_string.toCharArray();
-        mName.setText(name_chars, 0, len);
-
-        len =long_name_string.length();
+        int len =long_name_string.length();
         char[]long_name_chars =long_name_string.toCharArray();
         mLongName.setText(long_name_chars, 0, len);
 
@@ -139,7 +149,7 @@ public class ActorActivity extends Activity
         char[] license_chars = license_string.toCharArray();
         mVersion.setText(license_chars, 0, len);
 
-        setContentView(mLayout);
+        setContentView(mScrollView);
         
     }
 }
