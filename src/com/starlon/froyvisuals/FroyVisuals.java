@@ -83,13 +83,11 @@ public class FroyVisuals extends Activity
                 return true;
             }
 
-/*
             case R.id.settings:
             {
-                startActivity(new Intent(this, PreferencesActivity));
+                startActivity(new Intent(this, PreferencesActivity.class));
                 return true;
             }
-*/            
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");
@@ -111,7 +109,8 @@ class FroyVisualsView extends View {
     private Bitmap mBitmap;
     private AudioRecord mAudio;
     private int mH, mW;
-    private boolean isAvailable;
+    private boolean mActive;
+    private boolean mInit = false;
     private int PCM_SIZE;
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
@@ -163,30 +162,32 @@ class FroyVisualsView extends View {
     public FroyVisualsView(Context context) {
         super(context);
 
+        if(mInit) return;
+        mInit = true;
+
         mW = -1;
         mH = -1;
-        isAvailable = false;
+        mActive = true;
 
         initApp(getWidth(), getHeight());
-/*
+
         mAudio = findAudioRecord();
         if(mAudio != null)
         {
             resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 	        new Thread(new Runnable() {
 	            public void run() {
-                    while(true)
+					mAudio.startRecording();
+                    while(mActive)
                     {
-					    mAudio.startRecording();
 					    short[] data = new short[PCM_SIZE];
 					    mAudio.read(data, 0, PCM_SIZE);
-					    mAudio.stop();
 					    uploadAudio(data);
                     }
+					mAudio.stop();
 	            }
 	        }).start();
         }
-*/
     }
 
     @Override protected void onDraw(Canvas canvas) 
