@@ -39,6 +39,7 @@ public class FroyVisuals extends Activity
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private static Settings mSettings;
 
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -88,6 +89,14 @@ public class FroyVisuals extends Activity
                 startActivity(new Intent(this, PreferencesActivity.class));
                 return true;
             }
+
+/*
+            case R.id.about_actor:
+            {
+                startActivity(new Intent(this, AboutActorActivity.class));
+                return true;
+            }
+*/
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");
@@ -117,14 +126,6 @@ class FroyVisualsView extends View {
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private static final String APP_TAG = "FroyVisuals";
 
-    private static native void switchActor(int direction);
-    private static native boolean render(Bitmap  bitmap);
-    private static native void resizePCM(int size, int rate, int channels, int encoding);
-    private static native void uploadAudio(short[] data);
-    private static native void initApp(int w, int h);
-    private static native void mouseMotion(float x, float y);
-    private static native void mouseButton(int button, float x, float y);
-    private static native void screenResize(int w, int h);
 
     private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
     public AudioRecord findAudioRecord() {

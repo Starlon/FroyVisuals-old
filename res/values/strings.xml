@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FroyVisuals</string>
+
+    <!-- Preferences -->
     <string name="preferences_name">FroyVisuals Preferences</string>
     <string name="prefs_title_general">General</string>
     <string name="prefs_morph_enabled">Enable Morphs</string>
     <string name="prefs_summary_morph_enabled">Check to enable morphs.</string>
+
+    <!-- Menu -->
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
+    <string name="menu_actor">Actor</string>
+    <string name="menu_morph">Morph</string>
+    <string name="menu_input">Input</string>
+
+    <!-- About Menu -->
     <string name="about_name">About FroyVisuals</string>
     <string name="about_title">FroyVisuals v0.1</string>
     <string name="about_copyright">2012 (c) Scott Sibley</string>
@@ -14,6 +23,17 @@
     <string name="about_description">
         Various configurable music visualizations.
     </string>
-    <string name="about_changes">* v0.1 beta - initial beta release\n</string>
+    <string name="about_changes">
+        * v0.1 beta - initial beta release
+    </string>
+    
+    <!-- Plugin info -->
+    <string name="plugin_name">Plugin Name</string>
+    <string name="plugin_long_name">Plugin Long Name</string>
+    <string name="plugin_author">Author</string>
+    <string name="plugin_version">Version</string>
+    <string name="plugin_about">About</string>
+    <string name="plugin_help">Help</string>
+    <string name="plugin_license">License</string>
 
 </resources>

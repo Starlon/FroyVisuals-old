@@ -23,8 +23,6 @@
 #include <android/log.h>
 #include <android/bitmap.h>
 #include <libvisual/libvisual.h>
-#include <libxml/parser.h>
-#include <libxml/xmlmemory.h>
 
 #define DEVICE_DEPTH VISUAL_VIDEO_DEPTH_16BIT
 
@@ -32,6 +30,7 @@
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
+
 #define MORPH "alphablend"
 #define ACTOR "bumpscope"
 #define INPUT "dummy"
@@ -227,6 +226,327 @@ v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
     return 0;
+}
+
+
+// ---------- INPUT ----------
+
+// Get the VisInput at the requested index.
+VisInput *get_input(int index)
+{
+    VisInput *input = NULL;
+    VisList *list = visual_input_get_list();
+    int count = visual_list_count(list);
+    if(count <= index)
+    {
+        input = visual_list_get(list, index);
+    }
+    return input;
+}
+
+// Get the count of available input plugins.
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_FroyVisuals_inputCount(JNIEnv *env, jobject obj)
+{
+    return visual_list_count(visual_input_get_list());
+}
+
+// Get the input's plugin name.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_inputGetName(JNIEnv *env, jobject obj, jint index)
+{
+    VisInput *input = get_input(index);
+    char *plugname = NULL;
+    if(input)
+    {
+        plugname = input->plugin->info->plugname;
+    }
+    return plugname;
+}
+
+// Get the input's plugin longname.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_inputGetLongName(JNIEnv *env, jobject obj, jint index)
+{
+    VisInput *input = get_input(index);
+    char *plugname = NULL;
+    if(input)
+    {
+        plugname = input->plugin->info->name;
+    }
+    return plugname;
+}
+
+// Get the input's plugin author.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_inputGetAuthor(JNIEnv *env, jobject obj, jint index)
+{
+    VisInput *input = get_input(index);
+    char *author = NULL;
+    if(input)
+    {
+        author = input->plugin->info->author;
+    }
+    return author;
+}
+
+// Get the input's plugin version.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_inputGetVersion(JNIEnv *env, jobject obj, jint index)
+{
+    VisInput *input = get_input(index);
+    char *version = NULL;
+    if(input)
+    {
+        version = input->plugin->info->version;
+    }
+    return version;
+}
+
+// Get the input's plugin about string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_inputGetAbout(JNIEnv *env, jobject obj, jint index)
+{
+    VisInput *input = get_input(index);
+    char *about = NULL;
+    if(input)
+    {
+        about = input->plugin->info->about;
+    }
+    return about;
+}
+
+// Get the input's plugin help string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_inputGetHelp(JNIEnv *env, jobject obj, jint index)
+{
+    VisInput *input = get_input(index);
+    char *help = NULL;
+    if(input)
+    {
+        help = input->plugin->info->help;
+    }
+    return help;
+}
+
+// Get the input's plugin license string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_inputGetLicense(JNIEnv *env, jobject obj, jint index)
+{
+    VisInput *input = get_input(index);
+    char *license = NULL;
+    if(input)
+    {
+        license = input->plugin->info->license;
+    }
+    return license;
+}
+
+
+
+// ------ MORPH ------
+
+// Get the VisMorph at the requested index.
+VisMorph *get_morph(int index)
+{
+    VisMorph *morph = NULL;
+    VisList *list = visual_morph_get_list();
+    int count = visual_list_count(list);
+    if(count <= index)
+    {
+        morph = visual_list_get(list, index);
+    }
+    return morph;
+}
+
+
+// Get the count of available morph plugins.
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_FroyVisuals_morphCount(JNIEnv *env, jobject obj)
+{
+    return visual_list_count(visual_morph_get_list());
+}
+
+// Get the morph plugin's name string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_morphGetName(JNIEnv *env, jobject obj, jint index)
+{
+    VisMorph *morph = get_morph(index);
+    char *plugname = NULL;
+    if(morph)
+    {
+        plugname = morph->plugin->info->plugname;
+    }
+    return plugname;
+}
+
+// Get the morph plugin's long name string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_morphGetLongName(JNIEnv *env, jobject obj, jint index)
+{
+    VisMorph *morph = get_morph(index);
+    char *name = NULL;
+    if(morph)
+    {
+        name = morph->plugin->info->name;
+    }
+    return name;
+}
+
+// Get the morph plugin's author string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_morphGetAuthor(JNIEnv *env, jobject obj, jint index)
+{
+    VisMorph *morph = get_morph(index);
+    char *author = NULL;
+    if(morph)
+    {
+        author = morph->plugin->info->author;
+    }
+    return author;
+}
+
+// Get the morph plugin's version string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_morphGetVersion(JNIEnv *env, jobject obj, jint index)
+{
+    VisMorph *morph = get_morph(index);
+    char *version = NULL;
+    if(morph)
+    {
+        version = morph->plugin->info->version;
+    }
+    return version;
+}
+
+// Get the morph plugin's about string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_morphGetAbout(JNIEnv *env, jobject obj, jint index)
+{
+    VisMorph *morph = get_morph(index);
+    char *about = NULL;
+    if(morph)
+    {
+        about = morph->plugin->info->about;
+    }
+    return about;
+}
+
+// Get the morph plugin's help string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_morphGetHelp(JNIEnv *env, jobject obj, jint index)
+{
+    VisMorph *morph = get_morph(index);
+    char *help = NULL;
+    if(morph)
+    {
+        help = morph->plugin->info->help;
+    }
+    return help;
+}
+
+// Get the morph plugin's license string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_morphGetLicense(JNIEnv *env, jobject obj, jint index)
+{
+    VisMorph *morph = get_morph(index);
+    char *license = NULL;
+    if(morph)
+    {
+        license = morph->plugin->info->license;
+    }
+    return license;
+}
+
+
+
+// ------ ACTORS ------
+
+// Get the VisActor at the requested index.
+VisActor *get_actor(int index)
+{
+    VisActor *actor = NULL;
+    VisList *list = visual_actor_get_list();
+    int count = visual_list_count(list);
+    if(count <= index)
+    {
+        actor = visual_list_get(list, index);
+    }
+    return actor;
+}
+
+// Get the count of available actor plugins.
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_FroyVisuals_actorCount(JNIEnv *env, jobject obj)
+{
+    return visual_list_count(visual_actor_get_list());
+}
+
+// Get the actor's plugin name.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_actorGetName(JNIEnv *env, jobject obj, jint index)
+{
+    VisActor *actor = get_actor(index);
+    char *plugname = NULL;
+    if(actor)
+    {
+        plugname = actor->plugin->info->plugname;
+    }
+    return plugname;
+}
+
+// Get the actor's long name.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_actorGetLongName(JNIEnv *env, jobject obj, jint index)
+{
+    VisActor *actor = get_actor(index);
+    char *name = NULL;
+    if(actor)
+    {
+        name = actor->plugin->info->name;
+    }
+    return name;
+}
+
+// Get the actor's author.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_actorGetAuthor(JNIEnv *env, jobject obj, jint index)
+{
+    VisActor *actor = get_actor(index);
+    char *author = NULL;
+    if(actor)
+    {
+        author = actor->plugin->info->author;
+    }
+    return author;
+}
+
+// Get the actor's version string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_actorGetVersion(JNIEnv *env, jobject obj, jint index)
+{
+    VisActor *actor = get_actor(index);
+    char *version = NULL;
+    if(actor)
+    {
+        version = actor->plugin->info->version;
+    }
+    return version;
+}
+
+// Get the actor's about string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_actorGetAbout(JNIEnv *env, jobject obj, jint index)
+{
+    VisActor *actor = get_actor(index);
+    char *about = NULL;
+    if(actor)
+    {
+        about = actor->plugin->info->about;
+    }
+    return about;
+}
+
+// Get the actor's help string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_actorGetHelp(JNIEnv *env, jobject obj, jint index)
+{
+    VisActor *actor = get_actor(index);
+    char *help = NULL;
+    if(actor)
+    {
+        help = actor->plugin->info->help;
+    }
+    return help;
+}
+
+// Get the actor's license string.
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_FroyVisuals_actorGetLicense(JNIEnv *env, jobject obj, jint index)
+{
+    VisActor *actor = get_actor(index);
+    char *license = NULL;
+    if(actor)
+    {
+        license = actor->plugin->info->license;
+    }
+    return license;
 }
 
 // For fallback audio source.
