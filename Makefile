@@ -16,8 +16,14 @@ debug:
 install:
 	@ant release install
 
-install-debug:
+install_debug:
 	@ant debug install
+
+install_simu:
+	@ant -e release install
+
+install_debug_simu:
+	@ant -e debug install
 
 clean:
 	@ndk-build clean

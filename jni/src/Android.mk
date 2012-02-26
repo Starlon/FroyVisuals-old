@@ -4,14 +4,14 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := main
 
-LOCAL_C_INCLUDES := \
-    ./include
+LOCAL_C_INCLUDES := ./include
 
-# Add any compilation flags for your project here...
-LOCAL_CFLAGS := \
-	-DPLAY_MOD -g -O0 -Wstrict-aliasing -Wcast-align -Waddress
+LOCAL_CFLAGS := -DPLAY_MOD
 
-# Add your application source files here...
+LOCAL_CFLAGS += $(WARNING_FLAGS)
+LOCAL_CFLAGS += $(DEBUG_FLAGS)
+LOCAL_CFLAGS += $(OPTIM_FLAGS)
+
 LOCAL_SRC_FILES := froyvisuals.c
 
 LOCAL_SHARED_LIBRARIES := libvisual

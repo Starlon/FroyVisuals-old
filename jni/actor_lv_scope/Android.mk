@@ -4,7 +4,9 @@ include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= actor_lv_scope
 LOCAL_SRC_FILES := actor_lv_scope.c
-LOCAL_CFLAGS	:= -Wall -O0 -g -Wstrict-aliasing -Wcast-align -Wpointer-arith -Waddress
+LOCAL_CFLAGS += $(WARNING_FLAGS)
+LOCAL_CFLAGS += $(DEBUG_FLAGS)
+LOCAL_CFLAGS += $(OPTIM_FLAGS)
 LOCAL_SHARED_LIBRARIES := libvisual
 include $(BUILD_SHARED_LIBRARY)
 

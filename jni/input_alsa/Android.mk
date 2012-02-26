@@ -5,6 +5,8 @@ LOCAL_STATIC_LIBRARIES := libvisual tinyalsa
 LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= input_alsa
 LOCAL_SRC_FILES := input_alsa.c
-LOCAL_CFLAGS	:= -Wall -O0 -g -Wstrict-aliasing -Wcast-align -Wpointer-arith -Waddress
+LOCAL_CFLAGS += $(WARNING_FLAGS)
+LOCAL_CFLAGS += $(DEBUG_FLAGS)
+LOCAL_CFLAGS += $(OPTIM_FLAGS)
 include $(BUILD_SHARED_LIBRARY)
 

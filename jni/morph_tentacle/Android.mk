@@ -5,6 +5,8 @@ LOCAL_STATIC_LIBRARIES := libvisual
 LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= morph_tentacle
 LOCAL_SRC_FILES := morph_tentacle.c
-LOCAL_CFLAGS	:= -Wall -O0 -g -Wstrict-aliasing -Wcast-align -Wpointer-arith -Waddress
+LOCAL_CFLAGS += $(WARNING_FLAGS)
+LOCAL_CFLAGS += $(DEBUG_FLAGS)
+LOCAL_CFLAGS += $(OPTIM_FLAGS)
 include $(BUILD_SHARED_LIBRARY)
 

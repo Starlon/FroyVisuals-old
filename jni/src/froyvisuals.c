@@ -220,11 +220,11 @@ static void v_cycleActor (int prev)
     }
 }
 
-v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
+static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 {
-    visual_log_return_if_fail(input != NULL);
-    visual_log_return_if_fail(audio != NULL);
-    visual_log_return_if_fail(pcm_ref.pcm_data != NULL);
+    visual_log_return_val_if_fail(input != NULL, VISUAL_ERROR_GENERAL);
+    visual_log_return_val_if_fail(audio != NULL, VISUAL_ERROR_GENERAL);
+    visual_log_return_val_if_fail(pcm_ref.pcm_data != NULL, VISUAL_ERROR_GENERAL);
 
     VisBuffer buf;
 
@@ -709,7 +709,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_switchActor
     const char *morph = v.morph_name;
     
     if(bin_morph && !visual_morph_is_done(bin_morph))
-        return;
+        return FALSE;
 
     v_cycleActor((int)prev);
 
@@ -730,6 +730,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_switchActor
     }
 
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
+    return TRUE;
 }
 
 // Set the VisBin's plugins. This causes the actor to change immediately.
@@ -770,6 +771,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_updatePlugi
 
     // Sync VisBin without events.
     visual_bin_sync(v.bin, FALSE);
+
+    return TRUE;
 }
 
 // Set the VisBin's morph style -- to morph or not to morph.
@@ -815,9 +818,9 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_screenResize(JN
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
 {
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v.bin)));
-    VisKey keysym;
-    int keymod;
-    VisKeyState state;
+    VisKey keysym = 0;
+    int keymod = 0;
+    VisKeyState state = 0;
     visual_event_queue_add_keyboard(eventqueue, keysym, keymod, state);
 }
 
@@ -868,16 +871,16 @@ void app_main(int w, int h)
     VisActor *actor = visual_actor_new((char*)v.actor_name);
     VisInput *input = visual_input_new((char*)v.input_name);
 
-//FIXME For mic input
-/*
-    VisInput *input = visual_mem_malloc(sizeof( VisInput));
-    input->audio = visual_audio_new();
-    visual_audio_init(input->audio);
-
-    if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
-        visual_log (VISUAL_LOG_CRITICAL, "Cannot set input plugin callback");
+    if(FALSE) /* FIXME For Mic input */
+    {
+        VisInput *input = visual_mem_malloc(sizeof( VisInput));
+        input->audio = visual_audio_new();
+        visual_audio_init(input->audio);
+    
+        if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
+            visual_log (VISUAL_LOG_CRITICAL, "Cannot set input plugin callback");
+        }
     }
-*/
 
     depthflag = visual_actor_get_supported_depth(actor);
     depth = visual_video_depth_get_highest(depthflag);
@@ -923,8 +926,14 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_render(JNIE
     void*              pixels;
     int                ret;
     static Stats       stats;
+    static int init = TRUE;
     int depthflag;
     VisVideoDepth depth;
+
+    if(init) {
+        stats_init(&stats);
+        init = FALSE;
+    }
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
