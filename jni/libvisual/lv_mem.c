@@ -119,6 +119,13 @@ int visual_mem_initialize ()
 		visual_mem_set32 = mem_set32_mmx2;
 	}
 
+    if (visual_cpu_get_altivec() > 0) {
+        visual_mem_copy = mem_copy_altivec;
+        visual_mem_set = mem_set8_altivec;
+        visual_mem_set16 = mem_set16_altivec;
+        visual_mem_set32 = mem_set32_altivec;
+    }
+
     if (visual_cpu_get_neon() > 0) {
         visual_mem_copy = mem_copy_neon;
         visual_mem_set = mem_set8_neon;

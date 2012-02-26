@@ -75,8 +75,10 @@
 static VisCPU __lv_cpu_caps;
 static int __lv_cpu_initialized = FALSE;
 
+#if defined(VISUAL_ARCH_X86)
 static int has_cpuid (void);
 static int cpuid (unsigned int ax, unsigned int *p);
+#endif
 
 /* The sigill handlers */
 #if defined(VISUAL_ARCH_X86) //x86 (linux katmai handler check thing)
@@ -290,9 +292,9 @@ void check_os_katmai_support( void )
 }
 
 
+#if defined(VISUAL_ARCH_X86)
 int has_cpuid (void)
 {
-#if defined(VISUAL_ARCH_X86)
 	int a, c;
 
 	__asm __volatile
@@ -309,14 +311,12 @@ int has_cpuid (void)
 		 : "cc");
 
 	return a != c;
-#else
-	return 0;
-#endif
 }
+#endif
 
+#if defined(VISUAL_ARCH_X86)
 int cpuid (unsigned int ax, unsigned int *p)
 {
-#if defined(VISUAL_ARCH_X86)
 	uint32_t flags;
 
 	__asm __volatile
@@ -328,10 +328,9 @@ int cpuid (unsigned int ax, unsigned int *p)
 		 : "0" (ax));
 
 	return VISUAL_OK;
-#else
-	return -VISUAL_ERROR_CPU_INVALID_CODE;
-#endif
+	//return -VISUAL_ERROR_CPU_INVALID_CODE;
 }
+#endif
 
 /**
  * @defgroup VisCPU VisCPU

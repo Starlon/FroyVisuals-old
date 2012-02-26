@@ -94,15 +94,15 @@ extern "C" const VisPluginInfo *get_plugin_info (int *count)
 	actor[0].render  = lv_corona_render;
 	actor[0].vidoptions.depth   = VISUAL_VIDEO_DEPTH_8BIT;
 
-	info[0].type = VISUAL_PLUGIN_TYPE_ACTOR;
+	info[0].type = (char *)VISUAL_PLUGIN_TYPE_ACTOR;
 
-	info[0].plugname = "corona";
-	info[0].name     = "libvisual corona plugin";
-	info[0].author   = "Jean-Christophe Hoelt <jeko@ios-software.com> and Richard Ashburn <richard.asbury@btinternet.com>";
-	info[0].version  = "0.1";
-	info[0].about    = "Libvisual corona plugin";
-	info[0].help     = "This plugin adds support for the neat corona plugin";
-	info[0].license = VISUAL_PLUGIN_LICENSE_GPL,
+	info[0].plugname = (char *)"corona";
+	info[0].name     = (char *)"libvisual corona plugin";
+	info[0].author   = (char *)"Jean-Christophe Hoelt <jeko@ios-software.com> and Richard Ashburn <richard.asbury@btinternet.com>";
+	info[0].version  = (char *)"0.1";
+	info[0].about    = (char *)"Libvisual corona plugin";
+	info[0].help     = (char *)"This plugin adds support for the neat corona plugin";
+	info[0].license = (char *)VISUAL_PLUGIN_LICENSE_GPL,
 
 	info[0].init     = lv_corona_init;
 	info[0].cleanup  = lv_corona_cleanup;
@@ -245,11 +245,11 @@ extern "C" int lv_corona_render (VisPluginData *plugin, VisVideo *video, VisAudi
 
 	visual_buffer_set_data_pair (&pcmb, pcm, sizeof (pcm));
 
-	visual_audio_get_sample (audio, &pcmb, VISUAL_AUDIO_CHANNEL_LEFT);
+	visual_audio_get_sample (audio, &pcmb, (char *)VISUAL_AUDIO_CHANNEL_LEFT);
 	visual_buffer_set_data_pair (&buffer, freq[0], sizeof (freq[0]));
 	visual_audio_get_spectrum_for_sample (&buffer, &pcmb, FALSE);
 
-	visual_audio_get_sample (audio, &pcmb, VISUAL_AUDIO_CHANNEL_RIGHT);
+	visual_audio_get_sample (audio, &pcmb, (char *)VISUAL_AUDIO_CHANNEL_RIGHT);
 	visual_buffer_set_data_pair (&buffer, freq[1], sizeof (freq[1]));
 	visual_audio_get_spectrum_for_sample (&buffer, &pcmb, TRUE);
 

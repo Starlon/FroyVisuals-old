@@ -276,9 +276,10 @@ void _oink_scene_scope_select (OinksiePrivate *priv, uint8_t *buf, int color, in
 
 void _oink_scene_randomize (OinksiePrivate *priv)
 {
-	_oink_config_random_scopemode (priv);
-	_oink_config_random_blurmode (priv);
-	_oink_config_random_backgroundmode (priv);
+    // FIXME These aren't defined anywhere??
+	//_oink_config_random_scopemode (priv);
+	//_oink_config_random_blurmode (priv);
+	//_oink_config_random_backgroundmode (priv);
 
 	_oink_gfx_palette_build (priv, priv->config.acidpalette);
 }
@@ -297,11 +298,13 @@ void _oink_scene_render (OinksiePrivate *priv)
 
 	if (priv->audio.beat == TRUE)
 	{
+        /* FIXME These aren't defined anywhere...
 		if (visual_random_context_int_range (priv->rcontext, 0, 50) == 0)
 			_oink_config_random_scopemode (priv);
 
 		if (visual_random_context_int_range (priv->rcontext, 0, 40) == 0)
 			_oink_config_random_blurmode (priv);
+        */
 
 		if (visual_random_context_int_range (priv->rcontext, 0, 20) == 0)
 			_oink_gfx_palette_build (priv, priv->config.acidpalette);

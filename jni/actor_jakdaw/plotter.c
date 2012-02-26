@@ -26,8 +26,10 @@
 #include "plotter.h"
 
 static void vert_line(JakdawPrivate *priv, int x, int a, int b, uint32_t col, uint32_t *vscr);
-static int no_of_shifts(int val);
-static int p2(int val);
+
+//FIXME These are not used apparently.
+//static int no_of_shifts(int val); 
+//static int p2(int val);
 
 void _jakdaw_plotter_draw(JakdawPrivate *priv, float *pcm_data, float *freq_data, uint32_t *vscr)
 {
@@ -113,6 +115,7 @@ static void vert_line(JakdawPrivate *priv, int x,int a, int b, uint32_t col, uin
 // Calculate maximum no of right shifts that can be applied to a sample so
 // that val can still be represented.
 
+/* FIXME These doesn't seem to be used. Commenting to get rid of warning.
 static int no_of_shifts(int val)
 {
 
@@ -138,3 +141,4 @@ static int p2(int val)
 
 	return a;
 }
+*/
