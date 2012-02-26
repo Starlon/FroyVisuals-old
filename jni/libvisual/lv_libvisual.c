@@ -41,6 +41,7 @@
 #include "lv_thread.h"
 #include "lv_cpu.h"
 #include "config.h"
+#include "prof.h"
 
 
 /** Set when libvisual is initialized. */
@@ -279,6 +280,8 @@ int visual_init (int *argc, char ***argv)
 	char *homedir = NULL;
 	int ret = 0;
 
+    monstartup("libvisual.so"); // FIXME Start profiling
+
 #if ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -450,6 +453,7 @@ int visual_quit ()
 	}
 
 	__lv_initialized = FALSE;
+    moncleanup(); //FIXME End profilng
 	return VISUAL_OK;
 }
 

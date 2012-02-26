@@ -25,6 +25,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.MotionEvent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -58,7 +60,13 @@ public class FroyVisuals extends Activity
             }
         });
 */
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(new FroyVisualsView(this));
+
     }
 
     public void onResume()
@@ -96,13 +104,13 @@ public class FroyVisuals extends Activity
                 startActivity(new Intent(this, AboutPluginsActivity.class));
                 return true;
             }
-/*
-            case R.id.about_input:
+            case R.id.close_app:
             {
-                startActivity(new Intent(this, InputActivity.class));
+                mNativeHelper.visualsQuit();
                 return true;
             }
 
+/*
             case R.id.about_morph:
             {
                 startActivity(new Intent(this, MorphActivity.class));

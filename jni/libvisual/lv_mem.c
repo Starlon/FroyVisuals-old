@@ -27,6 +27,10 @@
 #include <stdlib.h>
 #include <gettext.h>
 
+#if defined(HAVE_NEON)
+#    include <arm_neon.h>
+#endif
+
 #include "lv_mem.h"
 #include "lv_common.h"
 #include "lv_log.h"
@@ -42,25 +46,25 @@ static void *mem_copy_mmx (void *dest, const void *src, visual_size_t n);
 static void *mem_copy_mmx2 (void *dest, const void *src, visual_size_t n);
 static void *mem_copy_3dnow (void *dest, const void *src, visual_size_t n);
 static void *mem_copy_altivec (void *dest, const void *src, visual_size_t n);
-static void *mem_copy_arm (void *dest, const void *src, visual_size_t n);
+static void *mem_copy_neon (void *dest, const void *src, visual_size_t n);
 
 static void *mem_set8_c (void *dest, int c, visual_size_t n);
 static void *mem_set8_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set8_mmx2 (void *dest, int c, visual_size_t n);
 static void *mem_set8_altivec (void *dest, int c, visual_size_t n);
-static void *mem_set8_arm (void *dest, int c, visual_size_t n);
+static void *mem_set8_neon (void *dest, int c, visual_size_t n);
 
 static void *mem_set16_c (void *dest, int c, visual_size_t n);
 static void *mem_set16_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set16_mmx2 (void *dest, int c, visual_size_t n);
 static void *mem_set16_altivec (void *dest, int c, visual_size_t n);
-static void *mem_set16_arm (void *dest, int c, visual_size_t n);
+static void *mem_set16_neon (void *dest, int c, visual_size_t n);
 
 static void *mem_set32_c (void *dest, int c, visual_size_t n);
 static void *mem_set32_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set32_mmx2 (void *dest, int c, visual_size_t n);
 static void *mem_set32_altivec (void *dest, int c, visual_size_t n);
-static void *mem_set32_arm (void *dest, int c, visual_size_t n);
+static void *mem_set32_neon (void *dest, int c, visual_size_t n);
 
 /* Optimal performance functions set by visual_mem_initialize(). */
 VisMemCopyFunc visual_mem_copy = mem_copy_c;
@@ -115,13 +119,12 @@ int visual_mem_initialize ()
 		visual_mem_set32 = mem_set32_mmx2;
 	}
 
-#if defined( VISUAL_ARCH_ARM)
-    visual_mem_copy = mem_copy_arm;
-    visual_mem_set = mem_set8_arm;
-    visual_mem_set16 = mem_set16_arm;
-    visual_mem_set32 = mem_set32_arm;
-    //FIXME These are generic for ARM family, and disregards CPU features.
-#endif
+    if (visual_cpu_get_neon() > 0) {
+        visual_mem_copy = mem_copy_neon;
+        visual_mem_set = mem_set8_neon;
+        visual_mem_set16 = mem_set16_neon;
+        visual_mem_set32 = mem_set32_neon;
+    }
 
 	return VISUAL_OK;
 }
@@ -391,7 +394,7 @@ static void *mem_copy_altivec (void *dest, const void *src, visual_size_t n)
     return NULL;
 }
 
-static void *mem_copy_arm (void *dest, const void *src, visual_size_t n)
+static void *mem_copy_neon (void *dest, const void *src, visual_size_t n)
 {
     memcpy(dest, src, n);
     return dest;
@@ -582,7 +585,7 @@ static void *mem_set8_altivec (void *dest, int c, visual_size_t n)
 }
 
 /* Memset functions, 1 byte memset */
-static void *mem_set8_arm (void *dest, int c, visual_size_t n)
+static void *mem_set8_neon (void *dest, int c, visual_size_t n)
 {
 
     memset(dest, c, n);
@@ -778,7 +781,7 @@ static void *mem_set16_altivec (void *dest, int c, visual_size_t n)
 }
 
 /* Memset functions, 2 byte memset */
-static void *mem_set16_arm (void *dest, int c, visual_size_t n)
+static void *mem_set16_neon (void *dest, int c, visual_size_t n)
 {
     memset(dest, c, n);
     return dest;
@@ -913,7 +916,7 @@ static void *mem_set32_altivec (void *dest, int c, visual_size_t n)
 }
 
 /* Memset functions, 4 byte memset */
-static void *mem_set32_arm (void *dest, int c, visual_size_t n)
+static void *mem_set32_neon (void *dest, int c, visual_size_t n)
 {
     memset(dest, c, n);
     return dest;

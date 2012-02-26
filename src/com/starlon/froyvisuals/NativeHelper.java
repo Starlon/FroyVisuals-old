@@ -53,6 +53,7 @@ public class NativeHelper
     public static native void mouseMotion(float x, float y);
     public static native void mouseButton(int button, float x, float y);
     public static native void screenResize(int w, int h);
+    public static native void visualsQuit();
 
     /** constructor */
     public NativeHelper(Context c)

@@ -829,6 +829,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_visualsQuit(JNI
     visual_object_unref(VISUAL_OBJECT(v.video));
     visual_object_unref(VISUAL_OBJECT(v.bin));
     visual_quit();
+    exit(0);
 }
 
 void app_main(int w, int h)

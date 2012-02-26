@@ -13,6 +13,12 @@ debug:
 	@ant clean
 	@ant debug install
 
+install:
+	@ant release install
+
+install-debug:
+	@ant debug install
+
 clean:
 	@ndk-build clean
 	@ant clean
@@ -56,3 +62,6 @@ redirect:
 	@adb shell stop
 	@adb shell setprop log.redirect-stdio true
 	@adb shell start
+
+profile:
+	@./gprof.sh
