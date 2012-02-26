@@ -2633,6 +2633,7 @@ static int depth_transform_32_to_16_c (VisVideo *dest, VisVideo *src)
 	return VISUAL_OK;
 }
 
+
 static int depth_transform_32_to_24_c (VisVideo *dest, VisVideo *src)
 {
 	int x, y;

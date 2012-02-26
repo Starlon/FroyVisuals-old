@@ -153,7 +153,7 @@ class FroyVisualsView extends View {
     private static final String APP_TAG = "FroyVisuals";
     private NativeHelper mNativeHelper;
 
-
+/*
     private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
     public AudioRecord findAudioRecord() {
         for (int rate : mSampleRates) {
@@ -185,8 +185,8 @@ class FroyVisualsView extends View {
         }
         return null;
     }
-    
-    AudioRecord recorder = findAudioRecord();
+  */  
+    //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
 
