@@ -29,17 +29,9 @@
               android:name="PreferencesActivity" android:label="@string/preferences_name">
         </activity>
 
-        <!-- input activity -->
+        <!-- about plugins activity -->
         <activity 
-              android:name="InputActivity" android:label="@string/input_name">
-        </activity>
-        <!-- morph activity -->
-        <activity 
-              android:name="MorphActivity" android:label="@string/morph_name">
-        </activity>
-        <!-- actor activity -->
-        <activity 
-              android:name="ActorActivity" android:label="@string/actor_name">
+              android:name="AboutPluginsActivity" android:label="@string/input_name">
         </activity>
 
     </application>

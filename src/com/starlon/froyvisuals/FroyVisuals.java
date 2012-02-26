@@ -91,6 +91,12 @@ public class FroyVisuals extends Activity
                 return true;
             }
 
+            case R.id.about_plugins:
+            {
+                startActivity(new Intent(this, AboutPluginsActivity.class));
+                return true;
+            }
+/*
             case R.id.about_input:
             {
                 startActivity(new Intent(this, InputActivity.class));
@@ -108,7 +114,7 @@ public class FroyVisuals extends Activity
                 startActivity(new Intent(this, ActorActivity.class));
                 return true;
             }
-
+*/
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");
