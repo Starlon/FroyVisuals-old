@@ -280,7 +280,10 @@ int visual_init (int *argc, char ***argv)
 	char *homedir = NULL;
 	int ret = 0;
 
-    monstartup("libvisual.so"); // FIXME Start profiling
+    /* FIXME Start profiling */
+    /* Change to 500 interrupts per second */
+    setenv("CPUPROFILE_FREQUENCY", "500", 1); 
+    monstartup("libvisual.so"); 
 
 #if ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
