@@ -1,12 +1,12 @@
 # Android Makefile v0.1 (c) 2011 - Daniel Hiepler <daniel@niftylight.de>
 
 APPNAME = FroyVisuals
-ACTIVITY = FroyVisualsActivity
+ACTIVITY = FroyVisuals
 
 all:
 	@ndk-build
 	@ant clean
-	@ant release install
+	@ant release
 
 debug:
 	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
