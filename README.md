@@ -8,12 +8,12 @@ Or follow [this](https://github.com/starlon/FroyVisuals/zipball/master) link
 ## Installation ##
 * You'll need the Android SDK and the Android NDK.
 * Make sure your Android device is connected. Type 'adb devices' to make sure.
-* Uncompress the Downloaded Library
-* Rename the uncompressed folder to FroyVisuals
+* Uncompress the Downloaded zip file.
+* Rename the uncompressed folder to FroyVisuals.
 * Enter the directory and type 'make debug' -- 
   This will build and install the app with debug symbols.
 * Alternatively you can 'make', but you'll be required to 
-  run 'make keygen' and 'make sign' before 'make install'
+  run 'make keygen' and 'make sign' before 'make install'.
 * If you received no error messages, then FroyVisuals should be on your device.
 
 ## Alternative Install ##
