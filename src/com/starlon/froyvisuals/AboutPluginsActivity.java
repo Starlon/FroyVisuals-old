@@ -46,7 +46,7 @@ public class AboutPluginsActivity extends Activity
         mVersion = (TextView)mLayout.findViewById(R.id.info_version);
         mAbout = (TextView)mLayout.findViewById(R.id.info_about);
         mHelp = (TextView)mLayout.findViewById(R.id.info_help);
-        mLicense = (TextView)mLayout.findViewById(R.id.info_license);
+        mLicense = null;//(TextView)mLayout.findViewById(R.id.info_license);
 
 
         mWrapperLayout.addView(mLayout);
@@ -70,7 +70,7 @@ public class AboutPluginsActivity extends Activity
         String version_string = mHelper.actorGetVersion(current);
         String about_string = mHelper.actorGetAbout(current);
         String help_string = mHelper.actorGetHelp(current);
-        String license_string = mHelper.actorGetLicense(current);
+        String license_string = null;//mHelper.actorGetLicense(current);
 
         fillFields(long_name_string,author_string,version_string,
             about_string,help_string,license_string);
@@ -92,11 +92,10 @@ public class AboutPluginsActivity extends Activity
         String version_string = mHelper.inputGetVersion(current);
         String about_string = mHelper.inputGetAbout(current);
         String help_string = mHelper.inputGetHelp(current);
-        String license_string = mHelper.inputGetLicense(current);
+        String license_string = null;//mHelper.inputGetLicense(current);
 
         fillFields(long_name_string,author_string,version_string,
             about_string,help_string,license_string);
-
     }
 
     public void showMorph(View view)
@@ -114,11 +113,10 @@ public class AboutPluginsActivity extends Activity
         String version_string = mHelper.morphGetVersion(current);
         String about_string = mHelper.morphGetAbout(current);
         String help_string = mHelper.morphGetHelp(current);
-        String license_string = mHelper.morphGetLicense(current);
+        String license_string = null;//mHelper.morphGetLicense(current);
 
         fillFields(long_name_string,author_string,version_string,
             about_string,help_string,license_string);
-
     }
 
     public void fillFields(
@@ -169,7 +167,7 @@ public class AboutPluginsActivity extends Activity
         {
             int len = license_string.length();
             char[] license_chars = license_string.toCharArray();
-            mVersion.setText(license_chars, 0, len);
+            mLicense.setText(license_chars, 0, len);
         }
     }
 }

@@ -344,7 +344,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLice
 
     visual_log_return_val_if_fail(ref != NULL, NULL);
 
-    return ((*env)->NewStringUTF(env, ref->info->name));
+    return ((*env)->NewStringUTF(env, ref->info->license));
 
 }
 
@@ -480,12 +480,15 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLice
 VisPluginRef *get_actor(int index)
 {
     VisList *list = visual_actor_get_list();
+    VisPluginRef *ref;
 
     int count = visual_list_count(list);
 
-    visual_log_return_val_if_fail(index < count, NULL);
+    visual_log_return_val_if_fail(index >= 0 && index < count, NULL);
 
-    return visual_list_get(list, index);
+    ref = visual_list_get(list, index);
+
+    return ref;
 }
 
 // Get the count of available actor plugins.
@@ -503,8 +506,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetCurrent
     for(i = 0; i < count; i++)
     {
         VisPluginRef *ref = visual_list_get(list, i);
-        visual_log(VISUAL_LOG_DEBUG, "LOLOLAHAHAHA %s %s", v.actor_name, ref->info->plugname);
-        if(!strcmp(v.actor_name, ref->info->plugname))
+        if(ref->info->plugname && !strcmp(v.actor_name, ref->info->plugname))
             return i;
     }
     return -1;
@@ -543,10 +545,12 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetName
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLongName(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
+    const char *name;
 
     visual_log_return_val_if_fail(ref != NULL, NULL);
+    name = ref->info->name;
 
-    return ((*env)->NewStringUTF(env, ref->info->name));
+    return ((*env)->NewStringUTF(env, (char *)name));
 }
 
 // Get the actor's author.
@@ -596,7 +600,9 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLice
 
     visual_log_return_val_if_fail(ref != NULL, NULL);
 
-    return ((*env)->NewStringUTF(env, ref->info->license));
+    char *license = ref->info->license;
+
+    return ((*env)->NewStringUTF(env, license));
 }
 
 // For fallback audio source.
