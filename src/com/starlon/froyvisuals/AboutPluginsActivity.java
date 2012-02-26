@@ -46,7 +46,7 @@ public class AboutPluginsActivity extends Activity
         mVersion = (TextView)mLayout.findViewById(R.id.info_version);
         mAbout = (TextView)mLayout.findViewById(R.id.info_about);
         mHelp = (TextView)mLayout.findViewById(R.id.info_help);
-        mLicense = null;//(TextView)mLayout.findViewById(R.id.info_license);
+        mLicense = (TextView)mLayout.findViewById(R.id.info_license);
 
 
         mWrapperLayout.addView(mLayout);

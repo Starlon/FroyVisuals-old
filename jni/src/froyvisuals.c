@@ -36,6 +36,11 @@
 #define ACTOR "bumpscope"
 #define INPUT "dummy"
 
+#define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
+#define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
+#define URL_LGPL "http://www.gnu.org/licenses/lgpl-3.0.txt"
+#define URL_BSD "http://www.opensource.org/licenses/bsd-license.php"
+
 struct {
     int16_t *pcm_data;
     int size;
@@ -342,9 +347,24 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLice
 {
     VisPluginRef *ref = get_input(index);
 
+    char text[256];
+
     visual_log_return_val_if_fail(ref != NULL, NULL);
 
-    return ((*env)->NewStringUTF(env, ref->info->license));
+    char *license = ref->info->license;
+
+    visual_mem_set(text, 0, sizeof(text));
+
+    if(strcmp(license, "GPLv2"))
+        visual_mem_copy(text, URL_GPLv2, strlen(URL_GPLv2));
+    else if(strcmp(license, "GPLv3"))
+        visual_mem_copy(text, URL_GPLv3, strlen(URL_GPLv3));
+    else if(strcmp(license, "LGPL"))
+        visual_mem_copy(text, URL_LGPL, strlen(URL_LGPL));
+    else if(strcmp(license, "BSD"))
+        visual_mem_copy(text, URL_BSD, strlen(URL_BSD));
+
+    return ((*env)->NewStringUTF(env, text));
 
 }
 
@@ -467,9 +487,25 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLice
 {
     VisPluginRef *ref = get_morph(index);
 
+    char text[256];
+
     visual_log_return_val_if_fail(ref != NULL, NULL);
 
-    return ((*env)->NewStringUTF(env, ref->info->license));
+    char *license = ref->info->license;
+
+    visual_mem_set(text, 0, sizeof(text));
+
+    if(strcmp(license, "GPLv2"))
+        visual_mem_copy(text, URL_GPLv2, strlen(URL_GPLv2));
+    else if(strcmp(license, "GPLv3"))
+        visual_mem_copy(text, URL_GPLv3, strlen(URL_GPLv3));
+    else if(strcmp(license, "LGPL"))
+        visual_mem_copy(text, URL_LGPL, strlen(URL_LGPL));
+    else if(strcmp(license, "BSD"))
+        visual_mem_copy(text, URL_BSD, strlen(URL_BSD));
+
+    return ((*env)->NewStringUTF(env, text));
+
 }
 
 
@@ -597,12 +633,24 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetHelp
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLicense(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
+    char text[256];
 
     visual_log_return_val_if_fail(ref != NULL, NULL);
 
     char *license = ref->info->license;
 
-    return ((*env)->NewStringUTF(env, license));
+    visual_mem_set(text, 0, sizeof(text));
+
+    if(strcmp(license, "GPLv2"))
+        visual_mem_copy(text, URL_GPLv2, strlen(URL_GPLv2));
+    else if(strcmp(license, "GPLv3"))
+        visual_mem_copy(text, URL_GPLv3, strlen(URL_GPLv3));
+    else if(strcmp(license, "LGPL"))
+        visual_mem_copy(text, URL_LGPL, strlen(URL_LGPL));
+    else if(strcmp(license, "BSD"))
+        visual_mem_copy(text, URL_BSD, strlen(URL_BSD));
+
+    return ((*env)->NewStringUTF(env, text));
 }
 
 // For fallback audio source.
