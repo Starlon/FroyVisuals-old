@@ -7,7 +7,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 
-LOCAL_C_INCLUDES := ./include sources/cpufeatures
+LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= visual
 
 
