@@ -42,6 +42,7 @@ public class FroyVisuals extends Activity
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
+    private MediaRecorder mRecorder;
     private boolean mMicActive = false;
     private int PCM_SIZE = 1024;
     private static int RECORDER_SAMPLERATE = 44100;
