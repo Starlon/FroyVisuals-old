@@ -90,11 +90,13 @@ public class FroyVisuals extends Activity
                 return true;
             }
 
+/*
             case R.id.about_plugins:
             {
                 startActivity(new Intent(this, AboutPluginsActivity.class));
                 return true;
             }
+*/
             case R.id.close_app:
             {
                 mNativeHelper.visualsQuit();

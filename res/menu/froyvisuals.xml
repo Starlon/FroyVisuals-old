@@ -8,7 +8,8 @@
 
     <item android:visible="true" android:id="@+id/close_app" android:enabled="true" android:title="@string/close_app" android:icon="@android:drawable/ic_menu_info_details"></item>
 
+<!--
     <item android:visible="true" android:id="@+id/about_plugins" android:enabled="true" android:title="@string/menu_plugins" android:icon="@android:drawable/ic_menu_info_details"></item>
-
+-->
 
 </menu>
