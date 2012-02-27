@@ -34,8 +34,7 @@ for example we have android program with Manifest like below:
 
                             To run the code issue command like this (in one line):
 
-                            am start -a android.intent.action.MAIN -n
-                            com.iftitah.android.contact/com.iftitah.android.contact.Contact
+                            
 
                             ok, Have a nice try!
 adb shell am start -n com.starlon.froyvisuals/.FroyVisuals
