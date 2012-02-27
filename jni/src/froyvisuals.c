@@ -272,7 +272,9 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIE
     v_cycleInput(prev);
     visual_object_unref(VISUAL_OBJECT(v.bin->input));
     VisInput *input = visual_input_new(v.input_name);
+    visual_input_realize(input);
     visual_bin_set_input(v.bin, input);
+    visual_bin_sync(v.bin, FALSE);
     return;
 }
 
