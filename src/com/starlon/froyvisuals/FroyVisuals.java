@@ -41,8 +41,7 @@ public class FroyVisuals extends Activity
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
-    public boolean mPrev = false;
-    public static native void cycleInput(int prev);
+    public int mPrev = 0;
 
     /** Called when the activity is first created. */
     @Override
@@ -101,15 +100,13 @@ public class FroyVisuals extends Activity
                 mNativeHelper.visualsQuit();
                 return true;
             }
-            case R.id.toggle_mic:
-            {
-                startActivity(new Intent(this, ToggleMicInput.class));
-                return true;
-            }
             case R.id.input_stub:
             {
-                mPrev = mPrev ? !mPrev;
-                cycleInput(mPrev);
+                if(mPrev == 0)
+                    mPrev = 1;
+                else
+                    mPrev = 2;
+                mNativeHelper.finalizeSwitch(mPrev);
             }
 
             default:
@@ -238,7 +235,7 @@ class FroyVisualsView extends View {
             break;
             case MotionEvent.ACTION_UP:
                 if(direction >= 0) {
-                    mNativeHelper.switchActor(direction);
+                    mNativeHelper.finalizeSwitch(direction);
                 }
             break;
             case MotionEvent.ACTION_MOVE:
@@ -262,18 +259,3 @@ class FroyVisualsView extends View {
 }
 
 
-public class ToggleMicInput extends Activity
-{
-
-}
-
-public class MicActivity extends Activity
-{
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.input_mic);
-    }
-}

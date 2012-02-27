@@ -905,6 +905,7 @@ void app_main(int w, int h, int device, int card)
 
         // Check alsa device permissions.
 
+/*
         int card = 0, device = 0;
         char fn[256];
 
@@ -922,6 +923,8 @@ void app_main(int w, int h, int device, int card)
             goto exit_alsa_check;
         }
 
+        close(fd);
+*/
         struct pcm *pcmstream;
         struct pcm_config config;
         config.channels = 1;
@@ -931,13 +934,16 @@ void app_main(int w, int h, int device, int card)
         config.format = PCM_FORMAT_S16_LE;
         config.stop_threshold = 0;
         pcmstream = pcm_open(device, card, PCM_IN, &config);
+
         if(!pcmstream) {
             goto exit_alsa_check;
         }
-        
+
         pcm_close(pcmstream);
-        visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
+
         v.input_name = "alsa";
+
+        visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
     }
 
 exit_alsa_check:
