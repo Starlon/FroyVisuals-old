@@ -907,21 +907,20 @@ void app_main(int w, int h, int device, int card)
 
         // Check alsa device permissions.
 
-/*
+/* FIXME Check for read permissions.
         int card = 0, device = 0;
         char fn[256];
 
         snprintf(fn, sizeof(fn), "/dev/snd/pcmC%uD%u%c", card, device, 'c');
 
-        int fd = open(fn, O_RDWR);
+        int fd = open(fn, O_RD);
         if (fd < 0) {
             goto exit_alsa_check;
         }
 
         struct stat info;
-        if (fd < 0 || (fd = ioctl(fd, SNDRV_PCM_IOCTL_INFO, &info))) {
-            if(fd) // Short circuit
-                close(fd);
+        if ((fd = ioctl(fd, SNDRV_PCM_IOCTL_INFO, &info))) {
+            close(fd);
             goto exit_alsa_check;
         }
 
