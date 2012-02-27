@@ -139,7 +139,7 @@ stats_endFrame( Stats*  s )
             avgRender /= s->numFrames;
             avgFrame  /= s->numFrames;
 
-            visual_log(VISUAL_LOG_INFO, "frame/s (avg,min,max) = (%.1f,%.1f,%.1f) "
+            visual_log(VISUAL_LOG_CRITICAL, "frame/s (avg,min,max) = (%.1f,%.1f,%.1f) "
                  "render time ms (avg,min,max) = (%.1f,%.1f,%.1f)\n",
                  1000./avgFrame, 1000./maxFrame, 1000./minFrame,
                  avgRender, minRender, maxRender);

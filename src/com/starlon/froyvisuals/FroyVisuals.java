@@ -17,6 +17,7 @@ package com.starlon.froyvisuals;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -30,11 +31,17 @@ import android.view.WindowManager;
 import android.view.MotionEvent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Typeface;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.media.AudioRecord;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.util.Log;
 import android.util.TypedValue;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class FroyVisuals extends Activity
 {
@@ -48,6 +55,8 @@ public class FroyVisuals extends Activity
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+
+    public String mTextDisplay = null;
 
     /** Called when the activity is first created. */
     @Override
@@ -63,6 +72,7 @@ public class FroyVisuals extends Activity
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(new FroyVisualsView(this));
+
 
     }
 
@@ -110,12 +120,31 @@ public class FroyVisuals extends Activity
             }
             case R.id.input_stub:
             {
-                String input = mNativeHelper.cycleInput(1);
+/*
+                int index = mNativeHelper.cycleInput(1);
+
+                String input = mNativeHelper.inputGetName(index);
+
                 if(input == "mic")
+                {
                     if(!enableMic())
-                        mNativeHelper.cycleInput(1);
-                else
+                        input = mNativeHelper.cycleInput(1);
+                } else {
                     mMicActive = false;
+                }
+
+                mTextDisplay = "Choosing input plugin: " + mNativeHelper.inputGetLongName(index);
+
+                new CountDownTimer(3000, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                    }
+    
+                    public void onFinish() {
+                        mTextDisplay = null;
+                    }
+                }.start();
+*/
+
             }
 
             default:
@@ -140,19 +169,19 @@ public class FroyVisuals extends Activity
         if(mAudio != null)
         {
             mNativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
-	        new Thread(new Runnable() {
-	            public void run() {
+            new Thread(new Runnable() {
+                public void run() {
                     mMicActive = true;
-					mAudio.startRecording();
+                    mAudio.startRecording();
                     while(mMicActive)
                     {
-					    short[] data = new short[PCM_SIZE];
-					    mAudio.read(data, 0, PCM_SIZE);
-					    mNativeHelper.uploadAudio(data);
+                        short[] data = new short[PCM_SIZE];
+                        mAudio.read(data, 0, PCM_SIZE);
+                        mNativeHelper.uploadAudio(data);
                     }
-					mAudio.stop();
-	            }
-	        }).start();
+                    mAudio.stop();
+                }
+            }).start();
             return true;
         }
         return false;
@@ -198,11 +227,15 @@ class FroyVisualsView extends View {
     private int mH, mW;
     private boolean mInit = false;
     private NativeHelper mNativeHelper;
+    private FroyVisuals mActivity;
+    private Stats mStats;
 
 
     //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
+
+        mActivity = (FroyVisuals)context;
 
         if(mInit) return;
 
@@ -212,11 +245,27 @@ class FroyVisualsView extends View {
         mH = -1;
 
         mNativeHelper.initApp(getWidth(), getHeight(), 0, 0);
+        mStats = new Stats();
+        mStats.statsInit();
+
+        final int delay = 0;
+        final int period = 300;
+
+        final Timer timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+            public void run() {
+                mActivity.mTextDisplay = mStats.getText();
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, delay, period);
 
     }
 
     @Override protected void onDraw(Canvas canvas) 
     {
+        mStats.startFrame();
         if( mW != getWidth() || mH != getHeight())
         {
             mW = getWidth();
@@ -230,7 +279,29 @@ class FroyVisualsView extends View {
 
         canvas.drawBitmap(mBitmap, 0, 0, null);
 
+        String text = mActivity.mTextDisplay;
+
+        //if(text != null || true)
+        //{
+            Paint mPaint = new Paint();
+            mPaint.setAntiAlias(true);
+            mPaint.setTextSize(30);
+            mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
+            mPaint.setStyle(Paint.Style.STROKE);
+            mPaint.setStrokeWidth(1);
+            mPaint.setColor(Color.WHITE);
+    
+            float canvasWidth = canvas.getWidth();
+            float textWidth = mPaint.measureText(text);
+            float startPositionX = (canvasWidth - textWidth / 2) / 2;
+    
+//            mPaint.setTextAlign(Paint.Align.LEFT);
+            canvas.drawText(text, startPositionX, mH-50, mPaint);
+        //}
+
+
         invalidate();
+        mStats.endFrame();
     }
 
     private int direction = -1;
