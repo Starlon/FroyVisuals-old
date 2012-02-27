@@ -772,11 +772,11 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwi
     else
     {
         v_cycleMorph((int)prev);
-        //visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+        visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     }
 
     v_cycleActor((int)prev);
-    //visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
+    visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
 
     return TRUE;
 }
