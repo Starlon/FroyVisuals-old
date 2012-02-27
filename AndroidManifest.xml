@@ -29,6 +29,11 @@
               android:name="PreferencesActivity" android:label="@string/preferences_name">
         </activity>
 
+        <!-- mic input activity -->
+        <activity 
+              android:name="AboutPluginsActivity" android:label="@string/input_name">
+        </activity>
+
         <!-- about plugins activity -->
         <activity 
               android:name="AboutPluginsActivity" android:label="@string/input_name">

@@ -10,8 +10,11 @@
  ***************************************************************************/
 
 #include <sys/types.h>
+#include <sys/stat.h>
 //#include <sys/socket.h>
 //#include <sys/un.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #include <stdlib.h>
@@ -23,6 +26,8 @@
 #include <android/log.h>
 #include <android/bitmap.h>
 #include <libvisual/libvisual.h>
+#include <tinyalsa/asoundlib.h>
+#include <asound.h>
 
 #define DEVICE_DEPTH VISUAL_VIDEO_DEPTH_16BIT
 
@@ -34,7 +39,7 @@
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
 #define ACTOR "lv_scope"
-#define INPUT "alsa"
+#define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
 #define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
@@ -213,10 +218,22 @@ static void v_cycleActor (int prev)
         v.actor_name = (prev ? visual_actor_get_prev_by_name (0)
                          : visual_actor_get_next_by_name (0));
     }
+}
 
+static void v_cycleMorph (int prev)
+{
     v.morph_name = visual_morph_get_next_by_name(v.morph_name);
     if(!v.morph_name) {
         v.morph_name = visual_morph_get_next_by_name(0);
+    }
+}
+
+static void v_cycleInput(int prev)
+{
+    v.input_name = visual_input_get_next_by_name(v.input_name);
+    if(!v.input_name)
+    {
+        v.input_name = visual_input_get_next_by_name(0);
     }
 }
 
@@ -248,6 +265,29 @@ VisPluginRef *get_input(int index)
 
 
     return visual_list_get(list, index);
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIEnv *env, jobject obj, jint prev)
+{
+    v_cycleInput(prev);
+    visual_object_unref(VISUAL_OBJECT(v.bin->input));
+    VisInput *input = visual_input_new(v.input_name);
+    visual_bin_set_input(v.bin, input);
+    return;
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleMorph(JNIEnv *env, jobject obj, jint prev)
+{
+    v_cycleMorph(prev);
+    visual_bin_set_morph_by_name(v.bin, (char *)v.morph_name);
+    return;
+}
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleActor(JNIEnv *env, jobject obj, jint prev)
+{
+    v_cycleActor(prev);
+    visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
+    return;
 }
 
 // Get the count of available input plugins.
@@ -654,6 +694,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLice
 }
 
 // For fallback audio source.
+/*
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
 {
     int i;
@@ -666,8 +707,10 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_uploadAudio(JNI
     }
     (*env)->ReleaseShortArrayElements(env, data, pcm, 0);
 }
+*/
 
 // Reinitialize audio fields.
+/*
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint size, jint samplerate, jint channels, jint encoding)
 {
     if(pcm_ref.pcm_data)
@@ -701,9 +744,10 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint 
     pcm_ref.channels = VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO;
     pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S16;
 }
+*/
 
 // Increment or decrement actor and morph
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_switchActor(JNIEnv * env, jobject  obj, jboolean prev)
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jboolean prev)
 {
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
     const char *morph = v.morph_name;
@@ -711,7 +755,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_switchActor
     if(bin_morph && !visual_morph_is_done(bin_morph))
         return FALSE;
 
-    v_cycleActor((int)prev);
 
     visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
@@ -726,10 +769,13 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_switchActor
     }
     else
     {
-        visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+        v_cycleMorph((int)prev);
+        //visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     }
 
-    visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
+    v_cycleActor((int)prev);
+    //visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
+
     return TRUE;
 }
 
@@ -835,7 +881,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_visualsQuit(JNI
     exit(0);
 }
 
-void app_main(int w, int h)
+void app_main(int w, int h, int device, int card)
 {
     int depthflag;
     VisVideoDepth depth;
@@ -852,12 +898,49 @@ void app_main(int w, int h)
         visual_init (0, NULL);
         memset(&v, 0, sizeof(v));
         memset(&pcm_ref, 0, sizeof(pcm_ref));
+
+        v.morph_name = MORPH;
+        v.actor_name = ACTOR;
+        v.input_name = INPUT;
+
+        // Check alsa device permissions.
+
+        int card = 0, device = 0;
+        char fn[256];
+
+        snprintf(fn, sizeof(fn), "/dev/snd/pcmC%uD%u%c", card, device, 'c');
+
+        int fd = open(fn, O_RDWR);
+        if (fd < 0) {
+            goto exit_alsa_check;
+        }
+
+        struct stat info;
+        if (fd < 0 || (fd = ioctl(fd, SNDRV_PCM_IOCTL_INFO, &info))) {
+            if(fd) // Short circuit
+                close(fd);
+            goto exit_alsa_check;
+        }
+
+        struct pcm *pcmstream;
+        struct pcm_config config;
+        config.channels = 1;
+        config.rate = 44100;
+        config.period_count = 4;
+        config.period_size = 1024;
+        config.format = PCM_FORMAT_S16_LE;
+        config.stop_threshold = 0;
+        pcmstream = pcm_open(device, card, PCM_IN, &config);
+        if(!pcmstream) {
+            goto exit_alsa_check;
+        }
+        
+        pcm_close(pcmstream);
+        visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
+        v.input_name = "alsa";
     }
 
-    v.morph_name = MORPH;
-    v.actor_name = ACTOR;
-    v.input_name = INPUT;
-
+exit_alsa_check:
     v.bin    = visual_bin_new ();
 
     if (!visual_actor_valid_by_name (v.actor_name)) {
@@ -913,9 +996,9 @@ void app_main(int w, int h)
 }
 
 // Initialize the application's view and libvisual.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h)
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h, jint device, jint card)
 {
-    app_main(w, h);
+    app_main(w, h, device, card);
 }
 
 // Render the view's bitmap image.

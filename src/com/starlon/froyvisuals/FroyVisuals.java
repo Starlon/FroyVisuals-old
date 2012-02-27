@@ -41,7 +41,8 @@ public class FroyVisuals extends Activity
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
-
+    public boolean mPrev = false;
+    public static native void cycleInput(int prev);
 
     /** Called when the activity is first created. */
     @Override
@@ -50,16 +51,7 @@ public class FroyVisuals extends Activity
         super.onCreate(savedInstanceState);
 
         mSettings = new Settings(this);
-/*
-        View v = new FroyVisualsView(this);
-        v.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v)
-            {
-                switchActor(0);
-                return false;
-            }
-        });
-*/
+
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -109,20 +101,17 @@ public class FroyVisuals extends Activity
                 mNativeHelper.visualsQuit();
                 return true;
             }
-
-/*
-            case R.id.about_morph:
+            case R.id.toggle_mic:
             {
-                startActivity(new Intent(this, MorphActivity.class));
+                startActivity(new Intent(this, ToggleMicInput.class));
                 return true;
             }
-
-            case R.id.about_actor:
+            case R.id.input_stub:
             {
-                startActivity(new Intent(this, ActorActivity.class));
-                return true;
+                mPrev = mPrev ? !mPrev;
+                cycleInput(mPrev);
             }
-*/
+
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");
@@ -144,16 +133,16 @@ class FroyVisualsView extends View {
     private Bitmap mBitmap;
     private AudioRecord mAudio;
     private int mH, mW;
-    private boolean mActive;
+    private boolean mActive = false;
+    private boolean mMicInput = false;
     private boolean mInit = false;
-    private int PCM_SIZE;
+    private int PCM_SIZE = 1024;
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     private static final String APP_TAG = "FroyVisuals";
     private NativeHelper mNativeHelper;
 
-/*
     private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
     public AudioRecord findAudioRecord() {
         for (int rate : mSampleRates) {
@@ -185,7 +174,7 @@ class FroyVisualsView extends View {
         }
         return null;
     }
-  */  
+
     //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
@@ -197,11 +186,10 @@ class FroyVisualsView extends View {
         mH = -1;
         mActive = true;
 
-        mNativeHelper.initApp(getWidth(), getHeight());
+        mNativeHelper.initApp(getWidth(), getHeight(), 0, 0);
 
-/*
         mAudio = findAudioRecord();
-        if(mAudio != null)
+        if(mMicInput && mAudio != null)
         {
             mNativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
 	        new Thread(new Runnable() {
@@ -217,7 +205,6 @@ class FroyVisualsView extends View {
 	            }
 	        }).start();
         }
-*/
     }
 
     @Override protected void onDraw(Canvas canvas) 
@@ -271,5 +258,22 @@ class FroyVisualsView extends View {
             break;
         }
         return true;    
+    }
+}
+
+
+public class ToggleMicInput extends Activity
+{
+
+}
+
+public class MicActivity extends Activity
+{
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.input_mic);
     }
 }
