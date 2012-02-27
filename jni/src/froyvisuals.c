@@ -994,7 +994,6 @@ void app_main(int w, int h, int device, int card)
         visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
     }
 
-    v.input_name = "mic";
 exit_alsa_check:
     v.bin    = visual_bin_new ();
 
