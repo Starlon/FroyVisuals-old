@@ -152,11 +152,8 @@ int inp_mic_cleanup (VisPluginData *plugin)
 
 int inp_mic_upload (VisPluginData *plugin, VisAudio *audio)
 {
-    int freq = FREQUENCY;
-    int amp = AMPLITUDE;
     VisBuffer buffer;
     int16_t data[pcm_ref.size], i;
-    int val1, val2;
     micPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
     visual_log_return_val_if_fail(audio != NULL, -1);
@@ -164,14 +161,12 @@ int inp_mic_upload (VisPluginData *plugin, VisAudio *audio)
 
     visual_log_return_val_if_fail(priv != NULL, -1);
 
-    visual_random_context_set_seed(&priv->rContext, visual_timer_elapsed_msecs(&priv->timer));
-
-    for(i = 0; i < PCM_BUF_SIZE; i++)
+    for(i = 0; i < pcm_ref.size; i++)
     {
         data[i] = pcm_ref.pcm_data[i];
     }
 
-    visual_buffer_init (&buffer, data, PCM_BUF_SIZE/2, NULL);
+    visual_buffer_init (&buffer, data, pcm_ref.size/2, NULL);
     visual_audio_samplepool_input (audio->samplepool, &buffer, 
         VISUAL_AUDIO_SAMPLE_RATE_48000,
         VISUAL_AUDIO_SAMPLE_FORMAT_S16, 

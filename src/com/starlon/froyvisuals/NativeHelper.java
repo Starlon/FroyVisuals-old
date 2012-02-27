@@ -43,9 +43,9 @@ public class NativeHelper
     public static native String actorGetHelp(int index);
     public static native String actorGetLicense(int index);
 
-    public static native void cycleInput(int prev);
-    public static native void cycleMorph(int prev);
-    public static native void cycleActor(int prev);
+    public static native String cycleInput(int prev);
+    public static native String cycleMorph(int prev);
+    public static native String cycleActor(int prev);
     public static native void finalizeSwitch(int prev);
     public static native void updatePlugins();
     public static native void setMorphStyle(boolean style);

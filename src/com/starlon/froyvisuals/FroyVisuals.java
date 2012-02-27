@@ -41,7 +41,12 @@ public class FroyVisuals extends Activity
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
-    public int mPrev = 0;
+    private AudioRecord mAudio;
+    private boolean mMicActive = false;
+    private int PCM_SIZE = 1024;
+    private static int RECORDER_SAMPLERATE = 44100;
+    private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
+    private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
     /** Called when the activity is first created. */
     @Override
@@ -104,11 +109,12 @@ public class FroyVisuals extends Activity
             }
             case R.id.input_stub:
             {
-                if(mPrev == 0)
-                    mPrev = 1;
+                String input = mNativeHelper.cycleInput(1);
+                if(input == "mic")
+                    if(!enableMic())
+                        mNativeHelper.cycleInput(1);
                 else
-                    mPrev = 2;
-                mNativeHelper.finalizeSwitch(mPrev);
+                    mMicActive = false;
             }
 
             default:
@@ -126,21 +132,30 @@ public class FroyVisuals extends Activity
         //System.loadLibrary("actor_avs");
         System.loadLibrary("main");
     }
-}
 
-class FroyVisualsView extends View {
-    private Bitmap mBitmap;
-    private AudioRecord mAudio;
-    private int mH, mW;
-    private boolean mActive = false;
-    private boolean mMicInput = false;
-    private boolean mInit = false;
-    private int PCM_SIZE = 1024;
-    private static int RECORDER_SAMPLERATE = 44100;
-    private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
-    private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-    private static final String APP_TAG = "FroyVisuals";
-    private NativeHelper mNativeHelper;
+    private boolean enableMic()
+    {
+        mAudio = findAudioRecord();
+        if(mAudio != null)
+        {
+            mNativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+	        new Thread(new Runnable() {
+	            public void run() {
+                    mMicActive = true;
+					mAudio.startRecording();
+                    while(mMicActive)
+                    {
+					    short[] data = new short[PCM_SIZE];
+					    mAudio.read(data, 0, PCM_SIZE);
+					    mNativeHelper.uploadAudio(data);
+                    }
+					mAudio.stop();
+	            }
+	        }).start();
+            return true;
+        }
+        return false;
+    }
 
     private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
     public AudioRecord findAudioRecord() {
@@ -148,7 +163,7 @@ class FroyVisualsView extends View {
             for (short audioFormat : new short[] { AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT }) {
                 for (short channelConfig : new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO }) {
                     try {
-                        Log.d(APP_TAG, "Attempting rate " + rate + "Hz, bits: " + audioFormat + ", channel: "
+                        Log.d(TAG, "Attempting rate " + rate + "Hz, bits: " + audioFormat + ", channel: "
                                 + channelConfig);
                         int bufferSize = AudioRecord.getMinBufferSize(rate, channelConfig, audioFormat);
     
@@ -166,7 +181,7 @@ class FroyVisualsView extends View {
                             }
                         }
                     } catch (Exception e) {
-                        Log.e(APP_TAG, rate + " Exception, keep trying.",e);
+                        Log.e(TAG, rate + " Exception, keep trying.",e);
                     }
                 }
             }
@@ -174,36 +189,29 @@ class FroyVisualsView extends View {
         return null;
     }
 
+
+}
+
+class FroyVisualsView extends View {
+    private Bitmap mBitmap;
+    private int mH, mW;
+    private boolean mInit = false;
+    private NativeHelper mNativeHelper;
+
+
     //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
 
         if(mInit) return;
+
         mInit = true;
 
         mW = -1;
         mH = -1;
-        mActive = true;
 
         mNativeHelper.initApp(getWidth(), getHeight(), 0, 0);
 
-        mAudio = findAudioRecord();
-        if(mMicInput && mAudio != null)
-        {
-            mNativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
-	        new Thread(new Runnable() {
-	            public void run() {
-					mAudio.startRecording();
-                    while(mActive)
-                    {
-					    short[] data = new short[PCM_SIZE];
-					    mAudio.read(data, 0, PCM_SIZE);
-					    mNativeHelper.uploadAudio(data);
-                    }
-					mAudio.stop();
-	            }
-	        }).start();
-        }
     }
 
     @Override protected void onDraw(Canvas canvas) 

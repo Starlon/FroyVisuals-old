@@ -38,7 +38,7 @@
 
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
-#define ACTOR "bumpscope"
+#define ACTOR "lv_scope"
 #define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
@@ -267,7 +267,21 @@ VisPluginRef *get_input(int index)
     return visual_list_get(list, index);
 }
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIEnv *env, jobject obj, jint prev)
+int get_input_index()
+{
+    VisList *list = visual_input_get_list();
+    int count = visual_list_count(list), i;
+    for(i = 0; i < count; i++)
+    {
+        VisPluginRef *ref = visual_list_get(list, i);
+        if(ref->info->plugname && !strcmp(v.input_name, ref->info->plugname))
+            return i;
+    }
+    return -1;
+
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIEnv *env, jobject obj, jint prev)
 {
     v_cycleInput(prev);
     visual_object_unref(VISUAL_OBJECT(v.bin->input));
@@ -275,22 +289,10 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIE
     visual_input_realize(input);
     visual_bin_set_input(v.bin, input);
     visual_bin_sync(v.bin, FALSE);
-    return;
+    visual_log(VISUAL_LOG_DEBUG, "Just changed input to %s", v.input_name);
+    return get_input_index();
 }
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleMorph(JNIEnv *env, jobject obj, jint prev)
-{
-    v_cycleMorph(prev);
-    visual_bin_set_morph_by_name(v.bin, (char *)v.morph_name);
-    return;
-}
-
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleActor(JNIEnv *env, jobject obj, jint prev)
-{
-    v_cycleActor(prev);
-    visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
-    return;
-}
 
 // Get the count of available input plugins.
 JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputCount(JNIEnv *env, jobject obj)
@@ -302,7 +304,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputCount(JNIE
 // Note that this index may change as new plugins are added.
 JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetCurrent(JNIEnv *env)
 {
-    return v.bin->input->plugin->ref->index;
+    return get_input_index();
 }
 
 // Set the current input plugin to that at the provided index.
@@ -424,6 +426,27 @@ VisPluginRef *get_morph(int index)
     visual_log_return_val_if_fail(index < count, NULL);
 
     return visual_list_get(list, index);
+}
+
+int get_morph_index()
+{
+    VisList *list = visual_morph_get_list();
+    int count = visual_list_count(list), i;
+    for(i = 0; i < count; i++)
+    {
+        VisPluginRef *ref = visual_list_get(list, i);
+        if(ref->info->plugname && !strcmp(v.morph_name, ref->info->plugname))
+            return i;
+    }
+    return -1;
+
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleMorph(JNIEnv *env, jobject obj, jint prev)
+{
+    v_cycleMorph(prev);
+    visual_bin_set_morph_by_name(v.bin, (char *)v.morph_name);
+    return get_morph_index();
 }
 
 
@@ -569,15 +592,7 @@ VisPluginRef *get_actor(int index)
     return ref;
 }
 
-// Get the count of available actor plugins.
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorCount(JNIEnv *env, jobject obj)
-{
-    return visual_list_count(visual_actor_get_list());
-}
-
-// Get the index of the current plugin. 
-// Note that this index may change as new plugins are added.
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetCurrent(JNIEnv *env)
+int get_actor_index()
 {
     VisList *list = visual_actor_get_list();
     int count = visual_list_count(list), i;
@@ -588,6 +603,38 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetCurrent
             return i;
     }
     return -1;
+
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleActor(JNIEnv *env, jobject obj, jint prev)
+{
+    v_cycleActor(prev);
+    visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
+    return get_actor_index();
+}
+
+// Get the count of available actor plugins.
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorCount(JNIEnv *env, jobject obj)
+{
+    return visual_list_count(visual_actor_get_list());
+}
+
+// Get the index of the current plugin. 
+// Note that this index may change as new plugins are added.
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetCurrent(JNIEnv *env)
+{
+    return get_actor_index();
+    /*
+    VisList *list = visual_actor_get_list();
+    int count = visual_list_count(list), i;
+    for(i = 0; i < count; i++)
+    {
+        VisPluginRef *ref = visual_list_get(list, i);
+        if(ref->info->plugname && !strcmp(v.actor_name, ref->info->plugname))
+            return i;
+    }
+    return -1;
+    */
 }
 
 // Set the current actor plugin to that at the provided index.
@@ -947,6 +994,7 @@ void app_main(int w, int h, int device, int card)
         visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
     }
 
+    v.input_name = "mic";
 exit_alsa_check:
     v.bin    = visual_bin_new ();
 
