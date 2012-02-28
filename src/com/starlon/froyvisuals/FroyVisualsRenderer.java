@@ -148,7 +148,7 @@ public class FroyVisualsRenderer implements Renderer {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
                 GL10.GL_FASTEST);
 
-        GLES20.glEnable(GLES20.GL_TEXTURE_2D);
+        gl.glEnable(GLES20.GL_TEXTURE_2D);
     }
 
     public void onDrawFrame(GL10 gl) {
@@ -176,7 +176,7 @@ public class FroyVisualsRenderer implements Renderer {
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         // Set the active texture unit to texture unit 0.
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        gl.glActiveTexture(GLES20.GL_TEXTURE0);
 
         mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
         mCanvas = new Canvas(mBitmap);
