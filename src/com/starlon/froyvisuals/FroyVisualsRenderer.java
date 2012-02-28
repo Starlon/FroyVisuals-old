@@ -36,7 +36,6 @@ import java.nio.IntBuffer;
 import java.nio.ByteOrder;
 
 
-
 public class FroyVisualsRenderer implements Renderer {
     private Bitmap mBitmap;
     private NativeHelper mNativeHelper;
@@ -46,21 +45,8 @@ public class FroyVisualsRenderer implements Renderer {
     private FroyVisuals mActivity;
     private int mW;
     private int mH;
-    private Context mContext;
     private int mTextureId;
     private IntBuffer mPixelBuffer;
-    private int[] colors;
-    private boolean mInited = false;
-
-    private int getWidth()
-    {
-        return mW;
-    }
-
-    private int getHeight()
-    {
-        return mH;
-    }
 
     public FroyVisualsRenderer(Context context) {
         mActivity = (FroyVisuals)context;
@@ -80,8 +66,6 @@ public class FroyVisualsRenderer implements Renderer {
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glPushMatrix();
         gl.glLoadIdentity();
-
-        mInited = false;
     }
 
     private void resetGl(GL11 gl) {
@@ -129,14 +113,6 @@ public class FroyVisualsRenderer implements Renderer {
         // using glTexSubImage2D
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * android.opengl.GLSurfaceView.Renderer#onSurfaceCreated(javax.
-         * microedition.khronos.opengles.GL10, javax.microedition.khronos.
-         * egl.EGLConfig)
-     */
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         // FPS stats
         mStats = new Stats();
@@ -172,25 +148,9 @@ public class FroyVisualsRenderer implements Renderer {
         gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT,
                 GL10.GL_FASTEST);
 
-        int[] textures = new int[1];
-        gl.glGenTextures(1, textures, 0);
-        mTextureId = textures[0];
-
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId);
-
-        // and init the GL texture with the pixels
-        gl.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, mW, mH,
-                0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, mPixelBuffer);
-
+        GLES20.glEnable(GLES20.GL_TEXTURE_2D);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * android.opengl.GLSurfaceView.Renderer#onDrawFrame(javax.
-         * microedition.khronos.opengles.GL10)
-     */
     public void onDrawFrame(GL10 gl) {
         mStats.startFrame();
 
@@ -215,18 +175,19 @@ public class FroyVisualsRenderer implements Renderer {
         gl.glColor4f(0f, 0f, 0f, 1f);
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-        /*
-         * Now we're ready to draw some 3D objects
-         */
+        // Set the active texture unit to texture unit 0.
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
+        mCanvas = new Canvas(mBitmap);
 
 
         if(!mNativeHelper.render(mBitmap)) return;
 
-        mCanvas.drawBitmap(mBitmap, 0, 0, null);
+        //mCanvas.drawBitmap(mBitmap, 0, 0, null);
 
         String text = mActivity.mTextDisplay;
+        text = "--------------------------------";
         if(text != null)
         {
             mPaint.setAntiAlias(true);
@@ -241,12 +202,12 @@ public class FroyVisualsRenderer implements Renderer {
             float startPositionX = (canvasWidth - textWidth / 2) / 2;
     
             mPaint.setTextAlign(Paint.Align.CENTER);
-            mCanvas.drawText(text, startPositionX, getHeight()-50, mPaint);
+            mCanvas.drawText(text, startPositionX, mH-50, mPaint);
         }
-   
+ 
         mPixelBuffer.rewind();
         mBitmap.copyPixelsToBuffer(mPixelBuffer);
-        
+
         gl11.glBindTexture(GL11.GL_TEXTURE_2D, mTextureId);
 
         gl11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, mW, mH,
@@ -255,16 +216,10 @@ public class FroyVisualsRenderer implements Renderer {
         // Draw the texture on the surface
         ((GL11Ext) gl11).glDrawTexiOES(0, 0, 0, mW, mH);
 
-        
+        mBitmap.recycle();
         mStats.endFrame();
     }
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * android.opengl.GLSurfaceView.Renderer#onSurfaceChanged(javax.
-         * microedition.khronos.opengles.GL10, int, int)
-     */
+
     public void onSurfaceChanged(GL10 gl, int width, int height) {
 
         mW = width;
@@ -272,13 +227,10 @@ public class FroyVisualsRenderer implements Renderer {
 
         mPixelBuffer = IntBuffer.allocate(mW * mH);
 
-        mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        mCanvas = new Canvas(mBitmap);
 
         mNativeHelper.screenResize(width, height);
 
-        //if(mInited)
-            resetGl((GL11)gl);
+        resetGl((GL11)gl);
 
         initGl((GL11)gl, mW, mH);
 
