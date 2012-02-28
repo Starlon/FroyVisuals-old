@@ -50,6 +50,8 @@ public class FroyVisuals extends Activity
     private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
     private MediaRecorder mRecorder;
+    private FroyVisualsView mView;
+    private FroyVisualsRenderer mRenderer;
     private boolean mMicActive = false;
     private int PCM_SIZE = 1024;
     private static int RECORDER_SAMPLERATE = 44100;
@@ -71,14 +73,28 @@ public class FroyVisuals extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(new FroyVisualsView(this));
+        mRenderer = new FroyVisualsRenderer(this);
 
+        mView = new FroyVisualsView(this);
+
+        mView.setRenderer(mRenderer);
+
+        setContentView(mView);
 
     }
 
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        mView.onPause();
+    }
+
+    @Override
     public void onResume()
     {
         super.onResume();
+        mView.onResume();
     }
 
     @Override
@@ -220,124 +236,6 @@ public class FroyVisuals extends Activity
     }
 
 
-}
-
-class FroyVisualsView extends View {
-    private Bitmap mBitmap;
-    private int mH, mW;
-    private boolean mInit = false;
-    private NativeHelper mNativeHelper;
-    private FroyVisuals mActivity;
-    private Stats mStats;
-
-
-    //AudioRecord recorder = findAudioRecord();
-    public FroyVisualsView(Context context) {
-        super(context);
-
-        mActivity = (FroyVisuals)context;
-
-        if(mInit) return;
-
-        mInit = true;
-
-        mW = -1;
-        mH = -1;
-
-        mNativeHelper.initApp(getWidth(), getHeight(), 0, 0);
-        mStats = new Stats();
-        mStats.statsInit();
-
-        final int delay = 0;
-        final int period = 300;
-
-        final Timer timer = new Timer();
-
-        TimerTask task = new TimerTask() {
-            public void run() {
-                mActivity.mTextDisplay = mStats.getText();
-            }
-        };
-
-        timer.scheduleAtFixedRate(task, delay, period);
-
-    }
-
-    @Override protected void onDraw(Canvas canvas) 
-    {
-        mStats.startFrame();
-        if( mW != getWidth() || mH != getHeight())
-        {
-            mW = getWidth();
-            mH = getHeight();
-            mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
-            mNativeHelper.screenResize(mW, mH);
-        }
-
-
-        if(!mNativeHelper.render(mBitmap)) return;
-
-        canvas.drawBitmap(mBitmap, 0, 0, null);
-
-        String text = mActivity.mTextDisplay;
-
-        //if(text != null || true)
-        //{
-            Paint mPaint = new Paint();
-            mPaint.setAntiAlias(true);
-            mPaint.setTextSize(30);
-            mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setStrokeWidth(1);
-            mPaint.setColor(Color.WHITE);
-    
-            float canvasWidth = canvas.getWidth();
-            float textWidth = mPaint.measureText(text);
-            float startPositionX = (canvasWidth - textWidth / 2) / 2;
-    
-//            mPaint.setTextAlign(Paint.Align.LEFT);
-            canvas.drawText(text, startPositionX, mH-50, mPaint);
-        //}
-
-
-        invalidate();
-        mStats.endFrame();
-    }
-
-    private int direction = -1;
-    @Override public boolean onTouchEvent (MotionEvent event) 
-    {
-        int action = event.getAction();
-        float x = event.getX();
-        float y = event.getY();
-        switch(action)
-        {
-            case MotionEvent.ACTION_DOWN:
-                direction = -1;
-            break;
-            case MotionEvent.ACTION_UP:
-                if(direction >= 0) {
-                    mNativeHelper.finalizeSwitch(direction);
-                }
-            break;
-            case MotionEvent.ACTION_MOVE:
-                mNativeHelper.mouseMotion(x, y);
-                int size = event.getHistorySize();
-                if(size > 1)
-                {
-                    if(event.getHistoricalX(0, 0) < event.getHistoricalX(0, 1))
-                    {
-                        direction = 0;
-                    }
-                    else
-                    {
-                        direction = 1;
-                    }
-                }
-            break;
-        }
-        return true;    
-    }
 }
 
 
