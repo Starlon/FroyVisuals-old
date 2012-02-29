@@ -989,7 +989,7 @@ void app_main(int w, int h, int device, int card)
 
         pcm_close(pcmstream);
 
-        v.input_name = "alsa";
+        //v.input_name = "alsa";
 
         visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
     }
