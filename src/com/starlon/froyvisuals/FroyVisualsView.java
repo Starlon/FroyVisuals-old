@@ -61,11 +61,22 @@ class FroyVisualsView extends GLSurfaceView {
 
     private void init(boolean translucent, int depth, int stencil)
     {
-
         if (translucent) {
             this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         }
 
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
     }
 
     private int direction = -1;
@@ -85,7 +96,7 @@ class FroyVisualsView extends GLSurfaceView {
                 }
             break;
             case MotionEvent.ACTION_MOVE:
-                mNativeHelper.mouseMotion(x, y);
+                //mNativeHelper.mouseMotion(x, y);
                 int size = event.getHistorySize();
                 if(size > 1)
                 {
