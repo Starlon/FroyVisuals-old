@@ -22,8 +22,6 @@ import javax.microedition.khronos.opengles.GL11Ext;
 import java.util.Timer;
 import java.util.TimerTask;
 
-//import java.io.IOException;
-//import java.io.InputStream;
 import java.nio.ShortBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -88,21 +86,11 @@ public class FroyVisualsRenderer implements Renderer {
 final class Visual {
     private int mTextureWidth;
     private int mTextureHeight;
-    //private static final int seedLines = 3;
-    //private byte[] intensityMap;
     private ByteBuffer mPixelBuffer;
     private static final int bytesPerPixel = 4;
-    //private int[] colors;
     private int mTextureId = -1;
     private int[] textureCrop = new int[4]; 
     private boolean glInited = false;
-    //private static final int iterationsPerFrame = 1;
-    //private long lastSeedTime = -1L;
-    //private static final long targetFrameInterval = 1000L / 10L; // target 10 FPS 
-    //private static final long seedInterval = 175L;
-    //private long lastFpsTime = -1L;
-    //private static final long fpsInterval = 1000L * 5;
-    //private int frameCounter = 0;
     private NativeHelper mNativeHelper;
     private FroyVisuals mActivity;
 
@@ -113,15 +101,8 @@ final class Visual {
 
         mActivity = activity;
 
-        // TODO: choose values smarter
-        // but remember they have to be powers of 2
-        if (surfaceWidth < surfaceHeight) {
-            mTextureWidth = 256;
-            mTextureHeight = 256;
-        } else {
-            mTextureWidth = 256;
-            mTextureHeight = 256;
-        }
+        mTextureWidth = 256;
+        mTextureHeight = 256;
 
         mNativeHelper.initApp(mTextureWidth, mTextureHeight, 0, 0);
 
@@ -130,9 +111,6 @@ final class Visual {
         textureCrop[2] = mTextureWidth;
         textureCrop[3] = mTextureHeight;
         
-        // init the intensity map
-        //intensityMap = new byte[mTextureWidth * mTextureHeight];
-
         // init the pixel buffer
         mPixelBuffer = ByteBuffer.allocate(mTextureWidth * mTextureHeight * bytesPerPixel);
 
