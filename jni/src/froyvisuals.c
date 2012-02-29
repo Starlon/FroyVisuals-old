@@ -29,7 +29,7 @@
 #include <tinyalsa/asoundlib.h>
 #include <asound.h>
 
-#define DEVICE_DEPTH VISUAL_VIDEO_DEPTH_16BIT
+#define DEVICE_DEPTH VISUAL_VIDEO_DEPTH_32BIT
 
 #define  LOG_TAG    "FroyVisuals"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)

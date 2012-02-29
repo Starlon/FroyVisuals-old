@@ -283,19 +283,20 @@ final class Visual {
         Canvas canvas = new Canvas(bitmap);
 
         Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        paint.setTextSize(30);
+        paint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(1);
+        paint.setColor(Color.WHITE);
 
-        //if(!mNativeHelper.render(bitmap)) return;
+        if(!mNativeHelper.render(bitmap)) return;
 
         //String text = mActivity.mTextDisplay;
+/*
         String text = "HELLO WORLD";
         if(text != null)
         {
-            paint.setAntiAlias(true);
-            paint.setTextSize(30);
-            paint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(1);
-            paint.setColor(Color.WHITE);
     
             float canvasWidth = canvas.getWidth();
             float textWidth = paint.measureText(text);
@@ -304,7 +305,8 @@ final class Visual {
             paint.setTextAlign(Paint.Align.CENTER);
             canvas.drawText(text, startPositionX, mTextureWidth-50, paint);
         }
- 
+*/
+
         mPixelBuffer.rewind();
         bitmap.copyPixelsToBuffer(mPixelBuffer);
         bitmap.recycle();
@@ -424,7 +426,7 @@ final class Visual {
 
         // Update the texture
         gl.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, mTextureWidth, mTextureHeight, 
-                           GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, mPixelBuffer);
+                           GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, mPixelBuffer);
 
         // Draw the texture on the surface
         gl.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, textureCrop, 0);
