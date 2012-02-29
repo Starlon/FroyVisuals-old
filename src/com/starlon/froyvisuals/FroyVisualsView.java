@@ -65,10 +65,6 @@ class FroyVisualsView extends GLSurfaceView {
         if (translucent) {
             this.getHolder().setFormat(PixelFormat.TRANSLUCENT);
         }
-    
-
-        mNativeHelper.initApp(getWidth(), getHeight(), 0, 0);
-
 
     }
 
