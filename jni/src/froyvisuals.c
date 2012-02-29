@@ -38,7 +38,7 @@
 
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
-#define ACTOR "lv_scope"
+#define ACTOR "jakdaw"
 #define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
@@ -989,7 +989,7 @@ void app_main(int w, int h, int device, int card)
 
         pcm_close(pcmstream);
 
-        //v.input_name = "alsa";
+        v.input_name = "alsa";
 
         visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
     }

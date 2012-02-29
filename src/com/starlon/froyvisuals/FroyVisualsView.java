@@ -83,8 +83,6 @@ class FroyVisualsView extends GLSurfaceView {
     @Override public boolean onTouchEvent (MotionEvent event) 
     {
         int action = event.getAction();
-        float x = event.getX();
-        float y = event.getY();
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
@@ -92,15 +90,13 @@ class FroyVisualsView extends GLSurfaceView {
                 direction = -1;
             break;
             case MotionEvent.ACTION_UP:
-                Log.w(TAG, "MotionEvent.ACTION_UP");
+                Log.w(TAG, "MotionEvent.ACTION_UP direction=" + direction);
                 if(direction >= 0) {
                     Log.w(TAG, "Switching actor: " + direction);
                     mNativeHelper.finalizeSwitch(direction);
                 }
             break;
             case MotionEvent.ACTION_MOVE:
-                Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y);
-                //mNativeHelper.mouseMotion(x, y);
                 int size = event.getHistorySize();
                 if(size > 1)
                 {
@@ -113,6 +109,10 @@ class FroyVisualsView extends GLSurfaceView {
                         direction = 1;
                     }
                 }
+                float x = event.getX();
+                float y = event.getY();
+                Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + size);
+                //mNativeHelper.mouseMotion(x, y);
             break;
         }
         return true;    

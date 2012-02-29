@@ -129,7 +129,7 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 
     if(pcm_is_ready(priv->pcmstream))
     {
-        int size = pcm_get_buffer_size(priv->pcmstream);
+        int size = pcm_get_buffer_size(priv->pcmstream)/2;
         if(size > 0)
         {
             int16_t data[size];
