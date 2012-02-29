@@ -136,7 +136,6 @@ public class FroyVisuals extends Activity
             }
             case R.id.input_stub:
             {
-/*
                 int index = mNativeHelper.cycleInput(1);
 
                 String input = mNativeHelper.inputGetName(index);
@@ -144,7 +143,7 @@ public class FroyVisuals extends Activity
                 if(input == "mic")
                 {
                     if(!enableMic())
-                        input = mNativeHelper.cycleInput(1);
+                        index = mNativeHelper.cycleInput(1);
                 } else {
                     mMicActive = false;
                 }
@@ -159,7 +158,6 @@ public class FroyVisuals extends Activity
                         mTextDisplay = null;
                     }
                 }.start();
-*/
 
             }
 
