@@ -88,15 +88,18 @@ class FroyVisualsView extends GLSurfaceView {
         switch(action)
         {
             case MotionEvent.ACTION_DOWN:
+                Log.w(TAG, "MotionEvent.ACTION_DOWN");
                 direction = -1;
             break;
             case MotionEvent.ACTION_UP:
+                Log.w(TAG, "MotionEvent.ACTION_UP");
                 if(direction >= 0) {
                     Log.w(TAG, "Switching actor: " + direction);
                     mNativeHelper.finalizeSwitch(direction);
                 }
             break;
             case MotionEvent.ACTION_MOVE:
+                Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y);
                 //mNativeHelper.mouseMotion(x, y);
                 int size = event.getHistorySize();
                 if(size > 1)
