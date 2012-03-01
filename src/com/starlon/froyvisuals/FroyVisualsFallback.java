@@ -44,10 +44,9 @@ import java.util.TimerTask;
 
 
 
-/*
-public class FroyVisuals extends Activity
+public class FroyVisualsFallback extends Activity
 {
-    private final static String TAG = "FroyVisuals/FroyVisualsActivity";
+    private final static String TAG = "FroyVisuals/FroyVisualsFallbackActivity";
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
@@ -72,7 +71,7 @@ public class FroyVisuals extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(new FroyVisualsView(this));
+        setContentView(new FroyVisualsFallbackView(this));
 
 
     }
@@ -121,7 +120,7 @@ public class FroyVisuals extends Activity
                 if(input == "mic")
                 {
                     if(!enableMic())
-                        input = mNativeHelper.cycleInput(1);
+                        index = mNativeHelper.cycleInput(1);
                 } else {
                     mMicActive = false;
                 }
@@ -212,22 +211,21 @@ public class FroyVisuals extends Activity
 
 
 }
-*/
 
-public class FroyVisualsFallbackView extends View {
+class FroyVisualsFallbackView extends View {
     private Bitmap mBitmap;
     private int mH, mW;
     private boolean mInit = false;
     private NativeHelper mNativeHelper;
-    private FroyVisuals mActivity;
+    private FroyVisualsFallback mActivity;
     private Stats mStats;
 
 
     //AudioRecord recorder = findAudioRecord();
-    public FroyVisualsView(Context context) {
+    public FroyVisualsFallbackView(Context context) {
         super(context);
 
-        mActivity = (FroyVisuals)context;
+        mActivity = (FroyVisualsFallback)context;
 
         if(mInit) return;
 

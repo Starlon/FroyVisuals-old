@@ -51,7 +51,7 @@ public class FroyVisuals extends Activity
     private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
     private MediaRecorder mRecorder;
-    private FroyVisualsView mView;
+    private FroyVisualsView mView = null;
     private FroyVisualsRenderer mRenderer;
     private boolean mMicActive = false;
     private int PCM_SIZE = 1024;
@@ -89,14 +89,16 @@ public class FroyVisuals extends Activity
     public void onPause()
     {
         super.onPause();
-        mView.onPause();
+        if(mView != null)
+            mView.onPause();
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        mView.onResume();
+        if(mView != null)
+            mView.onResume();
     }
 
     @Override
