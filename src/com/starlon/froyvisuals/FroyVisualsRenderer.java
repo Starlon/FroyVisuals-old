@@ -35,7 +35,7 @@ public class FroyVisualsRenderer implements Renderer {
     private boolean mInited = false;
 
     public FroyVisualsRenderer(Context context) {
-        vis = new Visual();
+        vis = new Visual((FroyVisuals)context);
         mStats = new Stats();
         mStats.statsInit();
         mActivity = (FroyVisuals)context;
@@ -59,7 +59,7 @@ public class FroyVisualsRenderer implements Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
-        vis.initialize(width, height, (GL10) gl10, mActivity);
+        vis.initialize(width, height, (GL10) gl10);
         mSurfaceWidth = width;
         mSurfaceHeight = height;
     }
@@ -116,8 +116,8 @@ final class Visual {
             1.0f, 0.0f      // bottom right (V3)
     };
 
-    public Visual() {
-
+    public Visual(FroyVisuals activity) {
+        mActivity = activity;
 
         // a float has 4 bytes so we allocate for each coordinate 4 bytes
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -140,9 +140,7 @@ final class Visual {
 
     }
 
-    public void initialize(int surfaceWidth, int surfaceHeight, GL10 gl, FroyVisuals activity) {
-
-        mActivity = activity;
+    public void initialize(int surfaceWidth, int surfaceHeight, GL10 gl) {
 
         mTextureWidth = 256;
         mTextureHeight = 256;
@@ -238,7 +236,9 @@ final class Visual {
         mBitmap.eraseColor(Color.BLACK);
 
         // Pass bitmap to be rendered by native function.
-        if(!mNativeHelper.render(mBitmap)) return;
+        mActivity.lock();
+        mNativeHelper.render(mBitmap);
+        mActivity.release();
 
 
         // If FroyVisuals has text to display, then use a canvas and paint brush to display it.

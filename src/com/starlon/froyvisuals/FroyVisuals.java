@@ -49,8 +49,6 @@ import java.lang.Runnable;
 public class FroyVisuals extends Activity
 {
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
-    private static final int MUTEX = 1;
-    Mutex5 mMutex = new Mutex5(MUTEX);
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
@@ -59,11 +57,33 @@ public class FroyVisuals extends Activity
     private FroyVisualsRenderer mRenderer;
     private boolean mMicActive = false;
     private int PCM_SIZE = 1024;
+    private boolean mutex = false;
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
     public String mTextDisplay = null;
+
+    private void sleep()
+    {
+        try {
+            Thread.sleep(15);
+        } catch (InterruptedException ex) {}
+    }
+
+    public void release()
+    {
+        mutex = false;
+    }
+
+    public void lock()
+    {
+        while(mutex) {
+             sleep();
+        }
+        mutex = true;
+    }
+
 
     /** Called when the activity is first created. */
     @Override

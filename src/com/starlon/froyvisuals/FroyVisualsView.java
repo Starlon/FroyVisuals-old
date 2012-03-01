@@ -54,6 +54,7 @@ class FroyVisualsView extends GLSurfaceView {
         init(false, 0, 0);
     }
 
+
     public FroyVisualsView(Context context, boolean translucent, int depth, int stencil) {
         super(context);
 
@@ -99,7 +100,9 @@ class FroyVisualsView extends GLSurfaceView {
                 Log.w(TAG, "MotionEvent.ACTION_UP direction=" + direction);
                 if(direction >= 0) {
                     Log.w(TAG, "Switching actor: " + direction);
+                    mActivity.lock();
                     mNativeHelper.finalizeSwitch(direction);
+                    mActivity.release();
                 }
             break;
             case MotionEvent.ACTION_MOVE:
@@ -119,7 +122,10 @@ class FroyVisualsView extends GLSurfaceView {
                 }
                 mLastX = x;
                 Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + mSize + " direction=" + direction);
+
+                mActivity.lock();
                 mNativeHelper.mouseMotion(x, y);
+                mActivity.release();
             break;
         }
         return true;    
