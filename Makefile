@@ -24,6 +24,7 @@ debug:
 	@ant debug
 
 debug_emu:
+	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
 	@adb -e install -r bin/$(APPNAME)-debug.apk
 
 install_debug: 
