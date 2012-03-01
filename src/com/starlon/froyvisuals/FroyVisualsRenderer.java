@@ -118,7 +118,6 @@ final class Visual {
 
     public Visual() {
 
-        mCanvas = new Canvas();
 
         // a float has 4 bytes so we allocate for each coordinate 4 bytes
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -154,8 +153,12 @@ final class Visual {
         textureCrop[1] = 0;
         textureCrop[2] = mTextureWidth;
         textureCrop[3] = mTextureHeight;
+
+        mCanvas = new Canvas();
         
         mBitmap = Bitmap.createBitmap(mTextureWidth, mTextureHeight, Bitmap.Config.ARGB_8888);
+
+        mCanvas.setBitmap(mBitmap);
 
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -243,7 +246,6 @@ final class Visual {
         if(text != null)
         {
             // Give the bitmap a canvas so we can draw on it.
-            mCanvas.setBitmap(mBitmap);
     
 
             float canvasWidth = mCanvas.getWidth();

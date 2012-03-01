@@ -40,6 +40,10 @@ class FroyVisualsView extends GLSurfaceView {
     private NativeHelper mNativeHelper;
     private FroyVisuals mActivity;
     private Stats mStats;
+    private float mLastX = -1.0f;
+    private float mLastY = -1.0f;
+    private int mSize = 0;
+    private int direction = -1;
 
 
     //AudioRecord recorder = findAudioRecord();
@@ -81,7 +85,6 @@ class FroyVisualsView extends GLSurfaceView {
         super.onResume();
     }
 
-    private int direction = -1;
     @Override public boolean onTouchEvent (MotionEvent event) 
     {
         int action = event.getAction();
@@ -90,6 +93,8 @@ class FroyVisualsView extends GLSurfaceView {
             case MotionEvent.ACTION_DOWN:
                 Log.w(TAG, "MotionEvent.ACTION_DOWN");
                 direction = -1;
+                mLastX = -1;
+                mSize = 0;
             break;
             case MotionEvent.ACTION_UP:
                 Log.w(TAG, "MotionEvent.ACTION_UP direction=" + direction);
@@ -99,10 +104,12 @@ class FroyVisualsView extends GLSurfaceView {
                 }
             break;
             case MotionEvent.ACTION_MOVE:
-                int size = event.getHistorySize();
-                if(size > 1)
+                mSize = mSize + 1;
+                float x = event.getX();
+                float y = event.getY();
+                if(mSize > 2 && mLastX != -1.0f)
                 {
-                    if(event.getHistoricalX(0, 0) < event.getHistoricalX(0, 1))
+                    if(mLastX < x)
                     {
                         direction = 0;
                     }
@@ -111,10 +118,9 @@ class FroyVisualsView extends GLSurfaceView {
                         direction = 1;
                     }
                 }
-                float x = event.getX();
-                float y = event.getY();
-                Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + size);
-                //mNativeHelper.mouseMotion(x, y);
+                mLastX = x;
+                Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + mSize + " direction=" + direction);
+                mNativeHelper.mouseMotion(x, y);
             break;
         }
         return true;    
