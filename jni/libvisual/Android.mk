@@ -33,7 +33,7 @@ ifeq ($(TARGET_ARCH_ABI),x86)
     LOCAL_CFLAGS += -DVISUAL_ARCH_X86=1
 endif
 
-LOCAL_SHARED_LIBRARIES := cpufeatures
+LOCAL_STATIC_LIBRARIES := cpufeatures
 
 ifeq ($(TARGET_ARCH_ABI),armeabi)
     LOCAL_CFLAGS += -DVISUAL_ARCH_ARM=1 -pg
