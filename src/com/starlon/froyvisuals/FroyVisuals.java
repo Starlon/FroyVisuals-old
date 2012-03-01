@@ -18,6 +18,7 @@ package com.starlon.froyvisuals;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -42,6 +43,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.lang.Runnable;
 
 
 public class FroyVisuals extends Activity
@@ -67,7 +69,6 @@ public class FroyVisuals extends Activity
     {
         super.onCreate(savedInstanceState);
 
-
         mSettings = new Settings(this);
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -75,6 +76,12 @@ public class FroyVisuals extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        create();
+
+    }
+
+    private void create()
+    {
         mRenderer = new FroyVisualsRenderer(this);
 
         mView = new FroyVisualsView(this);
@@ -82,23 +89,43 @@ public class FroyVisuals extends Activity
         mView.setRenderer(mRenderer);
 
         setContentView(mView);
+    }
 
+    @Override 
+    public void onDestroy()
+    {
+        super.onDestroy();
+        mRenderer.destroy();
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        if(mView != null)
-            mView.onPause();
+        
+        Handler handler = new Handler();
+        class RefreshRunnable implements Runnable{
+        
+            public RefreshRunnable(){
+        
+            }
+        
+            public void run(){
+                mRenderer.destroy();
+                create();
+            }
+        };
+        
+        RefreshRunnable r = new RefreshRunnable();
+        handler.postDelayed(r, 15);
     }
 
     @Override
     public void onResume()
     {
         super.onResume();
-        if(mView != null)
-            mView.onResume();
+        create();
+        mView.onResume();
     }
 
     @Override

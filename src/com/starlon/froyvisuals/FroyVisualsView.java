@@ -72,7 +72,7 @@ class FroyVisualsView extends GLSurfaceView {
     @Override
     public void onPause()
     {
-        super.onPause();
+        super.onPause();    
     }
 
     @Override

@@ -16,8 +16,6 @@ import android.opengl.GLES20;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL10;
-//import javax.microedition.khronos.opengles.GL11Ext;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -41,8 +39,17 @@ public class FroyVisualsRenderer implements Renderer {
         mStats = new Stats();
         mStats.statsInit();
         mActivity = (FroyVisuals)context;
+        mInited = true;
     }
 
+    public void destroy()
+    {
+        if(!mInited) return;
+        vis.destroy();
+        vis = null;
+        mStats = null;
+        mActivity = null;
+    }
     @Override
     public void onDrawFrame(GL10 gl10) {
         mStats.startFrame();
@@ -59,17 +66,8 @@ public class FroyVisualsRenderer implements Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglconfig) {
-/*
-        if (! (gl10 instanceof GL10Ext)) {
-            throw new RuntimeException("GL10Ext not supported");
-        }
-*/
-        // FPS stats
-
         final int delay = 0;
         final int period = 300;
-
-        final GL10 gl = gl10;
 
         final Timer timer = new Timer();
 
@@ -97,11 +95,11 @@ final class Visual {
     private boolean glInited = false;
     private NativeHelper mNativeHelper;
     private FroyVisuals mActivity;
-    private Canvas mCanvas;
     private Bitmap mBitmap;
     private Paint mPaint;
+    private Canvas mCanvas;
 
-    private FloatBuffer vertexBuffer;   // buffer holding the vertices
+    private FloatBuffer mVertexBuffer;   // buffer holding the vertices
     private float vertices[] = {
             -1.0f, -1.0f,  0.0f,        // V1 - bottom left
             -1.0f,  1.0f,  0.0f,        // V2 - top left
@@ -109,7 +107,7 @@ final class Visual {
              1.0f,  1.0f,  0.0f         // V4 - top right
     };
 
-    private FloatBuffer textureBuffer;  // buffer holding the texture coordinates
+    private FloatBuffer mTextureBuffer;  // buffer holding the texture coordinates
     private float texture[] = {         
             // Mapping coordinates for the vertices
             0.0f, 1.0f,     // top left     (V2)
@@ -119,6 +117,7 @@ final class Visual {
     };
 
     public Visual() {
+
         mCanvas = new Canvas();
 
         // a float has 4 bytes so we allocate for each coordinate 4 bytes
@@ -126,19 +125,19 @@ final class Visual {
         byteBuffer.order(ByteOrder.nativeOrder());
         
         // allocates the memory from the byte buffer
-        vertexBuffer = byteBuffer.asFloatBuffer();
+        mVertexBuffer = byteBuffer.asFloatBuffer();
         
-        // fill the vertexBuffer with the vertices
-        vertexBuffer.put(vertices);
+        // fill the mVertexBuffer with the vertices
+        mVertexBuffer.put(vertices);
         
         // set the cursor position to the beginning of the buffer
-        vertexBuffer.position(0);
+        mVertexBuffer.position(0);
         
         byteBuffer = ByteBuffer.allocateDirect(texture.length * 4);
         byteBuffer.order(ByteOrder.nativeOrder());
-        textureBuffer = byteBuffer.asFloatBuffer();
-        textureBuffer.put(texture);
-        textureBuffer.position(0);
+        mTextureBuffer = byteBuffer.asFloatBuffer();
+        mTextureBuffer.put(texture);
+        mTextureBuffer.position(0);
 
     }
 
@@ -159,6 +158,13 @@ final class Visual {
         mBitmap = Bitmap.createBitmap(mTextureWidth, mTextureHeight, Bitmap.Config.ARGB_8888);
 
         mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setTextSize(10);
+        mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(1);
+        mPaint.setColor(Color.WHITE);
+        mPaint.setTextAlign(Paint.Align.CENTER);
 
         // init the pixel buffer
         mPixelBuffer = ByteBuffer.allocate(mTextureWidth * mTextureHeight * bytesPerPixel);
@@ -176,17 +182,36 @@ final class Visual {
     }   
 
     private void resetGl(GL10 gl) {
+        if(!glInited) return;
+
+        glInited = false;
+
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glPopMatrix();
         gl.glMatrixMode(GL10.GL_TEXTURE);
         gl.glPopMatrix();
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glPopMatrix();
+    }
+
+    public void destroy()
+    {
+        if(!glInited) return;
+
         glInited = false;
+
+        mBitmap.recycle();
+        mBitmap = null;
+        mPixelBuffer = null;
+        mPaint = null;
+        mCanvas = null;
+        mVertexBuffer = null;
+        mTextureBuffer = null;
     }
     
 
     private void initGl(GL10 gl, int surfaceWidth, int surfaceHeight) {
+        if(glInited) return;
 
         gl.glShadeModel(GL10.GL_FLAT);
         gl.glFrontFace(GL10.GL_CCW);
@@ -220,13 +245,6 @@ final class Visual {
             // Give the bitmap a canvas so we can draw on it.
             mCanvas.setBitmap(mBitmap);
     
-            mPaint.setAntiAlias(true);
-            mPaint.setTextSize(10);
-            mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setStrokeWidth(1);
-            mPaint.setColor(Color.WHITE);
-            mPaint.setTextAlign(Paint.Align.CENTER);
 
             float canvasWidth = mCanvas.getWidth();
             float textWidth = mPaint.measureText(text);
@@ -289,6 +307,7 @@ final class Visual {
     
 
     public void dispose(GL10 gl) {
+        resetGl(gl);
         releaseTexture(gl);
     }
 
@@ -309,8 +328,8 @@ final class Visual {
         gl.glFrontFace(GL10.GL_CW);
         
         // Point to our vertex buffer
-        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
-        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer);
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
+        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTextureBuffer);
  
 
         // Choose the texture
