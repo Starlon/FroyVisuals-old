@@ -58,7 +58,7 @@
 #endif
 
 #if defined(VISUAL_ARCH_ARM)
-#include <cpu-features.h>
+#include <cpufeatures/cpu-features.h>
 #endif
 
 #include <stdio.h>
