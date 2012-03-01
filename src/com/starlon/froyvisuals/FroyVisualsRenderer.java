@@ -16,8 +16,8 @@ import android.opengl.GLES20;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
+import javax.microedition.khronos.opengles.GL10;
+//import javax.microedition.khronos.opengles.GL11Ext;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,27 +46,30 @@ public class FroyVisualsRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 gl10) {
         mStats.startFrame();
-        vis.performFrame((GL11) gl10, mSurfaceWidth, mSurfaceHeight);
+        vis.performFrame((GL10) gl10, mSurfaceWidth, mSurfaceHeight);
         mStats.endFrame();
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
-        vis.initialize(width, height, (GL11) gl10, mActivity);
+        vis.initialize(width, height, (GL10) gl10, mActivity);
         mSurfaceWidth = width;
         mSurfaceHeight = height;
     }
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglconfig) {
-        if (! (gl10 instanceof GL11Ext)) {
-            throw new RuntimeException("GL11Ext not supported");
+/*
+        if (! (gl10 instanceof GL10Ext)) {
+            throw new RuntimeException("GL10Ext not supported");
         }
-
+*/
         // FPS stats
 
         final int delay = 0;
         final int period = 300;
+
+        final GL10 gl = gl10;
 
         final Timer timer = new Timer();
 
@@ -139,7 +142,7 @@ final class Visual {
 
     }
 
-    public void initialize(int surfaceWidth, int surfaceHeight, GL11 gl, FroyVisuals activity) {
+    public void initialize(int surfaceWidth, int surfaceHeight, GL10 gl, FroyVisuals activity) {
 
         mActivity = activity;
 
@@ -172,7 +175,7 @@ final class Visual {
 
     }   
 
-    private void resetGl(GL11 gl) {
+    private void resetGl(GL10 gl) {
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glPopMatrix();
         gl.glMatrixMode(GL10.GL_TEXTURE);
@@ -183,13 +186,13 @@ final class Visual {
     }
     
 
-    private void initGl(GL11 gl, int surfaceWidth, int surfaceHeight) {
+    private void initGl(GL10 gl, int surfaceWidth, int surfaceHeight) {
 
-        gl.glShadeModel(GL11.GL_FLAT);
-        gl.glFrontFace(GL11.GL_CCW);
-        gl.glEnable(GL11.GL_TEXTURE_2D);
+        gl.glShadeModel(GL10.GL_FLAT);
+        gl.glFrontFace(GL10.GL_CCW);
+        gl.glEnable(GL10.GL_TEXTURE_2D);
 
-        gl.glMatrixMode(GL11.GL_PROJECTION);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadIdentity();
         gl.glPushMatrix();
 
@@ -238,13 +241,13 @@ final class Visual {
         mBitmap.copyPixelsToBuffer(mPixelBuffer);
     }
 
-    private void releaseTexture(GL11 gl) {
+    private void releaseTexture(GL10 gl) {
         if (mTextureId != -1) {
             gl.glDeleteTextures(1, new int[] { mTextureId }, 0);
         }       
     }
 
-    private void initGlTexture(GL11 gl) {
+    private void initGlTexture(GL10 gl) {
 
         releaseTexture(gl);
 
@@ -253,7 +256,7 @@ final class Visual {
         mTextureId = textures[0];
 
         // we want to modify this texture so bind it
-        gl.glBindTexture(GL11.GL_TEXTURE_2D, mTextureId);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId);
 
         // GL_LINEAR gives us smoothing since the texture is larger than the screen
         gl.glTexParameterf(GL10.GL_TEXTURE_2D, 
@@ -275,8 +278,8 @@ final class Visual {
         //updatePixels();
 
         // and init the GL texture with the pixels
-        gl.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, mTextureWidth, mTextureHeight,
-                0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, mPixelBuffer);        
+        gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, mTextureWidth, mTextureHeight,
+                0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, mPixelBuffer);        
 
 
         // at this point, we are OK to further modify the texture
@@ -285,18 +288,18 @@ final class Visual {
 
     
 
-    public void dispose(GL11 gl) {
+    public void dispose(GL10 gl) {
         releaseTexture(gl);
     }
 
-    public void performFrame(GL11 gl, int surfaceWidth, int surfaceHeight) {
+    public void performFrame(GL10 gl, int surfaceWidth, int surfaceHeight) {
 
         // Draw
         updatePixels();
 
         // Clear the surface
         gl.glClearColorx(0, 0, 0, 0);
-        gl.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
         // Point to our buffers
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
@@ -311,16 +314,16 @@ final class Visual {
  
 
         // Choose the texture
-        gl.glBindTexture(GL11.GL_TEXTURE_2D, mTextureId);
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId);
 
         // Update the texture
-        gl.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, mTextureWidth, mTextureHeight, 
-                           GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, mPixelBuffer);
+        gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, mTextureWidth, mTextureHeight, 
+                           GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, mPixelBuffer);
 
         // Draw the texture on the surface
-        gl.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, textureCrop, 0);
+        //gl.glTexParameteriv(GL10.GL_TEXTURE_2D, GL11Ext.GL_TEXTURE_CROP_RECT_OES, textureCrop, 0);
 
-        //((GL11Ext) gl).glDrawTexiOES(0, 0, 0, surfaceWidth, surfaceHeight);
+        //((GL10Ext) gl).glDrawTexiOES(0, 0, 0, surfaceWidth, surfaceHeight);
         
         // Draw the vertices as triangle strip
         gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, vertices.length / 3);

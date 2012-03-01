@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
@@ -45,6 +46,7 @@ class FroyVisualsView extends GLSurfaceView {
     public FroyVisualsView(Context context) {
         super(context);
 
+        this.getHolder().setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
         mActivity = (FroyVisuals)context;
 
         init(false, 0, 0);
