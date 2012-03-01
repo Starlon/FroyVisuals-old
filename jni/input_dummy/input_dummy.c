@@ -107,7 +107,7 @@ int inp_alsa_cleanup (VisPluginData *plugin)
 
 int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 {
-    static int increment = 10;
+    static double time = 0;
     int freq = FREQUENCY;
     int amp = AMPLITUDE;
     VisBuffer buffer;
@@ -126,7 +126,7 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 
     for(i = 0; i < PCM_BUF_SIZE; i++)
     {
-         val2 = val1 + i;
+        val2 = val1 + i;
             
         data[i] = amp*cos(val2*freq*(2*M_PI)/PCM_BUF_SIZE);
     }
