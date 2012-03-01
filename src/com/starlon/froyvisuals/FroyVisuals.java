@@ -34,6 +34,7 @@ import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Matrix;
 import android.media.AudioRecord;
 import android.media.AudioFormat;
 import android.media.MediaRecorder;
@@ -223,13 +224,15 @@ public class FroyVisuals extends Activity
 }
 
 class FroyVisualsView extends View {
+    private final String TAG = "FroyVisuals/FroyVisualsView";
     private Bitmap mBitmap;
-    private int mH, mW;
-    private boolean mInit = false;
     private NativeHelper mNativeHelper;
     private FroyVisuals mActivity;
     private Stats mStats;
-
+    private final int WIDTH = 256;
+    private final int HEIGHT = 256;
+    private Paint mPaint;
+    private Matrix mMatrix;
 
     //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
@@ -237,14 +240,16 @@ class FroyVisualsView extends View {
 
         mActivity = (FroyVisuals)context;
 
-        if(mInit) return;
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setTextSize(30);
+        mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeWidth(1);
+        mPaint.setColor(Color.WHITE);
 
-        mInit = true;
+        mNativeHelper.initApp(WIDTH, HEIGHT, 0, 0);
 
-        mW = -1;
-        mH = -1;
-
-        mNativeHelper.initApp(getWidth(), getHeight(), 0, 0);
         mStats = new Stats();
         mStats.statsInit();
 
@@ -261,46 +266,39 @@ class FroyVisualsView extends View {
 
         timer.scheduleAtFixedRate(task, delay, period);
 
+        mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.RGB_565);
+    }
+
+    @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
+    {
+        mMatrix = new Matrix();
+        mMatrix.setScale(w/WIDTH*2, h/HEIGHT);
     }
 
     @Override protected void onDraw(Canvas canvas) 
     {
         mStats.startFrame();
-        if( mW != getWidth() || mH != getHeight())
-        {
-            mW = getWidth();
-            mH = getHeight();
-            mBitmap = Bitmap.createBitmap(mW, mH, Bitmap.Config.RGB_565);
-            mNativeHelper.screenResize(mW, mH);
-        }
 
+        // Render frame to bitmap
+        mNativeHelper.render(mBitmap);
 
-        if(!mNativeHelper.render(mBitmap)) return;
+        // Scale bitmap across canvas.
+        canvas.drawBitmap(mBitmap, mMatrix, mPaint);
 
-        canvas.drawBitmap(mBitmap, 0, 0, null);
-
+        // Do we have text to show?
         String text = mActivity.mTextDisplay;
 
-        //if(text != null || true)
-        //{
-            Paint mPaint = new Paint();
-            mPaint.setAntiAlias(true);
-            mPaint.setTextSize(30);
-            mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
-            mPaint.setStyle(Paint.Style.STROKE);
-            mPaint.setStrokeWidth(1);
-            mPaint.setColor(Color.WHITE);
-    
-            float canvasWidth = canvas.getWidth();
+        if(text != null)
+        {
+            float canvasWidth = getWidth();
             float textWidth = mPaint.measureText(text);
             float startPositionX = (canvasWidth - textWidth / 2) / 2;
     
-//            mPaint.setTextAlign(Paint.Align.LEFT);
-            canvas.drawText(text, startPositionX, mH-50, mPaint);
-        //}
-
+            canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
+        }
 
         invalidate();
+
         mStats.endFrame();
     }
 
