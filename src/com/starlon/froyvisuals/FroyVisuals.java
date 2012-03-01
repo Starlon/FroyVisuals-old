@@ -303,6 +303,9 @@ class FroyVisualsView extends View {
     }
 
     private int direction = -1;
+    private float mX = 0.0f;
+    private float mY = 0.0f;
+    private int size = 0;
     @Override public boolean onTouchEvent (MotionEvent event) 
     {
         int action = event.getAction();
@@ -312,6 +315,7 @@ class FroyVisualsView extends View {
         {
             case MotionEvent.ACTION_DOWN:
                 direction = -1;
+                size = 0;
             break;
             case MotionEvent.ACTION_UP:
                 if(direction >= 0) {
@@ -320,10 +324,10 @@ class FroyVisualsView extends View {
             break;
             case MotionEvent.ACTION_MOVE:
                 mNativeHelper.mouseMotion(x, y);
-                int size = event.getHistorySize();
-                if(size > 1)
+                size = size + 1;
+                if(size > 2)
                 {
-                    if(event.getHistoricalX(0, 0) < event.getHistoricalX(0, 1))
+                    if(mX < x)
                     {
                         direction = 0;
                     }
@@ -334,6 +338,8 @@ class FroyVisualsView extends View {
                 }
             break;
         }
+        mX = x;
+        mY = y;
         return true;    
     }
 }
