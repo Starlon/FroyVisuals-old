@@ -38,7 +38,7 @@
 
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
-#define ACTOR "jakdaw"
+#define ACTOR "lv_scope"
 #define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
@@ -79,7 +79,7 @@ typedef struct {
     double  frameTime;
 } FrameStats;
 
-#define  MAX_FRAME_STATS  200
+#define  MAX_FRAME_STATS  20
 #define  MAX_PERIOD_MS    1500
 
 typedef struct {
@@ -805,7 +805,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwi
         return FALSE;
 
 
-    visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
     if(prev == 0) {
         visual_bin_set_morph_by_name (v.bin, (char *)"slide_left");
@@ -825,6 +824,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwi
     v_cycleActor((int)prev);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
 
+    visual_log(VISUAL_LOG_INFO, "Switching actors (%s -> %s)", morph, v.morph_name);
     return TRUE;
 }
 

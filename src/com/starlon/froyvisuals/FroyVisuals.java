@@ -49,6 +49,8 @@ import java.lang.Runnable;
 public class FroyVisuals extends Activity
 {
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
+    private static final int MUTEX = 1;
+    Mutex5 mMutex = new Mutex5(MUTEX);
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
@@ -69,12 +71,12 @@ public class FroyVisuals extends Activity
     {
         super.onCreate(savedInstanceState);
 
-        mSettings = new Settings(this);
-
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        mSettings = new Settings(this);
 
         create();
 

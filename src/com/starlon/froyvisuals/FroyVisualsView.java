@@ -45,12 +45,10 @@ class FroyVisualsView extends GLSurfaceView {
     private int mSize = 0;
     private int direction = -1;
 
-
     //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
 
-        this.getHolder().setType(SurfaceHolder.SURFACE_TYPE_NORMAL);
         mActivity = (FroyVisuals)context;
 
         init(false, 0, 0);
@@ -61,6 +59,7 @@ class FroyVisualsView extends GLSurfaceView {
 
         mActivity = (FroyVisuals)context;
 
+        translucent = true;
         init(translucent, depth, stencil);
     }
 
@@ -130,4 +129,6 @@ class FroyVisualsView extends GLSurfaceView {
 
 
 
+
         
+
