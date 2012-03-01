@@ -12,28 +12,27 @@ all: install
 install: 
 	@ant release install
 
-debug: install_debug
+install_emu:
+	@adb -e install -r bin/$(APPNAME).apk
+
+install_dev:
+	@adb -d install -r bin/$(APPNAME)-debug.apk
+
+debug:
 	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
 	@ant clean
 	@ant debug
 
-debug_emu: 
-	@adb -e install -r bin/$(APPNAME).apk
+debug_emu:
+	@adb -e install -r bin/$(APPNAME)-debug.apk
 
 install_debug: 
 	@ant debug install
 
-install_emu: install_debug
+install_debug_emu:
 	@adb -e install -r bin/$(APPNAME)-debug.apk
 
-install_dev: install_debug
-	@adb -d install -r bin/$(APPNAME)-debug.apk
-
-
-install_debug_emu: install_debug
-	@adb -e install -r bin/$(APPNAME)-debug.apk
-
-install_debug_dev_install: install_debug
+install_debug_dev:
 	@adb -d install -r bin/$(APPNAME)-debug.apk
  
 clean:
