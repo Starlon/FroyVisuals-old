@@ -1029,7 +1029,7 @@ exit_alsa_check:
     visual_video_allocate_buffer(v.video);
     visual_bin_set_video(v.bin, v.video);
 
-    visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
+    visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_DIRECT);
     visual_bin_switch_set_automatic (v.bin, 1);
     visual_bin_switch_set_steps (v.bin, 10);
 

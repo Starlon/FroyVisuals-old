@@ -37,11 +37,13 @@ static inline int alpha_blend_buffer (uint8_t *dest, uint8_t *src1, uint8_t *src
 
 /* alpha blenders */
 static inline int alpha_blend_8_c (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha);
+// FIXME: alpha_blend_16_c is disabled to clear up warnings.
 static inline int alpha_blend_16_c (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha);
 static inline int alpha_blend_24_c (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha);
 static inline int alpha_blend_32_c (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha);
 
 static inline int alpha_blend_8_mmx (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha);
+// FIXME: alpha_blend_16_mmx is disabled to clear up warnings.
 static inline int alpha_blend_16_mmx (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha);
 static inline int alpha_blend_24_mmx (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha);
 static inline int alpha_blend_32_mmx (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha);
@@ -163,6 +165,7 @@ static inline int alpha_blend_8_c (uint8_t *dest, uint8_t *src1, uint8_t *src2, 
 
 static inline int alpha_blend_16_c (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha)
 {
+/*
 	uint8_t ialpha = (alpha * 255);
 	_color16 *destr = (_color16 *) dest;
 	_color16 *src1r = (_color16 *) src1;
@@ -174,7 +177,7 @@ static inline int alpha_blend_16_c (uint8_t *dest, uint8_t *src1, uint8_t *src2,
 		destr[i].g = ((ialpha * (src2r[i].g - src1r[i].g)) / 255 + src1r[i].g);
 		destr[i].b = ((ialpha * (src2r[i].b - src1r[i].b)) / 255 + src1r[i].b);
 	}
-
+*/
 	return 0;
 }
 
@@ -249,6 +252,7 @@ static inline int alpha_blend_8_mmx (uint8_t *dest, uint8_t *src1, uint8_t *src2
 
 static inline int alpha_blend_16_mmx (uint8_t *dest, uint8_t *src1, uint8_t *src2, int size, float alpha)
 {
+    /*
 	uint8_t ialpha = (alpha * 255);
 	_color16 *destr = (_color16 *) dest;
 	_color16 *src1r = (_color16 *) src1;
@@ -260,7 +264,7 @@ static inline int alpha_blend_16_mmx (uint8_t *dest, uint8_t *src1, uint8_t *src
 		destr[i].g = ((ialpha * (src2r[i].g - src1r[i].g)) / 255 + src1r[i].g);
 		destr[i].b = ((ialpha * (src2r[i].b - src1r[i].b)) / 255 + src1r[i].b);
 	}
-
+    */
 	return 0;
 }
 

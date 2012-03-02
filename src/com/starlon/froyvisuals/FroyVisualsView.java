@@ -101,9 +101,9 @@ class FroyVisualsView extends GLSurfaceView {
                 mDirection = -1;
                 if(mDirection >= -1) {
                     Log.w(TAG, "Switching actor: " + mDirection);
-                    mActivity.lock();
+                    //mActivity.lock();
                     mNativeHelper.finalizeSwitch(mDirection);
-                    mActivity.release();
+                    //mActivity.release();
                 }
             break;
             case MotionEvent.ACTION_MOVE:
@@ -124,9 +124,9 @@ class FroyVisualsView extends GLSurfaceView {
                 mLastX = x;
                 Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + mSize + " mDirection=" + mDirection);
 
-                mActivity.lock();
+                //mActivity.lock();
                 mNativeHelper.mouseMotion(x, y);
-                mActivity.release();
+                //mActivity.release();
             break;
         }
         return true;    

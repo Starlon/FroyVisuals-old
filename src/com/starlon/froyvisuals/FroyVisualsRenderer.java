@@ -8,6 +8,9 @@ import android.graphics.Typeface;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Matrix;
+import android.view.Surface;
+import android.view.Display;
+import android.view.WindowManager;
 
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
@@ -26,6 +29,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 public class FroyVisualsRenderer implements Renderer {
+    private Display mDisplay;
     private Visual vis;
     private int mSurfaceWidth;
     private int mSurfaceHeight;
@@ -35,6 +39,8 @@ public class FroyVisualsRenderer implements Renderer {
     private boolean mInited = false;
 
     public FroyVisualsRenderer(Context context) {
+/* First, get the Display from the WindowManager */
+
         vis = new Visual((FroyVisuals)context);
         mStats = new Stats();
         mStats.statsInit();
@@ -53,6 +59,7 @@ public class FroyVisualsRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 gl10) {
         mStats.startFrame();
+
         vis.performFrame((GL10) gl10, mSurfaceWidth, mSurfaceHeight);
         mStats.endFrame();
     }
@@ -98,6 +105,7 @@ final class Visual {
     private Bitmap mBitmap;
     private Paint mPaint;
     private Canvas mCanvas;
+    private Display mDisplay;
 
     private FloatBuffer mVertexBuffer;   // buffer holding the vertices
     private float vertices[] = {
@@ -117,6 +125,8 @@ final class Visual {
     };
 
     public Visual(FroyVisuals activity) {
+        mDisplay = ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+
         mActivity = activity;
 
         // a float has 4 bytes so we allocate for each coordinate 4 bytes
@@ -236,9 +246,9 @@ final class Visual {
         mBitmap.eraseColor(Color.BLACK);
 
         // Pass bitmap to be rendered by native function.
-        mActivity.lock();
+        //mActivity.lock();
         mNativeHelper.render(mBitmap);
-        mActivity.release();
+        //mActivity.release();
 
 
         // If FroyVisuals has text to display, then use a canvas and paint brush to display it.
@@ -314,9 +324,21 @@ final class Visual {
     }
 
     public void performFrame(GL10 gl, int surfaceWidth, int surfaceHeight) {
+        int orientation = mDisplay.getOrientation();
 
         // Draw
         updatePixels();
+
+/*
+        if(orientation == Surface.ROTATION_0)
+            gl.glRotatef( 0, 0.0f, 0.0f, 1.0f );
+        else if(orientation == Surface.ROTATION_180)
+            gl.glRotatef( 180, 0.0f, 0.0f, 1.0f );
+        else if(orientation == Surface.ROTATION_270)
+            gl.glRotatef( 270, 0.0f, 0.0f, 1.0f );
+        else if(orientation == Surface.ROTATION_90)
+            gl.glRotatef( 90, 0.0f, 0.0f, 1.0f );
+*/      
 
         // Clear the surface
         gl.glClearColorx(0, 0, 0, 0);
