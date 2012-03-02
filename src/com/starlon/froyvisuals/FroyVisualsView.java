@@ -43,7 +43,7 @@ class FroyVisualsView extends GLSurfaceView {
     private float mLastX = -1.0f;
     private float mLastY = -1.0f;
     private int mSize = 0;
-    private int direction = -1;
+    private int mDirection = -1;
 
     //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
@@ -92,16 +92,17 @@ class FroyVisualsView extends GLSurfaceView {
         {
             case MotionEvent.ACTION_DOWN:
                 Log.w(TAG, "MotionEvent.ACTION_DOWN");
-                direction = -1;
+                mDirection = -2;
                 mLastX = -1;
                 mSize = 0;
             break;
             case MotionEvent.ACTION_UP:
-                Log.w(TAG, "MotionEvent.ACTION_UP direction=" + direction);
-                if(direction >= 0) {
-                    Log.w(TAG, "Switching actor: " + direction);
+                Log.w(TAG, "MotionEvent.ACTION_UP mDirection=" + mDirection);
+                mDirection = -1;
+                if(mDirection >= -1) {
+                    Log.w(TAG, "Switching actor: " + mDirection);
                     mActivity.lock();
-                    mNativeHelper.finalizeSwitch(direction);
+                    mNativeHelper.finalizeSwitch(mDirection);
                     mActivity.release();
                 }
             break;
@@ -113,15 +114,15 @@ class FroyVisualsView extends GLSurfaceView {
                 {
                     if(mLastX < x)
                     {
-                        direction = 0;
+                        mDirection = 0;
                     }
                     else
                     {
-                        direction = 1;
+                        mDirection = 1;
                     }
                 }
                 mLastX = x;
-                Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + mSize + " direction=" + direction);
+                Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + mSize + " mDirection=" + mDirection);
 
                 mActivity.lock();
                 mNativeHelper.mouseMotion(x, y);
