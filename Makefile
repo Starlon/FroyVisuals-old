@@ -2,36 +2,53 @@
 
 APPNAME = FroyVisuals
 ACTIVITY = FroyVisuals
+TARGET = android-10
 
 all:
 	@ndk-build
 	@ant clean
 	@ant release
 
+install: 
+	@adb -e install -r bin/$(APPNAME).apk
+
+install_emu:
+	@adb -e install -r bin/$(APPNAME).apk
+
+install_dev:
+	@adb -d install -r bin/$(APPNAME).apk
+
 debug:
 	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
 	@ant clean
-	@ant debug install
+	@ant debug
+	@adb install -r bin/$(APPNAME)-debug.apk
 
-install:
-	@ant release install
+debug_emu:
+	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
+	@adb -e install -r bin/$(APPNAME)-debug.apk
 
-install_debug:
-	@ant debug install
+debug_dev:
+	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
+	@adb -d install -r bin/$(APPNAME)-debug.apk
 
-install_simu:
-	@ant -e release install
 
-install_debug_simu:
-	@ant -e debug install
+install_debug: 
+	@adb install -r bin/$(APPNAME)-debug.apk
 
+install_debug_emu:
+	@adb -e install -r bin/$(APPNAME)-debug.apk
+
+install_debug_dev:
+	@adb -d install -r bin/$(APPNAME)-debug.apk
+ 
 clean:
 	@ndk-build clean
 	@ant clean
 	@rm -rf bin libs obj gen
 
 update:
-	@android update project --path . --target android-10
+	@android update project --path . --target $(TARGET)
 
 keygen:
 	@keytool -genkey -v -keystore my.keystore -alias $(APPNAME)_key -keyalg RSA -keysize 4096 -validity 100000
@@ -71,4 +88,5 @@ redirect:
 
 profile:
 	@./gprof.sh
+
 
