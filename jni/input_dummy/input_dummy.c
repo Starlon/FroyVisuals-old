@@ -107,6 +107,7 @@ int inp_alsa_cleanup (VisPluginData *plugin)
 
 int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 {
+    static double time = 0;
     int freq = FREQUENCY;
     int amp = AMPLITUDE;
     VisBuffer buffer;
@@ -121,14 +122,13 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 
     visual_random_context_set_seed(&priv->rContext, visual_timer_elapsed_msecs(&priv->timer));
 
+    val1 = visual_random_context_int(&priv->rContext);
+
     for(i = 0; i < PCM_BUF_SIZE; i++)
     {
-        if(!(i % 5))
-            val1 = visual_random_context_int(&priv->rContext);
-        if(!(i % 15))
-            val2 = visual_random_context_int(&priv->rContext);
+        val2 = val1 + i;
             
-        data[i] = amp*val2*cos(val1*freq*(2*M_PI)/PCM_BUF_SIZE);
+        data[i] = amp*cos(val2*freq*(2*M_PI)/PCM_BUF_SIZE);
     }
 
     visual_buffer_init (&buffer, data, PCM_BUF_SIZE/2, NULL);

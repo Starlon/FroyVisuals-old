@@ -30,7 +30,8 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86)
-    LOCAL_CFLAGS += -DVISUAL_ARCH_X86=1
+    LOCAL_CFLAGS += 
+    #-DVISUAL_ARCH_X86=1
 endif
 
 LOCAL_SHARED_LIBRARIES := cpufeatures
