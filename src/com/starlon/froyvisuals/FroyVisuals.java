@@ -50,7 +50,6 @@ public class FroyVisuals extends Activity
 {
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private static final int MUTEX = 1;
-    Mutex5 mMutex = new Mutex5(MUTEX);
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
