@@ -237,6 +237,8 @@ final class Visual {
         gl.glOrthof(-1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f);
         gl.glPushMatrix();
 
+	gl.glViewport(0, 0, surfaceWidth, surfaceHeight);
+
         glInited = true;
     }
 

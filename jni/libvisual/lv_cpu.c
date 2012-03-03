@@ -456,6 +456,7 @@ void visual_cpu_initialize ()
 #endif /* VISUAL_ARCH_POWERPC */
 
 #if defined(VISUAL_ARCH_ARM)
+/*
     if(android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM)
     {
 	    uint64_t type = android_getCpuFeatures();
@@ -469,6 +470,7 @@ void visual_cpu_initialize ()
                 __lv_cpu_caps.hasLDREX_STREX = 1;
 		__lv_cpu_caps.nrcpu = android_getCpuCount();
     }
+*/
 #endif
 
 	/* Synchronizing enabled flags with has flags */
