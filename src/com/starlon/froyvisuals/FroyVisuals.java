@@ -356,6 +356,7 @@ class FroyVisualsView extends View {
 
         mMatrix.setScale(w/(float)WIDTH, h/(float)HEIGHT);
 
+/*
         switch(mDisplay.getRotation())
         {
             case Surface.ROTATION_0:
@@ -379,6 +380,7 @@ class FroyVisualsView extends View {
             }
             break;
         }
+*/
     }
 
     @Override protected void onDraw(Canvas canvas) 
