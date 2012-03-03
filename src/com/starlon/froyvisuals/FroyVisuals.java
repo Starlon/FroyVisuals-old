@@ -64,27 +64,6 @@ public class FroyVisuals extends Activity
 
     public String mTextDisplay = null;
 
-    private void sleep()
-    {
-        try {
-            Thread.sleep(15);
-        } catch (InterruptedException ex) {}
-    }
-
-    public void release()
-    {
-        mutex = false;
-    }
-
-    public void lock()
-    {
-        while(mutex) {
-             sleep();
-        }
-        mutex = true;
-    }
-
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
