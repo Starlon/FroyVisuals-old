@@ -18,6 +18,7 @@ package com.starlon.froyvisuals;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Looper;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -65,7 +66,7 @@ public class FroyVisuals extends Activity
     private String mInput;
     private String mActor;
 
-    public String mTextDisplay = null;
+    static private String mDisplayText = null;
 
     /* Get the current morph plugin name */
     public String getMorph()
@@ -116,6 +117,42 @@ public class FroyVisuals extends Activity
         return mDoMorph;
     }
 
+    /* Display a warning text: provide text, time in milliseconds, and priority */
+    private long mLastRefresh = 0l;
+    private boolean mWarn = false;
+    public boolean warn(String text, int millis, boolean priority)
+    {
+        long now = System.currentTimeMillis();
+
+        if(mWarn && (now - mLastRefresh) < millis && !priority) 
+            return false;
+
+        mDisplayText = "<" + text + ">";
+
+        mLastRefresh = now;
+
+        mWarn = true;
+
+        return true;
+    }
+
+    /* Display warning: provide text. */
+    public boolean warn(String text)
+    {
+        return warn(text, 2000, false);
+    }
+
+    /* Display warning: provide text and priority */
+    public boolean warn(String text, boolean priority)
+    {
+        return warn(text, 2000, priority);
+    }
+
+    public String getDisplayText()
+    {
+        return mDisplayText;
+    }
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle state)
@@ -141,6 +178,7 @@ public class FroyVisuals extends Activity
 
     public void onResume()
     {
+        //warn("Watch this.");
         super.onResume();
     }
 
@@ -212,16 +250,7 @@ public class FroyVisuals extends Activity
                     mMicActive = false;
                 }
 
-                mTextDisplay = "Choosing input plugin: " + mNativeHelper.inputGetLongName(index);
-
-                new CountDownTimer(3000, 1000) {
-                    public void onTick(long millisUntilFinished) {
-                    }
-    
-                    public void onFinish() {
-                        mTextDisplay = null;
-                    }
-                }.start();
+                warn(mNativeHelper.inputGetLongName(index), true);
             }
 
             default:
@@ -330,14 +359,14 @@ class FroyVisualsView extends View {
         mStats = new Stats();
         mStats.statsInit();
 
-        final int delay = 0;
+        final int delay = 100;
         final int period = 300;
 
         final Timer timer = new Timer();
 
         TimerTask task = new TimerTask() {
             public void run() {
-                mActivity.mTextDisplay = mStats.getText();
+                mActivity.warn(mStats.getText());
             }
         };
 
@@ -353,34 +382,7 @@ class FroyVisualsView extends View {
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
     {
         mMatrix = new Matrix();
-
         mMatrix.setScale(w/(float)WIDTH, h/(float)HEIGHT);
-
-/*
-        switch(mDisplay.getRotation())
-        {
-            case Surface.ROTATION_0:
-            {
-                mMatrix.postRotate(0);
-                break;
-            }
-            case Surface.ROTATION_180:
-            {
-                mMatrix.postRotate(180);
-                break;
-            }
-            case Surface.ROTATION_90:
-            {
-                mMatrix.postRotate(90);
-                break;
-            }
-            case Surface.ROTATION_270:
-            {
-                mMatrix.postRotate(270);
-            }
-            break;
-        }
-*/
     }
 
     @Override protected void onDraw(Canvas canvas) 
@@ -394,7 +396,7 @@ class FroyVisualsView extends View {
         canvas.drawBitmap(mBitmap, mMatrix, mPaint);
 
         // Do we have text to show?
-        String text = mActivity.mTextDisplay;
+        String text = mActivity.getDisplayText();
 
         if(text != null)
         {
