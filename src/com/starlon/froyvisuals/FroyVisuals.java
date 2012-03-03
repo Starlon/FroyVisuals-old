@@ -30,6 +30,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.MotionEvent;
+import android.view.Display;
+import android.view.Surface;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
@@ -307,6 +309,7 @@ class FroyVisualsView extends View {
     private final int HEIGHT = 256;
     private Paint mPaint;
     private Matrix mMatrix;
+    private Display mDisplay;
 
     //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
@@ -341,12 +344,41 @@ class FroyVisualsView extends View {
         timer.scheduleAtFixedRate(task, delay, period);
 
         mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.RGB_565);
+
+        mDisplay = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+
+
     }
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
     {
         mMatrix = new Matrix();
+
         mMatrix.setScale(w/(float)WIDTH, h/(float)HEIGHT);
+
+        switch(mDisplay.getRotation())
+        {
+            case Surface.ROTATION_0:
+            {
+                mMatrix.postRotate(0);
+                break;
+            }
+            case Surface.ROTATION_180:
+            {
+                mMatrix.postRotate(180);
+                break;
+            }
+            case Surface.ROTATION_90:
+            {
+                mMatrix.postRotate(90);
+                break;
+            }
+            case Surface.ROTATION_270:
+            {
+                mMatrix.postRotate(270);
+            }
+            break;
+        }
     }
 
     @Override protected void onDraw(Canvas canvas) 
