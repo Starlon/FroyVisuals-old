@@ -21,6 +21,7 @@ import android.os.CountDownTimer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,6 +48,7 @@ import java.util.TimerTask;
 public class FroyVisuals extends Activity
 {
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
+    private final static String PREFS = "FroyVisualsPrefs";
     private static Settings mSettings;
     private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
@@ -56,14 +58,67 @@ public class FroyVisuals extends Activity
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
+    private boolean mDoMorph;
+    private String mMorph;
+    private String mInput;
+    private String mActor;
 
     public String mTextDisplay = null;
 
+    /* Get the current morph plugin name */
+    public String getMorph()
+    {
+        return mMorph;
+    }
+
+    /* Get the current input plugin name */
+    public String getInput()
+    {
+        return mInput;
+    }
+
+    /* Get the current actor plugin name */
+    public String getActor()
+    {
+        return mActor;
+    }
+
+    /* Set the current morph plugin name */
+    public void setMorph(String morph)
+    {
+        mMorph = morph;
+    }
+
+    /* Set the current input plugin name */
+    public void setInput(String input)
+    {
+        mInput = input;
+    }
+
+    /* Set the current actor plugin name */
+    public void setActor(String actor)
+    {
+        mActor = actor;
+    }
+
+
+    /* Set whether to morph or not */
+    public void setDoMorph(boolean doMorph)
+    {
+        mDoMorph = doMorph;
+    }
+
+    /* Get whether to morph or not */
+    public boolean getDoMorph()
+    {
+        return mDoMorph;
+    }
+
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState)
+    public void onCreate(Bundle state)
     {
-        super.onCreate(savedInstanceState);
+        super.onCreate(state);
 
         mSettings = new Settings(this);
 
@@ -74,12 +129,34 @@ public class FroyVisuals extends Activity
 
         setContentView(new FroyVisualsView(this));
 
-
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        
+        mDoMorph = settings.getBoolean("doMorph", true);
+        mMorph = settings.getString("currentMorph", "alphablend");
+        mInput = settings.getString("currentInput", "dummy");
+        mActor = settings.getString("currentActor", "jakdaw");
     }
 
     public void onResume()
     {
         super.onResume();
+    }
+
+    public void onStop()
+    {
+        super.onStop();
+
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        editor.putBoolean("doMorph", mDoMorph);
+        editor.putString("currentMorph", mMorph);
+        editor.putString("currentInput", mInput);
+        editor.putString("currentActor", mActor);
+
+        //Commit edits
+        editor.commit();
+
     }
 
     @Override

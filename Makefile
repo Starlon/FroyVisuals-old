@@ -66,8 +66,8 @@ mem:
 	@adb shell setprop dalvik.vm.checkjni true
 	@adb shell setprop libc.debug.malloc 10
 	@adb shell setprop dalvik.vm.jniopts forcecopy
-	@adb shell start
 	@adb shell stop
+	@adb shell start
 
 start:
 	@adb shell am start -n com.starlon.froyvisuals/.FroyVisuals
