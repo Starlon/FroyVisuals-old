@@ -281,14 +281,21 @@ int get_input_index()
 
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIEnv *env, jobject obj, jint prev)
+void set_input()
 {
-    v_cycleInput(prev);
+
     visual_object_unref(VISUAL_OBJECT(v.bin->input));
     VisInput *input = visual_input_new(v.input_name);
     visual_input_realize(input);
     visual_bin_set_input(v.bin, input);
     visual_bin_sync(v.bin, FALSE);
+
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIEnv *env, jobject obj, jint prev)
+{
+    v_cycleInput(prev);
+    set_input();
     visual_log(VISUAL_LOG_DEBUG, "Just changed input to %s", v.input_name);
     return get_input_index();
 }
@@ -311,7 +318,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetCurrent
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCurrent(JNIEnv *env, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCurrent(JNIEnv *env, jobject obj, jint index)
 {
     VisList *list = visual_input_get_list();
     int count = visual_list_count(list);
@@ -323,8 +330,24 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCur
 
     v.input_name = ref->info->plugname;
 
+    set_input();
     return TRUE;
 }
+
+// Set the current input plugin by its name. Do nothing and return false if the plugin doesn't exist.
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *input = (*env)->GetStringUTFChars(env, name, &iscopy);
+    if(visual_input_valid_by_name(input))
+    {
+        v.input_name = input;
+        set_input();
+        return TRUE;
+    }
+    return FALSE;
+}
+
 
 // Get the input's plugin name.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetName(JNIEnv *env, jobject obj, jint index)
@@ -470,7 +493,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetCurrent
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCurrent(JNIEnv *env, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCurrent(JNIEnv *env, jobject obj, jint index)
 {
     VisList *list = visual_morph_get_list();
 
@@ -484,6 +507,19 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCur
     v.morph_name = ref->info->plugname;
 
     return TRUE;
+}
+
+// Set the current morph by name. use finalizeSwitch() to apply this change.
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *morph = (*env)->GetStringUTFChars(env, name, &iscopy);
+    if(visual_morph_valid_by_name(morph))
+    {
+        v.morph_name = morph;
+        return TRUE;
+    }
+    return FALSE;
 }
 
 // Get the morph plugin's name string.
@@ -641,7 +677,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetCurrent
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCurrent(JNIEnv *env, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCurrent(JNIEnv *env, jobject obj, jint index)
 {
     VisList *list = visual_actor_get_list();
     int count = visual_list_count(list);
@@ -655,6 +691,21 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCur
 
     return TRUE;
 }
+
+// Set the current actor by its name.
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *actor = (*env)->GetStringUTFChars(env, name, &iscopy);
+    if(visual_actor_valid_by_name(actor))
+    {
+        v.actor_name = actor;
+
+        return TRUE;
+    }
+    return FALSE;
+}
+
 
 // Get the actor's plugin name.
 JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetName(JNIEnv *env, jobject obj, jint index)
@@ -796,6 +847,8 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint 
 */
 
 // Increment or decrement actor and morph
+// Variable 'prev' is used to shift morph plugin around. 
+// 0=left, 1=right, 2=up, 3=down, 4=cycle.. Any other and the current value is used.
 JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jboolean prev)
 {
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
@@ -808,19 +861,25 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwi
     visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
     if(prev == 0) {
-        visual_bin_set_morph_by_name (v.bin, (char *)"slide_left");
         v.morph_name = "slide_left";
     }
     else if(prev == 1)
     {
-        visual_bin_set_morph_by_name (v.bin, (char *)"slide_right");
         v.morph_name = "slide_right";
     }
-    else
+    else if(prev == 2)
+    {
+        v.morph_name = "slide_up";
+    }
+    else if(prev == 3)
+    {
+        v.morph_name = "slide_down";
+    } 
+    else if(prev == -1)
     {
         v_cycleMorph((int)prev);
-        visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     }
+    visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
 
     v_cycleActor((int)prev);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);

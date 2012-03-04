@@ -127,7 +127,7 @@ public class FroyVisuals extends Activity
         if(mWarn && (now - mLastRefresh) < millis && !priority) 
             return false;
 
-        mDisplayText = "<" + text + ">";
+        mDisplayText = text;
 
         mLastRefresh = now;
 
@@ -168,17 +168,21 @@ public class FroyVisuals extends Activity
 
         setContentView(new FroyVisualsView(this));
 
-        SharedPreferences settings = getSharedPreferences(PREFS, 0);
-        
-        mDoMorph = settings.getBoolean("doMorph", true);
-        mMorph = settings.getString("currentMorph", "alphablend");
-        mInput = settings.getString("currentInput", "dummy");
-        mActor = settings.getString("currentActor", "jakdaw");
     }
 
     public void onResume()
     {
-        //warn("Watch this.");
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+
+        mDoMorph = settings.getBoolean("doMorph", true);
+
+        mMorph = settings.getString("currentMorph", "alphablend");
+        mInput = settings.getString("currentInput", "dummy");
+        mActor = settings.getString("currentActor", "jakdaw");
+
+        NativeHelper.morphSetCurrentByName(mMorph);
+        NativeHelper.inputSetCurrentByName(mInput);
+        NativeHelper.actorSetCurrentByName(mActor);
         super.onResume();
     }
 
@@ -189,10 +193,19 @@ public class FroyVisuals extends Activity
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
         SharedPreferences.Editor editor = settings.edit();
 
-        editor.putBoolean("doMorph", mDoMorph);
+        int morph = mNativeHelper.morphGetCurrent();
+        int input = mNativeHelper.inputGetCurrent();
+        int actor = mNativeHelper.actorGetCurrent();
+
+        this.setMorph(mNativeHelper.morphGetName(morph));
+        this.setInput(mNativeHelper.inputGetName(input));
+        this.setActor(mNativeHelper.actorGetName(morph));
+
         editor.putString("currentMorph", mMorph);
         editor.putString("currentInput", mInput);
         editor.putString("currentActor", mActor);
+
+        editor.putBoolean("doMorph", mDoMorph);
 
         //Commit edits
         editor.commit();
