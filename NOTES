@@ -1,4 +1,0 @@
-If you want to test for CPU features at run time then you can use the NDK function uint64_t android_getCpuFeatures() to get the features supported by the processor. This returns a bit-flag of 
-ANDROID_CPU_ARM_FEATURE_ARMv7 on v7a processors, 
-ANDROID_CPU_ARM_FEATURE_VFPv3 if hardware floating points are supported and 
-ANDROID_CPU_ARM_FEATURE_NEON if advanced SIMD instructions are supported. ARM can't have NEON without VFPv3.
