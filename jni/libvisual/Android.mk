@@ -49,4 +49,4 @@ endif
 LOCAL_CFLAGS += -fno-omit-frame-pointer -fno-function-sections
 
 include $(BUILD_SHARED_LIBRARY)
-
+$(call import-module,cpufeatures) 

@@ -63,7 +63,7 @@ LOCAL_CFLAGS += -fvisibility=hidden
 
 LOCAL_MODULE:= libxml2
 
-include $(BUILD_STATIC_LIBRARY)
+#include $(BUILD_STATIC_LIBRARY)
 
 
 # For the host

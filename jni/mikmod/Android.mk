@@ -62,4 +62,4 @@ LOCAL_SRC_FILES := \
 	posix/strdup.c \
 	posix/strstr.c
 
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
