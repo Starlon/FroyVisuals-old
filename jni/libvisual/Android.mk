@@ -30,9 +30,11 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86)
-    LOCAL_CFLAGS += -DVISUAL_ARCH_X86=1
+    LOCAL_CFLAGS += 
+    #-DVISUAL_ARCH_X86=1
 endif
 
+LOCAL_SHARED_LIBRARIES := cpufeatures
 
 ifeq ($(TARGET_ARCH_ABI),armeabi)
     LOCAL_CFLAGS += -DVISUAL_ARCH_ARM=1 -pg
@@ -45,8 +47,6 @@ ifeq ($(TARGET_ARCH_ABI),armeabi-v7)
 endif
 
 LOCAL_CFLAGS += -fno-omit-frame-pointer -fno-function-sections
-
-LOCAL_STATIC_LIBRARIES += cpufeatures
 
 include $(BUILD_SHARED_LIBRARY)
 

@@ -1425,8 +1425,8 @@ static int blit_overlay_colorkey (VisVideo *dest, VisVideo *src)
 static int blit_overlay_surfacealpha (VisVideo *dest, VisVideo *src)
 {
 	int x, y;
-	uint8_t *destbuf __attribute__ ((__aligned__(4))) = visual_video_get_pixels (dest);
-	uint8_t *srcbuf __attribute__ ((__aligned__(4))) = visual_video_get_pixels (src);
+	uint8_t *destbuf = visual_video_get_pixels (dest);
+	uint8_t *srcbuf = visual_video_get_pixels (src);
 	uint8_t alpha = src->density;
 
 	if (dest->depth == VISUAL_VIDEO_DEPTH_8BIT) {
@@ -1446,16 +1446,23 @@ static int blit_overlay_surfacealpha (VisVideo *dest, VisVideo *src)
 	} else if (dest->depth == VISUAL_VIDEO_DEPTH_16BIT) {
 
 		for (y = 0; y < src->height; y++) {
-			_color16 *destr = (_color16 *) destbuf;
-			_color16 *srcr = (_color16 *) srcbuf;
+			//_color16 *destr = (_color16 *) destbuf;
+			//_color16 *srcr = (_color16 *) srcbuf;
+            _color16 destr;
+            _color16 srcr;
+            int cnt = 0;
 
-			for (x = 0; x < src->width; x++) {
-				destr->r = ((alpha * (srcr->r - destr->r) >> 8) + destr->r);
-				destr->g = ((alpha * (srcr->g - destr->g) >> 8) + destr->g);
-				destr->b = ((alpha * (srcr->b - destr->b) >> 8) + destr->b);
+		for (x = 0; x < src->width; x++) {
+                memcpy(&srcr, srcbuf + cnt, sizeof(_color16));
+	            memcpy(&destr, destbuf + cnt, sizeof(_color16));
+				destr.r = ((alpha * (srcr.r - destr.r) >> 8) + destr.r);
+				destr.g = ((alpha * (srcr.g - destr.g) >> 8) + destr.g);
+				destr.b = ((alpha * (srcr.b - destr.b) >> 8) + destr.b);
+                memcpy(destbuf + cnt, &destr, sizeof(uint8_t) * 2);
 
-				destr += 1;
-				srcr += 1;
+				//destr += 1;
+				//srcr += 1;
+                cnt += 1;
 			}
 
 			destbuf += dest->pitch;
@@ -1534,18 +1541,22 @@ static int blit_overlay_surfacealphacolorkey (VisVideo *dest, VisVideo *src)
 		uint16_t color = visual_color_to_uint16 (&src->colorkey);
 
 		for (y = 0; y < src->height; y++) {
-			_color16 *destr = (_color16 *) destbuf;
-			_color16 *srcr = (_color16 *) srcbuf;
+			_color16 destr;// = (_color16 *) destbuf;
+			_color16 srcr;// = (_color16 *) srcbuf;
+            int cnt = 0;
 
 			for (x = 0; x < src->width; x++) {
-				if (color != *((uint16_t *) srcr)) {
-					destr->r = ((alpha * (srcr->r - destr->r) >> 8) + destr->r);
-					destr->g = ((alpha * (srcr->g - destr->g) >> 8) + destr->g);
-					destr->b = ((alpha * (srcr->b - destr->b) >> 8) + destr->b);
+                memcpy(&srcr, srcbuf + cnt, sizeof(_color16));
+	            memcpy(&destr, destbuf + cnt, sizeof(_color16));
+				if (color != *((uint16_t *) &srcr)) {
+					destr.r = ((alpha * (srcr.r - destr.r) >> 8) + destr.r);
+					destr.g = ((alpha * (srcr.g - destr.g) >> 8) + destr.g);
+					destr.b = ((alpha * (srcr.b - destr.b) >> 8) + destr.b);
 				}
-
-				destr++;
-				srcr++;
+                memcpy(destbuf + cnt, &destr, sizeof(uint8_t) * 2);
+                cnt++;
+				//destr++;
+				//srcr++;
 			}
 
 			destbuf += dest->pitch;
@@ -1578,7 +1589,12 @@ static int blit_overlay_surfacealphacolorkey (VisVideo *dest, VisVideo *src)
 
 		for (y = 0; y < src->height; y++) {
 			for (x = 0; x < src->width; x++) {
-				if (color == *((uint32_t *) destbuf)) {
+                int b = destbuf[0];
+                int g = destbuf[1];
+                int r = destbuf[2];
+                int a = destbuf[3];
+                int point = b | g | r | a;
+				if (color == point) {
 					*destbuf = ((alpha * (*srcbuf - *destbuf) >> 8) + *destbuf);
 					*(destbuf + 1) = ((alpha * (*(srcbuf + 1) - *(destbuf + 1)) >> 8) + *(destbuf + 1));
 					*(destbuf + 2) = ((alpha * (*(srcbuf + 2) - *(destbuf + 2)) >> 8) + *(destbuf + 2));
@@ -1836,12 +1852,17 @@ static int fill_color24 (VisVideo *video, VisColor *color)
 		(color->r);
 
 	for (y = 0; y < video->height; y++) {
-		buf = (uint32_t *) rbuf;
+		buf = malloc(video->pitch);//(uint32_t *) rbuf;
+
+        memcpy(buf, rbuf, video->pitch);
 
 		for (x = video->width; x >= video->bpp; x -= video->bpp) {
-			*(buf++) = cola;
-			*(buf++) = colb;
-			*(buf++) = colc;
+            uint8_t b = rbuf[0];
+            uint8_t g = rbuf[1];
+            uint8_t r = rbuf[2];
+			*(rbuf++) = cola;
+			*(rbuf++) = colb;
+			*(rbuf++) = colc;
 		}
 
 		buf8 = (uint8_t *) buf;
@@ -1851,6 +1872,8 @@ static int fill_color24 (VisVideo *video, VisColor *color)
 
 
 		rbuf += video->pitch;
+
+        free(buf);
 	}
 
 	return VISUAL_OK;
