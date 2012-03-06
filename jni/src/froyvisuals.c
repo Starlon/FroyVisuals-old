@@ -1,18 +1,6 @@
-/***************************************************************************
- *   Based on work by xmms2 team. #xmms2 irc.freenode.org
- *   Based on work by Max Howell <max.howell@methylblue.com>               *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
 
 #include <sys/types.h>
 #include <sys/stat.h>
-//#include <sys/socket.h>
-//#include <sys/un.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -64,109 +52,6 @@ struct {
     const char *input_name;
     int         pluginIsGL;
 } v;
-
-/* Return current time in milliseconds */
-static double now_ms(void)
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec*1000. + tv.tv_usec/1000.;
-}
-
-/* simple stats management */
-typedef struct {
-    double  renderTime;
-    double  frameTime;
-} FrameStats;
-
-#define  MAX_FRAME_STATS  200
-#define  MAX_PERIOD_MS    1500
-
-typedef struct {
-    double  firstTime;
-    double  lastTime;
-    double  frameTime;
-    int         firstFrame;
-    int         numFrames;
-    FrameStats  frames[ MAX_FRAME_STATS ];
-} Stats;
-
-static void
-stats_init( Stats*  s )
-{
-    s->lastTime = now_ms();
-    s->firstTime = 0.;
-    s->firstFrame = 0;
-    s->numFrames  = 0;
-}
-
-static void
-stats_startFrame( Stats*  s )
-{
-    s->frameTime = now_ms();
-}
-
-static void
-stats_endFrame( Stats*  s )
-{
-    double now = now_ms();
-    double renderTime = now - s->frameTime;
-    double frameTime  = now - s->lastTime;
-    int nn;
-
-    if (now - s->firstTime >= MAX_PERIOD_MS) {
-        if (s->numFrames > 0) {
-            double minRender, maxRender, avgRender;
-            double minFrame, maxFrame, avgFrame;
-            int count;
-
-            nn = s->firstFrame;
-            minRender = maxRender = avgRender = s->frames[nn].renderTime;
-            minFrame  = maxFrame  = avgFrame  = s->frames[nn].frameTime;
-            for (count = s->numFrames; count > 0; count-- ) {
-                nn += 1;
-                if (nn >= MAX_FRAME_STATS)
-                    nn -= MAX_FRAME_STATS;
-                double render = s->frames[nn].renderTime;
-                if (render < minRender) minRender = render;
-                if (render > maxRender) maxRender = render;
-                double frame = s->frames[nn].frameTime;
-                if (frame < minFrame) minFrame = frame;
-                if (frame > maxFrame) maxFrame = frame;
-                avgRender += render;
-                avgFrame  += frame;
-            }
-            avgRender /= s->numFrames;
-            avgFrame  /= s->numFrames;
-
-            visual_log(VISUAL_LOG_CRITICAL, "frame/s (avg,min,max) = (%.1f,%.1f,%.1f) "
-                 "render time ms (avg,min,max) = (%.1f,%.1f,%.1f)\n",
-                 1000./avgFrame, 1000./maxFrame, 1000./minFrame,
-                 avgRender, minRender, maxRender);
-        }
-        s->numFrames  = 0;
-        s->firstFrame = 0;
-        s->firstTime  = now;
-    }
-
-    nn = s->firstFrame + s->numFrames;
-    if (nn >= MAX_FRAME_STATS)
-        nn -= MAX_FRAME_STATS;
-
-    s->frames[nn].renderTime = renderTime;
-    s->frames[nn].frameTime  = frameTime;
-
-    if (s->numFrames < MAX_FRAME_STATS) {
-        s->numFrames += 1;
-    } else {
-        s->firstFrame += 1;
-        if (s->firstFrame >= MAX_FRAME_STATS)
-            s->firstFrame -= MAX_FRAME_STATS;
-    }
-
-    s->lastTime = now;
-}
-
 
 static void my_info_handler (const char *msg, const char *funcname, void *privdata)
 {
@@ -289,6 +174,15 @@ void set_input()
     visual_input_realize(input);
     visual_bin_set_input(v.bin, input);
     visual_bin_sync(v.bin, FALSE);
+
+    if(strstr(v.input_name, "mic"))
+    {
+    	VisInput *input = visual_bin_get_input (v.bin);
+    	if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
+    	    visual_log(VISUAL_LOG_CRITICAL, "Unable to set mic input callback.");	
+    	}
+    }
+
 
 }
 
@@ -794,7 +688,6 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLice
 }
 
 // For fallback audio source.
-/*
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
 {
     int i;
@@ -807,10 +700,8 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_uploadAudio(JNI
     }
     (*env)->ReleaseShortArrayElements(env, data, pcm, 0);
 }
-*/
 
 // Reinitialize audio fields.
-/*
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint size, jint samplerate, jint channels, jint encoding)
 {
     if(pcm_ref.pcm_data)
@@ -844,7 +735,6 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint 
     pcm_ref.channels = VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO;
     pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S16;
 }
-*/
 
 // Increment or decrement actor and morph
 // Variable 'prev' is used to shift morph plugin around. 
@@ -1124,15 +1014,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_render(JNIE
     AndroidBitmapInfo  info;
     void*              pixels;
     int                ret;
-    static Stats       stats;
-    static int init = TRUE;
     int depthflag;
     VisVideoDepth depth;
-
-    if(init) {
-        stats_init(&stats);
-        init = FALSE;
-    }
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -1143,8 +1026,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_render(JNIE
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
         return FALSE;
     }
-
-    stats_startFrame(&stats);
 
     VisVideo *vid = new_video(info.width, info.height, DEVICE_DEPTH, pixels);
 
@@ -1184,8 +1065,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_render(JNIE
     visual_object_unref(VISUAL_OBJECT(vid));
 
     AndroidBitmap_unlockPixels(env, bitmap);
-
-    stats_endFrame(&stats);
 
     return TRUE;
 }
