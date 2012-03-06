@@ -874,6 +874,8 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_keyboardEvent(J
 // Seems in Android 4.0 you can kill an app by swiping it.
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_visualsQuit(JNIEnv * env, jobject  obj)
 {
+    if(!visual_is_initialized())
+        return;
     visual_video_free_buffer(v.video);
     visual_object_unref(VISUAL_OBJECT(v.video));
     visual_object_unref(VISUAL_OBJECT(v.bin));
@@ -883,8 +885,12 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_visualsQuit(JNI
 
 void app_main(int w, int h, int device, int card)
 {
+
     int depthflag;
     VisVideoDepth depth;
+
+    //if(visual_is_initialized())
+    //    visual_quit();
 
     if(!visual_is_initialized())
     {
@@ -943,8 +949,13 @@ void app_main(int w, int h, int device, int card)
         //v.input_name = "alsa";
 
         visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
+    } else {
+        visual_video_free_buffer(v.video);
+        visual_object_unref(VISUAL_OBJECT(v.video));
+        visual_object_unref(VISUAL_OBJECT(v.bin));
     }
 
+    visual_log(VISUAL_LOG_CRITICAL, "app_main 000000000000000000000000000000000");
 exit_alsa_check:
     v.bin    = visual_bin_new ();
 
@@ -995,8 +1006,6 @@ exit_alsa_check:
     visual_bin_realize (v.bin);
     visual_bin_sync (v.bin, 0);
     visual_bin_depth_changed(v.bin);
-
-
 
     printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));
 }

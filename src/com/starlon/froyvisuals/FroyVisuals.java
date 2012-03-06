@@ -417,6 +417,8 @@ class FroyVisualsView extends View {
     public FroyVisualsView(Context context) {
         super(context);
 
+        Log.e(TAG, "FroyVisualsVIew constructor");
+
         mActivity = (FroyVisuals)context;
 
         mPaint = new Paint();
