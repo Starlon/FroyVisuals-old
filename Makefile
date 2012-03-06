@@ -4,7 +4,7 @@ APPNAME = FroyVisuals
 ACTIVITY = FroyVisuals
 TARGET = android-10
 
-all: install
+all:
 	@ndk-build
 	@ant clean
 	@ant release

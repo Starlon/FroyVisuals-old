@@ -31,8 +31,6 @@
 
 #include <tinyalsa/asoundlib.h>
 
-#define PCM_BUF_SIZE 2048
-
 typedef struct {
     struct pcm *pcmstream;
     struct pcm_config config;
@@ -55,7 +53,7 @@ const VisPluginInfo *get_plugin_info (int *count)
         .type = VISUAL_PLUGIN_TYPE_INPUT,
 
         .plugname = "alsa",
-        .name = "alsa",
+        .name = "Alsa Input",
         .author = "Scott Sibley <sisibley@gmail.com>",
         .version = "0.1",
         .about = ("ALSA capture plugin"),

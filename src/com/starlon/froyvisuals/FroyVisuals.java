@@ -33,6 +33,11 @@ import android.view.WindowManager;
 import android.view.MotionEvent;
 import android.view.Display;
 import android.view.Surface;
+import android.view.View.OnTouchListener;
+import android.view.View.OnClickListener;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.ViewConfiguration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
@@ -48,7 +53,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-public class FroyVisuals extends Activity
+public class FroyVisuals extends Activity implements OnClickListener
 {
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private final static String PREFS = "FroyVisualsPrefs";
@@ -68,90 +73,13 @@ public class FroyVisuals extends Activity
 
     static private String mDisplayText = null;
 
-    /* Get the current morph plugin name */
-    public String getMorph()
-    {
-        return mMorph;
-    }
+    private static int SWIPE_MIN_DISTANCE = 120;
+    private static int SWIPE_MAX_OFF_PATH = 250;
+    private static int SWIPE_THRESHOLD_VELOCITY = 200;
+    private GestureDetector gestureDetector;
+    OnTouchListener gestureListener;
 
-    /* Get the current input plugin name */
-    public String getInput()
-    {
-        return mInput;
-    }
-
-    /* Get the current actor plugin name */
-    public String getActor()
-    {
-        return mActor;
-    }
-
-    /* Set the current morph plugin name */
-    public void setMorph(String morph)
-    {
-        mMorph = morph;
-    }
-
-    /* Set the current input plugin name */
-    public void setInput(String input)
-    {
-        mInput = input;
-    }
-
-    /* Set the current actor plugin name */
-    public void setActor(String actor)
-    {
-        mActor = actor;
-    }
-
-
-    /* Set whether to morph or not */
-    public void setDoMorph(boolean doMorph)
-    {
-        mDoMorph = doMorph;
-    }
-
-    /* Get whether to morph or not */
-    public boolean getDoMorph()
-    {
-        return mDoMorph;
-    }
-
-    /* Display a warning text: provide text, time in milliseconds, and priority */
-    private long mLastRefresh = 0l;
-    private boolean mWarn = false;
-    public boolean warn(String text, int millis, boolean priority)
-    {
-        long now = System.currentTimeMillis();
-
-        if(mWarn && (now - mLastRefresh) < millis && !priority) 
-            return false;
-
-        mDisplayText = text;
-
-        mLastRefresh = now;
-
-        mWarn = true;
-
-        return true;
-    }
-
-    /* Display warning: provide text. */
-    public boolean warn(String text)
-    {
-        return warn(text, 2000, false);
-    }
-
-    /* Display warning: provide text and priority */
-    public boolean warn(String text, boolean priority)
-    {
-        return warn(text, 2000, priority);
-    }
-
-    public String getDisplayText()
-    {
-        return mDisplayText;
-    }
+    private FroyVisualsView mView;
 
     /** Called when the activity is first created. */
     @Override
@@ -166,12 +94,62 @@ public class FroyVisuals extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(new FroyVisualsView(this));
+        mView = new FroyVisualsView(this);
 
+        final ViewConfiguration vc = ViewConfiguration.get((Context)this);
+
+        SWIPE_MIN_DISTANCE = vc.getScaledTouchSlop();
+        SWIPE_THRESHOLD_VELOCITY = vc.getScaledMinimumFlingVelocity();
+        SWIPE_MAX_OFF_PATH = vc.getScaledMaximumFlingVelocity();
+
+        class MyGestureDetector extends SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            try {
+                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                    return false;
+                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
+                    Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    Log.w(TAG, "Left swipe...");
+                    mNativeHelper.finalizeSwitch(1);
+                    // Left swipe
+                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
+                    Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                    Log.w(TAG, "Right swipe...");
+                    mNativeHelper.finalizeSwitch(0);
+                    // Right swipe
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Failure in onFling");
+                // nothing
+            }
+            return false;
+        }
+        }
+        // Gesture detection
+        gestureDetector = new GestureDetector(new MyGestureDetector());
+        gestureListener = new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        };
+        mView.setOnClickListener(FroyVisuals.this);
+        mView.setOnTouchListener(gestureListener);
+
+        setContentView(mView);
+
+    }
+
+    public void onClick(View v) {
+/*
+        Filter f = (Filter) v.getTag();
+        FilterFullscreenActivity.show(this, input, f);
+*/
     }
 
     public void onResume()
     {
+        super.onResume();
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
 
         mDoMorph = settings.getBoolean("doMorph", true);
@@ -183,7 +161,6 @@ public class FroyVisuals extends Activity
         NativeHelper.morphSetCurrentByName(mMorph);
         NativeHelper.inputSetCurrentByName(mInput);
         NativeHelper.actorSetCurrentByName(mActor);
-        super.onResume();
     }
 
     public void onStop()
@@ -282,6 +259,91 @@ public class FroyVisuals extends Activity
         System.loadLibrary("main");
     }
 
+    /* Get the current morph plugin name */
+    public String getMorph()
+    {
+        return mMorph;
+    }
+
+    /* Get the current input plugin name */
+    public String getInput()
+    {
+        return mInput;
+    }
+
+    /* Get the current actor plugin name */
+    public String getActor()
+    {
+        return mActor;
+    }
+
+    /* Set the current morph plugin name */
+    public void setMorph(String morph)
+    {
+        mMorph = morph;
+    }
+
+    /* Set the current input plugin name */
+    public void setInput(String input)
+    {
+        mInput = input;
+    }
+
+    /* Set the current actor plugin name */
+    public void setActor(String actor)
+    {
+        mActor = actor;
+    }
+
+
+    /* Set whether to morph or not */
+    public void setDoMorph(boolean doMorph)
+    {
+        mDoMorph = doMorph;
+    }
+
+    /* Get whether to morph or not */
+    public boolean getDoMorph()
+    {
+        return mDoMorph;
+    }
+
+    /* Display a warning text: provide text, time in milliseconds, and priority */
+    private long mLastRefresh = 0l;
+    private boolean mWarn = false;
+    public boolean warn(String text, int millis, boolean priority)
+    {
+        long now = System.currentTimeMillis();
+
+        if(mWarn && (now - mLastRefresh) < millis && !priority) 
+            return false;
+
+        mDisplayText = text;
+
+        mLastRefresh = now;
+
+        mWarn = true;
+
+        return true;
+    }
+
+    /* Display warning: provide text. */
+    public boolean warn(String text)
+    {
+        return warn(text, 2000, false);
+    }
+
+    /* Display warning: provide text and priority */
+    public boolean warn(String text, boolean priority)
+    {
+        return warn(text, 2000, priority);
+    }
+
+    public String getDisplayText()
+    {
+        return mDisplayText;
+    }
+
     private boolean enableMic()
     {
         mAudio = findAudioRecord();
@@ -353,7 +415,6 @@ class FroyVisualsView extends View {
     private Matrix mMatrix;
     private Display mDisplay;
 
-    //AudioRecord recorder = findAudioRecord();
     public FroyVisualsView(Context context) {
         super(context);
 
@@ -425,6 +486,7 @@ class FroyVisualsView extends View {
         mStats.endFrame();
     }
 
+/*
     private int direction = -1;
     private float mX = 0.0f;
     private float mY = 0.0f;
@@ -465,6 +527,7 @@ class FroyVisualsView extends View {
         mY = y;
         return true;    
     }
+*/
 }
 
 

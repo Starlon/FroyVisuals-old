@@ -446,7 +446,7 @@ VisPluginRef *get_morph(int index)
 
     int count = visual_list_count(list);
 
-    visual_log_return_val_if_fail(index < count, NULL);
+    visual_log_return_val_if_fail(index >= 0 && index < count, NULL);
 
     return visual_list_get(list, index);
 }
@@ -849,16 +849,18 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint 
 // Increment or decrement actor and morph
 // Variable 'prev' is used to shift morph plugin around. 
 // 0=left, 1=right, 2=up, 3=down, 4=cycle.. Any other and the current value is used.
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jboolean prev)
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jint prev)
 {
+
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
     const char *morph = v.morph_name;
+
+    visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
     
     if(bin_morph && !visual_morph_is_done(bin_morph))
         return FALSE;
 
 
-    visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
     if(prev == 0) {
         v.morph_name = "slide_left";
@@ -1091,6 +1093,7 @@ exit_alsa_check:
     visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
     visual_bin_switch_set_automatic (v.bin, 1);
     visual_bin_switch_set_steps (v.bin, 10);
+    //visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
 
     visual_bin_connect(v.bin, actor, input);
     if((v.pluginIsGL = (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL)))
