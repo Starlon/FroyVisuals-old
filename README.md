@@ -1,6 +1,9 @@
 # FroyVisuals - Android Music-Visualization APP #
 FroyVisuals is a music-visualization app for Android 2.2 Froyo and beyond.
 
+# IRC #
+We're usually parked in #libvisual on freenode.
+
 ## Download ##
 Click the Downloads Tab in the Tabbar above. 
 Or follow [this](https://github.com/starlon/FroyVisuals/zipball/master) link
