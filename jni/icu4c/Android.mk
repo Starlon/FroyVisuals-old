@@ -21,4 +21,4 @@ subdirs := $(addprefix $(LOCAL_PATH)/,$(addsuffix /Android.mk, \
 		stubdata \
 	))
 
-include $(subdirs)
+#include $(subdirs)
