@@ -955,7 +955,6 @@ void app_main(int w, int h, int device, int card)
         visual_object_unref(VISUAL_OBJECT(v.bin));
     }
 
-    visual_log(VISUAL_LOG_CRITICAL, "app_main 000000000000000000000000000000000");
 exit_alsa_check:
     v.bin    = visual_bin_new ();
 
