@@ -329,6 +329,140 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLice
 
 }
 
+VisParamEntry *get_input_param_entry(int index)
+{
+    VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
+
+    visual_log_return_val_if_fail(cont != NULL, NULL);
+
+    int count = visual_list_count(&cont->entries);
+
+    visual_log_return_val_if_fail(index < count, NULL);
+
+    VisParamEntry *entry = (VisParamEntry *)visual_list_get(&cont->entries, index);
+
+    visual_log_return_val_if_fail(entry != NULL, NULL);
+
+    return entry;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetCount(JNIEnv *env, jobject obj)
+{
+    VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
+
+    visual_log_return_val_if_fail(cont != NULL, 0);
+
+    int count = visual_list_count(&cont->entries);
+
+    return count;
+}
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetType(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
+
+    jstring string;
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
+
+    VisParamEntry *entry = visual_param_container_get(cont, chars);
+
+    visual_log_return_val_if_fail(entry != NULL, NULL);
+
+    switch(entry->type)
+    {
+        case VISUAL_PARAM_ENTRY_TYPE_STRING:
+            string = ((*env)->NewStringUTF(env, "string"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_INTEGER:
+            string = ((*env)->NewStringUTF(env, "integer"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_FLOAT:
+            string = ((*env)->NewStringUTF(env, "float"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_DOUBLE:
+            string = ((*env)->NewStringUTF(env, "double"));
+            break;
+        default:
+            return NULL;
+            break;
+    }
+
+    return string;
+}
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetName(JNIEnv *env, jobject obj, jint index)
+{
+    VisParamEntry *entry = get_input_param_entry(index);
+    
+    jstring string = ((*env)->NewStringUTF(env, visual_param_entry_get_name(entry)));
+    
+    return string;
+}
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetString(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(chars != NULL, NULL);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
+
+    VisParamEntry *entry = visual_param_container_get(cont, chars);
+
+    jstring string = ((*env)->NewStringUTF(env, visual_param_entry_get_string(entry)));
+
+    return string;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetInteger(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(string != NULL, 0);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    int val = visual_param_entry_get_integer(entry);
+
+    return val;
+}
+
+JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetFloat(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(string != NULL, 0.0f);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    float val = visual_param_entry_get_float(entry);
+
+    return val;
+}
+
+JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetDouble(JNIEnv *env, jobject obj, jstring name)
+{    
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+
+    visual_log_return_val_if_fail(string != NULL, 0.0);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    double val = visual_param_entry_get_double(entry);
+
+    return val;
+}
+
+
 
 
 // ------ MORPH ------
@@ -503,6 +637,138 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLice
 
 }
 
+VisParamEntry *get_morph_param_entry(int index)
+{
+    VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
+
+    visual_log_return_val_if_fail(cont != NULL, NULL);
+
+    int count = visual_list_count(&cont->entries);
+
+    visual_log_return_val_if_fail(index < count, NULL);
+
+    VisParamEntry *entry = (VisParamEntry *)visual_list_get(&cont->entries, index);
+
+    visual_log_return_val_if_fail(entry != NULL, NULL);
+
+    return entry;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetCount(JNIEnv *env, jobject obj)
+{
+    VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
+
+    visual_log_return_val_if_fail(cont != NULL, 0);
+
+    int count = visual_list_count(&cont->entries);
+
+    return count;
+}
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetName(JNIEnv *env, jobject obj, jint index)
+{
+    VisParamEntry *entry = get_morph_param_entry(index);
+    
+    jstring string = ((*env)->NewStringUTF(env, visual_param_entry_get_name(entry)));
+    
+    return string;
+}
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetType(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
+
+    jstring string;
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
+
+    VisParamEntry *entry = visual_param_container_get(cont, chars);
+
+    visual_log_return_val_if_fail(entry != NULL, NULL);
+
+    switch(entry->type)
+    {
+        case VISUAL_PARAM_ENTRY_TYPE_STRING:
+            string = ((*env)->NewStringUTF(env, "string"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_INTEGER:
+            string = ((*env)->NewStringUTF(env, "integer"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_FLOAT:
+            string = ((*env)->NewStringUTF(env, "float"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_DOUBLE:
+            string = ((*env)->NewStringUTF(env, "double"));
+            break;
+        default:
+            return NULL;
+            break;
+    }
+
+    return string;
+}
+
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetString(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(chars != NULL, NULL);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
+
+    VisParamEntry *entry = visual_param_container_get(cont, chars);
+
+    jstring string = ((*env)->NewStringUTF(env, visual_param_entry_get_string(entry)));
+
+    return string;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetInteger(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(string != NULL, 0);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    int val = visual_param_entry_get_integer(entry);
+
+    return val;
+}
+
+JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetFloat(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(string != NULL, 0.0f);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    float val = visual_param_entry_get_float(entry);
+
+    return val;
+}
+
+JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetDouble(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(string != NULL, 0.0);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    double val = visual_param_entry_get_double(entry);
+
+    return val;
+}
 
 
 // ------ ACTORS ------
@@ -685,6 +951,147 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLice
         visual_mem_copy(text, URL_BSD, strlen(URL_BSD));
 
     return ((*env)->NewStringUTF(env, text));
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetParamsCount(JNIEnv *env, jobject obj)
+{
+    VisParamContainer *params = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
+
+    int count = visual_list_count(&params->entries);
+    
+    return count;
+}
+
+VisParamEntry *get_actor_param_entry(int index)
+{
+    VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
+
+    visual_log_return_val_if_fail(cont != NULL, NULL);
+
+    int count = visual_list_count(&cont->entries);
+
+    visual_log_return_val_if_fail(index < count, NULL);
+
+    VisParamEntry *entry = (VisParamEntry *)visual_list_get(&cont->entries, index);
+
+    visual_log_return_val_if_fail(entry != NULL, NULL);
+
+    return entry;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetCount(JNIEnv *env, jobject obj)
+{
+    VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
+
+    visual_log_return_val_if_fail(cont != NULL, 0);
+
+    int count = visual_list_count(&cont->entries);
+
+    return count;
+}
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetType(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
+
+    jstring string;
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
+
+    VisParamEntry *entry = visual_param_container_get(cont, chars);
+
+    visual_log_return_val_if_fail(entry != NULL, NULL);
+
+    switch(entry->type)
+    {
+        case VISUAL_PARAM_ENTRY_TYPE_STRING:
+            string = ((*env)->NewStringUTF(env, "string"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_INTEGER:
+            string = ((*env)->NewStringUTF(env, "integer"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_FLOAT:
+            string = ((*env)->NewStringUTF(env, "float"));
+            break;
+        case VISUAL_PARAM_ENTRY_TYPE_DOUBLE:
+            string = ((*env)->NewStringUTF(env, "double"));
+            break;
+        default:
+            return NULL;
+            break;
+    }
+
+    return string;
+}
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetName(JNIEnv *env, jobject obj, jint index)
+{
+    VisParamEntry *entry = get_actor_param_entry(index);
+    
+    jstring string = ((*env)->NewStringUTF(env, visual_param_entry_get_name(entry)));
+    
+    return string;
+}
+
+JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetString(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(chars != NULL, NULL);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
+
+    VisParamEntry *entry = visual_param_container_get(cont, chars);
+
+    jstring string = ((*env)->NewStringUTF(env, visual_param_entry_get_string(entry)));
+
+    return string;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetInteger(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(string != NULL, 0);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    int val = visual_param_entry_get_integer(entry);
+
+    return val;
+}
+
+JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetFloat(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(string != NULL, 0.0f);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    float val = visual_param_entry_get_float(entry);
+
+    return val;
+}
+
+JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetDouble(JNIEnv *env, jobject obj, jstring name)
+{
+    jboolean iscopy;
+    const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
+    visual_log_return_val_if_fail(string != NULL, 0.0);
+
+    VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
+
+    VisParamEntry *entry = visual_param_container_get(cont, string);
+
+    double val = visual_param_entry_get_double(entry);
+
+    return val;
 }
 
 // For fallback audio source.
