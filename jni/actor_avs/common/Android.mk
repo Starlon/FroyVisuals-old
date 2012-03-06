@@ -6,6 +6,6 @@ LOCAL_MODULE	:= common
 LOCAL_SRC_FILES := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
 LOCAL_CFLAGS	:= -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual
-LOCAL_STATIC_LIBRARIES := libxml2
+#LOCAL_STATIC_LIBRARIES := libxml2
 include $(BUILD_SHARED_LIBRARY)
 

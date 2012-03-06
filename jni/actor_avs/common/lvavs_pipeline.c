@@ -117,7 +117,7 @@ static int lvavs_pipeline_container_dtor (VisObject *object)
     LVAVSPipelineContainer *container = LVAVS_PIPELINE_CONTAINER (object);
 
     if (container->members != NULL)
-        ;//visual_object_unref (VISUAL_OBJECT (container->members));
+        ;//FIXME visual_object_unref (VISUAL_OBJECT (container->members));
 
     container->members = NULL;
 

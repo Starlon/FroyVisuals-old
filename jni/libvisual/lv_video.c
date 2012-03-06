@@ -1553,7 +1553,7 @@ static int blit_overlay_surfacealphacolorkey (VisVideo *dest, VisVideo *src)
 					destr.g = ((alpha * (srcr.g - destr.g) >> 8) + destr.g);
 					destr.b = ((alpha * (srcr.b - destr.b) >> 8) + destr.b);
 				}
-                memcpy(destbuf + cnt, &destr, sizeof(uint8_t) * 2);
+                memcpy(destbuf + cnt, &destr, sizeof(uint16_t));
                 cnt++;
 				//destr++;
 				//srcr++;

@@ -247,7 +247,7 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 					priv->wtree = NULL;
 
 					if (filename != NULL) {
-						priv->lvtree = lvavs_preset_new_from_preset (filename);
+						//priv->lvtree = lvavs_preset_new_from_preset (filename);
 					} else {
 						LVAVSPreset *preset;
 						LVAVSPresetElement *sscope1;
