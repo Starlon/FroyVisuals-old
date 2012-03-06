@@ -254,8 +254,6 @@ public class FroyVisuals extends Activity implements OnClickListener
     /* load our native library */
     static {
         System.loadLibrary("visual");
-        //System.loadLibrary("common");
-        //System.loadLibrary("actor_avs");
         System.loadLibrary("main");
     }
 

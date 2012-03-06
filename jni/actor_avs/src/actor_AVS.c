@@ -260,7 +260,7 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 						LVAVSPresetElement *blur3;
 						LVAVSPresetElement *blur4;
 						sscope1 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
-						move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
+						//move = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_movement");
 						preset = lvavs_preset_new ();
 						preset->main = lvavs_preset_container_new ();
 
