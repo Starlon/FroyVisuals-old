@@ -22,6 +22,7 @@ import android.os.Looper;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.content.res.Configuration;
 import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -195,6 +196,12 @@ public class FroyVisuals extends Activity implements OnClickListener
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.froyvisuals, menu);
         return true;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
