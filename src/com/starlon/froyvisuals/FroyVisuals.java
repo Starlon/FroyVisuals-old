@@ -104,28 +104,28 @@ public class FroyVisuals extends Activity implements OnClickListener
         SWIPE_MAX_OFF_PATH = vc.getScaledMaximumFlingVelocity();
 
         class MyGestureDetector extends SimpleOnGestureListener {
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            try {
-                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-                    return false;
-                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
-                    Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    Log.w(TAG, "Left swipe...");
-                    mNativeHelper.finalizeSwitch(1);
-                    // Left swipe
-                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
-                    Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                    Log.w(TAG, "Right swipe...");
-                    mNativeHelper.finalizeSwitch(0);
-                    // Right swipe
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                try {
+                    if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                        return false;
+                    if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
+                        Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                        Log.w(TAG, "Left swipe...");
+                        mNativeHelper.finalizeSwitch(1);
+                        // Left swipe
+                    }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
+                        Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                        Log.w(TAG, "Right swipe...");
+                        mNativeHelper.finalizeSwitch(0);
+                        // Right swipe
+                    }
+                } catch (Exception e) {
+                    Log.w(TAG, "Failure in onFling");
+                    // nothing
                 }
-            } catch (Exception e) {
-                Log.w(TAG, "Failure in onFling");
-                // nothing
+                return false;
             }
-            return false;
-        }
         }
         // Gesture detection
         gestureDetector = new GestureDetector(new MyGestureDetector());
