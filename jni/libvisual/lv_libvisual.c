@@ -282,9 +282,9 @@ int visual_init (int *argc, char ***argv)
 
     /* FIXME Start profiling */
     /* Change to 500 interrupts per second */
-#ifdef HAVE_PROFILING
+#ifdef VISUAL_HAVE_PROFILING
     setenv("CPUPROFILE_FREQUENCY", "500", 1); 
-    //monstartup("libvisual.so"); 
+    monstartup("libvisual.so"); 
 #endif
 
 #if ENABLE_NLS
@@ -459,8 +459,8 @@ int visual_quit ()
 
 	__lv_initialized = FALSE;
 
-#ifdef HAVE_PROFILING
-    //moncleanup(); //FIXME End profilng
+#ifdef VISUAL_HAVE_PROFILING
+    moncleanup(); //FIXME End profilng
 #endif
 
 	return VISUAL_OK;
