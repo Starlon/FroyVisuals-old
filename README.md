@@ -2,7 +2,7 @@
 FroyVisuals is a music-visualization app for Android 2.2 Froyo and beyond.
 
 # IRC #
-We're usually parked in #libvisual on irc.freenode.net.
+We're usually parked in #libvisual on irc.freenode.net. 
 
 ## Download ##
 Click the Downloads Tab in the Tabbar above. 
