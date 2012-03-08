@@ -20,7 +20,9 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Looper;
 import android.os.AsyncTask;
+import android.os.ParcelFileDescriptor;
 import android.content.Context;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.Configuration;
@@ -44,6 +46,7 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewConfiguration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.Color;
@@ -54,9 +57,10 @@ import android.media.AudioFormat;
 import android.media.MediaRecorder;
 import android.util.Log;
 import android.util.TypedValue;
+import android.net.Uri;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Semaphore;
+import java.io.FileDescriptor;
 
 public class FroyVisuals extends Activity implements OnClickListener
 {
@@ -77,10 +81,11 @@ public class FroyVisuals extends Activity implements OnClickListener
     private String mActor;
     private float mSongChanged = 0;
     private String mSongAction;
-    private String mSongCommand;
-    private String mSongArtist;
-    private String mSongAlbum;
-    private String mSongTrack;
+    public String mSongCommand;
+    public String mSongArtist;
+    public String mSongAlbum;
+    public String mSongTrack;
+    public Bitmap mAlbumArt;
 
     static private String mDisplayText = "Please wait...";
 
@@ -178,11 +183,13 @@ public class FroyVisuals extends Activity implements OnClickListener
             Log.e(TAG, "wtf wtf " + mSongAction);
             //if(mSongAction == "com.android.music.metachanged")
             {
+                long id = intent.getLongExtra("id", -1);
+                mAlbumArt = getAlbumArt(id);
                 mSongArtist = intent.getStringExtra("artist");
                 mSongAlbum = intent.getStringExtra("album");
                 mSongTrack = intent.getStringExtra("track");
                 mSongChanged = System.currentTimeMillis();
-                warn(mSongArtist + " <" + mSongTrack + "> ", true);
+                warn("(" + mSongTrack + ")", 5000, true);
             }
 
         }
@@ -410,6 +417,35 @@ public class FroyVisuals extends Activity implements OnClickListener
         return mDisplayText;
     }
 
+    /* http://stackoverflow.com/questions/6591087/most-robust-way-to-fetch-album-art-in-android*/
+    public Bitmap getAlbumArt(long album_id) 
+    {
+        if(album_id == -1) 
+            return null;
+
+        Bitmap bm = null;
+        try 
+        {
+            final Uri sArtworkUri = Uri
+                .parse("content://media/external/audio/albumart");
+
+            Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
+
+            ParcelFileDescriptor pfd = ((Context)this).getContentResolver()
+                .openFileDescriptor(uri, "r");
+
+            if (pfd != null) 
+            {
+                FileDescriptor fd = pfd.getFileDescriptor();
+                bm = BitmapFactory.decodeFileDescriptor(fd);
+            }
+        } catch (Exception e) {
+            warn("Can't load album art.", 5000, true);
+            // Do nothing
+        }
+        return bm;
+    }
+
     private boolean enableMic()
     {
         mAudio = findAudioRecord();
@@ -600,6 +636,14 @@ class FroyVisualsView extends View {
             }
 
             invalidate();
+        }
+
+        if(mActivity.mAlbumArt != null)
+        {
+            int width = mActivity.mAlbumArt.getWidth();
+            int height = mActivity.mAlbumArt.getHeight();
+            canvas.drawBitmap(mActivity.mAlbumArt, 50.0f, 50.0f, mPaint);
+            canvas.drawText("lollllz", 100, 80, mPaint);
         }
        
     }
