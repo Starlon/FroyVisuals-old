@@ -16,6 +16,7 @@ public class PreferencesActivity extends PreferenceActivity
 {
         private final static String TAG = "FroyVisuals/PreferencesActivity";
         
+        private NativeHelper mNativeHelper;
         
         
         /** called by OS when app is created initially */

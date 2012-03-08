@@ -1530,25 +1530,18 @@ void app_main(int w, int h, int device, int card)
 
         // Check alsa device permissions.
 
-/* FIXME Check for read permissions.
+        // Check for read permissions.
         int card = 0, device = 0;
         char fn[256];
 
         snprintf(fn, sizeof(fn), "/dev/snd/pcmC%uD%u%c", card, device, 'c');
 
-        int fd = open(fn, O_RD);
-        if (fd < 0) {
-            goto exit_alsa_check;
+        if(access(fn, R_OK) != 0)
+        {
+            if(chmod(fn, S_IROTH) != 0)
+                goto exit_alsa_check;
         }
-
-        struct stat info;
-        if ((fd = ioctl(fd, SNDRV_PCM_IOCTL_INFO, &info))) {
-            close(fd);
-            goto exit_alsa_check;
-        }
-
-        close(fd);
-*/
+        
         struct pcm *pcmstream;
         struct pcm_config config;
         config.channels = 1;
