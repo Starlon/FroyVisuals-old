@@ -167,24 +167,24 @@ public class FroyVisuals extends Activity implements OnClickListener
         public void onReceive(Context context, Intent intent)
         {
             // intent.getAction() returns one of the following:
-            // com.android.music.metachanged
-            // com.android.music.playstatechanged
-            // com.android.music.playbackcomplete
-            // com.android.music.queuechanged
+            // com.android.music.metachanged - new track has started
+            // com.android.music.playstatechanged - playback queue has changed
+            // com.android.music.playbackcomplete - playback has stopped, last file played
+            // com.android.music.queuechanged - play-state has changed (pause/resume)
             mSongAction = intent.getAction();
 
-            // This one seems to be null always?
             mSongCommand = intent.getStringExtra("command");
 
-            // Song info. :D
-            mSongArtist = intent.getStringExtra("artist");
-            mSongAlbum = intent.getStringExtra("album");
-            mSongTrack = intent.getStringExtra("track");
+            Log.e(TAG, "wtf wtf " + mSongAction);
+            //if(mSongAction == "com.android.music.metachanged")
+            {
+                mSongArtist = intent.getStringExtra("artist");
+                mSongAlbum = intent.getStringExtra("album");
+                mSongTrack = intent.getStringExtra("track");
+                mSongChanged = System.currentTimeMillis();
+                warn(mSongArtist + " <" + mSongTrack + "> ", true);
+            }
 
-            // Record when this event happened.
-            mSongChanged = System.currentTimeMillis();
-
-            warn(mSongArtist + " <" + mSongTrack + "> ", true);
         }
     };
 
@@ -212,9 +212,9 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         IntentFilter iF = new IntentFilter();
         iF.addAction("com.android.music.metachanged");
-        iF.addAction("com.android.music.playstatechanged");
-        iF.addAction("com.android.music.playbackcomplete");
-        iF.addAction("com.android.music.queuechanged");
+        //iF.addAction("com.android.music.playstatechanged");
+        //iF.addAction("com.android.music.playbackcomplete");
+        //iF.addAction("com.android.music.queuechanged");
 
         registerReceiver(mReceiver, iF);
 
@@ -503,7 +503,7 @@ class FroyVisualsView extends View {
         mStats = new Stats();
         mStats.statsInit();
 
-        final int delay = 100;
+        final int delay = 1000;
         final int period = 300;
 
         final Timer timer = new Timer();
@@ -584,6 +584,9 @@ class FroyVisualsView extends View {
     {
         synchronized(mBitmap)
         {
+            // Draw bitmap on canvas
+            canvas.drawBitmap(mBitmap, mMatrix, mPaint);
+
             // Do we have text to show?
             String text = mActivity.getDisplayText();
     
@@ -595,9 +598,6 @@ class FroyVisualsView extends View {
         
                 canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
             }
-
-
-            canvas.drawBitmap(mBitmap, mMatrix, mPaint);
 
             invalidate();
         }
