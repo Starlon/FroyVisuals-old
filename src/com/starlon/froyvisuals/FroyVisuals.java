@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Looper;
+import android.os.AsyncTask;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -55,7 +56,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import java.util.concurrent.Semaphore;
 
 public class FroyVisuals extends Activity implements OnClickListener
 {
@@ -81,7 +82,7 @@ public class FroyVisuals extends Activity implements OnClickListener
     private String mSongAlbum;
     private String mSongTrack;
 
-    static private String mDisplayText = null;
+    static private String mDisplayText = "Please wait...";
 
     private static int SWIPE_MIN_DISTANCE = 120;
     private static int SWIPE_MAX_OFF_PATH = 250;
@@ -118,23 +119,28 @@ public class FroyVisuals extends Activity implements OnClickListener
         class MyGestureDetector extends SimpleOnGestureListener {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                try {
-                    if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-                        return false;
-                    if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
-                        Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                        Log.w(TAG, "Left swipe...");
-                        mNativeHelper.finalizeSwitch(1);
-                        // Left swipe
-                    }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
-                        Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                        Log.w(TAG, "Right swipe...");
-                        mNativeHelper.finalizeSwitch(0);
-                        // Right swipe
+                synchronized(mView.mBitmap)
+                {
+                    try {
+                        if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                            return false;
+                        if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
+                            Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                            Log.w(TAG, "Left swipe...");
+                            //mNativeHelper.finalizeSwitch(1);
+                            mView.switchScene(1);
+                            // Left swipe
+                        }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
+                            Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                            Log.w(TAG, "Right swipe...");
+                            //mNativeHelper.finalizeSwitch(0);
+                            mView.switchScene(0);
+                            // Right swipe
+                        }
+                    } catch (Exception e) {
+                        Log.w(TAG, "Failure in onFling");
+                        // nothing
                     }
-                } catch (Exception e) {
-                    Log.w(TAG, "Failure in onFling");
-                    // nothing
                 }
                 return false;
             }
@@ -211,6 +217,8 @@ public class FroyVisuals extends Activity implements OnClickListener
         iF.addAction("com.android.music.queuechanged");
 
         registerReceiver(mReceiver, iF);
+
+        mView.startThread();
     }
 
     public void onStop()
@@ -238,6 +246,8 @@ public class FroyVisuals extends Activity implements OnClickListener
         editor.commit();
 
         unregisterReceiver(mReceiver);
+
+        mView.stopThread();
     }
 
     @Override
@@ -461,7 +471,7 @@ public class FroyVisuals extends Activity implements OnClickListener
 
 class FroyVisualsView extends View {
     private final String TAG = "FroyVisuals/FroyVisualsView";
-    private Bitmap mBitmap;
+    public Bitmap mBitmap;
     private NativeHelper mNativeHelper;
     private FroyVisuals mActivity;
     private Stats mStats;
@@ -470,6 +480,8 @@ class FroyVisualsView extends View {
     private Paint mPaint;
     private Matrix mMatrix;
     private Display mDisplay;
+    private Thread mThread;
+    private boolean mActive = false;
 
     public FroyVisualsView(Context context) {
         super(context);
@@ -508,7 +520,6 @@ class FroyVisualsView extends View {
 
         mDisplay = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
-
     }
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
@@ -519,73 +530,88 @@ class FroyVisualsView extends View {
 
     @Override protected void onDraw(Canvas canvas) 
     {
-        mStats.startFrame();
-
-        // Render frame to bitmap
-        mNativeHelper.render(mBitmap);
-
-        // Scale bitmap across canvas.
-        canvas.drawBitmap(mBitmap, mMatrix, mPaint);
-
-        // Do we have text to show?
-        String text = mActivity.getDisplayText();
-
-        if(text != null)
-        {
-            float canvasWidth = getWidth();
-            float textWidth = mPaint.measureText(text);
-            float startPositionX = (canvasWidth - textWidth / 2) / 2;
-    
-            canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
-        }
-
-        invalidate();
-
-        mStats.endFrame();
+        drawScene(canvas);
     }
 
-/*
-    private int direction = -1;
-    private float mX = 0.0f;
-    private float mY = 0.0f;
-    private int size = 0;
-    @Override public boolean onTouchEvent (MotionEvent event) 
+    public void stopThread()
     {
-        int action = event.getAction();
-        float x = event.getX();
-        float y = event.getY();
-        switch(action)
+        if(mThread != null)
         {
-            case MotionEvent.ACTION_DOWN:
-                direction = -1;
-                size = 0;
-            break;
-            case MotionEvent.ACTION_UP:
-                if(direction >= 0) {
-                    mNativeHelper.finalizeSwitch(direction);
-                }
-            break;
-            case MotionEvent.ACTION_MOVE:
-                mNativeHelper.mouseMotion(x, y);
-                size = size + 1;
-                if(size > 2)
-                {
-                    if(mX < x)
-                    {
-                        direction = 0;
-                    }
-                    else
-                    {
-                        direction = 1;
-                    }
-                }
-            break;
+            mActive = false;
+            mThread.interrupt();
+            try {
+                mThread.join();
+            } catch (InterruptedException e) {
+                // Do nothing
+            }
         }
-        mX = x;
-        mY = y;
-        return true;    
     }
-*/
+
+    public void startThread()
+    {
+        stopThread();
+        mThread = new Thread(new Runnable() {
+            public void run() {
+                mActive = true;
+                while(mActive)
+                {
+                    try {
+                        updateBitmap();
+                        mThread.sleep(5);
+                    } catch (InterruptedException e) {
+                        mActive = false;
+                    }
+                    
+                }
+            }
+        }, "Update Bitmap");
+
+        mThread.start();
+    }
+
+    private void updateBitmap()
+    {
+        synchronized(mBitmap)
+        {
+            mStats.startFrame();
+            mNativeHelper.render(mBitmap);
+            mStats.endFrame();
+        }
+
+    }
+
+    private void drawScene(Canvas canvas)
+    {
+        synchronized(mBitmap)
+        {
+            // Do we have text to show?
+            String text = mActivity.getDisplayText();
+    
+            if(text != null)
+            {
+                float canvasWidth = getWidth();
+                float textWidth = mPaint.measureText(text);
+                float startPositionX = (canvasWidth / 2 - textWidth / 2);
+        
+                canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
+            }
+
+
+            canvas.drawBitmap(mBitmap, mMatrix, mPaint);
+
+            invalidate();
+        }
+       
+    }
+
+    public void switchScene(int prev)
+    {
+        synchronized(mBitmap)
+        {
+            mNativeHelper.finalizeSwitch(prev);
+        }
+    }
+
 }
 
 
