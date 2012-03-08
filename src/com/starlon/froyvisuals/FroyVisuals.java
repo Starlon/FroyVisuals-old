@@ -24,6 +24,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.Configuration;
 import android.content.SharedPreferences;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -71,6 +74,12 @@ public class FroyVisuals extends Activity implements OnClickListener
     private String mMorph;
     private String mInput;
     private String mActor;
+    private float mSongChanged = 0;
+    private String mSongAction;
+    private String mSongCommand;
+    private String mSongArtist;
+    private String mSongAlbum;
+    private String mSongTrack;
 
     static private String mDisplayText = null;
 
@@ -142,7 +151,36 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         setContentView(mView);
 
+     
+
     }
+
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+ 
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            // intent.getAction() returns one of the following:
+            // com.android.music.metachanged
+            // com.android.music.playstatechanged
+            // com.android.music.playbackcomplete
+            // com.android.music.queuechanged
+            mSongAction = intent.getAction();
+
+            // This one seems to be null always?
+            mSongCommand = intent.getStringExtra("command");
+
+            // Song info. :D
+            mSongArtist = intent.getStringExtra("artist");
+            mSongAlbum = intent.getStringExtra("album");
+            mSongTrack = intent.getStringExtra("track");
+
+            // Record when this event happened.
+            mSongChanged = System.currentTimeMillis();
+
+            warn(mSongArtist + " <" + mSongTrack + "> ", true);
+        }
+    };
 
     public void onClick(View v) {
 /*
@@ -165,6 +203,14 @@ public class FroyVisuals extends Activity implements OnClickListener
         NativeHelper.morphSetCurrentByName(mMorph);
         NativeHelper.inputSetCurrentByName(mInput);
         NativeHelper.actorSetCurrentByName(mActor);
+
+        IntentFilter iF = new IntentFilter();
+        iF.addAction("com.android.music.metachanged");
+        iF.addAction("com.android.music.playstatechanged");
+        iF.addAction("com.android.music.playbackcomplete");
+        iF.addAction("com.android.music.queuechanged");
+
+        registerReceiver(mReceiver, iF);
     }
 
     public void onStop()
@@ -191,6 +237,7 @@ public class FroyVisuals extends Activity implements OnClickListener
         //Commit edits
         editor.commit();
 
+        unregisterReceiver(mReceiver);
     }
 
     @Override
