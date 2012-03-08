@@ -97,6 +97,9 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         mView = new FroyVisualsView(this);
 
+        // Don't dim screen
+        mView.setKeepScreenOn(true);
+
         final ViewConfiguration vc = ViewConfiguration.get((Context)this);
 
         SWIPE_MIN_DISTANCE = vc.getScaledTouchSlop();
