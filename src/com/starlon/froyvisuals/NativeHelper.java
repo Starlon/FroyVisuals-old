@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 
 public class NativeHelper
 {
+
     // VisInput native calls
     public static native int inputCount();
     public static native int inputGetCurrent();

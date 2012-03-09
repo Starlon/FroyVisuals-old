@@ -23,7 +23,6 @@ import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.content.Context;
 import android.content.ContentUris;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.Configuration;
 import android.content.SharedPreferences;
@@ -75,10 +74,10 @@ public class FroyVisuals extends Activity implements OnClickListener
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-    private boolean mDoMorph;
-    private String mMorph;
-    private String mInput;
-    private String mActor;
+    public boolean mDoMorph;
+    public String mMorph;
+    public String mInput;
+    public String mActor;
     private float mSongChanged = 0;
     private String mSongAction;
     public String mSongCommand;
@@ -166,7 +165,7 @@ public class FroyVisuals extends Activity implements OnClickListener
 
     }
 
-    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+    public BroadcastReceiver mReceiver = new BroadcastReceiver() {
  
         @Override
         public void onReceive(Context context, Intent intent)
@@ -176,20 +175,23 @@ public class FroyVisuals extends Activity implements OnClickListener
             // com.android.music.playstatechanged - playback queue has changed
             // com.android.music.playbackcomplete - playback has stopped, last file played
             // com.android.music.queuechanged - play-state has changed (pause/resume)
-            mSongAction = intent.getAction();
+            String action = intent.getAction();
 
-            mSongCommand = intent.getStringExtra("command");
-
-            Log.e(TAG, "wtf wtf " + mSongAction);
-            //if(mSongAction == "com.android.music.metachanged")
+            if(action.equals("com.android.music.metachanged"))
             {
+                mSongCommand = intent.getStringExtra("command");
                 long id = intent.getLongExtra("id", -1);
                 mAlbumArt = getAlbumArt(id);
                 mSongArtist = intent.getStringExtra("artist");
                 mSongAlbum = intent.getStringExtra("album");
                 mSongTrack = intent.getStringExtra("track");
                 mSongChanged = System.currentTimeMillis();
-                warn("(" + mSongTrack + ")", 5000, true);
+                //warn("(" + mSongTrack + ")", 5000, true);
+            }
+            else if(action.equals("com.starlon.froyvisuals.PREFS_UPDATE"))
+            {
+                warn("Prefs updated...", 10000, true);
+                ((FroyVisuals)context).updatePrefs();
             }
 
         }
@@ -202,23 +204,33 @@ public class FroyVisuals extends Activity implements OnClickListener
 */
     }
 
-    public void onResume()
+    public void updatePrefs()
     {
+
         super.onResume();
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
 
         mDoMorph = settings.getBoolean("doMorph", true);
 
-        mMorph = settings.getString("currentMorph", "alphablend");
-        mInput = settings.getString("currentInput", "dummy");
-        mActor = settings.getString("currentActor", "jakdaw");
+        NativeHelper.setMorphStyle(mDoMorph);
+
+        mMorph = settings.getString("prefs_morph_selection", "alphablend");
+        mInput = settings.getString("prefs_input_selection", "dummy");
+        mActor = settings.getString("prefs_actor_selection", "jakdaw");
 
         NativeHelper.morphSetCurrentByName(mMorph);
         NativeHelper.inputSetCurrentByName(mInput);
         NativeHelper.actorSetCurrentByName(mActor);
+    }
+
+    public void onResume()
+    {
+
+        updatePrefs();
 
         IntentFilter iF = new IntentFilter();
         iF.addAction("com.android.music.metachanged");
+        iF.addAction("com.starlon.froyvisuals.PREFS_UPDATE");
         //iF.addAction("com.android.music.playstatechanged");
         //iF.addAction("com.android.music.playbackcomplete");
         //iF.addAction("com.android.music.queuechanged");
@@ -243,15 +255,16 @@ public class FroyVisuals extends Activity implements OnClickListener
         this.setInput(mNativeHelper.inputGetName(input));
         this.setActor(mNativeHelper.actorGetName(morph));
 
-        editor.putString("currentMorph", mMorph);
-        editor.putString("currentInput", mInput);
-        editor.putString("currentActor", mActor);
+/*
+        editor.putString("prefs_morph_selection", mMorph);
+        editor.putString("prefs_input_selection", mInput);
+        editor.putString("prefs_actor_selection", mActor);
 
         editor.putBoolean("doMorph", mDoMorph);
 
         //Commit edits
         editor.commit();
-
+*/
         unregisterReceiver(mReceiver);
 
         mView.stopThread();
