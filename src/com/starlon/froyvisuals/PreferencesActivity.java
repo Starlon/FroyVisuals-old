@@ -45,7 +45,7 @@ public class PreferencesActivity extends PreferenceActivity
         public void onPause()
         {
             /** update widget */
-            Intent i = new Intent(this, BroadcastReceiver.class);
+            Intent i = new Intent(this, FroyVisualsReceiver.class);
             i.setAction("com.starlon.froyvisuals.PREFS_UPDATE");
             sendBroadcast(i);
             super.onPause();
