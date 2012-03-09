@@ -42,10 +42,10 @@
 
     <!-- Indicate that landscape view requires GL version 2.0. -->
     <uses-feature android:name="android.hardware.screen.landscape"
-                  android:required="false">
+                  android:required="false"/>
 
     <uses-feature android:name="android.hardware.screen.portrait"
-                  android:required="false">
+                  android:required="false"/>
 
     <!-- Indicate that we'll be using the wallpapers feature. -->
     <uses-feature android:name="android.software.live_wallpapers"
