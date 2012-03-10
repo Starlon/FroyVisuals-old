@@ -4,17 +4,17 @@
     <!-- Preferences -->
     <string name="preferences_name">FroyVisuals Einstellungen</string>
     <string name="prefs_title_general">General</string>
-    <string name="prefs_morph_enabled">Enable Morphs</string>
-    <string name="prefs_summary_morph_enabled">Check to enable morphs.</string>
-    <string name="prefs_actor_selection">Choose an Actor</string>
-    <string name="prefs_actor_selection_summary">Actors are the visualizations themselves.</string>
-    <string name="prefs_input_selection">Choose an Input</string>
-    <string name="prefs_input_selection_summary">Inputs provide audio wave data to visualizations.</string>
-    <string name="prefs_morph_selection">Choose a Morph</string>
-    <string name="prefs_morph_selection_summary">Morphs indicate the style in which actors are changed.</string>
+    <string name="prefs_morph_enabled">Ermöglichen Morphs</string>
+    <string name="prefs_summary_morph_enabled">Überprüfen Sie, Morphs zu ermöglichen.</string>
+    <string name="prefs_actor_selection">Wählen Sie einen Darsteller.</string>
+    <string name="prefs_actor_selection_summary">Schauspieler sind die Visualisierungen sich.</string>
+    <string name="prefs_input_selection">Wählen Sie einen Eingang.</string>
+    <string name="prefs_input_selection_summary">Eingänge bieten Audio-Wave-Daten zu Visualisierungen.</string>
+    <string name="prefs_morph_selection">Wählen Sie eine Morph.</string>
+    <string name="prefs_morph_selection_summary">Morphs zeigen den Stil, in dem Akteure verändert.</string>
 
     <!-- Info -->
-    <string name="info_name">Plugin Information</string>
+    <string name="info_name">Plugin Informationen</string>
 
     <!-- Input -->
     <string name="input_name">Input Plugin</string>
@@ -28,18 +28,18 @@
     <!-- Plugin header titles -->
     <string name="title_plugin_name">Name</string>
     <string name="title_plugin_long_name">Long Name</string>
-    <string name="title_plugin_author">Author</string>
+    <string name="title_plugin_author">Autor</string>
     <string name="title_plugin_version">Version</string>
-    <string name="title_plugin_about">About</string>
-    <string name="title_plugin_help">Help</string>
-    <string name="title_plugin_license">License</string>
+    <string name="title_plugin_about">Über</string>
+    <string name="title_plugin_help">Hilfe</string>
+    <string name="title_plugin_license">Lizenz</string>
 
     <!-- Menu -->
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_about">Über&amp;#8230;</string>
     <string name="menu_plugins">Plugins</string>
-    <string name="close_app">Close App</string>
-    <string name="input_stub">Input Method</string>
+    <string name="close_app">Schließen App</string>
+    <string name="input_stub">Input Methode</string>
 
     <!-- Plugin Information -->
     <string name="info_button_actor">Actor</string>
@@ -63,9 +63,9 @@
     <string name="plugin_long_name">Plugin Long Name</string>
     <string name="plugin_author">Author</string>
     <string name="plugin_version">Version</string>
-    <string name="plugin_about">About</string>
-    <string name="plugin_help">Help</string>
-    <string name="plugin_license">License</string>
+    <string name="plugin_about">Über</string>
+    <string name="plugin_help">Hilfe</string>
+    <string name="plugin_license">Lizenz</string>
 
 
 </resources>
