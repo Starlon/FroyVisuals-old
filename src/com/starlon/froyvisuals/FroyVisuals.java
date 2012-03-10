@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,8 +38,12 @@ import android.media.AudioFormat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.net.Uri;
+import android.database.Cursor;
+import android.provider.MediaStore;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.FileDescriptor;
 
 public class FroyVisuals extends Activity implements OnClickListener
@@ -403,6 +408,30 @@ public class FroyVisuals extends Activity implements OnClickListener
         return mDisplayText;
     }
 
+    public final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+
+    // This works, and well on all devices
+    private int[] getAlbumIds(ContentResolver contentResolver)
+    {
+        List<Integer> result = new ArrayList<Integer>();
+        Cursor cursor = contentResolver.query(MediaStore.Audio.Media.getContentUri("external"), new String[]{MediaStore.Audio.Media.ALBUM_ID}, null, null, null);
+    
+        if (cursor.moveToFirst())
+        {
+            do{
+                int albumId = cursor.getInt(0);
+                if (!result.contains(albumId))
+                    result.add(albumId);
+            } while (cursor.moveToNext());
+        }
+    
+        int[] resultArray = new int[result.size()];
+        for (int i = 0; i < result.size(); i++)
+            resultArray[i] = result.get(i);
+    
+        return resultArray;
+    }
+
     /* http://stackoverflow.com/questions/6591087/most-robust-way-to-fetch-album-art-in-android*/
     public Bitmap getAlbumArt(long album_id) 
     {
@@ -412,9 +441,6 @@ public class FroyVisuals extends Activity implements OnClickListener
         Bitmap bm = null;
         try 
         {
-            final Uri sArtworkUri = Uri
-                .parse("content://media/external/audio/albumart");
-
             Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
 
             ParcelFileDescriptor pfd = ((Context)this).getContentResolver()
