@@ -44,12 +44,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.io.FileDescriptor;
 
 public class FroyVisuals extends Activity implements OnClickListener
 {
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private final static String PREFS = "FroyVisualsPrefs";
+    private final static int ARTWIDTH = 100;
+    private final static int ARTHEIGHT = 100;
     private static Settings mSettings;
     private AudioRecord mAudio;
     private MediaRecorder mRecorder;
@@ -69,6 +73,7 @@ public class FroyVisuals extends Activity implements OnClickListener
     public String mSongAlbum;
     public String mSongTrack;
     public Bitmap mAlbumArt;
+    public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
 
     static private String mDisplayText = "Please wait...";
 
@@ -165,11 +170,11 @@ public class FroyVisuals extends Activity implements OnClickListener
             {
                 mSongCommand = intent.getStringExtra("command");
                 long id = intent.getLongExtra("id", -1);
-                mAlbumArt = getAlbumArt(id);
                 mSongArtist = intent.getStringExtra("artist");
                 mSongAlbum = intent.getStringExtra("album");
                 mSongTrack = intent.getStringExtra("track");
                 mSongChanged = System.currentTimeMillis();
+                mAlbumArt = mAlbumMap.get(mSongAlbum);
                 warn("(" + mSongTrack + ")", 5000, true);
             }
         }
@@ -185,7 +190,6 @@ public class FroyVisuals extends Activity implements OnClickListener
     public void updatePrefs()
     {
 
-        super.onResume();
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
 
         mDoMorph = settings.getBoolean("doMorph", true);
@@ -203,6 +207,7 @@ public class FroyVisuals extends Activity implements OnClickListener
 
     public void onResume()
     {
+        super.onResume();
 
         updatePrefs();
 
@@ -216,6 +221,8 @@ public class FroyVisuals extends Activity implements OnClickListener
         registerReceiver(mReceiver, iF);
 
         mView.startThread();
+
+        getAlbumArt();
     }
 
     public void onStop()
@@ -246,6 +253,8 @@ public class FroyVisuals extends Activity implements OnClickListener
         unregisterReceiver(mReceiver);
 
         mView.stopThread();
+        
+        releaseAlbumArt();
     }
 
     @Override
@@ -410,26 +419,39 @@ public class FroyVisuals extends Activity implements OnClickListener
 
     public final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 
-    // This works, and well on all devices
-    private int[] getAlbumIds(ContentResolver contentResolver)
+    private void releaseAlbumArt()
     {
-        List<Integer> result = new ArrayList<Integer>();
-        Cursor cursor = contentResolver.query(MediaStore.Audio.Media.getContentUri("external"), new String[]{MediaStore.Audio.Media.ALBUM_ID}, null, null, null);
+        for(Entry<String, Bitmap> entry : mAlbumMap.entrySet())
+        {
+            entry.getValue().recycle();
+        }
+    }
+
+    private void getAlbumArt()
+    {
+        ContentResolver contentResolver = this.getContentResolver();
+
+        List<Long> result = new ArrayList<Long>();
+        List<String> map = new ArrayList<String>();
+        Cursor cursor = contentResolver.query(MediaStore.Audio.Media.getContentUri("external"), 
+            new String[]{MediaStore.Audio.Media.ALBUM_ID}, null, null, null);
+        Cursor albumCursor = contentResolver.query(MediaStore.Audio.Media.getContentUri("external"), 
+            new String[]{MediaStore.Audio.Media.ALBUM}, null, null, null);
     
-        if (cursor.moveToFirst())
+        if (cursor.moveToFirst() && albumCursor.moveToFirst())
         {
             do{
-                int albumId = cursor.getInt(0);
+                long albumId = cursor.getLong(0);
                 if (!result.contains(albumId))
+                {
+                    String album = albumCursor.getString(0);
                     result.add(albumId);
-            } while (cursor.moveToNext());
+                    Bitmap bm = getAlbumArt(albumId);
+                    if(bm != null && album != null)
+                        mAlbumMap.put(album, bm);
+                }
+            } while (cursor.moveToNext() && albumCursor.moveToNext());
         }
-    
-        int[] resultArray = new int[result.size()];
-        for (int i = 0; i < result.size(); i++)
-            resultArray[i] = result.get(i);
-    
-        return resultArray;
     }
 
     /* http://stackoverflow.com/questions/6591087/most-robust-way-to-fetch-album-art-in-android*/
@@ -452,10 +474,15 @@ public class FroyVisuals extends Activity implements OnClickListener
                 bm = BitmapFactory.decodeFileDescriptor(fd);
             }
         } catch (Exception e) {
-            warn("Can't load album art.", 5000, true);
             // Do nothing
         }
-        return bm;
+        Bitmap scaled = null;
+        if(bm != null)
+        {
+            scaled = Bitmap.createScaledBitmap(bm, ARTWIDTH, ARTHEIGHT, false);
+            bm.recycle();
+        }
+        return scaled;
     }
 
     private boolean enableMic()

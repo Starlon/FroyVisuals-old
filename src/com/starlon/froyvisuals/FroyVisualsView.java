@@ -152,7 +152,6 @@ public class FroyVisualsView extends View {
             int width = mActivity.mAlbumArt.getWidth();
             int height = mActivity.mAlbumArt.getHeight();
             canvas.drawBitmap(mActivity.mAlbumArt, 50.0f, 50.0f, mPaint);
-            canvas.drawText("lollllz", 100, 80, mPaint);
         }
        
     }
