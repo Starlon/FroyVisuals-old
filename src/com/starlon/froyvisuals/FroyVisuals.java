@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.content.Context;
 import android.content.ContentUris;
-import android.content.res.Resources;
 import android.content.res.Configuration;
 import android.content.SharedPreferences;
 import android.content.Intent;
@@ -31,14 +30,10 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewConfiguration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Typeface;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Matrix;
 import android.media.AudioRecord;
-import android.media.AudioFormat;
 import android.media.MediaRecorder;
+import android.media.AudioFormat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.net.Uri;
@@ -51,7 +46,6 @@ public class FroyVisuals extends Activity implements OnClickListener
     private final static String TAG = "FroyVisuals/FroyVisualsActivity";
     private final static String PREFS = "FroyVisualsPrefs";
     private static Settings mSettings;
-    private NativeHelper mNativeHelper;
     private AudioRecord mAudio;
     private MediaRecorder mRecorder;
     private boolean mMicActive = false;
@@ -116,13 +110,13 @@ public class FroyVisuals extends Activity implements OnClickListener
                         if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
                             Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             Log.w(TAG, "Left swipe...");
-                            //mNativeHelper.finalizeSwitch(1);
+                            //NativeHelper.finalizeSwitch(1);
                             mView.switchScene(1);
                             // Left swipe
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                             Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             Log.w(TAG, "Right swipe...");
-                            //mNativeHelper.finalizeSwitch(0);
+                            //NativeHelper.finalizeSwitch(0);
                             mView.switchScene(0);
                             // Right swipe
                         }
@@ -226,13 +220,13 @@ public class FroyVisuals extends Activity implements OnClickListener
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
         SharedPreferences.Editor editor = settings.edit();
 
-        int morph = mNativeHelper.morphGetCurrent();
-        int input = mNativeHelper.inputGetCurrent();
-        int actor = mNativeHelper.actorGetCurrent();
+        int morph = NativeHelper.morphGetCurrent();
+        int input = NativeHelper.inputGetCurrent();
+        int actor = NativeHelper.actorGetCurrent();
 
-        this.setMorph(mNativeHelper.morphGetName(morph));
-        this.setInput(mNativeHelper.inputGetName(input));
-        this.setActor(mNativeHelper.actorGetName(morph));
+        this.setMorph(NativeHelper.morphGetName(morph));
+        this.setInput(NativeHelper.inputGetName(input));
+        this.setActor(NativeHelper.actorGetName(morph));
 
 /*
         editor.putString("prefs_morph_selection", mMorph);
@@ -289,24 +283,24 @@ public class FroyVisuals extends Activity implements OnClickListener
 */
             case R.id.close_app:
             {
-                mNativeHelper.visualsQuit();
+                NativeHelper.visualsQuit();
                 return true;
             }
             case R.id.input_stub:
             {
-                int index = mNativeHelper.cycleInput(1);
+                int index = NativeHelper.cycleInput(1);
 
-                String input = mNativeHelper.inputGetName(index);
+                String input = NativeHelper.inputGetName(index);
 
                 if(input == "mic")
                 {
                     if(!enableMic())
-                        index = mNativeHelper.cycleInput(1);
+                        index = NativeHelper.cycleInput(1);
                 } else {
                     mMicActive = false;
                 }
 
-                warn(mNativeHelper.inputGetLongName(index), true);
+                warn(NativeHelper.inputGetLongName(index), true);
             }
 
             default:
@@ -443,7 +437,7 @@ public class FroyVisuals extends Activity implements OnClickListener
         mAudio = findAudioRecord();
         if(mAudio != null)
         {
-            mNativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+            NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
             new Thread(new Runnable() {
                 public void run() {
                     mMicActive = true;
@@ -452,7 +446,7 @@ public class FroyVisuals extends Activity implements OnClickListener
                     {
                         short[] data = new short[PCM_SIZE];
                         mAudio.read(data, 0, PCM_SIZE);
-                        mNativeHelper.uploadAudio(data);
+                        NativeHelper.uploadAudio(data);
                     }
                     mAudio.stop();
                 }

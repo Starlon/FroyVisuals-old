@@ -1,29 +1,19 @@
 package com.starlon.froyvisuals;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Intent;
-import android.content.BroadcastReceiver;
 import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
-import android.preference.SwitchPreference;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
-import android.util.Log;
-
-
 
 
 public class PreferencesActivity extends PreferenceActivity
 {
         private final static String TAG = "FroyVisuals/PreferencesActivity";
         private final static String PREFS = "FroyVisualsPrefs";
-        
-        private NativeHelper mNativeHelper;
-        
         
         /** called by OS when app is created initially */
         @Override
@@ -69,14 +59,14 @@ public class PreferencesActivity extends PreferenceActivity
             checkboxPref.setSummary(R.string.prefs_summary_morph_enabled);
             inlinePrefCat.addPreference(checkboxPref);
 
-            current = mNativeHelper.actorGetCurrent();
-            count = mNativeHelper.actorCount();
+            current = NativeHelper.actorGetCurrent();
+            count = NativeHelper.actorCount();
             entries = new CharSequence[count];
             entryValues = new CharSequence[count];
             for(int i = 0; i < count; i++)
             {
-                entryValues[i] = mNativeHelper.actorGetName(i);
-                entries[i] = mNativeHelper.actorGetLongName(i);
+                entryValues[i] = NativeHelper.actorGetName(i);
+                entries[i] = NativeHelper.actorGetLongName(i);
             }
             ListPreference actorPref = new ListPreference(this);
             actorPref.setEntries(entries);
@@ -89,14 +79,14 @@ public class PreferencesActivity extends PreferenceActivity
             //    actorPref.setValueIndex(current);
             inlinePrefCat.addPreference(actorPref);
 
-            current = mNativeHelper.inputGetCurrent();
-            count = mNativeHelper.inputCount();
+            current = NativeHelper.inputGetCurrent();
+            count = NativeHelper.inputCount();
             entries = new CharSequence[count];
             entryValues = new CharSequence[count];
             for(int i = 0; i < count; i++)
             {
-                entries[i] = mNativeHelper.inputGetName(i);
-                entryValues[i] = mNativeHelper.inputGetLongName(i);
+                entries[i] = NativeHelper.inputGetName(i);
+                entryValues[i] = NativeHelper.inputGetLongName(i);
             }
             ListPreference inputPref = new ListPreference(this);
             inputPref.setEntries(entries);
@@ -109,14 +99,14 @@ public class PreferencesActivity extends PreferenceActivity
             //    inputPref.setValueIndex(current);
             inlinePrefCat.addPreference(inputPref);
 
-            current = mNativeHelper.morphGetCurrent();
-            count = mNativeHelper.morphCount();
+            current = NativeHelper.morphGetCurrent();
+            count = NativeHelper.morphCount();
             entries = new CharSequence[count];
             entryValues = new CharSequence[count];
             for(int i = 0; i < count; i++)
             {
-                entries[i] = mNativeHelper.morphGetName(i);
-                entryValues[i] = mNativeHelper.morphGetLongName(i);
+                entries[i] = NativeHelper.morphGetName(i);
+                entryValues[i] = NativeHelper.morphGetLongName(i);
             }
             ListPreference morphPref = new ListPreference(this);
             morphPref.setEntries(entries);

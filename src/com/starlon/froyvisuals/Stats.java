@@ -17,7 +17,6 @@ public class Stats {
     public int firstFrame;
     public int numFrames;
     public FrameStats frames[];
-    private String mText = "";
     public double mAvgFrame = 0.0;
     public double mMaxFrame = 0.0;
     public double mMinFrame = 0.0;

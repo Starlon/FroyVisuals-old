@@ -1,64 +1,31 @@
 package com.starlon.froyvisuals;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Looper;
-import android.os.AsyncTask;
-import android.os.ParcelFileDescriptor;
 import android.content.Context;
-import android.content.ContentUris;
-import android.content.res.Resources;
-import android.content.res.Configuration;
-import android.content.SharedPreferences;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.BroadcastReceiver;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.view.MotionEvent;
 import android.view.Display;
-import android.view.Surface;
-import android.view.View.OnTouchListener;
-import android.view.View.OnClickListener;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.ViewConfiguration;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Matrix;
-import android.media.AudioRecord;
-import android.media.AudioFormat;
-import android.media.MediaRecorder;
 import android.util.Log;
-import android.util.TypedValue;
-import android.net.Uri;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.io.FileDescriptor;
 
 
 public class FroyVisualsView extends View {
     private final String TAG = "FroyVisuals/FroyVisualsView";
     public Bitmap mBitmap;
-    private NativeHelper mNativeHelper;
     private FroyVisuals mActivity;
     private Stats mStats;
     private final int WIDTH = 256;
     private final int HEIGHT = 256;
     private Paint mPaint;
     private Matrix mMatrix;
-    private Display mDisplay;
     private Thread mThread;
+    private Display mDisplay;
     private boolean mActive = false;
 
     public FroyVisualsView(Context context) {
@@ -76,7 +43,7 @@ public class FroyVisualsView extends View {
         mPaint.setStrokeWidth(1);
         mPaint.setColor(Color.WHITE);
 
-        mNativeHelper.initApp(WIDTH, HEIGHT, 0, 0);
+        NativeHelper.initApp(WIDTH, HEIGHT, 0, 0);
 
         mStats = new Stats();
         mStats.statsInit();
@@ -152,7 +119,7 @@ public class FroyVisualsView extends View {
         synchronized(mBitmap)
         {
             mStats.startFrame();
-            mNativeHelper.render(mBitmap);
+            NativeHelper.render(mBitmap);
             mStats.endFrame();
         }
 
@@ -194,7 +161,7 @@ public class FroyVisualsView extends View {
     {
         synchronized(mBitmap)
         {
-            mNativeHelper.finalizeSwitch(prev);
+            NativeHelper.finalizeSwitch(prev);
         }
     }
 
