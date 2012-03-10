@@ -1,11 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Preferences -->
     <string name="preferences_name">FroyVisuals Einstellungen</string>
+    <string name="prefs_title_general">General</string>
+    <string name="prefs_morph_enabled">Enable Morphs</string>
+    <string name="prefs_summary_morph_enabled">Check to enable morphs.</string>
+    <string name="prefs_actor_selection">Choose an Actor</string>
+    <string name="prefs_actor_selection_summary">Actors are the visualizations themselves.</string>
+    <string name="prefs_input_selection">Choose an Input</string>
+    <string name="prefs_input_selection_summary">Inputs provide audio wave data to visualizations.</string>
+    <string name="prefs_morph_selection">Choose a Morph</string>
+    <string name="prefs_morph_selection_summary">Morphs indicate the style in which actors are changed.</string>
+
+    <!-- Info -->
+    <string name="info_name">Plugin Information</string>
+
+    <!-- Input -->
+    <string name="input_name">Input Plugin</string>
+
+    <!-- Morph -->
+    <string name="morph_name">Morph Plugin</string>
+
+    <!-- Actor -->
+    <string name="actor_name">Actor Plugin</string>
+
+    <!-- Plugin header titles -->
+    <string name="title_plugin_name">Name</string>
+    <string name="title_plugin_long_name">Long Name</string>
+    <string name="title_plugin_author">Author</string>
+    <string name="title_plugin_version">Version</string>
+    <string name="title_plugin_about">About</string>
+    <string name="title_plugin_help">Help</string>
+    <string name="title_plugin_license">License</string>
+
+    <!-- Menu -->
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_about">Über&amp;#8230;</string>
+    <string name="menu_plugins">Plugins</string>
+    <string name="close_app">Close App</string>
+    <string name="input_stub">Input Method</string>
+
+    <!-- Plugin Information -->
+    <string name="info_button_actor">Actor</string>
+    <string name="info_button_input">Input</string>
+    <string name="info_button_morph">Morph</string>
+
+    <!-- About Menu -->
     <string name="about_name">Über FroyVisuals</string>
     <string name="about_description">
         Verschiedene konfigurierbare Musik-Visualisierungen.
     </string>
+    <string name="about_title">FroyVisuals v0.1</string>
+    <string name="about_copyright">2012 %#169; Scott Sibley</string>
+    <string name="about_url">sisibley@gmail.com</string>
+    <string name="about_changes">
+        * v0.1 beta - initial beta release
+    </string>
+    
+    <!-- Plugin info -->
+    <string name="plugin_name">Plugin Name</string>
+    <string name="plugin_long_name">Plugin Long Name</string>
+    <string name="plugin_author">Author</string>
+    <string name="plugin_version">Version</string>
+    <string name="plugin_about">About</string>
+    <string name="plugin_help">Help</string>
+    <string name="plugin_license">License</string>
+
 
 </resources>
