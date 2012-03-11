@@ -30,6 +30,7 @@ public class FroyVisualsView extends View {
     private Display mDisplay;
     private boolean mActive = false;
     private boolean mDoBeat = false;
+    public short mMicData[] = null;
     private final ReentrantLock mLock = new ReentrantLock();
 
     public FroyVisualsView(Context context) {
@@ -124,9 +125,12 @@ public class FroyVisualsView extends View {
         synchronized(mBitmap)
         {
             mStats.startFrame();
-            //mLock.lock();
+
+            //if(mMicData != null)
+                //NativeHelper.uploadAudio(mMicData);
+
             NativeHelper.render(mBitmap);
-            //mLock.unlock();
+
             mStats.endFrame();
         }
 

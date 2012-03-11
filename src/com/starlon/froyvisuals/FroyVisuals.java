@@ -154,7 +154,7 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         mHasRoot = checkRoot();
 
-        enableMic();
+        //enableMic();
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -212,7 +212,7 @@ public class FroyVisuals extends Activity implements OnClickListener
         NativeHelper.setMorphStyle(mDoMorph);
 
         mMorph = settings.getString("prefs_morph_selection", "alphablend");
-        mInput = "mic";//settings.getString("prefs_input_selection", "alsa");
+        mInput = settings.getString("prefs_input_selection", "alsa");
         mActor = settings.getString("prefs_actor_selection", "jakdaw");
 
         NativeHelper.morphSetCurrentByName(mMorph);
@@ -328,9 +328,6 @@ public class FroyVisuals extends Activity implements OnClickListener
                     } else {
                         mMicActive = false;
                     }
-
-                    if(input.equals("alsa") && !checkRoot())
-                        index = NativeHelper.cycleInput(1);
     
                     warn(NativeHelper.inputGetLongName(index), true);
                 }
@@ -358,7 +355,7 @@ public class FroyVisuals extends Activity implements OnClickListener
             Process exec = Runtime.getRuntime().exec(new String[]{"su"});
     
             final OutputStreamWriter out = new OutputStreamWriter(exec.getOutputStream());
-            out.write("exit\n");
+            out.write("\nexit\n");
             out.flush();
             Log.i(TAG, "Superuser detected...");
             return true; 
@@ -527,24 +524,23 @@ public class FroyVisuals extends Activity implements OnClickListener
     private boolean enableMic()
     {
         mAudio = findAudioRecord();
+        mView.mMicData = new short[PCM_SIZE * 4];
         if(mAudio != null)
         {
             NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
-
-            new Thread(new Runnable() {
+            Thread audioThread = new Thread(new Runnable() {
                 public void run() {
                     mMicActive = true;
                     mAudio.startRecording();
                     while(mMicActive)
                     {
-                        
-                        short[] data = new short[PCM_SIZE];
-                        mAudio.read(data, 0, PCM_SIZE);
-                        NativeHelper.uploadAudio(data);
+                        mAudio.read(mView.mMicData, 0, PCM_SIZE);
                     }
                     mAudio.stop();
                 }
-            }).start();
+            });
+            audioThread.start();
+            mView.mMicData = null;
             return true;
         }
         return false;
@@ -570,7 +566,7 @@ public class FroyVisuals extends Activity implements OnClickListener
                                 RECORDER_SAMPLERATE = rate;
                                 RECORDER_CHANNELS = channelConfig;
                                 RECORDER_AUDIO_ENCODING = audioFormat;
-                                Log.d(TAG, "Opened mic: " + rate + "Hz, bits: " + audioFormat + ", channel: " + channelConfig);
+                                Log.d(TAG, "Opened mic: " + rate + "Hz, bits: " + audioFormat + ", channel: " + channelConfig + ", buffersize:" + PCM_SIZE);
                                 return recorder;
                             }
                         }

@@ -1323,7 +1323,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_uploadAudio(JNI
 // Reinitialize audio fields.
 JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint size, jint samplerate, jint channels, jint encoding)
 {
-    if(pcm_ref.pcm_data)
+    if(pcm_ref.pcm_data != NULL)
         visual_mem_free(pcm_ref.pcm_data);
     pcm_ref.pcm_data = visual_mem_malloc(sizeof(int16_t) * size);
     pcm_ref.size = size;
@@ -1580,7 +1580,8 @@ void app_main(int w, int h, int device, int card)
 
         if(access(fn, R_OK) != 0)
         {
-            if(chmod(fn, S_IROTH) != 0)
+            //FIXME rigid calls this evil 
+            //if(chmod(fn, S_IROTH) != 0)
                 goto exit_alsa_check;
         }
         
@@ -1600,7 +1601,7 @@ void app_main(int w, int h, int device, int card)
 
         pcm_close(pcmstream);
 
-        //v.input_name = "alsa";
+        v.input_name = "alsa";
 
         visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
     } else {
@@ -1622,17 +1623,6 @@ exit_alsa_check:
 
     VisActor *actor = visual_actor_new((char*)v.actor_name);
     VisInput *input = visual_input_new((char*)v.input_name);
-
-    if(FALSE) /* FIXME For Mic input */
-    {
-        VisInput *input = visual_mem_malloc(sizeof( VisInput));
-        input->audio = visual_audio_new();
-        visual_audio_init(input->audio);
-    
-        if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
-            visual_log (VISUAL_LOG_CRITICAL, "Cannot set input plugin callback");
-        }
-    }
 
     depthflag = visual_actor_get_supported_depth(actor);
     depth = visual_video_depth_get_highest(depthflag);

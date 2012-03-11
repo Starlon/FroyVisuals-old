@@ -35,11 +35,14 @@ typedef struct {
     struct pcm *pcmstream;
     struct pcm_config config;
     int loaded;
+    int device;
+    int card;
 } alsaPrivate;
 
 static int inp_alsa_init (VisPluginData *plugin);
 static int inp_alsa_cleanup (VisPluginData *plugin);
 static int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio);
+static int inp_alsa_events (VisPluginData *plugin, VisEventQueue *events);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
@@ -62,6 +65,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 
         .init = inp_alsa_init,
         .cleanup = inp_alsa_cleanup,
+        .events = inp_alsa_events,
 
         .plugin = VISUAL_OBJECT (&input[0])
     }};
@@ -74,7 +78,6 @@ const VisPluginInfo *get_plugin_info (int *count)
 int inp_alsa_init (VisPluginData *plugin)
 {
     alsaPrivate *priv = visual_mem_new0 (alsaPrivate, 1);
-    unsigned int device = 0;
     unsigned int channels = 2;
     unsigned int rate = 48000;
 
@@ -82,6 +85,7 @@ int inp_alsa_init (VisPluginData *plugin)
     visual_log_return_val_if_fail(plugin != NULL, -1);
 
     visual_object_set_private (VISUAL_OBJECT (plugin), priv);
+
 
     priv->config.channels = channels;
     priv->config.rate = rate;
@@ -91,32 +95,46 @@ int inp_alsa_init (VisPluginData *plugin)
     priv->config.stop_threshold = 0;
     priv->config.start_threshold = 0;
     priv->config.silence_threshold = 0;
-    priv->pcmstream = pcm_open(0, device, PCM_IN, &priv->config);
+    priv->device = 0;
+    priv->card = 0;
+    priv->pcmstream = pcm_open(priv->device, priv->card, PCM_IN, &priv->config);
 
     if(!priv->pcmstream) {
         visual_log(VISUAL_LOG_WARNING, "Couldn't open pcm stream: %s", 
             pcm_get_error(priv->pcmstream));
-        return VISUAL_ERROR_GENERAL;
+        return -1;
     }
 
     VisParamContainer *paramcontainer = visual_plugin_get_params(plugin);
 
     static VisParamEntry params[] = {
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("isBeat", FALSE),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("device", 0),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("card", 0),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("channels", 2),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("rate", 48000),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("period_count", 4),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("period_size", 1024),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("stop_threshold", 0),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("start_threshold", 0),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("silence_threshold", 0),
+
         VISUAL_PARAM_LIST_END
     };
 
     visual_param_container_add_many(paramcontainer, params);
+
 
     return 0;
 }
 
 int inp_alsa_cleanup (VisPluginData *plugin)
 {
+    visual_log_return_val_if_fail(plugin != NULL, -1);
+
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
     visual_log_return_val_if_fail(priv != NULL, -1);
-    visual_log_return_val_if_fail(plugin != NULL, -1);
 
     pcm_close(priv->pcmstream);
 
@@ -125,9 +143,109 @@ int inp_alsa_cleanup (VisPluginData *plugin)
     return 0;
 }
 
+static int inp_alsa_events (VisPluginData *plugin, VisEventQueue *events)
+{
+    visual_log_return_val_if_fail(plugin != NULL, -1);
+
+    alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+
+    visual_log_return_val_if_fail(priv != NULL, -1);
+
+    VisEvent ev;
+    VisParamEntry *param;
+    int newConfig = FALSE;
+
+    while(visual_event_queue_poll(events, &ev))
+    {
+        switch(ev.type)
+        {
+            case VISUAL_EVENT_PARAM:
+                param = ev.event.param.param;
+
+                if(visual_param_entry_is(param, "device"))
+                {
+                    priv->device = visual_param_entry_get_integer(param);
+                    newConfig = TRUE;
+                }
+                else if (visual_param_entry_is(param, "card"))
+                {
+                    priv->card = visual_param_entry_get_integer(param);
+                    newConfig = TRUE;
+                }
+                else if (visual_param_entry_is(param, "rate"))
+                {
+                    priv->config.rate = visual_param_entry_get_integer(param);
+                    newConfig = TRUE;
+                }
+                else if (visual_param_entry_is(param, "period_count"))
+                {
+                    priv->config.period_count = visual_param_entry_get_integer(param);
+                    newConfig = TRUE;
+                }
+                else if (visual_param_entry_is(param, "period_size"))
+                {
+                    priv->config.period_size = visual_param_entry_get_integer(param);
+                    newConfig = TRUE;
+                }
+                else if (visual_param_entry_is(param, "stop_threshold"))
+                {
+                    priv->config.stop_threshold = visual_param_entry_get_integer(param);
+                    newConfig = TRUE;
+                }
+                else if (visual_param_entry_is(param, "start_threshold"))
+                {
+                    priv->config.start_threshold = visual_param_entry_get_integer(param);
+                    newConfig = TRUE;
+                }
+                else if (visual_param_entry_is(param, "silence_threshold"))
+                {
+                    priv->config.silence_threshold = visual_param_entry_get_integer(param);
+                    newConfig = TRUE;
+                }
+                break;
+            default:
+                // Huh?
+                break;
+        }
+    }
+
+    if(newConfig)
+    {
+        char fn[256];
+        snprintf(fn, sizeof(fn), "/dev/snd/pcmC%uD%u%c", priv->card, priv->device, 'c');
+    
+        if(access(fn, R_OK) != 0)
+        {
+            //FIXME rigid calls this evil. Evil is Microsoft. This is life or death. :( 
+            //if(chmod(fn, S_IROTH) != 0)
+            visual_log(VISUAL_LOG_WARNING, "ALSA input - device is not readable: %s", fn);
+            return -1;
+        }
+
+        if(priv->pcmstream != NULL)
+            pcm_close(priv->pcmstream);
+
+        priv->pcmstream = pcm_open(priv->device, priv->card, PCM_IN, &priv->config);
+
+        if(!priv->pcmstream) 
+        {
+            visual_log(VISUAL_LOG_WARNING, "Couldn't open pcm stream: %s", 
+                pcm_get_error(priv->pcmstream));
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
 int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 {
+    visual_log_return_val_if_fail(plugin != NULL, -1);
+
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+
+    visual_log_return_val_if_fail(priv != NULL, -1);
+
     VisParamContainer *paramcontainer = visual_plugin_get_params(plugin);
     VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
     int isBeat, i;
