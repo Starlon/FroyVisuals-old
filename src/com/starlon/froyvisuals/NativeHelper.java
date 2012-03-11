@@ -91,6 +91,10 @@ public class NativeHelper
     /* Audio input */
     public static native void resizePCM(int size, int rate, int channels, int encoding);
     public static native void uploadAudio(short[] data);
+    public static native void newSong();
+    public static native int getBPM();
+    public static native int getBPMConfidence();
+    public static native boolean isBeat();
 
     /* Mouse and key events */
     public static native void mouseMotion(float x, float y);

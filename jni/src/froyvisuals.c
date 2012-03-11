@@ -26,7 +26,7 @@
 
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
-#define ACTOR "infinite"
+#define ACTOR "jakdaw"
 #define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
@@ -1488,6 +1488,37 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_keyboardEvent(J
     VisKeyState state = 0;
     visual_event_queue_add_keyboard(eventqueue, keysym, keymod, state);
 }
+
+    
+JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_isBeat(JNIEnv *env, jobject obj)
+{
+    return visual_audio_is_beat(v.bin->input->audio, VISUAL_BEAT_ALGORITHM_PEAK);
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_getBPM(JNIEnv *env, jobject obj)
+{
+    VisAudio *audio = v.bin->input->audio;
+    int isBeat = visual_audio_is_beat(audio, VISUAL_BEAT_ALGORITHM_PEAK);
+    VisBeat *beat = visual_audio_get_beat(audio);
+    return beat->bpm;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_getBPMConfidence(JNIEnv *env, jobject obj)
+{
+    VisAudio *audio = v.bin->input->audio;
+    int isBeat = visual_audio_is_beat(audio, VISUAL_BEAT_ALGORITHM_PEAK);
+    VisBeat *beat = visual_audio_get_beat(audio);
+    return beat->confidence;
+   
+}
+
+
+JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_newSong(JNIEnv *env, jobject obj)
+{
+    VisBeat *beat = visual_audio_get_beat(v.bin->input->audio);
+    visual_beat_change_song(beat);
+}
+
 
 // Is this even needed? What happens when the app is quietly discarded?
 // Seems in Android 4.0 you can kill an app by swiping it.

@@ -1382,7 +1382,7 @@ static int input_interleaved_stereo (VisAudioSamplePool *samplepool, VisBuffer *
 
 //out is in the format of [spectrum:0,wave:1][channel][band]
 //returns TRUE if there's a beat, FALSE otherwise.
-int visual_audio_get_cheap_audio_data(VisAudio *audio, unsigned char out[2][2][576])
+int visual_audio_get_cheap_audio_data(VisAudio *audio, char out[2][2][576])
 {
     int i, ch;
     VisBuffer pcmbuf1;
@@ -1391,7 +1391,7 @@ int visual_audio_get_cheap_audio_data(VisAudio *audio, unsigned char out[2][2][5
     VisBuffer spmbuf2;
     VisBuffer tmp;
     int size = 576;
-    unsigned char visdata[size*2];
+    char visdata[size*2];
     float data[2][2][size];
 
     visual_buffer_init_allocate(&tmp, sizeof(float) * size, visual_buffer_destroyer_free);
@@ -1420,8 +1420,8 @@ int visual_audio_get_cheap_audio_data(VisAudio *audio, unsigned char out[2][2][5
 
     for(ch = 0; ch < 2; ch++) {
 	    for(i = 0; i < size; i++) {
-		out[0][ch][i] = (data[0][ch][i] + 1) / 2.0 * UCHAR_MAX;
-		out[1][ch][i] = (data[1][ch][i] + 1) / 2.0 * UCHAR_MAX;
+		out[0][ch][i] = (data[0][ch][i] + 1) / 2.0 * CHAR_MAX;
+		out[1][ch][i] = (data[1][ch][i] + 1) / 2.0 * CHAR_MAX;
 	    }
     }
 
@@ -1569,7 +1569,7 @@ int visual_audio_is_beat(VisAudio *audio, VisBeatAlgorithm algo)
 
     VisBuffer pcm;
     float buffer[BEAT_MAX_SIZE];
-    unsigned char visdata[BEAT_MAX_SIZE];
+    char visdata[BEAT_MAX_SIZE];
     int i;
 
     visual_buffer_set_data_pair(&pcm, buffer, BEAT_MAX_SIZE * sizeof(float));
@@ -1582,15 +1582,15 @@ int visual_audio_is_beat(VisAudio *audio, VisBeatAlgorithm algo)
 
     for(i = 0; i < BEAT_MAX_SIZE; i++)
     {
-        visdata[i] = (buffer[i] + 1) / 2.0 * UCHAR_MAX;
+        visdata[i] = (buffer[i] + 1) / 2.0 * CHAR_MAX;
     }
     return visual_audio_is_beat_with_data(audio, algo, visdata, BEAT_MAX_SIZE);
 }
 
-int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, unsigned char *visdata, int size)
+int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, char *visdata, int size)
 {
     static int outPtr = 0, inPtr = 0;
-    unsigned char outBuf[9], inBuf[9];
+    char outBuf[9], inBuf[9];
     int audio_beat = 0;
     int lt[2]={0,0};
     int ch = 0, b, x;
@@ -1691,7 +1691,7 @@ int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, unsig
 
     if(!getenv("LVSHOWBEATS")) return b;
 
-    printf("Beat info: %s, isBeat: %d, refined: %d\n", visual_beat_get_info(audio->beat), audio_beat, b);
+    visual_log(VISUAL_LOG_INFO, "Beat info: %s, isBeat: %d, refined: %d\n", visual_beat_get_info(audio->beat), audio_beat, b);
 
     memset(outBuf, ' ', 8);
     memset(inBuf, ' ', 8);
@@ -1715,10 +1715,10 @@ int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, unsig
     outBuf[outPtr] = '|';
     inBuf[inPtr] = '|';
 
-    printf("    --------    \n");
-    printf("[I] %s [I]\n", inBuf);
-    printf("[O] %s [O]\n", outBuf);
-    printf("    --------    \n");
+    visual_log(VISUAL_LOG_INFO, "    --------    \n");
+    visual_log(VISUAL_LOG_INFO, "[I] %s [I]\n", inBuf);
+    visual_log(VISUAL_LOG_INFO, "[O] %s [O]\n", outBuf);
+    visual_log(VISUAL_LOG_INFO, "    --------    \n");
 
 
 

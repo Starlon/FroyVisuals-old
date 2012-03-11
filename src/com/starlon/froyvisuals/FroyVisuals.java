@@ -176,6 +176,7 @@ public class FroyVisuals extends Activity implements OnClickListener
                 mSongChanged = System.currentTimeMillis();
                 mAlbumArt = mAlbumMap.get(mSongAlbum);
                 warn("(" + mSongTrack + ")", 5000, true);
+                NativeHelper.newSong();
             }
         }
     };
@@ -197,8 +198,8 @@ public class FroyVisuals extends Activity implements OnClickListener
         NativeHelper.setMorphStyle(mDoMorph);
 
         mMorph = settings.getString("prefs_morph_selection", "alphablend");
-        mInput = settings.getString("prefs_input_selection", "dummy");
-        mActor = settings.getString("prefs_actor_selection", "jakdaw");
+        mInput = "alsa";// settings.getString("prefs_input_selection", "alsa");
+        mActor = "jakdaw";//settings.getString("prefs_actor_selection", "jakdaw");
 
         NativeHelper.morphSetCurrentByName(mMorph);
         NativeHelper.inputSetCurrentByName(mInput);
@@ -383,19 +384,19 @@ public class FroyVisuals extends Activity implements OnClickListener
 
     /* Display a warning text: provide text, time in milliseconds, and priority */
     private long mLastRefresh = 0l;
-    private boolean mWarn = false;
+    private int mLastDelay = 0;
     public boolean warn(String text, int millis, boolean priority)
     {
         long now = System.currentTimeMillis();
 
-        if(mWarn && (now - mLastRefresh) < millis && !priority) 
+        if((now - mLastRefresh) < mLastDelay && !priority) 
             return false;
 
         mDisplayText = text;
 
         mLastRefresh = now;
 
-        mWarn = true;
+        mLastDelay = millis;
 
         return true;
     }

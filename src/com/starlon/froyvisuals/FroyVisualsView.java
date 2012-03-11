@@ -142,6 +142,18 @@ public class FroyVisualsView extends View {
                 float startPositionX = (canvasWidth / 2 - textWidth / 2);
         
                 canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
+                int bpm = NativeHelper.getBPM();
+                int confidence = NativeHelper.getBPMConfidence();
+                boolean isBeat = NativeHelper.isBeat();
+
+                if(bpm > 0)
+                    text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : "");
+                else
+                    text = "Learning...";
+
+                textWidth = mPaint.measureText(text);
+                startPositionX = (canvasWidth / 2 - textWidth / 2);
+                canvas.drawText(text, startPositionX, getHeight()-100, mPaint);
             }
 
             invalidate();
