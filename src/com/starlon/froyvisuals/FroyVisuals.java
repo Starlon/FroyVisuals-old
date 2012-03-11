@@ -47,6 +47,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.io.FileDescriptor;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.lang.Process;
 
 public class FroyVisuals extends Activity implements OnClickListener
 {
@@ -73,6 +76,7 @@ public class FroyVisuals extends Activity implements OnClickListener
     public String mSongAlbum;
     public String mSongTrack;
     public Bitmap mAlbumArt;
+    public boolean mHasRoot = false;
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
 
     static private String mDisplayText = "Please wait...";
@@ -148,8 +152,9 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         setContentView(mView);
 
-     
+        mHasRoot = checkRoot();
 
+        enableMic();
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -207,8 +212,8 @@ public class FroyVisuals extends Activity implements OnClickListener
         NativeHelper.setMorphStyle(mDoMorph);
 
         mMorph = settings.getString("prefs_morph_selection", "alphablend");
-        mInput = "alsa";// settings.getString("prefs_input_selection", "alsa");
-        mActor = "jakdaw";//settings.getString("prefs_actor_selection", "jakdaw");
+        mInput = "mic";//settings.getString("prefs_input_selection", "alsa");
+        mActor = settings.getString("prefs_actor_selection", "jakdaw");
 
         NativeHelper.morphSetCurrentByName(mMorph);
         NativeHelper.inputSetCurrentByName(mInput);
@@ -249,7 +254,6 @@ public class FroyVisuals extends Activity implements OnClickListener
         this.setInput(NativeHelper.inputGetName(input));
         this.setActor(NativeHelper.actorGetName(morph));
 
-/*
         editor.putString("prefs_morph_selection", mMorph);
         editor.putString("prefs_input_selection", mInput);
         editor.putString("prefs_actor_selection", mActor);
@@ -258,7 +262,7 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         //Commit edits
         editor.commit();
-*/
+
         unregisterReceiver(mReceiver);
 
         mView.stopThread();
@@ -324,6 +328,9 @@ public class FroyVisuals extends Activity implements OnClickListener
                     } else {
                         mMicActive = false;
                     }
+
+                    if(input.equals("alsa") && !checkRoot())
+                        index = NativeHelper.cycleInput(1);
     
                     warn(NativeHelper.inputGetLongName(index), true);
                 }
@@ -342,6 +349,26 @@ public class FroyVisuals extends Activity implements OnClickListener
         System.loadLibrary("visual");
         //System.loadLibrary("common");
         System.loadLibrary("main");
+    }
+
+    public boolean checkRoot()
+    {
+        try {
+            
+            Process exec = Runtime.getRuntime().exec(new String[]{"su"});
+    
+            final OutputStreamWriter out = new OutputStreamWriter(exec.getOutputStream());
+            out.write("exit\n");
+            out.flush();
+            Log.i(TAG, "Superuser detected...");
+            return true; 
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "Root not detected...");
+        return false;
     }
 
     /* Get the current morph plugin name */
@@ -503,12 +530,14 @@ public class FroyVisuals extends Activity implements OnClickListener
         if(mAudio != null)
         {
             NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+
             new Thread(new Runnable() {
                 public void run() {
                     mMicActive = true;
                     mAudio.startRecording();
                     while(mMicActive)
                     {
+                        
                         short[] data = new short[PCM_SIZE];
                         mAudio.read(data, 0, PCM_SIZE);
                         NativeHelper.uploadAudio(data);
@@ -521,11 +550,11 @@ public class FroyVisuals extends Activity implements OnClickListener
         return false;
     }
 
-    private static int[] mSampleRates = new int[] { 8000, 11025, 22050, 44100 };
+    private static int[] mSampleRates = new int[] { 48000, 44100, 22050, 11025, 8000 };
     public AudioRecord findAudioRecord() {
         for (int rate : mSampleRates) {
-            for (short audioFormat : new short[] { AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT }) {
-                for (short channelConfig : new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO }) {
+            for (short audioFormat : new short[] { AudioFormat.ENCODING_PCM_16BIT, AudioFormat.ENCODING_PCM_8BIT}) {
+                for (short channelConfig : new short[] { AudioFormat.CHANNEL_IN_STEREO, AudioFormat.CHANNEL_IN_MONO}) {
                     try {
                         Log.d(TAG, "Attempting rate " + rate + "Hz, bits: " + audioFormat + ", channel: "
                                 + channelConfig);
@@ -537,10 +566,11 @@ public class FroyVisuals extends Activity implements OnClickListener
     
                             if (recorder.getState() == AudioRecord.STATE_INITIALIZED)
                             {
-                                PCM_SIZE = bufferSize;
+                                PCM_SIZE = bufferSize / 4;
                                 RECORDER_SAMPLERATE = rate;
                                 RECORDER_CHANNELS = channelConfig;
                                 RECORDER_AUDIO_ENCODING = audioFormat;
+                                Log.d(TAG, "Opened mic: " + rate + "Hz, bits: " + audioFormat + ", channel: " + channelConfig);
                                 return recorder;
                             }
                         }

@@ -1351,8 +1351,19 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint 
             pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_96000;
         break;
     }
+
+    // It seems lv only supports stereo? hmm
     pcm_ref.channels = VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO;
-    pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S16;
+
+    switch(encoding)
+    {
+        case sizeof(int16_t):
+            pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S16;
+            break;
+        case sizeof(int8_t):
+            pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S8;
+            break;
+    }
 }
 
 // Increment or decrement actor and morph
@@ -1425,8 +1436,9 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_updatePlugi
     visual_object_unref(VISUAL_OBJECT(input));
 
     // Set the new input plugin.
-    input = visual_input_new((char *)v.input_name);
-    visual_bin_set_input(v.bin, input);
+    set_input();
+    //input = visual_input_new((char *)v.input_name);
+    //visual_bin_set_input(v.bin, input);
 
     // Tell lv to switch to specified actor plugin.
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
@@ -1647,6 +1659,9 @@ exit_alsa_check:
     visual_bin_realize (v.bin);
     visual_bin_sync (v.bin, 0);
     visual_bin_depth_changed(v.bin);
+
+    // We set it again because mic input may be default and it requires extra steps to initialize.
+    set_input();
 
     printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));
 }
