@@ -303,19 +303,22 @@ public class FroyVisuals extends Activity implements OnClickListener
             }
             case R.id.input_stub:
             {
-                int index = NativeHelper.cycleInput(1);
-
-                String input = NativeHelper.inputGetName(index);
-
-                if(input == "mic")
+                synchronized(mView.mBitmap)
                 {
-                    if(!enableMic())
-                        index = NativeHelper.cycleInput(1);
-                } else {
-                    mMicActive = false;
+                    int index = NativeHelper.cycleInput(1);
+    
+                    String input = NativeHelper.inputGetName(index);
+    
+                    if(input == "mic")
+                    {
+                        if(!enableMic())
+                            index = NativeHelper.cycleInput(1);
+                    } else {
+                        mMicActive = false;
+                    }
+    
+                    warn(NativeHelper.inputGetLongName(index), true);
                 }
-
-                warn(NativeHelper.inputGetLongName(index), true);
             }
 
             default:

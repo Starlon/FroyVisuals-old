@@ -142,6 +142,8 @@ public class FroyVisualsView extends View {
                 float startPositionX = (canvasWidth / 2 - textWidth / 2);
         
                 canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
+
+/* FIXME: Beat detection isn't working really well.
                 int bpm = NativeHelper.getBPM();
                 int confidence = NativeHelper.getBPMConfidence();
                 boolean isBeat = NativeHelper.isBeat();
@@ -154,6 +156,7 @@ public class FroyVisualsView extends View {
                 textWidth = mPaint.measureText(text);
                 startPositionX = (canvasWidth / 2 - textWidth / 2);
                 canvas.drawText(text, startPositionX, getHeight()-100, mPaint);
+*/
             }
 
             invalidate();

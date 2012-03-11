@@ -76,7 +76,7 @@ int inp_alsa_init (VisPluginData *plugin)
     alsaPrivate *priv = visual_mem_new0 (alsaPrivate, 1);
     unsigned int device = 0;
     unsigned int channels = 2;
-    unsigned int rate = 44100;
+    unsigned int rate = 48000;
 
     visual_log_return_val_if_fail(priv != NULL, -1);
     visual_log_return_val_if_fail(plugin != NULL, -1);
@@ -99,6 +99,15 @@ int inp_alsa_init (VisPluginData *plugin)
         return VISUAL_ERROR_GENERAL;
     }
 
+    VisParamContainer *paramcontainer = visual_plugin_get_params(plugin);
+
+    static VisParamEntry params[] = {
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("isBeat", FALSE),
+        VISUAL_PARAM_LIST_END
+    };
+
+    visual_param_container_add_many(paramcontainer, params);
+
     return 0;
 }
 
@@ -119,6 +128,9 @@ int inp_alsa_cleanup (VisPluginData *plugin)
 int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 {
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    VisParamContainer *paramcontainer = visual_plugin_get_params(plugin);
+    VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
+    int isBeat, i;
 
     visual_log_return_val_if_fail(audio != NULL, -1);
     visual_log_return_val_if_fail(plugin != NULL, -1);
@@ -131,6 +143,7 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
         if(size > 0)
         {
             int16_t data[size];
+            char scaled[size];
             if(!(pcm_read(priv->pcmstream, data, size)))
             {
         
@@ -138,8 +151,18 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
         
                 visual_buffer_init (&buffer, data, size/2, NULL);
         
-                visual_audio_samplepool_input (audio->samplepool, &buffer, VISUAL_AUDIO_SAMPLE_RATE_44100,
+                visual_audio_samplepool_input (audio->samplepool, &buffer, VISUAL_AUDIO_SAMPLE_RATE_48000,
                     VISUAL_AUDIO_SAMPLE_FORMAT_S16, VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO);
+
+                for(i = 0; i < size; i++)
+                {
+                    scaled[i] = data[size] / (float)USHRT_MAX * CHAR_MAX;
+                }
+
+                // FIXME Beat detection isn't working real well. It also slows us down.
+                //isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, size);
+
+                //visual_param_entry_set_integer(entry, isBeat);
             }
         }
     }

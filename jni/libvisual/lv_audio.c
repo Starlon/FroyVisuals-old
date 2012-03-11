@@ -1625,7 +1625,6 @@ int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, char 
     }
     else if(algo == VISUAL_BEAT_ALGORITHM_PEAK)
     {
-        int size = BEAT_MAX_SIZE / 2;
         for(ch = 0; ch < 2; ch++)
         {
                 char *f = (char*)(visdata + ch * size);

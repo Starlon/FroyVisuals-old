@@ -1492,24 +1492,25 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_keyboardEvent(J
     
 JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_isBeat(JNIEnv *env, jobject obj)
 {
-    return visual_audio_is_beat(v.bin->input->audio, VISUAL_BEAT_ALGORITHM_PEAK);
+    VisParamContainer *paramcontainer = visual_plugin_get_params(v.bin->input->plugin);
+    VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
+
+    if(entry != NULL)
+        return visual_param_entry_get_integer(entry);
+
+    return FALSE;
 }
 
 JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_getBPM(JNIEnv *env, jobject obj)
 {
-    VisAudio *audio = v.bin->input->audio;
-    int isBeat = visual_audio_is_beat(audio, VISUAL_BEAT_ALGORITHM_PEAK);
-    VisBeat *beat = visual_audio_get_beat(audio);
+    VisBeat *beat = visual_audio_get_beat(v.bin->input->audio);
     return beat->bpm;
 }
 
 JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_getBPMConfidence(JNIEnv *env, jobject obj)
 {
-    VisAudio *audio = v.bin->input->audio;
-    int isBeat = visual_audio_is_beat(audio, VISUAL_BEAT_ALGORITHM_PEAK);
-    VisBeat *beat = visual_audio_get_beat(audio);
+    VisBeat *beat = visual_audio_get_beat(v.bin->input->audio);
     return beat->confidence;
-   
 }
 
 
@@ -1539,11 +1540,9 @@ void app_main(int w, int h, int device, int card)
     int depthflag;
     VisVideoDepth depth;
 
-    //if(visual_is_initialized())
-    //    visual_quit();
-
     if(!visual_is_initialized())
     {
+        setenv("LVSHOWBEATS", "1", 1);
         visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
         visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
         visual_log_set_info_handler (my_info_handler, NULL);
