@@ -10,7 +10,7 @@ public class FroyVisualsReceiver extends BroadcastReceiver
     @Override
     public void onReceive(Context context, Intent intent)
     {
-            Log.e("WTFWTF", "WTFWTFWTFW");
+        Log.e("WTFWTF", "WTFWTFWTFW");
         String action = intent.getAction();
         if(action.equals("com.starlon.froyvisuals.PREFS_UPDATE"))
         {

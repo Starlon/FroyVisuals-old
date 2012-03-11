@@ -34,11 +34,10 @@ public class PreferencesActivity extends PreferenceActivity
         @Override
         public void onPause()
         {
-            /** update widget */
+            super.onPause();
             Intent i = new Intent(this, FroyVisualsReceiver.class);
             i.setAction("com.starlon.froyvisuals.PREFS_UPDATE");
             sendBroadcast(i);
-            super.onPause();
         }
 
         private PreferenceScreen createPreferenceHierarchy()

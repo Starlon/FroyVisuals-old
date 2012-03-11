@@ -13,6 +13,8 @@ import android.graphics.Matrix;
 import android.util.Log;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 
 public class FroyVisualsView extends View {
@@ -27,6 +29,8 @@ public class FroyVisualsView extends View {
     private Thread mThread;
     private Display mDisplay;
     private boolean mActive = false;
+    private boolean mDoBeat = false;
+    private final ReentrantLock mLock = new ReentrantLock();
 
     public FroyVisualsView(Context context) {
         super(context);
@@ -36,8 +40,8 @@ public class FroyVisualsView extends View {
         mActivity = (FroyVisuals)context;
 
         mPaint = new Paint();
-        mPaint.setAntiAlias(true);
         mPaint.setTextSize(30);
+        mPaint.setAntiAlias(true);
         mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(1);
@@ -102,11 +106,12 @@ public class FroyVisualsView extends View {
                 {
                     try {
                         updateBitmap();
-                        mThread.sleep(5);
-                    } catch (InterruptedException e) {
+                        mThread.sleep(2);
+                    } 
+                    catch(Exception e)
+                    {
                         mActive = false;
                     }
-                    
                 }
             }
         }, "Update Bitmap");
@@ -119,7 +124,9 @@ public class FroyVisualsView extends View {
         synchronized(mBitmap)
         {
             mStats.startFrame();
+            //mLock.lock();
             NativeHelper.render(mBitmap);
+            //mLock.unlock();
             mStats.endFrame();
         }
 
@@ -127,48 +134,48 @@ public class FroyVisualsView extends View {
 
     private void drawScene(Canvas canvas)
     {
-        synchronized(mBitmap)
-        {
-            // Draw bitmap on canvas
-            canvas.drawBitmap(mBitmap, mMatrix, mPaint);
-
-            // Do we have text to show?
-            String text = mActivity.getDisplayText();
-    
-            if(text != null)
+            synchronized(mBitmap)//if(mLock.tryLock())
             {
-                float canvasWidth = getWidth();
-                float textWidth = mPaint.measureText(text);
-                float startPositionX = (canvasWidth / 2 - textWidth / 2);
+                // Draw bitmap on canvas
+                canvas.drawBitmap(mBitmap, mMatrix, mPaint);
+                
+                // Do we have text to show?
+                String text = mActivity.getDisplayText();
         
-                canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
-
-/* FIXME: Beat detection isn't working really well.
-                int bpm = NativeHelper.getBPM();
-                int confidence = NativeHelper.getBPMConfidence();
-                boolean isBeat = NativeHelper.isBeat();
-
-                if(bpm > 0)
-                    text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : "");
-                else
-                    text = "Learning...";
-
-                textWidth = mPaint.measureText(text);
-                startPositionX = (canvasWidth / 2 - textWidth / 2);
-                canvas.drawText(text, startPositionX, getHeight()-100, mPaint);
-*/
+                if(text != null)
+                {
+                    float canvasWidth = getWidth();
+                    float textWidth = mPaint.measureText(text);
+                    float startPositionX = (canvasWidth / 2 - textWidth / 2);
+            
+                    canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
+        
+                    if(mDoBeat)
+                    {
+                        int bpm = NativeHelper.getBPM();
+                        int confidence = NativeHelper.getBPMConfidence();
+                        boolean isBeat = NativeHelper.isBeat();
+            
+                        if(bpm > 0)
+                            text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : "");
+                        else
+                            text = "Learning...";
+            
+                        textWidth = mPaint.measureText(text);
+                        startPositionX = (canvasWidth / 2 - textWidth / 2);
+                        canvas.drawText(text, startPositionX, getHeight()-100, mPaint);
+                    }
+                }
+        
+                if(mActivity.mAlbumArt != null)
+                {
+                    int width = mActivity.mAlbumArt.getWidth();
+                    int height = mActivity.mAlbumArt.getHeight();
+                    canvas.drawBitmap(mActivity.mAlbumArt, 50.0f, 50.0f, mPaint);
+                }
+        
+                invalidate();
             }
-
-            invalidate();
-        }
-
-        if(mActivity.mAlbumArt != null)
-        {
-            int width = mActivity.mAlbumArt.getWidth();
-            int height = mActivity.mAlbumArt.getHeight();
-            canvas.drawBitmap(mActivity.mAlbumArt, 50.0f, 50.0f, mPaint);
-        }
-       
     }
 
     public void switchScene(int prev)

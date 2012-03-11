@@ -36,7 +36,8 @@
 
         <receiver
                 android:name="FroyVisualReceiver"
-                android:label="@string/app_name">
+                android:label="@string/app_name"
+                android:exported="false">
                 <intent-filter>
                     <action android:name="com.starlon.froyvisuals.PREFS_UPDATE"/>
                 </intent-filter>

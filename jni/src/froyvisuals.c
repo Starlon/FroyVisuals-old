@@ -1542,7 +1542,7 @@ void app_main(int w, int h, int device, int card)
 
     if(!visual_is_initialized())
     {
-        setenv("LVSHOWBEATS", "1", 1);
+        //setenv("LVSHOWBEATS", "1", 1);
         visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
         visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
         visual_log_set_info_handler (my_info_handler, NULL);

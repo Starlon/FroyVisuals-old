@@ -120,13 +120,11 @@ public class FroyVisuals extends Activity implements OnClickListener
                         if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
                             Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             Log.w(TAG, "Left swipe...");
-                            //NativeHelper.finalizeSwitch(1);
                             mView.switchScene(1);
                             // Left swipe
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                             Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             Log.w(TAG, "Right swipe...");
-                            //NativeHelper.finalizeSwitch(0);
                             mView.switchScene(0);
                             // Right swipe
                         }
@@ -175,8 +173,19 @@ public class FroyVisuals extends Activity implements OnClickListener
                 mSongTrack = intent.getStringExtra("track");
                 mSongChanged = System.currentTimeMillis();
                 mAlbumArt = mAlbumMap.get(mSongAlbum);
-                warn("(" + mSongTrack + ")", 5000, true);
                 NativeHelper.newSong();
+                warn("(" + mSongTrack + ")", 5000, true);
+            }
+            else if(action.equals("com.android.music.playbackcomplete"))
+            {
+                mSongCommand = null;
+                mSongArtist = null;
+                mSongAlbum = null;
+                mSongTrack = null;
+                mSongChanged = 0;
+                mAlbumArt = null;
+                NativeHelper.newSong();
+                warn("Ended playback...", true);
             }
         }
     };
@@ -214,10 +223,9 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         IntentFilter iF = new IntentFilter();
         iF.addAction("com.android.music.metachanged");
-        iF.addAction("com.starlon.froyvisuals.PREFS_UPDATE");
-        //iF.addAction("com.android.music.playstatechanged");
-        //iF.addAction("com.android.music.playbackcomplete");
-        //iF.addAction("com.android.music.queuechanged");
+        iF.addAction("com.android.music.playstatechanged");
+        iF.addAction("com.android.music.playbackcomplete");
+        iF.addAction("com.android.music.queuechanged");
 
         registerReceiver(mReceiver, iF);
 

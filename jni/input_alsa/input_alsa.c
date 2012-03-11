@@ -160,9 +160,9 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
                 }
 
                 // FIXME Beat detection isn't working real well. It also slows us down.
-                //isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, size);
+                isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, size);
 
-                //visual_param_entry_set_integer(entry, isBeat);
+                visual_param_entry_set_integer(entry, isBeat);
             }
         }
     }
