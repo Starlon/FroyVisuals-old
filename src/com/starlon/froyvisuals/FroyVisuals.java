@@ -152,7 +152,7 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         setContentView(mView);
 
-        mHasRoot = checkRoot();
+        //mHasRoot = checkRoot();
 
         //enableMic();
     }
