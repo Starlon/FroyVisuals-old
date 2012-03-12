@@ -8,6 +8,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
+import android.util.Log;
 
 
 public class PreferencesActivity extends PreferenceActivity
@@ -24,8 +25,8 @@ public class PreferencesActivity extends PreferenceActivity
             /** create prefs from xml */
             //addPreferencesFromResource(R.xml.preferences);
 
-            PreferenceManager prefManager = getPreferenceManager();
-            prefManager.setSharedPreferencesName(PREFS); 
+            //PreferenceManager prefManager = getPreferenceManager();
+            //prefManager.setSharedPreferencesName(PREFS); 
 
             setPreferenceScreen(createPreferenceHierarchy());
         }
@@ -35,7 +36,8 @@ public class PreferencesActivity extends PreferenceActivity
         public void onPause()
         {
             super.onPause();
-            Intent i = new Intent(this, FroyVisualsReceiver.class);
+            //Intent i = new Intent(this, FroyVisualsReceiver.class);
+            Intent i = new Intent();
             i.setAction("com.starlon.froyvisuals.PREFS_UPDATE");
             sendBroadcast(i);
         }

@@ -11,7 +11,7 @@ all:
 	@ant release
 
 install: 
-	@ant release install
+	@adb install -r bin/$(APPNAME).apk
 
 install_emu:
 	@adb -e install -r bin/$(APPNAME).apk
@@ -29,7 +29,7 @@ debug_emu:
 	@adb -e install -r bin/$(APPNAME)-debug.apk
 
 install_debug: 
-	@ant debug install
+	@adb install -r bin/$(APPNAME)-debug.apk
 
 install_debug_emu:
 	@adb -e install -r bin/$(APPNAME)-debug.apk

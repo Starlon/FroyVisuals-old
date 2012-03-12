@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.os.Looper;
 import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
+import android.preference.PreferenceManager;
 import android.content.Context;
 import android.content.ContentUris;
 import android.content.res.Configuration;
@@ -155,6 +156,15 @@ public class FroyVisuals extends Activity implements OnClickListener
         //mHasRoot = checkRoot();
 
         //enableMic();
+        IntentFilter iF = new IntentFilter();
+        iF.addAction("com.android.music.metachanged");
+        iF.addAction("com.android.music.playstatechanged");
+        iF.addAction("com.android.music.playbackcomplete");
+        iF.addAction("com.android.music.queuechanged");
+        iF.addAction("com.starlon.froyvisuals.PREFS_UPDATE");
+
+        registerReceiver(mReceiver, iF);
+
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -168,6 +178,7 @@ public class FroyVisuals extends Activity implements OnClickListener
             // com.android.music.playbackcomplete - playback has stopped, last file played
             // com.android.music.queuechanged - play-state has changed (pause/resume)
             String action = intent.getAction();
+
 
             if(action.equals("com.android.music.metachanged"))
             {
@@ -192,6 +203,10 @@ public class FroyVisuals extends Activity implements OnClickListener
                 NativeHelper.newSong();
                 warn("Ended playback...", true);
             }
+            else if(action.equals("com.starlon.froyvisuals.PREFS_UPDATE"))
+            {
+                updatePrefs();
+            }
         }
     };
 
@@ -204,8 +219,7 @@ public class FroyVisuals extends Activity implements OnClickListener
 
     public void updatePrefs()
     {
-
-        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
 
         mDoMorph = settings.getBoolean("doMorph", true);
 
@@ -213,11 +227,13 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         mMorph = settings.getString("prefs_morph_selection", "alphablend");
         mInput = settings.getString("prefs_input_selection", "alsa");
-        mActor = settings.getString("prefs_actor_selection", "jakdaw");
+        mActor = settings.getString("prefs_actor_selection", "infinite");
 
         NativeHelper.morphSetCurrentByName(mMorph);
         NativeHelper.inputSetCurrentByName(mInput);
         NativeHelper.actorSetCurrentByName(mActor);
+
+        NativeHelper.updatePlugins();
     }
 
     public void onResume()
@@ -226,13 +242,6 @@ public class FroyVisuals extends Activity implements OnClickListener
 
         updatePrefs();
 
-        IntentFilter iF = new IntentFilter();
-        iF.addAction("com.android.music.metachanged");
-        iF.addAction("com.android.music.playstatechanged");
-        iF.addAction("com.android.music.playbackcomplete");
-        iF.addAction("com.android.music.queuechanged");
-
-        registerReceiver(mReceiver, iF);
 
         mView.startThread();
 
@@ -243,7 +252,7 @@ public class FroyVisuals extends Activity implements OnClickListener
     {
         super.onStop();
 
-        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
         SharedPreferences.Editor editor = settings.edit();
 
         int morph = NativeHelper.morphGetCurrent();
@@ -263,7 +272,7 @@ public class FroyVisuals extends Activity implements OnClickListener
         //Commit edits
         editor.commit();
 
-        unregisterReceiver(mReceiver);
+        //unregisterReceiver(mReceiver);
 
         mView.stopThread();
         
@@ -321,7 +330,7 @@ public class FroyVisuals extends Activity implements OnClickListener
     
                     String input = NativeHelper.inputGetName(index);
     
-                    if(input == "mic")
+                    if(input.equals("mic"))
                     {
                         if(!enableMic())
                             index = NativeHelper.cycleInput(1);

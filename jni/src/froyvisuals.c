@@ -1401,6 +1401,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwi
     {
         v_cycleMorph((int)prev);
     }
+
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
 
     v_cycleActor((int)prev);
