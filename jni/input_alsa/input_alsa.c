@@ -79,7 +79,7 @@ int inp_alsa_init (VisPluginData *plugin)
 {
     alsaPrivate *priv = visual_mem_new0 (alsaPrivate, 1);
     unsigned int channels = 2;
-    unsigned int rate = 48000;
+    unsigned int rate = 44100;
 
     visual_log_return_val_if_fail(priv != NULL, -1);
     visual_log_return_val_if_fail(plugin != NULL, -1);
@@ -112,7 +112,7 @@ int inp_alsa_init (VisPluginData *plugin)
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("device", 0),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("card", 0),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("channels", 2),
-        VISUAL_PARAM_LIST_ENTRY_INTEGER ("rate", 48000),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("rate", 44100),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("period_count", 4),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("period_size", 1024),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("stop_threshold", 0),
@@ -269,12 +269,12 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
         
                 visual_buffer_init (&buffer, data, size/2, NULL);
         
-                visual_audio_samplepool_input (audio->samplepool, &buffer, VISUAL_AUDIO_SAMPLE_RATE_48000,
+                visual_audio_samplepool_input (audio->samplepool, &buffer, VISUAL_AUDIO_SAMPLE_RATE_44100,
                     VISUAL_AUDIO_SAMPLE_FORMAT_S16, VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO);
 
                 for(i = 0; i < size; i++)
                 {
-                    scaled[i] = data[size] / (float)USHRT_MAX * CHAR_MAX;
+                    scaled[i] = data[size] / (float)SHRT_MAX * CHAR_MAX;
                 }
 
                 // FIXME Beat detection isn't working real well. It also slows us down.
