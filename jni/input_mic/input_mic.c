@@ -53,7 +53,7 @@ const VisPluginInfo *get_plugin_info (int *count)
         .author = "Scott Sibley <sisibley@gmail.com>",
         .version = "0.1",
         .about = ("Mic input plugin for libvisual"),
-        .help = ("You sing into the mic, and FroyVisuals goes nuts. Sing loud. With feeling."),
+        .help = ("You sing into the mic, and LibVisual goes nuts. Sing loud. With feeling."),
         .license = VISUAL_PLUGIN_LICENSE_LGPL,
 
         .init = inp_mic_init,

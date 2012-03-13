@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">FroyVisuals</string>
+    <string name="app_name">StarVisuals</string>
 
     <!-- Preferences -->
-    <string name="preferences_name">FroyVisuals Preferences</string>
+    <string name="preferences_name">StarVisuals Preferences</string>
     <string name="prefs_title_general">General</string>
     <string name="prefs_morph_enabled">Enable Morphs</string>
     <string name="prefs_summary_morph_enabled">Check to enable morphs.</string>
@@ -48,8 +48,8 @@
     <string name="info_button_morph">Morph</string>
 
     <!-- About Menu -->
-    <string name="about_name">About FroyVisuals</string>
-    <string name="about_title">FroyVisuals v0.1</string>
+    <string name="about_name">About StarVisuals</string>
+    <string name="about_title">StarVisuals v0.1</string>
     <string name="about_copyright">2012 %#169; Scott Sibley</string>
     <string name="about_url">sisibley@gmail.com</string>
     <string name="about_description">

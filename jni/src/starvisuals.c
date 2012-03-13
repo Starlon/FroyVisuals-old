@@ -19,7 +19,7 @@
 
 #define DEVICE_DEPTH VISUAL_VIDEO_DEPTH_32BIT
 
-#define  LOG_TAG    "FroyVisuals"
+#define  LOG_TAG    "StarVisuals"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGW(...)  __android_log_print(ANDROID_LOG_WARN,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)

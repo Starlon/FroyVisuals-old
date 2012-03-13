@@ -2,7 +2,7 @@
 <resources>
 
     <!-- Preferences -->
-    <string name="preferences_name">FroyVisuals Einstellungen</string>
+    <string name="preferences_name">StarVisuals Einstellungen</string>
     <string name="prefs_title_general">General</string>
     <string name="prefs_morph_enabled">Ermöglichen Morphs</string>
     <string name="prefs_summary_morph_enabled">Überprüfen Sie, Morphs zu ermöglichen.</string>
@@ -47,11 +47,11 @@
     <string name="info_button_morph">Morph</string>
 
     <!-- About Menu -->
-    <string name="about_name">Über FroyVisuals</string>
+    <string name="about_name">Über StarVisuals</string>
     <string name="about_description">
         Verschiedene konfigurierbare Musik-Visualisierungen.
     </string>
-    <string name="about_title">FroyVisuals v0.1</string>
+    <string name="about_title">StarVisuals v0.1</string>
     <string name="about_copyright">2012 %#169; Scott Sibley</string>
     <string name="about_url">sisibley@gmail.com</string>
     <string name="about_changes">
