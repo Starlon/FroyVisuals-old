@@ -164,7 +164,6 @@ public class FroyVisuals extends Activity implements OnClickListener
         iF.addAction("com.starlon.froyvisuals.PREFS_UPDATE");
 
         registerReceiver(mReceiver, iF);
-
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -240,11 +239,6 @@ public class FroyVisuals extends Activity implements OnClickListener
     {
         super.onResume();
 
-        updatePrefs();
-
-
-        mView.startThread();
-
         getAlbumArt();
     }
 
@@ -272,10 +266,6 @@ public class FroyVisuals extends Activity implements OnClickListener
         //Commit edits
         editor.commit();
 
-        //unregisterReceiver(mReceiver);
-
-        mView.stopThread();
-        
         releaseAlbumArt();
     }
 

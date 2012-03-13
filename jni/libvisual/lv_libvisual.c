@@ -283,7 +283,7 @@ int visual_init (int *argc, char ***argv)
     /* FIXME Start profiling */
     /* Change to 500 interrupts per second */
 #ifdef VISUAL_HAVE_PROFILING
-    setenv("CPUPROFILE_FREQUENCY", "500", 1); 
+    //setenv("CPUPROFILE_FREQUENCY", "500", 1); 
     monstartup("libvisual.so"); 
 #endif
 

@@ -26,7 +26,7 @@ public class FroyVisualsView extends View {
     private final int HEIGHT = 256;
     private Paint mPaint;
     private Matrix mMatrix;
-    private Thread mThread;
+    //private Thread mThread;
     private Display mDisplay;
     private boolean mActive = false;
     private boolean mDoBeat = false;
@@ -66,7 +66,7 @@ public class FroyVisualsView extends View {
 
         timer.scheduleAtFixedRate(task, delay, period);
 
-        mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.RGB_565);
+        mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
 
         mDisplay = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
@@ -80,9 +80,19 @@ public class FroyVisualsView extends View {
 
     @Override protected void onDraw(Canvas canvas) 
     {
+        mStats.startFrame();
+
+        //if(mMicData != null)
+        //    NativeHelper.uploadAudio(mMicData);
+
+        NativeHelper.render(mBitmap);
+
         drawScene(canvas);
+
+        mStats.endFrame();
     }
 
+/*
     public void stopThread()
     {
         if(mThread != null)
@@ -96,7 +106,9 @@ public class FroyVisualsView extends View {
             }
         }
     }
+*/
 
+/*
     public void startThread()
     {
         stopThread();
@@ -119,26 +131,11 @@ public class FroyVisualsView extends View {
 
         mThread.start();
     }
-
-    private void updateBitmap()
-    {
-        synchronized(mBitmap)
-        {
-            mStats.startFrame();
-
-            //if(mMicData != null)
-                //NativeHelper.uploadAudio(mMicData);
-
-            NativeHelper.render(mBitmap);
-
-            mStats.endFrame();
-        }
-
-    }
+*/
 
     private void drawScene(Canvas canvas)
     {
-            synchronized(mBitmap)//if(mLock.tryLock())
+            //synchronized(mBitmap)//if(mLock.tryLock())
             {
                 // Draw bitmap on canvas
                 canvas.drawBitmap(mBitmap, mMatrix, mPaint);
@@ -184,7 +181,7 @@ public class FroyVisualsView extends View {
 
     public void switchScene(int prev)
     {
-        synchronized(mBitmap)
+        //synchronized(mBitmap)
         {
             NativeHelper.finalizeSwitch(prev);
         }

@@ -82,6 +82,6 @@ redirect:
 	@adb shell start
 
 profile:
-	@./gprof.sh
+	@./tools/gprof.sh
 
 
