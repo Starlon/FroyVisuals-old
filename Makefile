@@ -1,8 +1,8 @@
 # Android Makefile v0.1 (c) 2011 - Daniel Hiepler <daniel@niftylight.de>
 
 
-APPNAME = FroyVisuals
-ACTIVITY = FroyVisuals
+APPNAME = StarVisuals
+ACTIVITY = StarVisuals
 TARGET = android-10
 
 all:
@@ -71,7 +71,7 @@ mem:
 	@adb shell start
 
 start:
-	@adb shell am start -n com.starlon.froyvisuals/.FroyVisuals
+	@adb shell am start -n com.starlon.froyvisuals/.StarVisuals
 
 valgrind:
 	@adb shell setprop wrap.com.starlon.froyvisuals "logwrapper valgrind"
