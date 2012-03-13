@@ -1,4 +1,4 @@
-package com.starlon.froyvisuals;
+package com.starlon.starvisuals;
 
 import android.content.Context;
 import android.view.View;
@@ -17,10 +17,10 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.TimeUnit;
 
 
-public class FroyVisualsView extends View {
-    private final String TAG = "FroyVisuals/FroyVisualsView";
+public class StarVisualsView extends View {
+    private final String TAG = "StarVisuals/StarVisualsView";
     public Bitmap mBitmap;
-    private FroyVisuals mActivity;
+    private StarVisuals mActivity;
     private Stats mStats;
     private final int WIDTH = 256;
     private final int HEIGHT = 256;
@@ -33,12 +33,12 @@ public class FroyVisualsView extends View {
     public short mMicData[] = null;
     private final ReentrantLock mLock = new ReentrantLock();
 
-    public FroyVisualsView(Context context) {
+    public StarVisualsView(Context context) {
         super(context);
 
-        Log.e(TAG, "FroyVisualsVIew constructor");
+        Log.e(TAG, "StarVisualsVIew constructor");
 
-        mActivity = (FroyVisuals)context;
+        mActivity = (StarVisuals)context;
 
         mPaint = new Paint();
         mPaint.setTextSize(30);

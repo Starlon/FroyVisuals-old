@@ -1,4 +1,4 @@
-package com.starlon.froyvisuals;
+package com.starlon.starvisuals;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.util.Log;
 
 public class AboutPluginsActivity extends Activity
 {
-    private final static String TAG = "FroyVisuals/AboutPluginsActivity";
+    private final static String TAG = "StarVisuals/AboutPluginsActivity";
     private NativeHelper mHelper;
     private static TextView mLongName;
     private TextView mAuthor;

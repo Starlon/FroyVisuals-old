@@ -186,7 +186,7 @@ void set_input()
 
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIEnv *env, jobject obj, jint prev)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleInput(JNIEnv *env, jobject obj, jint prev)
 {
     v_cycleInput(prev);
     set_input();
@@ -196,14 +196,14 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleInput(JNIE
 
 
 // Get the count of available input plugins.
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputCount(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_inputCount(JNIEnv *env, jobject obj)
 {
     return visual_list_count(visual_input_get_list());
 }
 
 // Get the index of the current plugin. 
 // Note that this index may change as new plugins are added.
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetCurrent(JNIEnv *env)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetCurrent(JNIEnv *env)
 {
     return get_input_index();
 }
@@ -212,7 +212,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetCurrent
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCurrent(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCurrent(JNIEnv *env, jobject obj, jint index)
 {
     VisList *list = visual_input_get_list();
     int count = visual_list_count(list);
@@ -229,7 +229,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCur
 }
 
 // Set the current input plugin by its name. Do nothing and return false if the plugin doesn't exist.
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *input = (*env)->GetStringUTFChars(env, name, &iscopy);
@@ -244,7 +244,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputSetCur
 
 
 // Get the input's plugin name.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetName(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
 
@@ -254,7 +254,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetName
 }
 
 // Get the input's plugin longname.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLongName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetLongName(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
 
@@ -264,7 +264,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLong
 }
 
 // Get the input's plugin author.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetAuthor(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetAuthor(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
 
@@ -274,7 +274,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetAuth
 }
 
 // Get the input's plugin version.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetVersion(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetVersion(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
 
@@ -284,7 +284,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetVers
 }
 
 // Get the input's plugin about string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetAbout(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetAbout(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
 
@@ -294,7 +294,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetAbou
 }
 
 // Get the input's plugin help string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetHelp(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetHelp(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
 
@@ -304,7 +304,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetHelp
 }
 
 // Get the input's plugin license string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputGetLicense(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetLicense(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
 
@@ -346,7 +346,7 @@ VisParamEntry *get_input_param_entry(int index)
     return entry;
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetCount(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetCount(JNIEnv *env, jobject obj)
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -357,7 +357,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetCo
     return count;
 }
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetType(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetType(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -392,7 +392,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGe
     return string;
 }
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetName(JNIEnv *env, jobject obj, jint index)
 {
     VisParamEntry *entry = get_input_param_entry(index);
     
@@ -401,7 +401,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGe
     return string;
 }
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetString(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetString(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -416,7 +416,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGe
     return string;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamSetString(JNIEnv *env, jobject obj, jstring name, jstring newstring)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamSetString(JNIEnv *env, jobject obj, jstring name, jstring newstring)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -434,7 +434,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamS
     return !ret;
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetInteger(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetInteger(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -449,7 +449,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetIn
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamSetInteger(JNIEnv *env, jobject obj, jstring name, jint newint)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamSetInteger(JNIEnv *env, jobject obj, jstring name, jint newint)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -466,7 +466,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamS
     return !ret;
 }
 
-JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetFloat(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jfloat JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetFloat(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -481,7 +481,7 @@ JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGet
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamSetFloat(JNIEnv *env, jobject obj, jstring name, jfloat newfloat)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamSetFloat(JNIEnv *env, jobject obj, jstring name, jfloat newfloat)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -498,7 +498,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamS
     return !ret;
 }
 
-JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGetDouble(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jdouble JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetDouble(JNIEnv *env, jobject obj, jstring name)
 {    
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -514,7 +514,7 @@ JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamGe
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_inputParamSetDouble(JNIEnv *env, jobject obj, jstring name, jdouble newdouble)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamSetDouble(JNIEnv *env, jobject obj, jstring name, jdouble newdouble)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -561,7 +561,7 @@ int get_morph_index()
 
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleMorph(JNIEnv *env, jobject obj, jint prev)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleMorph(JNIEnv *env, jobject obj, jint prev)
 {
     v_cycleMorph(prev);
     visual_bin_set_morph_by_name(v.bin, (char *)v.morph_name);
@@ -570,14 +570,14 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleMorph(JNIE
 
 
 // Get the count of available morph plugins.
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphCount(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_morphCount(JNIEnv *env, jobject obj)
 {
     return visual_list_count(visual_morph_get_list());
 }
 
 // Get the index of the current plugin. 
 // Note that this index may change as new plugins are added.
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetCurrent(JNIEnv *env)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetCurrent(JNIEnv *env)
 {
     VisMorph *morph = visual_bin_get_morph(v.bin);
     if(morph)
@@ -589,7 +589,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetCurrent
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCurrent(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphSetCurrent(JNIEnv *env, jobject obj, jint index)
 {
     VisList *list = visual_morph_get_list();
 
@@ -606,7 +606,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCur
 }
 
 // Set the current morph by name. use finalizeSwitch() to apply this change.
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *morph = (*env)->GetStringUTFChars(env, name, &iscopy);
@@ -619,7 +619,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphSetCur
 }
 
 // Get the morph plugin's name string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetName(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_morph(index);
 
@@ -629,7 +629,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetName
 }
 
 // Get the morph plugin's long name string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLongName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetLongName(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_morph(index);
 
@@ -639,7 +639,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLong
 }
 
 // Get the morph plugin's author string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetAuthor(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetAuthor(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_morph(index);
 
@@ -649,7 +649,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetAuth
 }
 
 // Get the morph plugin's version string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetVersion(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetVersion(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_morph(index);
 
@@ -660,7 +660,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetVers
 }
 
 // Get the morph plugin's about string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetAbout(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetAbout(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_morph(index);
 
@@ -670,7 +670,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetAbou
 }
 
 // Get the morph plugin's help string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetHelp(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetHelp(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_morph(index);
 
@@ -680,7 +680,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetHelp
 }
 
 // Get the morph plugin's license string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphGetLicense(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetLicense(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_morph(index);
 
@@ -722,7 +722,7 @@ VisParamEntry *get_morph_param_entry(int index)
     return entry;
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetCount(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetCount(JNIEnv *env, jobject obj)
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -733,7 +733,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetCo
     return count;
 }
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetName(JNIEnv *env, jobject obj, jint index)
 {
     VisParamEntry *entry = get_morph_param_entry(index);
     
@@ -742,7 +742,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGe
     return string;
 }
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetType(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetType(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -778,7 +778,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGe
 }
 
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetString(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetString(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -793,7 +793,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGe
     return string;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamSetString(JNIEnv *env, jobject obj, jstring name, jstring newstring)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamSetString(JNIEnv *env, jobject obj, jstring name, jstring newstring)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -811,7 +811,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamS
     return !ret;
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetInteger(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetInteger(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -826,7 +826,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetIn
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamSetInteger(JNIEnv *env, jobject obj, jstring name, jint newint)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamSetInteger(JNIEnv *env, jobject obj, jstring name, jint newint)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -843,7 +843,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamS
     return !ret;
 }
 
-JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetFloat(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jfloat JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetFloat(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -858,7 +858,7 @@ JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGet
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamSetFloat(JNIEnv *env, jobject obj, jstring name, jfloat newfloat)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamSetFloat(JNIEnv *env, jobject obj, jstring name, jfloat newfloat)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -875,7 +875,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamS
     return !ret;
 }
 
-JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGetDouble(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jdouble JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetDouble(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -890,7 +890,7 @@ JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamGe
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_morphParamSetDouble(JNIEnv *env, jobject obj, jstring name, jdouble newdouble)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamSetDouble(JNIEnv *env, jobject obj, jstring name, jdouble newdouble)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -938,7 +938,7 @@ int get_actor_index()
 
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleActor(JNIEnv *env, jobject obj, jint prev)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleActor(JNIEnv *env, jobject obj, jint prev)
 {
     v_cycleActor(prev);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
@@ -946,14 +946,14 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_cycleActor(JNIE
 }
 
 // Get the count of available actor plugins.
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorCount(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_actorCount(JNIEnv *env, jobject obj)
 {
     return visual_list_count(visual_actor_get_list());
 }
 
 // Get the index of the current plugin. 
 // Note that this index may change as new plugins are added.
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetCurrent(JNIEnv *env)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetCurrent(JNIEnv *env)
 {
     return get_actor_index();
     /*
@@ -973,7 +973,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetCurrent
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCurrent(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorSetCurrent(JNIEnv *env, jobject obj, jint index)
 {
     VisList *list = visual_actor_get_list();
     int count = visual_list_count(list);
@@ -989,7 +989,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCur
 }
 
 // Set the current actor by its name.
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *actor = (*env)->GetStringUTFChars(env, name, &iscopy);
@@ -1004,7 +1004,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorSetCur
 
 
 // Get the actor's plugin name.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetName(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
 
@@ -1014,7 +1014,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetName
 }
 
 // Get the actor's long name.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLongName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetLongName(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
     const char *name;
@@ -1026,7 +1026,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLong
 }
 
 // Get the actor's author.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetAuthor(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetAuthor(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
 
@@ -1036,7 +1036,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetAuth
 }
 
 // Get the actor's version string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetVersion(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetVersion(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
 
@@ -1046,7 +1046,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetVers
 }
 
 // Get the actor's about string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetAbout(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetAbout(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
 
@@ -1056,7 +1056,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetAbou
 }
 
 // Get the actor's help string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetHelp(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetHelp(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
 
@@ -1066,7 +1066,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetHelp
 }
 
 // Get the actor's license string.
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLicense(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetLicense(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_actor(index);
     char text[256];
@@ -1089,7 +1089,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetLice
     return ((*env)->NewStringUTF(env, text));
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorGetParamsCount(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetParamsCount(JNIEnv *env, jobject obj)
 {
     VisParamContainer *params = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1115,7 +1115,7 @@ VisParamEntry *get_actor_param_entry(int index)
     return entry;
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetCount(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetCount(JNIEnv *env, jobject obj)
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1126,7 +1126,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetCo
     return count;
 }
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetType(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetType(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1161,7 +1161,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGe
     return string;
 }
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetName(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetName(JNIEnv *env, jobject obj, jint index)
 {
     VisParamEntry *entry = get_actor_param_entry(index);
     
@@ -1170,7 +1170,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGe
     return string;
 }
 
-JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetString(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetString(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1185,7 +1185,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGe
     return string;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamSetString(JNIEnv *env, jobject obj, jstring name, jstring newstring)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamSetString(JNIEnv *env, jobject obj, jstring name, jstring newstring)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1204,7 +1204,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamS
 }
 
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetInteger(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetInteger(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1219,7 +1219,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetIn
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamSetInteger(JNIEnv *env, jobject obj, jstring name, jint newint)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamSetInteger(JNIEnv *env, jobject obj, jstring name, jint newint)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1236,7 +1236,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamS
     return !ret;
 }
 
-JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetFloat(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jfloat JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetFloat(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1251,7 +1251,7 @@ JNIEXPORT jfloat JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGet
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamSetFloat(JNIEnv *env, jobject obj, jstring name, jfloat newfloat)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamSetFloat(JNIEnv *env, jobject obj, jstring name, jfloat newfloat)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1268,7 +1268,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamS
     return !ret;
 }
 
-JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGetDouble(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jdouble JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetDouble(JNIEnv *env, jobject obj, jstring name)
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1283,7 +1283,7 @@ JNIEXPORT jdouble JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamGe
     return val;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamSetDouble(JNIEnv *env, jobject obj, jstring name, jdouble newdouble)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamSetDouble(JNIEnv *env, jobject obj, jstring name, jdouble newdouble)
 {
     jboolean iscopy;
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
@@ -1307,7 +1307,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_actorParamS
 
 
 // For fallback audio source.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_uploadAudio(JNIEnv * env, jobject  obj, jshortArray data)
 {
     int i;
     jshort *pcm;
@@ -1321,7 +1321,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_uploadAudio(JNI
 }
 
 // Reinitialize audio fields.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint size, jint samplerate, jint channels, jint encoding)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_resizePCM(jint size, jint samplerate, jint channels, jint encoding)
 {
     if(pcm_ref.pcm_data != NULL)
         visual_mem_free(pcm_ref.pcm_data);
@@ -1369,7 +1369,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_resizePCM(jint 
 // Increment or decrement actor and morph
 // Variable 'prev' is used to shift morph plugin around. 
 // 0=left, 1=right, 2=up, 3=down, 4=cycle.. Any other and the current value is used.
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jint prev)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jint prev)
 {
 
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
@@ -1411,7 +1411,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_finalizeSwi
 }
 
 // Set the VisBin's plugins. This causes the actor to change immediately.
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_updatePlugins(JNIEnv * env, jobject  obj)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_updatePlugins(JNIEnv * env, jobject  obj)
 {
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
     VisInput *input;
@@ -1454,7 +1454,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_updatePlugi
 }
 
 // Set the VisBin's morph style -- to morph or not to morph.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_setMorphStyle(JNIEnv * env, jobject  obj, jboolean morph)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_setMorphStyle(JNIEnv * env, jobject  obj, jboolean morph)
 {
     if(morph)
         visual_bin_switch_set_style(v.bin, VISUAL_SWITCH_STYLE_MORPH);
@@ -1463,7 +1463,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_setMorphStyle(J
 }
 
 // Pump mouse motion events to the current actor.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_mouseMotion(JNIEnv * env, jobject  obj, jfloat x, jfloat y)
 {
     visual_log(VISUAL_LOG_INFO, "Mouse motion: x %f, y %f", x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
@@ -1472,7 +1472,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_mouseMotion(JNI
 }
 
 // Pump mouse button events to the current actor.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_mouseButton(JNIEnv * env, jobject  obj, jint button, jfloat x, jfloat y)
 {
     visual_log(VISUAL_LOG_INFO, "Mouse button: button %d, x %f, y %f", button, x, y);
     VisPluginData *plugin = visual_actor_get_plugin(visual_bin_get_actor(v.bin));
@@ -1483,7 +1483,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_mouseButton(JNI
 
 
 // Pump resize events to the current actor.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_screenResize(JNIEnv * env, jobject  obj, jint w, jint h)
 {
     visual_log(VISUAL_LOG_INFO, "Screen resize w %d h %d", w, h);
 
@@ -1493,7 +1493,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_screenResize(JN
 }
 
 // Pump keyboard events to the current actor.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_keyboardEvent(JNIEnv * env, jobject  obj, jint x, jint y)
 {
     VisEventQueue *eventqueue = visual_plugin_get_eventqueue(visual_actor_get_plugin(visual_bin_get_actor(v.bin)));
     VisKey keysym = 0;
@@ -1503,7 +1503,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_keyboardEvent(J
 }
 
     
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_isBeat(JNIEnv *env, jobject obj)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_isBeat(JNIEnv *env, jobject obj)
 {
     VisParamContainer *paramcontainer = visual_plugin_get_params(v.bin->input->plugin);
     VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
@@ -1514,20 +1514,20 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_isBeat(JNIE
     return FALSE;
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_getBPM(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_getBPM(JNIEnv *env, jobject obj)
 {
     VisBeat *beat = visual_audio_get_beat(v.bin->input->audio);
     return beat->bpm;
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_froyvisuals_NativeHelper_getBPMConfidence(JNIEnv *env, jobject obj)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_getBPMConfidence(JNIEnv *env, jobject obj)
 {
     VisBeat *beat = visual_audio_get_beat(v.bin->input->audio);
     return beat->confidence;
 }
 
 
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_newSong(JNIEnv *env, jobject obj)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_newSong(JNIEnv *env, jobject obj)
 {
     VisBeat *beat = visual_audio_get_beat(v.bin->input->audio);
     visual_beat_change_song(beat);
@@ -1536,7 +1536,7 @@ JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_newSong(JNIEnv 
 
 // Is this even needed? What happens when the app is quietly discarded?
 // Seems in Android 4.0 you can kill an app by swiping it.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_visualsQuit(JNIEnv * env, jobject  obj)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNIEnv * env, jobject  obj)
 {
     if(!visual_is_initialized())
         return;
@@ -1556,7 +1556,7 @@ void app_main(int w, int h, int device, int card)
     if(!visual_is_initialized())
     {
         //setenv("LVSHOWBEATS", "1", 1);
-        visual_init_path_add("/data/data/com.starlon.froyvisuals/lib");
+        visual_init_path_add("/data/data/com.starlon.starvisuals/lib");
         visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
         visual_log_set_info_handler (my_info_handler, NULL);
         visual_log_set_warning_handler (my_warning_handler, NULL);
@@ -1658,13 +1658,13 @@ exit_alsa_check:
 }
 
 // Initialize the application's view and libvisual.
-JNIEXPORT void JNICALL Java_com_starlon_froyvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h, jint device, jint card)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h, jint device, jint card)
 {
     app_main(w, h, device, card);
 }
 
 // Render the view's bitmap image.
-JNIEXPORT jboolean JNICALL Java_com_starlon_froyvisuals_NativeHelper_render(JNIEnv * env, jobject  obj, jobject bitmap, jint dur)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIEnv * env, jobject  obj, jobject bitmap, jint dur)
 {
     
     AndroidBitmapInfo  info;

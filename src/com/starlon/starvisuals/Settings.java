@@ -1,4 +1,4 @@
-package com.starlon.froyvisuals;
+package com.starlon.starvisuals;
 
 import android.content.Context;
 import android.content.SharedPreferences;

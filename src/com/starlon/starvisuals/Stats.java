@@ -1,4 +1,4 @@
-package com.starlon.froyvisuals;
+package com.starlon.starvisuals;
 
 class FrameStats {
     public double renderTime;

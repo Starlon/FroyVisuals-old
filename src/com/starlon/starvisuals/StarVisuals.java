@@ -1,4 +1,4 @@
-package com.starlon.froyvisuals;
+package com.starlon.starvisuals;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -52,10 +52,10 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.lang.Process;
 
-public class FroyVisuals extends Activity implements OnClickListener
+public class StarVisuals extends Activity implements OnClickListener
 {
-    private final static String TAG = "FroyVisuals/FroyVisualsActivity";
-    private final static String PREFS = "FroyVisualsPrefs";
+    private final static String TAG = "StarVisuals/StarVisualsActivity";
+    private final static String PREFS = "StarVisualsPrefs";
     private final static int ARTWIDTH = 100;
     private final static int ARTHEIGHT = 100;
     private static Settings mSettings;
@@ -88,7 +88,7 @@ public class FroyVisuals extends Activity implements OnClickListener
     private GestureDetector gestureDetector;
     OnTouchListener gestureListener;
 
-    private FroyVisualsView mView;
+    private StarVisualsView mView;
 
     /** Called when the activity is first created. */
     @Override
@@ -103,7 +103,7 @@ public class FroyVisuals extends Activity implements OnClickListener
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        mView = new FroyVisualsView(this);
+        mView = new StarVisualsView(this);
 
         // Don't dim screen
         mView.setKeepScreenOn(true);
@@ -148,7 +148,7 @@ public class FroyVisuals extends Activity implements OnClickListener
                 return gestureDetector.onTouchEvent(event);
             }
         };
-        mView.setOnClickListener(FroyVisuals.this);
+        mView.setOnClickListener(StarVisuals.this);
         mView.setOnTouchListener(gestureListener);
 
         setContentView(mView);
@@ -161,7 +161,7 @@ public class FroyVisuals extends Activity implements OnClickListener
         iF.addAction("com.android.music.playstatechanged");
         iF.addAction("com.android.music.playbackcomplete");
         iF.addAction("com.android.music.queuechanged");
-        iF.addAction("com.starlon.froyvisuals.PREFS_UPDATE");
+        iF.addAction("com.starlon.starvisuals.PREFS_UPDATE");
 
         registerReceiver(mReceiver, iF);
     }
@@ -202,7 +202,7 @@ public class FroyVisuals extends Activity implements OnClickListener
                 NativeHelper.newSong();
                 warn("Ended playback...", true);
             }
-            else if(action.equals("com.starlon.froyvisuals.PREFS_UPDATE"))
+            else if(action.equals("com.starlon.starvisuals.PREFS_UPDATE"))
             {
                 updatePrefs();
             }
@@ -273,7 +273,7 @@ public class FroyVisuals extends Activity implements OnClickListener
     public boolean onCreateOptionsMenu(Menu menu)
     {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.froyvisuals, menu);
+        inflater.inflate(R.menu.starvisuals, menu);
         return true;
     }
 

@@ -1,4 +1,4 @@
-package com.starlon.froyvisuals;
+package com.starlon.starvisuals;
 
 import android.content.Intent;
 import android.preference.CheckBoxPreference;
@@ -13,8 +13,8 @@ import android.util.Log;
 
 public class PreferencesActivity extends PreferenceActivity
 {
-        private final static String TAG = "FroyVisuals/PreferencesActivity";
-        private final static String PREFS = "FroyVisualsPrefs";
+        private final static String TAG = "StarVisuals/PreferencesActivity";
+        private final static String PREFS = "StarVisualsPrefs";
         
         /** called by OS when app is created initially */
         @Override
@@ -36,9 +36,9 @@ public class PreferencesActivity extends PreferenceActivity
         public void onPause()
         {
             super.onPause();
-            //Intent i = new Intent(this, FroyVisualsReceiver.class);
+            //Intent i = new Intent(this, StarVisualsReceiver.class);
             Intent i = new Intent();
-            i.setAction("com.starlon.froyvisuals.PREFS_UPDATE");
+            i.setAction("com.starlon.starvisuals.PREFS_UPDATE");
             sendBroadcast(i);
         }
 
