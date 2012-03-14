@@ -1582,9 +1582,12 @@ void app_main(int w, int h)
         visual_video_free_buffer(v.video);
         
         visual_object_unref(VISUAL_OBJECT(v.video));
+/*
         visual_object_unref(VISUAL_OBJECT(v.bin->input));
         visual_object_unref(VISUAL_OBJECT(v.bin->actor));
-        visual_object_unref(VISUAL_OBJECT(v.bin));
+*/
+        //FIXME We need valgrind pronto... 
+        //visual_object_unref(VISUAL_OBJECT(v.bin));
     }
 
     v.bin    = visual_bin_new ();
