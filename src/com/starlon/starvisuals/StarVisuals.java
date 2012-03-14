@@ -155,7 +155,8 @@ public class StarVisuals extends Activity implements OnClickListener
 
         //mHasRoot = checkRoot();
 
-        //enableMic();
+        enableMic();
+
         IntentFilter iF = new IntentFilter();
         iF.addAction("com.android.music.metachanged");
         iF.addAction("com.android.music.playstatechanged");
@@ -228,15 +229,15 @@ public class StarVisuals extends Activity implements OnClickListener
     
             NativeHelper.setMorphStyle(mDoMorph);
     
-            mMorph = "alphablend";//settings.getString("prefs_morph_selection", "alphablend");
-            mInput = "dummy";//settings.getString("prefs_input_selection", "alsa");
-            mActor = "jakdaw";//settings.getString("prefs_actor_selection", "infinite");
+            mMorph = settings.getString("prefs_morph_selection", "alphablend");
+            mInput = settings.getString("prefs_input_selection", "alsa");
+            mActor = settings.getString("prefs_actor_selection", "infinite");
     
             NativeHelper.morphSetCurrentByName(mMorph);
             NativeHelper.inputSetCurrentByName(mInput);
             NativeHelper.actorSetCurrentByName(mActor);
     
-            NativeHelper.updatePlugins();
+            mView.initVisual();
         }
     }
 
@@ -552,13 +553,13 @@ public class StarVisuals extends Activity implements OnClickListener
                     }
                 });
                 audioThread.start();
-                mView.mMicData = null;
             }
             return true;
         }
         return false;
     }
 
+    // Detect parameters from highest to lowest values. 
     private static int[] mSampleRates = new int[] { 48000, 44100, 22050, 11025, 8000 };
     public AudioRecord findAudioRecord() {
         for (int rate : mSampleRates) {

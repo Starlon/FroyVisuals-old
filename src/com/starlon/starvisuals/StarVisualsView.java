@@ -16,29 +16,30 @@ import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.TimeUnit;
 import java.lang.Thread;
+import java.lang.Double;
 import java.nio.IntBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.text.DecimalFormat;
 
 
 public class StarVisualsView extends View {
     private final String TAG = "StarVisuals/StarVisualsView";
     private final int INT_BYTES = 4;
-    public Bitmap mBitmap;
-    public Bitmap mBitmapSecond;
-    public IntBuffer mIntBuffer;
-    private StarVisuals mActivity;
-    private Stats mStats;
-    private final int WIDTH = 256;
-    private final int HEIGHT = 256;
-    private Paint mPaint;
-    private Matrix mMatrix;
-    //private Thread mThread;
-    private Display mDisplay;
+    public Bitmap mBitmap = null;
+    public Bitmap mBitmapSecond = null;
+    public IntBuffer mIntBuffer = null;
+    private StarVisuals mActivity = null;
+    private Stats mStatsNative = null;
+    private Stats mStatsCanvas = null;
+    private int WIDTH = 192;
+    private int HEIGHT = 192;
+    private Paint mPaint = null;
+    private Matrix mMatrix = null;
+    //private Display mDisplay = null;
     private boolean mActive = false;
     private boolean mDoBeat = false;
     public short mMicData[] = null;
-    public int mPixels[] = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
 
@@ -49,6 +50,11 @@ public class StarVisualsView extends View {
 
         mActivity = (StarVisuals)context;
 
+        mStatsNative = new Stats();
+        mStatsCanvas = new Stats();
+        mStatsNative.statsInit();
+        mStatsCanvas.statsInit();
+
         mPaint = new Paint();
         mPaint.setTextSize(30);
         mPaint.setAntiAlias(true);
@@ -57,18 +63,19 @@ public class StarVisualsView extends View {
         mPaint.setStrokeWidth(1);
         mPaint.setColor(Color.WHITE);
 
-
-        mStats = new Stats();
-        mStats.statsInit();
-
         final int delay = 1000;
         final int period = 300;
 
         final Timer timer = new Timer();
 
+
         TimerTask task = new TimerTask() {
+            double roundTwoDecimals(double d) {
+                DecimalFormat twoDForm = new DecimalFormat("#.##");
+                return Double.valueOf(twoDForm.format(d));
+            }
             public void run() {
-                mActivity.warn(mStats.getText());
+                mActivity.warn(roundTwoDecimals((mStatsCanvas.mAvgFrame + mStatsNative.mAvgFrame) / 2) + "fps");
             }
         };
 
@@ -82,11 +89,31 @@ public class StarVisualsView extends View {
         mIntBuffer = IntBuffer.wrap( new int[WIDTH * HEIGHT] );
         mIntBuffer.position(0);
 
-        mDisplay = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        //mDisplay = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
-        NativeHelper.initApp(WIDTH, HEIGHT, 0, 0);
+        initVisual();
 
         startThread();
+    }
+
+    public void initVisual(int w, int h)
+    {
+        WIDTH = w;
+        HEIGHT = h;
+        initVisual();
+    }
+
+    public void initVisual()
+    {
+        if(mBitmap != null)
+            mBitmap.recycle();
+        if(mBitmapSecond != null)
+            mBitmapSecond.recycle();
+
+        mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+        mBitmapSecond = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+
+        NativeHelper.initApp(WIDTH, HEIGHT);
     }
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
@@ -97,14 +124,14 @@ public class StarVisualsView extends View {
 
     @Override protected void onDraw(Canvas canvas) 
     {
-        mStats.startFrame();
+        mStatsCanvas.startFrame();
 
-        //if(mMicData != null)
-        //    NativeHelper.uploadAudio(mMicData);
+        if(mMicData != null)
+            NativeHelper.uploadAudio(mMicData);
 
         drawScene(canvas);
 
-        mStats.endFrame();
+        mStatsCanvas.endFrame();
     }
 
     public void stopThread()
@@ -132,9 +159,11 @@ public class StarVisualsView extends View {
                     try {
                         synchronized(mBitmap)
                         {
+                            mStatsNative.startFrame();
                             mLock.lock();
                             NativeHelper.render(mBitmap);
                             mLock.unlock();
+                            mStatsNative.endFrame();
                         }
                         mThread.sleep(10);
                     } 

@@ -105,7 +105,7 @@ public class NativeHelper
 
     /* Init and quit libvisual */
     public static native void visualsQuit();
-    public static native void initApp(int w, int h, int device, int card);
+    public static native void initApp(int w, int h);
 
     /* Draw and render vis */
     public static native boolean render(Bitmap  bitmap);

@@ -35,14 +35,13 @@
 
 static int inp_mic_init (VisPluginData *plugin);
 static int inp_mic_cleanup (VisPluginData *plugin);
-static int inp_mic_upload (VisPluginData *plugin, VisAudio *audio);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
 const VisPluginInfo *get_plugin_info (int *count)
 {
     static VisInputPlugin input[] = {{
-        .upload = inp_mic_upload
+            // empty.
     }};
 
     static VisPluginInfo info[] = {{
@@ -81,10 +80,4 @@ int inp_mic_cleanup (VisPluginData *plugin)
     return 0;
 }
 
-int inp_mic_upload (VisPluginData *plugin, VisAudio *audio)
-{
-
-    // This is just a dummy input. Provide a callback.
-    return 0;
-}
 

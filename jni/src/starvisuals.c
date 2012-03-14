@@ -16,6 +16,8 @@
 #include <libvisual/libvisual.h>
 #include <tinyalsa/asoundlib.h>
 #include <asound.h>
+#include <math.h>
+#include <sys/types.h>
 
 #define DEVICE_DEPTH VISUAL_VIDEO_DEPTH_32BIT
 
@@ -26,8 +28,8 @@
 
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
-#define ACTOR "jakdaw"
-#define INPUT "alsa"
+#define ACTOR "bumpscope"
+#define INPUT "mic"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
 #define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
@@ -35,7 +37,7 @@
 #define URL_BSD "http://www.opensource.org/licenses/bsd-license.php"
 
 struct {
-    int16_t *pcm_data;
+    int16_t pcm_data[1024];
     int size;
     VisAudioSampleRateType rate;
     VisAudioSampleChannelType channels;
@@ -130,7 +132,7 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 
     VisBuffer buf;
 
-    visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size, 0 );
+    visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
     return 0;
@@ -169,20 +171,21 @@ int get_input_index()
 void set_input()
 {
 
-    visual_object_unref(VISUAL_OBJECT(v.bin->input));
+    if(v.bin->input)
+        visual_object_unref(VISUAL_OBJECT(v.bin->input));
+
     VisInput *input = visual_input_new(v.input_name);
-    visual_input_realize(input);
-    visual_bin_set_input(v.bin, input);
-    visual_bin_sync(v.bin, FALSE);
 
     if(strstr(v.input_name, "mic"))
     {
-    	VisInput *input = visual_bin_get_input (v.bin);
     	if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
     	    visual_log(VISUAL_LOG_CRITICAL, "Unable to set mic input callback.");	
     	}
     }
 
+    visual_input_realize(input);
+    visual_bin_set_input(v.bin, input);
+    visual_bin_sync(v.bin, TRUE);
 
 }
 
@@ -1313,7 +1316,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_uploadAudio(JNI
     jshort *pcm;
     jsize len = (*env)->GetArrayLength(env, data);
     pcm = (*env)->GetShortArrayElements(env, data, NULL);
-    for(i = 0; i < len && i < pcm_ref.size; i++)
+    for(i = 0; i < len && i < pcm_ref.size / sizeof(int16_t); i++)
     {
         pcm_ref.pcm_data[i] = pcm[i];
     }
@@ -1323,10 +1326,12 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_uploadAudio(JNI
 // Reinitialize audio fields.
 JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_resizePCM(jint size, jint samplerate, jint channels, jint encoding)
 {
-    if(pcm_ref.pcm_data != NULL)
-        visual_mem_free(pcm_ref.pcm_data);
-    pcm_ref.pcm_data = visual_mem_malloc(sizeof(int16_t) * size);
-    pcm_ref.size = size;
+    //if(pcm_ref.pcm_data != NULL)
+    //    visual_mem_free(pcm_ref.pcm_data);
+    pcm_ref.size = 1024;//size;
+    //pcm_ref.pcm_data = visual_mem_malloc(pcm_ref.size * sizeof(int16_t));
+
+    //D/StarVisuals/StarVisualsActivity( 1102): Opened mic: 44100Hz, bits: 2, channel: 12, buffersize:8192
     switch(samplerate)
     {
         case 8000:
@@ -1350,20 +1355,16 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_resizePCM(jint 
         case 96000:
             pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_96000;
         break;
+        default:
+            pcm_ref.rate = VISUAL_AUDIO_SAMPLE_RATE_44100;
+        break;
     }
 
     // It seems lv only supports stereo? hmm
     pcm_ref.channels = VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO;
 
-    switch(encoding)
-    {
-        case sizeof(int16_t):
-            pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S16;
-            break;
-        case sizeof(int8_t):
-            pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S8;
-            break;
-    }
+    // According to documentation 16BIT sample size is guaranteed to be supported.
+    pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S16;
 }
 
 // Increment or decrement actor and morph
@@ -1397,9 +1398,13 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     {
         v.morph_name = "slide_down";
     } 
-    else if(prev == -1)
+    else if(prev == 4)
     {
         v_cycleMorph((int)prev);
+    }
+    else 
+    {
+        v.morph_name = "alphablend";
     }
 
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
@@ -1411,6 +1416,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
 }
 
 // Set the VisBin's plugins. This causes the actor to change immediately.
+/* // Call initApp() instead.
 JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_updatePlugins(JNIEnv * env, jobject  obj)
 {
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
@@ -1452,6 +1458,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_updatePlugi
 
     return TRUE;
 }
+*/
 
 // Set the VisBin's morph style -- to morph or not to morph.
 JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_setMorphStyle(JNIEnv * env, jobject  obj, jboolean morph)
@@ -1547,7 +1554,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNI
     exit(0);
 }
 
-void app_main(int w, int h, int device, int card)
+void app_main(int w, int h)
 {
 
     int depthflag;
@@ -1570,60 +1577,44 @@ void app_main(int w, int h, int device, int card)
         v.morph_name = MORPH;
         v.actor_name = ACTOR;
         v.input_name = INPUT;
-
-        // Check alsa device permissions.
-
-        // Check for read permissions.
-        int card = 0, device = 0;
-        char fn[256];
-
-        snprintf(fn, sizeof(fn), "/dev/snd/pcmC%uD%u%c", card, device, 'c');
-
-        if(access(fn, R_OK) != 0)
-        {
-            //FIXME rigid calls this evil 
-            //if(chmod(fn, S_IROTH) != 0)
-                goto exit_alsa_check;
-        }
-        
-        struct pcm *pcmstream;
-        struct pcm_config config;
-        config.channels = 1;
-        config.rate = 44100;
-        config.period_count = 4;
-        config.period_size = 1024;
-        config.format = PCM_FORMAT_S16_LE;
-        config.stop_threshold = 0;
-        pcmstream = pcm_open(device, card, PCM_IN, &config);
-
-        if(!pcmstream) {
-            goto exit_alsa_check;
-        }
-
-        pcm_close(pcmstream);
-
-        v.input_name = "alsa";
-
-        visual_log(VISUAL_LOG_INFO, "Choosing ALSA input plugin. Go loud.");
     } else {
         visual_video_free_buffer(v.video);
+        
         visual_object_unref(VISUAL_OBJECT(v.video));
+        visual_object_unref(VISUAL_OBJECT(v.bin->input));
+        visual_object_unref(VISUAL_OBJECT(v.bin->actor));
         visual_object_unref(VISUAL_OBJECT(v.bin));
     }
 
-exit_alsa_check:
     v.bin    = visual_bin_new ();
 
     if (!visual_actor_valid_by_name (v.actor_name)) {
-        visual_log(VISUAL_LOG_CRITICAL, ("Actor plugin not found!"));
-        return;
+        v_cycleActor(1);
+        visual_log(VISUAL_LOG_CRITICAL, ("Actor plugin not found! Choosing %s instead."), v.actor_name);
     }
 
     visual_bin_set_supported_depth (v.bin, VISUAL_VIDEO_DEPTH_ALL);
-    visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_8BIT);
+    visual_bin_set_preferred_depth(v.bin, VISUAL_VIDEO_DEPTH_32BIT);
 
     VisActor *actor = visual_actor_new((char*)v.actor_name);
     VisInput *input = visual_input_new((char*)v.input_name);
+
+    if(strstr(v.input_name, "mic"))
+    {
+        visual_object_unref(VISUAL_OBJECT(input));
+        input = visual_input_new(NULL);
+    	if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
+
+    	    visual_log(VISUAL_LOG_CRITICAL, "Unable to set mic input callback.");	
+
+            visual_object_unref(VISUAL_OBJECT(input));
+
+            v.input_name = "dummy";
+
+            input = visual_input_new((char *)v.input_name);
+    	} else {
+        }
+    }
 
     depthflag = visual_actor_get_supported_depth(actor);
     depth = visual_video_depth_get_highest(depthflag);
@@ -1638,7 +1629,7 @@ exit_alsa_check:
     visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
     visual_bin_switch_set_automatic (v.bin, 1);
     visual_bin_switch_set_steps (v.bin, 10);
-    //visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+    visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
 
     visual_bin_connect(v.bin, actor, input);
     if((v.pluginIsGL = (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL)))
@@ -1651,22 +1642,18 @@ exit_alsa_check:
     visual_bin_sync (v.bin, 0);
     visual_bin_depth_changed(v.bin);
 
-    // We set it again because mic input may be default and it requires extra steps to initialize.
-    set_input();
-
     printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));
 }
 
 // Initialize the application's view and libvisual.
-JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h, jint device, jint card)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h)
 {
-    app_main(w, h, device, card);
+    app_main(w, h);
 }
 
 // Render the view's bitmap image.
 JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIEnv * env, jobject  obj, jobject bitmap, jint dur)
 {
-    
     AndroidBitmapInfo  info;
     void*              pixels;
     int                ret;
