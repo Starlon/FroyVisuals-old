@@ -37,7 +37,7 @@
 #define URL_BSD "http://www.opensource.org/licenses/bsd-license.php"
 
 struct {
-    int16_t pcm_data[1024];
+    int16_t pcm_data[1024]; // FIXME grow this with audio buffer size taken from java-side. later.
     int size;
     VisAudioSampleRateType rate;
     VisAudioSampleChannelType channels;
