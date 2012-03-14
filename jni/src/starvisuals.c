@@ -1580,8 +1580,8 @@ void app_main(int w, int h)
         v.input_name = INPUT;
     } else {
         visual_video_free_buffer(v.video);
-        
         visual_object_unref(VISUAL_OBJECT(v.video));
+        v.video = NULL; // Will thread activity blowup in native_render() if we do this? Speifically free_buffer(). hmm This whole block of code is wrong.
 /*
         visual_object_unref(VISUAL_OBJECT(v.bin->input));
         visual_object_unref(VISUAL_OBJECT(v.bin->actor));
@@ -1692,7 +1692,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
         }
         visual_video_set_dimension(v.video, info.width, info.height);
         visual_video_set_pitch(v.video, info.width * visual_video_bpp_from_depth(depth));
-        if(visual_video_get_pixels(v.video))
+        if(v.video != NULL && visual_video_get_pixels(v.video))
             visual_video_free_buffer(v.video);
         visual_video_allocate_buffer(v.video);
         visual_bin_sync(v.bin, TRUE);

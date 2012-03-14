@@ -59,25 +59,26 @@ public class StarVisuals extends Activity implements OnClickListener
     private final static int ARTWIDTH = 100;
     private final static int ARTHEIGHT = 100;
     private static Settings mSettings;
-    private AudioRecord mAudio;
+    private AudioRecord mAudio = null;
     private MediaRecorder mRecorder;
     private boolean mMicActive = false;
     private int PCM_SIZE = 1024;
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-    public boolean mDoMorph;
-    public String mMorph;
-    public String mInput;
-    public String mActor;
+    public boolean mDoMorph = true;
+    public String mMorph = null;
+    public String mInput = null;
+    public String mActor = null;
     private float mSongChanged = 0;
-    private String mSongAction;
-    public String mSongCommand;
-    public String mSongArtist;
-    public String mSongAlbum;
-    public String mSongTrack;
-    public Bitmap mAlbumArt;
+    private String mSongAction = null;
+    public String mSongCommand = null;
+    public String mSongArtist = null;
+    public String mSongAlbum = null;
+    public String mSongTrack = null;
+    public Bitmap mAlbumArt = null;
     public boolean mHasRoot = false;
+    private Thread mAudioThread = null;
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
 
     static private String mDisplayText = "Please wait...";
@@ -85,7 +86,7 @@ public class StarVisuals extends Activity implements OnClickListener
     private static int SWIPE_MIN_DISTANCE = 120;
     private static int SWIPE_MAX_OFF_PATH = 250;
     private static int SWIPE_THRESHOLD_VELOCITY = 200;
-    private GestureDetector gestureDetector;
+    private GestureDetector gestureDetector = null;
     OnTouchListener gestureListener;
 
     private StarVisualsView mView;
@@ -157,14 +158,7 @@ public class StarVisuals extends Activity implements OnClickListener
 
         enableMic();
 
-        IntentFilter iF = new IntentFilter();
-        iF.addAction("com.android.music.metachanged");
-        iF.addAction("com.android.music.playstatechanged");
-        iF.addAction("com.android.music.playbackcomplete");
-        iF.addAction("com.android.music.queuechanged");
-        iF.addAction("com.starlon.starvisuals.PREFS_UPDATE");
 
-        registerReceiver(mReceiver, iF);
 
         //updatePrefs();
     }
@@ -245,6 +239,16 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onResume();
 
+
+        IntentFilter iF = new IntentFilter();
+        iF.addAction("com.android.music.metachanged");
+        iF.addAction("com.android.music.playstatechanged");
+        iF.addAction("com.android.music.playbackcomplete");
+        iF.addAction("com.android.music.queuechanged");
+        iF.addAction("com.starlon.starvisuals.PREFS_UPDATE");
+
+        registerReceiver(mReceiver, iF);
+
         getAlbumArt();
     }
 
@@ -275,7 +279,10 @@ public class StarVisuals extends Activity implements OnClickListener
             editor.commit();
         }
 
+        unregisterReceiver(mReceiver);
+
         releaseAlbumArt();
+        mAudio.release();
     }
 
     @Override
@@ -541,7 +548,18 @@ public class StarVisuals extends Activity implements OnClickListener
             synchronized(mView.mBitmap)
             {
                 NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
-                Thread audioThread = new Thread(new Runnable() {
+                mMicActive = false;
+                if(mAudioThread != null)
+                {
+                    mAudioThread.interrupt();
+                    try {
+                        mAudioThread.join();
+                    } catch (InterruptedException e) {
+                        // Do nothing
+                    }
+                }
+                mAudioThread = new Thread(new Runnable() 
+                {
                     public void run() {
                         mMicActive = true;
                         mAudio.startRecording();
@@ -552,7 +570,7 @@ public class StarVisuals extends Activity implements OnClickListener
                         mAudio.stop();
                     }
                 });
-                audioThread.start();
+                mAudioThread.start();
             }
             return true;
         }
