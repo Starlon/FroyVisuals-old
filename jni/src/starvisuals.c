@@ -1376,7 +1376,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
     const char *morph = v.morph_name;
 
-    visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
     
     if(bin_morph && !visual_morph_is_done(bin_morph))
         return FALSE;
@@ -1406,6 +1405,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     {
         v.morph_name = "alphablend";
     }
+
+    visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
 
@@ -1629,7 +1630,7 @@ void app_main(int w, int h)
     visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
     visual_bin_switch_set_automatic (v.bin, 1);
     visual_bin_switch_set_steps (v.bin, 10);
-    visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+    //visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
 
     visual_bin_connect(v.bin, actor, input);
     if((v.pluginIsGL = (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL)))
@@ -1639,7 +1640,7 @@ void app_main(int w, int h)
         visual_video_allocate_buffer(v.video);
     }
     visual_bin_realize (v.bin);
-    visual_bin_sync (v.bin, 0);
+    visual_bin_sync (v.bin, FALSE);
     visual_bin_depth_changed(v.bin);
 
     printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));

@@ -241,11 +241,10 @@ public class StarVisualsView extends View {
 
     public void switchScene(int prev)
     {
-        if(mLock.tryLock())
-        {
-            NativeHelper.finalizeSwitch(prev);
-            mLock.unlock();
-        }
+        mLock.lock();
+        Log.i(TAG, "Switch scene....");
+        NativeHelper.finalizeSwitch(prev);
+        mLock.unlock();
     }
 
 }
