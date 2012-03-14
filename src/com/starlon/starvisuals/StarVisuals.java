@@ -299,6 +299,8 @@ public class StarVisuals extends Activity implements OnClickListener
     protected void onRestart() 
     {
         super.onRestart();
+
+        mView.startThread();
     }
 
     // This activity is no longer visible
@@ -306,6 +308,8 @@ public class StarVisuals extends Activity implements OnClickListener
     protected void onStop()
     {
         super.onStop();
+
+        mView.stopThread();
 
         unregisterReceiver(mReceiver);
 
@@ -315,9 +319,15 @@ public class StarVisuals extends Activity implements OnClickListener
     @Override 
     protected void onDestroy()
     {
-        NativeHelper.visualsQuit(false); // false to prevent exit(0);
+        super.onDestroy();
+        synchronized(mView.mBitmap) // The thread should be stopped, but sync anyways.
+        {
+            // FIXME - call visual_quit() then call visual_init() -- crash. bad strdup mem in __lv_plugpaths
+            //NativeHelper.visualsQuit(false); // false to prevent exit(0);
+        }
     }
 
+    // Create options menu.
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -397,6 +407,7 @@ public class StarVisuals extends Activity implements OnClickListener
         System.loadLibrary("main");
     }
 
+    // Check for root privelege. This causes issues on rigid's phone. Find out why.
     public boolean checkRoot()
     {
         try {
