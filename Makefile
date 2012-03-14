@@ -53,11 +53,11 @@ sign:
 	@zipalign -v 4 bin/$(ACTIVITY)-release-unsigned.apk bin/$(APPNAME).apk
 
 log:
-	@cd lyrical/data/data/com.starlon.froyvisuals/lib;./pull.sh; cd ../../../../../
-	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libmain.so > libfroyvisuals.asm
+	@adb pull /data/data/com.starlon.starvisuals/lib/ lyrical/data/data/com.starlon.starvisuals/
+	@/opt/arm-2011.09/bin/arm-none-linux-gnueabi-objdump -S obj/local/armeabi/libvisual.so > libstarvisuals.asm
 	@adb shell logcat -d > test.log
-	@./stack.py --symbols-dir=lyrical/ ./test.log 
-	#This seems to suck. @./parse_stack.py ./libfroyvisuals.asm ./test.log
+	@./tools/stack.py --symbols-dir=./lyrical/ ./test.log 
+	#@./tools/parse_stack.py ./libstarvisuals.asm ./test.log
 	@adb shell dumpsys meminfo -h > meminfo.txt
 
 gdb:
