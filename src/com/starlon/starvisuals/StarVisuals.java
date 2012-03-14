@@ -118,7 +118,7 @@ public class StarVisuals extends Activity implements OnClickListener
         class MyGestureDetector extends SimpleOnGestureListener {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                synchronized(mView.mBitmap)
+                synchronized(mView.mSynch)
                 {
                     try {
                         if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
@@ -226,7 +226,7 @@ public class StarVisuals extends Activity implements OnClickListener
             NativeHelper.setMorphStyle(mDoMorph);
     
             mMorph = settings.getString("prefs_morph_selection", "alphablend");
-            mInput = settings.getString("prefs_input_selection", "dummy");
+            mInput = settings.getString("prefs_input_selection", "mic");
             mActor = settings.getString("prefs_actor_selection", "infinite");
     
             NativeHelper.morphSetCurrentByName(mMorph);
@@ -249,11 +249,13 @@ public class StarVisuals extends Activity implements OnClickListener
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
 
-        String input = settings.getString("prefs_input_selection", "dummy");
+        String input = settings.getString("prefs_input_selection", "mic");
 
         enableMic(input);
 
         getAlbumArt();
+
+        mView.startThread();
     }
 
     // follows onCreate() and onResume()
@@ -292,6 +294,10 @@ public class StarVisuals extends Activity implements OnClickListener
         editor.commit();
 
         releaseAlbumArt();
+
+        disableMic();
+
+        mView.stopThread();
     }
 
     // user navigates back to the activity. onRestart() -> onStart() -> onResume()
@@ -300,7 +306,6 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onRestart();
 
-        mView.startThread();
     }
 
     // This activity is no longer visible
@@ -309,7 +314,6 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onStop();
 
-        mView.stopThread();
 
         unregisterReceiver(mReceiver);
 
@@ -320,7 +324,7 @@ public class StarVisuals extends Activity implements OnClickListener
     protected void onDestroy()
     {
         super.onDestroy();
-        synchronized(mView.mBitmap) // The thread should be stopped, but sync anyways.
+        synchronized(mView.mSynch) // The thread should be stopped, but sync anyways.
         {
             // FIXME - call visual_quit() then call visual_init() -- crash. bad strdup mem in __lv_plugpaths
             //NativeHelper.visualsQuit(false); // false to prevent exit(0);
@@ -368,7 +372,7 @@ public class StarVisuals extends Activity implements OnClickListener
 */
             case R.id.close_app:
             {
-                synchronized(mView.mBitmap)
+                synchronized(mView.mSynch)
                 {
                     NativeHelper.visualsQuit(true);
                 }
@@ -376,7 +380,7 @@ public class StarVisuals extends Activity implements OnClickListener
             }
             case R.id.input_stub:
             {
-                synchronized(mView.mBitmap)
+                synchronized(mView.mSynch)
                 {
                     int index = NativeHelper.cycleInput(1);
     
@@ -384,7 +388,6 @@ public class StarVisuals extends Activity implements OnClickListener
     
                     if(!enableMic(input)) 
                     {
-                        mMicActive = false;
                         index = NativeHelper.cycleInput(1);
                     }
     
@@ -521,6 +524,8 @@ public class StarVisuals extends Activity implements OnClickListener
         {
             entry.getValue().recycle();
         }
+        mAlbumMap.clear();
+        mAlbumArt = null;
     }
 
     private void getAlbumArt()
@@ -581,7 +586,7 @@ public class StarVisuals extends Activity implements OnClickListener
         return scaled;
     }
 
-    private boolean enableMic(String input)
+    private void disableMic()
     {
         if(mAudio != null)
         {
@@ -596,18 +601,29 @@ public class StarVisuals extends Activity implements OnClickListener
             {
                 mAudio.stop();
             }
-            mAudio.release();
-            mAudio = null;
         }
+    }
+
+    private boolean enableMic(String input)
+    {
 
         if(input.equals("mic") == false)
+        {
+            disableMic();
             return false;
+        }
 
-        mAudio = findAudioRecord();
-        mView.mMicData = new short[PCM_SIZE * 4];
+        if(mAudio == null)
+            mAudio = findAudioRecord();
+
         if(mAudio != null)
         {
-            synchronized(mView.mBitmap)
+            if(mAudio.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING)
+                mAudio.stop();
+
+            mView.mMicData = new short[PCM_SIZE * 4];
+
+            synchronized(mView.mSynch)
             {
                 NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
                 mAudioThread = new Thread(new Runnable() 

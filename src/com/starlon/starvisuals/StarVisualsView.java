@@ -17,10 +17,12 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.TimeUnit;
 import java.lang.Thread;
 import java.lang.Double;
+import java.lang.NumberFormatException;
 import java.nio.IntBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DecimalFormat;
+
 
 
 public class StarVisualsView extends View {
@@ -42,6 +44,7 @@ public class StarVisualsView extends View {
     public short mMicData[] = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
+    public final Object mSynch = new Object();
 
     public StarVisualsView(Context context) {
         super(context);
@@ -71,8 +74,14 @@ public class StarVisualsView extends View {
 
         TimerTask task = new TimerTask() {
             double roundTwoDecimals(double d) {
-                DecimalFormat twoDForm = new DecimalFormat("#.##");
-                return Double.valueOf(twoDForm.format(d));
+                double val = 0.00;
+                try {
+                    DecimalFormat twoDForm = new DecimalFormat("#.##");
+                    val = (double)Double.valueOf(twoDForm.format(d));
+                } catch(NumberFormatException e) {
+                    val = 0.00;
+                }
+                return val;
             }
             public void run() {
                 mActivity.warn(roundTwoDecimals((mStatsCanvas.mAvgFrame + mStatsNative.mAvgFrame) / 2) + "fps");
@@ -104,18 +113,32 @@ public class StarVisualsView extends View {
     public void initVisual()
     {
         stopThread();
+        mLock.lock();
+        synchronized(mSynch)
+        {
+    
+            if(mBitmap != null) 
+            {
+                mBitmap.recycle();
+                mBitmap = null;
+                mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+            }
 
-        if(mBitmap != null)
-            mBitmap.recycle();
-        if(mBitmapSecond != null)
-            mBitmapSecond.recycle();
-
-        mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
-        mBitmapSecond = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
-
-        NativeHelper.initApp(WIDTH, HEIGHT);
-
+            if(mBitmapSecond != null)
+            {
+                mBitmapSecond.recycle();
+                mBitmapSecond = null;
+                mBitmapSecond = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+            }
+    
+    
+            NativeHelper.initApp(WIDTH, HEIGHT);
+            // Make this the last thing we do here since it's synchronized.
+            // Hopefully it doesn't blow up.
+        }
+        mLock.unlock();
         startThread();
+
     }
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
@@ -159,7 +182,7 @@ public class StarVisualsView extends View {
                 while(mActive)
                 {
                     try {
-                        synchronized(mBitmap)
+                        synchronized(mSynch)
                         {
                             mStatsNative.startFrame();
                             mLock.lock();

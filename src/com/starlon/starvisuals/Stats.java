@@ -11,11 +11,11 @@ class FrameStats {
 public class Stats {
     public int MAX_FRAME_STATS = 200;
     public int MAX_PERIOD_MS = 1500;
-    public double firstTime;
-    public double lastTime;
-    public double frameTime;
-    public int firstFrame;
-    public int numFrames;
+    public double firstTime = 0.0;
+    public double lastTime = 0.0;
+    public double frameTime = 0.0;
+    public int firstFrame = 0;
+    public int numFrames = 0;
     public FrameStats frames[];
     public double mAvgFrame = 0.0;
     public double mMaxFrame = 0.0;

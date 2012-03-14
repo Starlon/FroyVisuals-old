@@ -191,7 +191,10 @@ static int free_plugpaths ()
 			return VISUAL_OK;
 
 	for (i = 0; i < __lv_plugpath_cnt - 1; i++)
-		visual_mem_free (__lv_plugpaths[i]);
+    {
+        if(__lv_plugpaths[i] != NULL)
+    		visual_mem_free (__lv_plugpaths[i]);
+    }
 
 	free (__lv_plugpaths);
 	return VISUAL_OK;
