@@ -92,8 +92,6 @@ public class StarVisualsView extends View {
         //mDisplay = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
         initVisual();
-
-        startThread();
     }
 
     public void initVisual(int w, int h)
@@ -105,6 +103,8 @@ public class StarVisualsView extends View {
 
     public void initVisual()
     {
+        stopThread();
+
         if(mBitmap != null)
             mBitmap.recycle();
         if(mBitmapSecond != null)
@@ -114,6 +114,8 @@ public class StarVisualsView extends View {
         mBitmapSecond = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
 
         NativeHelper.initApp(WIDTH, HEIGHT);
+
+        startThread();
     }
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)

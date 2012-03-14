@@ -29,7 +29,7 @@
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
 #define ACTOR "bumpscope"
-#define INPUT "mic"
+#define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
 #define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
@@ -1544,15 +1544,18 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_newSong(JNIEnv 
 
 // Is this even needed? What happens when the app is quietly discarded?
 // Seems in Android 4.0 you can kill an app by swiping it.
-JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNIEnv * env, jobject  obj)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNIEnv * env, jobject  obj, jboolean toExit)
 {
     if(!visual_is_initialized())
         return;
+
     visual_video_free_buffer(v.video);
     visual_object_unref(VISUAL_OBJECT(v.video));
     visual_object_unref(VISUAL_OBJECT(v.bin));
     visual_quit();
-    exit(0);
+
+    if(toExit)
+        exit(0);
 }
 
 void app_main(int w, int h)

@@ -33,8 +33,8 @@ import android.view.ViewConfiguration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.media.AudioRecord;
 import android.media.AudioFormat;
 import android.util.Log;
 import android.util.TypedValue;
@@ -60,7 +60,6 @@ public class StarVisuals extends Activity implements OnClickListener
     private final static int ARTHEIGHT = 100;
     private static Settings mSettings;
     private AudioRecord mAudio = null;
-    private MediaRecorder mRecorder;
     private boolean mMicActive = false;
     private int PCM_SIZE = 1024;
     private static int RECORDER_SAMPLERATE = 44100;
@@ -77,6 +76,7 @@ public class StarVisuals extends Activity implements OnClickListener
     public String mSongAlbum = null;
     public String mSongTrack = null;
     public Bitmap mAlbumArt = null;
+    public IntentFilter mIntentFilter = null;
     public boolean mHasRoot = false;
     private Thread mAudioThread = null;
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
@@ -93,7 +93,7 @@ public class StarVisuals extends Activity implements OnClickListener
 
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle state)
+    protected void onCreate(Bundle state)
     {
         super.onCreate(state);
 
@@ -156,11 +156,15 @@ public class StarVisuals extends Activity implements OnClickListener
 
         //mHasRoot = checkRoot();
 
-        enableMic();
+        mIntentFilter = new IntentFilter();
+        mIntentFilter.addAction("com.android.music.metachanged");
+        mIntentFilter.addAction("com.android.music.playstatechanged");
+        mIntentFilter.addAction("com.android.music.playbackcomplete");
+        mIntentFilter.addAction("com.android.music.queuechanged");
+        mIntentFilter.addAction("com.starlon.starvisuals.PREFS_UPDATE");
 
+        registerReceiver(mReceiver, mIntentFilter);
 
-
-        //updatePrefs();
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -201,7 +205,7 @@ public class StarVisuals extends Activity implements OnClickListener
             }
             else if(action.equals("com.starlon.starvisuals.PREFS_UPDATE"))
             {
-                //updatePrefs();
+                updatePrefs();
             }
         }
     };
@@ -215,74 +219,103 @@ public class StarVisuals extends Activity implements OnClickListener
 
     public void updatePrefs() 
     {
-        synchronized(mView.mBitmap)
-        {
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
     
-            mDoMorph = true;//settings.getBoolean("doMorph", true);
+            mDoMorph = settings.getBoolean("doMorph", true);
     
             NativeHelper.setMorphStyle(mDoMorph);
     
             mMorph = settings.getString("prefs_morph_selection", "alphablend");
-            mInput = settings.getString("prefs_input_selection", "alsa");
+            mInput = settings.getString("prefs_input_selection", "dummy");
             mActor = settings.getString("prefs_actor_selection", "infinite");
     
             NativeHelper.morphSetCurrentByName(mMorph);
             NativeHelper.inputSetCurrentByName(mInput);
             NativeHelper.actorSetCurrentByName(mActor);
     
-            mView.initVisual();
-        }
+            mView.initVisual(); // FIXME width x height. This method's overloaded: initVisual(w, h);
     }
 
-    public void onResume()
+    // This series of on<Action>() methods a flow chart are outlined here:
+    // http://developer.android.com/reference/android/app/Activity.html
+
+    // User returns to activity
+    @Override
+    public void onResume() 
     {
         super.onResume();
 
+        updatePrefs();
 
-        IntentFilter iF = new IntentFilter();
-        iF.addAction("com.android.music.metachanged");
-        iF.addAction("com.android.music.playstatechanged");
-        iF.addAction("com.android.music.playbackcomplete");
-        iF.addAction("com.android.music.queuechanged");
-        iF.addAction("com.starlon.starvisuals.PREFS_UPDATE");
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
 
-        registerReceiver(mReceiver, iF);
+        String input = settings.getString("prefs_input_selection", "dummy");
+
+        enableMic(input);
 
         getAlbumArt();
     }
 
-    public void onStop()
+    // follows onCreate() and onResume()
+    @Override
+    protected void onStart() 
+    {   
+        super.onStart();
+
+        registerReceiver(mReceiver, mIntentFilter);
+    }
+
+    // another activity comes to foreground
+    @Override
+    protected void onPause() 
+    {
+        super.onPause();
+
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
+        SharedPreferences.Editor editor = settings.edit();
+
+        int morph = NativeHelper.morphGetCurrent();
+        int input = NativeHelper.inputGetCurrent();
+        int actor = NativeHelper.actorGetCurrent();
+
+        this.setMorph(NativeHelper.morphGetName(morph));
+        this.setInput(NativeHelper.inputGetName(input));
+        this.setActor(NativeHelper.actorGetName(morph));
+
+        editor.putString("prefs_morph_selection", mMorph);
+        editor.putString("prefs_input_selection", mInput);
+        editor.putString("prefs_actor_selection", mActor);
+
+        editor.putBoolean("doMorph", mDoMorph);
+
+        //Commit edits
+        editor.commit();
+
+        releaseAlbumArt();
+    }
+
+    // user navigates back to the activity. onRestart() -> onStart() -> onResume()
+    @Override
+    protected void onRestart() 
+    {
+        super.onRestart();
+    }
+
+    // This activity is no longer visible
+    @Override
+    protected void onStop()
     {
         super.onStop();
 
-        synchronized(mView.mBitmap)
-        {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
-            SharedPreferences.Editor editor = settings.edit();
-    
-            int morph = NativeHelper.morphGetCurrent();
-            int input = NativeHelper.inputGetCurrent();
-            int actor = NativeHelper.actorGetCurrent();
-    
-            this.setMorph(NativeHelper.morphGetName(morph));
-            this.setInput(NativeHelper.inputGetName(input));
-            this.setActor(NativeHelper.actorGetName(morph));
-    
-            editor.putString("prefs_morph_selection", mMorph);
-            editor.putString("prefs_input_selection", mInput);
-            editor.putString("prefs_actor_selection", mActor);
-    
-            editor.putBoolean("doMorph", mDoMorph);
-    
-            //Commit edits
-            editor.commit();
-        }
-
         unregisterReceiver(mReceiver);
 
-        releaseAlbumArt();
-        mAudio.release();
+    }
+
+    // Last method before shut down. Clean up LibVisual from here.
+    @Override 
+    protected void onDestroy()
+    {
+        NativeHelper.visualsQuit(false); // false to prevent exit(0);
     }
 
     @Override
@@ -327,7 +360,7 @@ public class StarVisuals extends Activity implements OnClickListener
             {
                 synchronized(mView.mBitmap)
                 {
-                    NativeHelper.visualsQuit();
+                    NativeHelper.visualsQuit(true);
                 }
                 return true;
             }
@@ -339,12 +372,10 @@ public class StarVisuals extends Activity implements OnClickListener
     
                     String input = NativeHelper.inputGetName(index);
     
-                    if(input.equals("mic"))
+                    if(!enableMic(input)) 
                     {
-                        if(!enableMic())
-                            index = NativeHelper.cycleInput(1);
-                    } else {
                         mMicActive = false;
+                        index = NativeHelper.cycleInput(1);
                     }
     
                     warn(NativeHelper.inputGetLongName(index), true);
@@ -539,8 +570,28 @@ public class StarVisuals extends Activity implements OnClickListener
         return scaled;
     }
 
-    private boolean enableMic()
+    private boolean enableMic(String input)
     {
+        if(mAudio != null)
+        {
+            mMicActive = false;
+            mAudioThread.interrupt();
+            try {
+                mAudioThread.join();
+            } catch (InterruptedException e) {
+                // Do nothing
+            }
+            if(mAudio.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING)
+            {
+                mAudio.stop();
+            }
+            mAudio.release();
+            mAudio = null;
+        }
+
+        if(input.equals("mic") == false)
+            return false;
+
         mAudio = findAudioRecord();
         mView.mMicData = new short[PCM_SIZE * 4];
         if(mAudio != null)
@@ -548,16 +599,6 @@ public class StarVisuals extends Activity implements OnClickListener
             synchronized(mView.mBitmap)
             {
                 NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
-                mMicActive = false;
-                if(mAudioThread != null)
-                {
-                    mAudioThread.interrupt();
-                    try {
-                        mAudioThread.join();
-                    } catch (InterruptedException e) {
-                        // Do nothing
-                    }
-                }
                 mAudioThread = new Thread(new Runnable() 
                 {
                     public void run() {

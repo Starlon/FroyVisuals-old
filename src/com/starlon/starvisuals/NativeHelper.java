@@ -104,7 +104,7 @@ public class NativeHelper
     public static native void screenResize(int w, int h);
 
     /* Init and quit libvisual */
-    public static native void visualsQuit();
+    public static native void visualsQuit(boolean toExit);
     public static native void initApp(int w, int h);
 
     /* Draw and render vis */
