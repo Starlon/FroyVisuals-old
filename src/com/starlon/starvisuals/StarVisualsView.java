@@ -15,11 +15,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.TimeUnit;
+import java.lang.Thread;
+import java.nio.IntBuffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 
 public class StarVisualsView extends View {
     private final String TAG = "StarVisuals/StarVisualsView";
+    private final int INT_BYTES = 4;
     public Bitmap mBitmap;
+    public Bitmap mBitmapSecond;
+    public IntBuffer mIntBuffer;
     private StarVisuals mActivity;
     private Stats mStats;
     private final int WIDTH = 256;
@@ -31,6 +38,8 @@ public class StarVisualsView extends View {
     private boolean mActive = false;
     private boolean mDoBeat = false;
     public short mMicData[] = null;
+    public int mPixels[] = null;
+    public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
 
     public StarVisualsView(Context context) {
@@ -48,7 +57,6 @@ public class StarVisualsView extends View {
         mPaint.setStrokeWidth(1);
         mPaint.setColor(Color.WHITE);
 
-        NativeHelper.initApp(WIDTH, HEIGHT, 0, 0);
 
         mStats = new Stats();
         mStats.statsInit();
@@ -67,9 +75,18 @@ public class StarVisualsView extends View {
         timer.scheduleAtFixedRate(task, delay, period);
 
         mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+        mBitmapSecond = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+
+        ByteBuffer ibb = ByteBuffer.allocateDirect(WIDTH * HEIGHT * INT_BYTES);
+        ibb.order(ByteOrder.nativeOrder());
+        mIntBuffer = IntBuffer.wrap( new int[WIDTH * HEIGHT] );
+        mIntBuffer.position(0);
 
         mDisplay = ((WindowManager) mActivity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
+        NativeHelper.initApp(WIDTH, HEIGHT, 0, 0);
+
+        startThread();
     }
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
@@ -85,14 +102,11 @@ public class StarVisualsView extends View {
         //if(mMicData != null)
         //    NativeHelper.uploadAudio(mMicData);
 
-        NativeHelper.render(mBitmap);
-
         drawScene(canvas);
 
         mStats.endFrame();
     }
 
-/*
     public void stopThread()
     {
         if(mThread != null)
@@ -106,9 +120,7 @@ public class StarVisualsView extends View {
             }
         }
     }
-*/
 
-/*
     public void startThread()
     {
         stopThread();
@@ -118,8 +130,13 @@ public class StarVisualsView extends View {
                 while(mActive)
                 {
                     try {
-                        updateBitmap();
-                        mThread.sleep(2);
+                        synchronized(mBitmap)
+                        {
+                            mLock.lock();
+                            NativeHelper.render(mBitmap);
+                            mLock.unlock();
+                        }
+                        mThread.sleep(10);
                     } 
                     catch(Exception e)
                     {
@@ -131,59 +148,74 @@ public class StarVisualsView extends View {
 
         mThread.start();
     }
-*/
 
     private void drawScene(Canvas canvas)
     {
-            //synchronized(mBitmap)//if(mLock.tryLock())
+            if(mLock.tryLock())
             {
                 // Draw bitmap on canvas
                 canvas.drawBitmap(mBitmap, mMatrix, mPaint);
-                
-                // Do we have text to show?
-                String text = mActivity.getDisplayText();
-        
-                if(text != null)
-                {
-                    float canvasWidth = getWidth();
-                    float textWidth = mPaint.measureText(text);
-                    float startPositionX = (canvasWidth / 2 - textWidth / 2);
-            
-                    canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
-        
-                    if(mDoBeat)
-                    {
-                        int bpm = NativeHelper.getBPM();
-                        int confidence = NativeHelper.getBPMConfidence();
-                        boolean isBeat = NativeHelper.isBeat();
-            
-                        if(bpm > 0)
-                            text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : "");
-                        else
-                            text = "Learning...";
-            
-                        textWidth = mPaint.measureText(text);
-                        startPositionX = (canvasWidth / 2 - textWidth / 2);
-                        canvas.drawText(text, startPositionX, getHeight()-100, mPaint);
-                    }
-                }
-        
-                if(mActivity.mAlbumArt != null)
-                {
-                    int width = mActivity.mAlbumArt.getWidth();
-                    int height = mActivity.mAlbumArt.getHeight();
-                    canvas.drawBitmap(mActivity.mAlbumArt, 50.0f, 50.0f, mPaint);
-                }
-        
-                invalidate();
+
+                mIntBuffer.position(0);
+                mBitmap.copyPixelsToBuffer(mIntBuffer);
+
+                mLock.unlock();
+
+            } else {
+                mIntBuffer.position(0);
+                mBitmapSecond.copyPixelsFromBuffer(mIntBuffer);
+
+                canvas.drawBitmap(mBitmapSecond, mMatrix, mPaint);
             }
+                
+            // Do we have text to show?
+            String text = mActivity.getDisplayText();
+    
+            if(text != null)
+            {
+                float canvasWidth = getWidth();
+                float textWidth = mPaint.measureText(text);
+                float startPositionX = (canvasWidth / 2 - textWidth / 2);
+        
+                canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
+            }
+    
+            if(mDoBeat)
+            {
+                float canvasWidth = getWidth();
+                float textWidth = mPaint.measureText(text);
+                float startPositionX = (canvasWidth / 2 - textWidth / 2);
+
+                int bpm = NativeHelper.getBPM();
+                int confidence = NativeHelper.getBPMConfidence();
+                boolean isBeat = NativeHelper.isBeat();
+    
+                if(bpm > 0)
+                    text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : "");
+                else
+                    text = "Learning...";
+    
+                textWidth = mPaint.measureText(text);
+                startPositionX = (canvasWidth / 2 - textWidth / 2);
+                canvas.drawText(text, startPositionX, getHeight()-100, mPaint);
+            }
+    
+            if(mActivity.mAlbumArt != null)
+            {
+                int width = mActivity.mAlbumArt.getWidth();
+                int height = mActivity.mAlbumArt.getHeight();
+                canvas.drawBitmap(mActivity.mAlbumArt, 50.0f, 50.0f, mPaint);
+            }
+            
+            invalidate();
     }
 
     public void switchScene(int prev)
     {
-        //synchronized(mBitmap)
+        if(mLock.tryLock())
         {
             NativeHelper.finalizeSwitch(prev);
+            mLock.unlock();
         }
     }
 

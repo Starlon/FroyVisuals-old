@@ -27,6 +27,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <gettext.h>
+#include <sys/stat.h>
 #include <libvisual/libvisual.h>
 
 #include <tinyalsa/asoundlib.h>
@@ -218,7 +219,7 @@ static int inp_alsa_events (VisPluginData *plugin, VisEventQueue *events)
         {
             //FIXME rigid calls this evil. Evil is Microsoft. This is life or death. :( 
             //if(chmod(fn, S_IROTH) != 0)
-            visual_log(VISUAL_LOG_WARNING, "ALSA input - device is not readable: %s", fn);
+                visual_log(VISUAL_LOG_WARNING, "ALSA input - device is not readable: %s", fn);
             return -1;
         }
 

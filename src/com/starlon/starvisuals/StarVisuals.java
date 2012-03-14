@@ -164,6 +164,8 @@ public class StarVisuals extends Activity implements OnClickListener
         iF.addAction("com.starlon.starvisuals.PREFS_UPDATE");
 
         registerReceiver(mReceiver, iF);
+
+        //updatePrefs();
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -204,7 +206,7 @@ public class StarVisuals extends Activity implements OnClickListener
             }
             else if(action.equals("com.starlon.starvisuals.PREFS_UPDATE"))
             {
-                updatePrefs();
+                //updatePrefs();
             }
         }
     };
@@ -216,23 +218,26 @@ public class StarVisuals extends Activity implements OnClickListener
 */
     }
 
-    public void updatePrefs()
+    public void updatePrefs() 
     {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
-
-        mDoMorph = settings.getBoolean("doMorph", true);
-
-        NativeHelper.setMorphStyle(mDoMorph);
-
-        mMorph = settings.getString("prefs_morph_selection", "alphablend");
-        mInput = settings.getString("prefs_input_selection", "alsa");
-        mActor = settings.getString("prefs_actor_selection", "infinite");
-
-        NativeHelper.morphSetCurrentByName(mMorph);
-        NativeHelper.inputSetCurrentByName(mInput);
-        NativeHelper.actorSetCurrentByName(mActor);
-
-        NativeHelper.updatePlugins();
+        synchronized(mView.mBitmap)
+        {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
+    
+            mDoMorph = true;//settings.getBoolean("doMorph", true);
+    
+            NativeHelper.setMorphStyle(mDoMorph);
+    
+            mMorph = "alphablend";//settings.getString("prefs_morph_selection", "alphablend");
+            mInput = "dummy";//settings.getString("prefs_input_selection", "alsa");
+            mActor = "jakdaw";//settings.getString("prefs_actor_selection", "infinite");
+    
+            NativeHelper.morphSetCurrentByName(mMorph);
+            NativeHelper.inputSetCurrentByName(mInput);
+            NativeHelper.actorSetCurrentByName(mActor);
+    
+            NativeHelper.updatePlugins();
+        }
     }
 
     public void onResume()
@@ -246,25 +251,28 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onStop();
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
-        SharedPreferences.Editor editor = settings.edit();
-
-        int morph = NativeHelper.morphGetCurrent();
-        int input = NativeHelper.inputGetCurrent();
-        int actor = NativeHelper.actorGetCurrent();
-
-        this.setMorph(NativeHelper.morphGetName(morph));
-        this.setInput(NativeHelper.inputGetName(input));
-        this.setActor(NativeHelper.actorGetName(morph));
-
-        editor.putString("prefs_morph_selection", mMorph);
-        editor.putString("prefs_input_selection", mInput);
-        editor.putString("prefs_actor_selection", mActor);
-
-        editor.putBoolean("doMorph", mDoMorph);
-
-        //Commit edits
-        editor.commit();
+        synchronized(mView.mBitmap)
+        {
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
+            SharedPreferences.Editor editor = settings.edit();
+    
+            int morph = NativeHelper.morphGetCurrent();
+            int input = NativeHelper.inputGetCurrent();
+            int actor = NativeHelper.actorGetCurrent();
+    
+            this.setMorph(NativeHelper.morphGetName(morph));
+            this.setInput(NativeHelper.inputGetName(input));
+            this.setActor(NativeHelper.actorGetName(morph));
+    
+            editor.putString("prefs_morph_selection", mMorph);
+            editor.putString("prefs_input_selection", mInput);
+            editor.putString("prefs_actor_selection", mActor);
+    
+            editor.putBoolean("doMorph", mDoMorph);
+    
+            //Commit edits
+            editor.commit();
+        }
 
         releaseAlbumArt();
     }
@@ -309,7 +317,10 @@ public class StarVisuals extends Activity implements OnClickListener
 */
             case R.id.close_app:
             {
-                NativeHelper.visualsQuit();
+                synchronized(mView.mBitmap)
+                {
+                    NativeHelper.visualsQuit();
+                }
                 return true;
             }
             case R.id.input_stub:
@@ -526,20 +537,23 @@ public class StarVisuals extends Activity implements OnClickListener
         mView.mMicData = new short[PCM_SIZE * 4];
         if(mAudio != null)
         {
-            NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
-            Thread audioThread = new Thread(new Runnable() {
-                public void run() {
-                    mMicActive = true;
-                    mAudio.startRecording();
-                    while(mMicActive)
-                    {
-                        mAudio.read(mView.mMicData, 0, PCM_SIZE);
+            synchronized(mView.mBitmap)
+            {
+                NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+                Thread audioThread = new Thread(new Runnable() {
+                    public void run() {
+                        mMicActive = true;
+                        mAudio.startRecording();
+                        while(mMicActive)
+                        {
+                            mAudio.read(mView.mMicData, 0, PCM_SIZE);
+                        }
+                        mAudio.stop();
                     }
-                    mAudio.stop();
-                }
-            });
-            audioThread.start();
-            mView.mMicData = null;
+                });
+                audioThread.start();
+                mView.mMicData = null;
+            }
             return true;
         }
         return false;
