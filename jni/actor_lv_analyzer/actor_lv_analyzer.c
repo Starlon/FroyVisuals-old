@@ -191,7 +191,7 @@ static void _change_bars(VisPluginData *plugin,
         visual_param_entry_set_integer(p, priv->bars);
 }
 
-static void _change_param(VisPluginData *plugin, VisParamEntry *p)
+static int _change_param(VisPluginData *plugin, VisParamEntry *p)
 {
 	/**
      * structure defining handler functions for configuration values
@@ -229,11 +229,11 @@ static void _change_param(VisPluginData *plugin, VisParamEntry *p)
         /* call this parameters' post-change handler */
         if(parms[i].postchange)
             parms[i].postchange(plugin);
-        
-        return;
+       //return 0; 
     }
     
     printf("Unknown param '%s'\n", visual_param_entry_get_name(p));
+    return 0;
 }
 
 int lv_analyzer_events (VisPluginData *plugin, VisEventQueue *events)
@@ -312,6 +312,7 @@ VisPalette *lv_analyzer_palette (VisPluginData *plugin)
 static inline void draw_vline (VisVideo *video, int x1, int x2, int y, uint8_t color)
 {
 	uint8_t *pixels = visual_video_get_pixels (video);
+	int i;
 
 	if (video->depth != VISUAL_VIDEO_DEPTH_8BIT)
 		return;
@@ -329,8 +330,8 @@ static inline void draw_vline (VisVideo *video, int x1, int x2, int y, uint8_t c
  */
 static void draw_bar (VisVideo *video, int index, int nbars, float amplitude)
 {
-	//int startx = (video->width / nbars) * index;
-	//int endx = ((video->width / nbars) * (index + 1));
+	int startx = (video->width / nbars) * index;
+	int endx = ((video->width / nbars) * (index + 1));
 	int height = video->height * amplitude;
 	int i;
 	float scale = 128.0 / video->height;
@@ -354,23 +355,21 @@ int lv_analyzer_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 	/* no value configured? */
 	if(bars < 0)
 		bars = video->width/2;
-
+		
 	float freq[bars];
 	float pcm[bars * 2];
 	int i;
 
 	visual_video_fill_color (video, NULL);
 
-	visual_buffer_set_data_pair (&buffer, freq, sizeof(freq));
-	visual_buffer_set_data_pair (&pcmb, pcm, sizeof(pcm));
+	visual_buffer_set_data_pair (&buffer, freq, sizeof (freq));
+	visual_buffer_set_data_pair (&pcmb, pcm, sizeof (pcm));
 
-	visual_audio_get_sample_mixed (audio, &pcmb, TRUE, 2,
+	visual_audio_get_sample_mixed_simple (audio, &pcmb, 2,
 			VISUAL_AUDIO_CHANNEL_LEFT,
-			VISUAL_AUDIO_CHANNEL_RIGHT,
-            1.0,
-            1.0);
+			VISUAL_AUDIO_CHANNEL_RIGHT);
 
-	visual_audio_get_spectrum_for_sample (&buffer, &pcmb, FALSE);
+	visual_audio_get_spectrum_for_sample (&buffer, &pcmb, TRUE);
 
 	for (i = 0; i < bars; i++)
 		draw_bar (video, i, bars, freq[i]);
