@@ -2,9 +2,6 @@ package com.starlon.starvisuals;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Looper;
-import android.os.AsyncTask;
 import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.content.Context;
@@ -18,13 +15,10 @@ import android.content.ContentResolver;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.MotionEvent;
-import android.view.Display;
-import android.view.Surface;
 import android.view.View.OnTouchListener;
 import android.view.View.OnClickListener;
 import android.view.GestureDetector;
@@ -32,12 +26,10 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewConfiguration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.media.MediaRecorder;
 import android.media.AudioRecord;
 import android.media.AudioFormat;
 import android.util.Log;
-import android.util.TypedValue;
 import android.net.Uri;
 import android.database.Cursor;
 import android.provider.MediaStore;
@@ -370,6 +362,8 @@ public class StarVisuals extends Activity implements OnClickListener
                 return true;
             }
 */
+
+/*
             case R.id.close_app:
             {
                 synchronized(mView.mSynch)
@@ -378,6 +372,8 @@ public class StarVisuals extends Activity implements OnClickListener
                 }
                 return true;
             }
+*/
+/*
             case R.id.input_stub:
             {
                 synchronized(mView.mSynch)
@@ -394,7 +390,7 @@ public class StarVisuals extends Activity implements OnClickListener
                     warn(NativeHelper.inputGetLongName(index), true);
                 }
             }
-
+*/
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");

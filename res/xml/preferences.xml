@@ -1,157 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-        <PreferenceCategory
+    <PreferenceCategory
                 android:title="@string/prefs_title_general">
                 
-            <LinearLayout 
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" 
-                android:orientation="vertical" 
-                android:baselineAligned="false"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="10dip">
-                        <ListPreference
-                            android:id="@+id/prefs_actor_selection"
-                            android:key="prefs_actor_selection"
-                            android:title="@string/prefs_actor_selection"
-                            android:summary="@string/prefs_actor_selection_summary"/>
+                    <ListPreference
+                        android:id="@+id/prefs_actor_selection"
+                        android:key="prefs_actor_selection"
+                        android:title="@string/prefs_actor_selection"
+                        android:summary="@string/prefs_actor_selection_summary"/>
 
-                        <PreferenceScreen
-                            android:fragment="com.starlon.starvisuals.PreferenceActivity$ActorFragment"
-                            android:title="@string/title_actor_singular"
-                            android:layout="@layout/about_plugins">
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dip">
-                
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:orientation="vertical"
-                android:paddingBottom="25dip">
-                
-                <TextView 
-                    android:text="@string/title_plugin_long_name" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
+                    <PreferenceScreen
+                        android:fragment="com.starlon.starvisuals.PreferenceActivity$ActorFragment"
+                        android:title="@string/title_actor_singular"
+                        android:widgetLayout="@layout/about_actors"
+                        android:enabled="true">
 
-                <TextView 
-                    android:id="@+id/actor_info_long_name"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-              
-                <TextView 
-                    android:text="@string/title_plugin_author" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/actor_info_author"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_version" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/actor_info_version"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_about" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/actor_info_about"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_help" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/actor_info_help"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_license" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/actor_info_license"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:linksClickable="true"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-    </ScrollView>
-                        </PreferenceScreen>
-            </LinearLayout>
-
-            <LinearLayout 
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" 
-                android:orientation="vertical" 
-                android:baselineAligned="false"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="10dip">
-
+                    </PreferenceScreen>
 
                     <ListPreference
                         android:id="@+id/prefs_input_selection"
@@ -161,138 +26,11 @@
 
                     <PreferenceScreen
                         android:fragment="com.starlon.starvisuals.PreferenceActivity$InputFragment"
-                        android:title="@string/title_input_singular" >
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dip">
-                
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:orientation="vertical"
-                android:paddingBottom="25dip">
-                
-                <TextView 
-                    android:text="@string/title_plugin_long_name" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:id="@+id/input_info_long_name"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-              
-                <TextView 
-                    android:text="@string/title_plugin_author" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/input_info_author"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_version" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/input_info_version"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_about" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/input_info_about"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_help" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/input_info_help"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_license" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/input_info_license"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:linksClickable="true"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-    </ScrollView>
+                        android:title="@string/title_input_singular"
+                        android:layout="@layout/about_input"
+                        android:enabled="false">
+                    
                     </PreferenceScreen>
-
-            </LinearLayout>
-
-            <LinearLayout 
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content" 
-                android:orientation="vertical" 
-                android:baselineAligned="false"
-                android:layout_marginTop="10dip"
-                android:layout_marginBottom="10dip">
 
 
                     <CheckBoxPreference
@@ -315,132 +53,13 @@
                             android:key="prefs_morph_selection"
                             android:title="@string/prefs_morph_selection"
                             android:summary="@string/prefs_morph_selection_summary"/>
+
                     <PreferenceScreen
                         android:fragment="com.starlon.starvisuals.PreferenceActivity$MorphFragment"
-                        android:title="@string/title_morph_singular" >
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dip">
-                
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" 
-                android:orientation="vertical"
-                android:paddingBottom="25dip">
-                
-                <TextView 
-                    android:text="@string/title_plugin_long_name" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:id="@+id/morph_info_long_name"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-              
-                <TextView 
-                    android:text="@string/title_plugin_author" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/morph_info_author"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_version" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/morph_info_version"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_about" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/morph_info_about"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_help" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/morph_info_help"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_weight="1"/>
-
-                <TextView 
-                    android:text="@string/title_plugin_license" 
-                    android:textAppearance="?android:attr/textAppearanceLarge" 
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content" 
-                    android:linksClickable="true"
-                    android:layout_gravity="left"
-                    android:layout_weight="0"
-                    android:autoLink="all"/>
-
-                <TextView 
-                    android:id="@+id/morph_info_license"
-                    android:paddingBottom="15dip"
-                    android:layout_height="wrap_content" 
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="left"
-                    android:linksClickable="true"
-                    android:layout_weight="1"/>
-
-            </LinearLayout>
-    </ScrollView>
+                        android:title="@string/title_morph_singular"
+                        android:layout="@layout/about_morph"
+                        android:enabled="false">
                     </PreferenceScreen>
-            </LinearLayout>
 
-        </PreferenceCategory>
-    
+    </PreferenceCategory>
 </PreferenceScreen>

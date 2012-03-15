@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+    android:id="@+id/morph_info_plugin_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:orientation="vertical">
+    
+    <LinearLayout 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:orientation="vertical" 
+        android:baselineAligned="false"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dip">
+<!--
+        <ImageView 
+            android:src="@drawable/icon" 
+            android:layout_gravity="left" 
+            android:layout_height="wrap_content" 
+            android:layout_width="wrap_content" 
+            android:layout_marginRight="15dip">
+        </ImageView>
+    -->    
+        <TextView 
+            android:textAppearance="?android:attr/textAppearanceLarge" 
+            android:layout_gravity="center" 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_plugin_singular">
+        </TextView>
+
+    </LinearLayout>
+    
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dip">
+                
+            <ListView
+                android:id="@+id/morph_info_list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="vertical"
+                android:paddingBottom="50dip">
+    
+            </ListView>
+
+    </ScrollView>
+</LinearLayout>
+
+

@@ -1,19 +1,31 @@
 package com.starlon.starvisuals;
 
 import android.content.Intent;
-//import android.preference.CheckBoxPreference;
-//import android.preference.ListPreference;
+import android.content.Context;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.SimpleAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.app.Activity;
+import android.app.ListActivity;
 import android.preference.PreferenceActivity;
-//import android.preference.PreferenceCategory;
-//import android.preference.PreferenceScreen;
-//import android.preference.PreferenceManager;
 import android.preference.PreferenceFragment;
+import android.content.res.Resources;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
-public class PreferencesActivity extends PreferenceActivity
+public class PreferencesActivity extends ListActivity
 {
         private final static String TAG = "StarVisuals/PreferencesActivity";
         private final static String PREFS = "StarVisualsPrefs";
@@ -23,146 +35,31 @@ public class PreferencesActivity extends PreferenceActivity
         public void onCreate(Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
+            setContentView(R.layout.preferences);
 
-            /** create prefs from xml */
-            //addPreferencesFromResource(R.xml.preferences);
+            //final Context mContext = (Context)this;
 
-            //PreferenceManager prefManager = getPreferenceManager();
-            //prefManager.setSharedPreferencesName(PREFS); 
+            ListView listView = (ListView) findViewById(android.R.id.list);
+            String[] values = new String[] { "About Plugins" };
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
-            //setPreferenceScreen(createPreferenceHierarchy());
-            addPreferencesFromResource(R.xml.preferences);
-        }
-
-        @Override
-        public void onBuildHeaders(List<Header> target)
-        {
-            //loadHeadersFromResource(R.xml.preference_headers, target);
-        }
-
-        /** another activity comes over this activity */
-        @Override
-        public void onPause()
-        {
-            super.onPause();
-            //Intent i = new Intent(this, StarVisualsReceiver.class);
-            Intent i = new Intent();
-            i.setAction("com.starlon.starvisuals.PREFS_UPDATE");
-            sendBroadcast(i);
-        }
-
-        public static class ActorFragment extends PreferenceFragment {
+            listView.setAdapter(adapter);
         
-            @Override
-            public void onCreate(Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-        
-                // Load the preferences from an XML resource
-                addPreferencesFromResource(R.xml.preferences_actor);
-            }
-        }
-        public static class InputFragment extends PreferenceFragment {
-        
-            @Override
-            public void onCreate(Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-        
-                // Load the preferences from an XML resource
-                addPreferencesFromResource(R.xml.preferences_input);
-            }
-        }
-
-        public static class MorphFragment extends PreferenceFragment {
-        
-            @Override
-            public void onCreate(Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-        
-                // Load the preferences from an XML resource
-                addPreferencesFromResource(R.xml.preferences_morph);
-            }
-        }
 /*
-        private PreferenceScreen createPreferenceHierarchy()
-        {
-            CharSequence[] entries;
-            CharSequence[] entryValues;
-            int count;
-            int current;
-            PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
-            
-            PreferenceCategory inlinePrefCat = new PreferenceCategory(this);
-            inlinePrefCat.setTitle(R.string.prefs_title_general);
-            root.addPreference(inlinePrefCat);
+            listView.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
+                {
+                    String item = (String) getListAdapter().getItem(position);
 
-            CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
-            checkboxPref.setKey("prefs_morph_enabled");
-            checkboxPref.setTitle(R.string.prefs_morph_enabled);
-            checkboxPref.setSummary(R.string.prefs_summary_morph_enabled);
-            inlinePrefCat.addPreference(checkboxPref);
+                    if(item.equals("About Plugins"))
+                        startActivity(new Intent(mContext, AboutPluginsActivity.class));
+                    
+                }
+            });
 
-            current = NativeHelper.actorGetCurrent();
-            count = NativeHelper.actorCount();
-            entries = new CharSequence[count];
-            entryValues = new CharSequence[count];
-            for(int i = 0; i < count; i++)
-            {
-                entryValues[i] = NativeHelper.actorGetName(i);
-                entries[i] = NativeHelper.actorGetLongName(i);
-            }
-            ListPreference actorPref = new ListPreference(this);
-            actorPref.setEntries(entries);
-            actorPref.setEntryValues(entryValues);
-            actorPref.setDialogTitle(R.string.prefs_actor_selection);
-            actorPref.setKey("prefs_actor_selection");
-            actorPref.setTitle(R.string.prefs_actor_selection);
-            actorPref.setSummary(R.string.prefs_actor_selection_summary);
-            //if(current >= 0)
-            //    actorPref.setValueIndex(current);
-            inlinePrefCat.addPreference(actorPref);
-
-            current = NativeHelper.inputGetCurrent();
-            count = NativeHelper.inputCount();
-            entries = new CharSequence[count];
-            entryValues = new CharSequence[count];
-            for(int i = 0; i < count; i++)
-            {
-                entries[i] = NativeHelper.inputGetName(i);
-                entryValues[i] = NativeHelper.inputGetLongName(i);
-            }
-            ListPreference inputPref = new ListPreference(this);
-            inputPref.setEntries(entries);
-            inputPref.setEntryValues(entryValues);
-            inputPref.setDialogTitle(R.string.prefs_input_selection);
-            inputPref.setKey("prefs_input_selection");
-            inputPref.setTitle(R.string.prefs_input_selection);
-            inputPref.setSummary(R.string.prefs_input_selection_summary);
-            //if(current >= 0)
-            //    inputPref.setValueIndex(current);
-            inlinePrefCat.addPreference(inputPref);
-
-            current = NativeHelper.morphGetCurrent();
-            count = NativeHelper.morphCount();
-            entries = new CharSequence[count];
-            entryValues = new CharSequence[count];
-            for(int i = 0; i < count; i++)
-            {
-                entries[i] = NativeHelper.morphGetName(i);
-                entryValues[i] = NativeHelper.morphGetLongName(i);
-            }
-            ListPreference morphPref = new ListPreference(this);
-            morphPref.setEntries(entries);
-            morphPref.setEntryValues(entryValues);
-            morphPref.setDialogTitle(R.string.prefs_morph_selection);
-            morphPref.setKey("prefs_morph_selection");
-            morphPref.setTitle(R.string.prefs_morph_selection);
-            morphPref.setSummary(R.string.prefs_morph_selection_summary);
-            //if(current >= 0)
-            //    morphPref.setValueIndex(current);
-            inlinePrefCat.addPreference(morphPref);
-
-            return root;
-        }
-        
 */
+        }
 }
+

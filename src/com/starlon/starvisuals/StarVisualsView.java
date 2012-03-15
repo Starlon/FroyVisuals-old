@@ -2,8 +2,7 @@ package com.starlon.starvisuals;
 
 import android.content.Context;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.Display;
+//import android.view.Display;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
@@ -190,7 +189,7 @@ public class StarVisualsView extends View {
                             mLock.unlock();
                             mStatsNative.endFrame();
                         }
-                        mThread.sleep(10);
+                        Thread.sleep(10);
                     } 
                     catch(Exception e)
                     {
