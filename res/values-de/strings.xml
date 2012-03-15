@@ -4,6 +4,9 @@
     <!-- Preferences -->
     <string name="preferences_name">StarVisuals Einstellungen</string>
     <string name="prefs_title_general">General</string>
+    <string name="prefs_title_actor">Actor Plugins</string>
+    <string name="prefs_title_input">Input Plugins</string>
+    <string name="prefs_title_morph">Morph Plugins</string>
     <string name="prefs_morph_enabled">Ermöglichen Morphs</string>
     <string name="prefs_summary_morph_enabled">Überprüfen Sie, Morphs zu ermöglichen.</string>
     <string name="prefs_actor_selection">Wählen Sie einen Darsteller.</string>
@@ -14,16 +17,16 @@
     <string name="prefs_morph_selection_summary">Morphs zeigen den Stil, in dem Akteure verändert.</string>
 
     <!-- Info -->
-    <string name="info_name">Plugin Informationen</string>
+    <string name="title_plugin_singular">Plugin Informationen</string>
 
     <!-- Input -->
-    <string name="input_name">Input Plugin</string>
+    <string name="title_actor_singular">Actor Plugin</string>
 
     <!-- Morph -->
-    <string name="morph_name">Morph Plugin</string>
+    <string name="title_input_singular">Input Plugin</string>
 
     <!-- Actor -->
-    <string name="actor_name">Actor Plugin</string>
+    <string name="title_morph_singular">Morph Plugin</string>
 
     <!-- Plugin header titles -->
     <string name="title_plugin_name">Name</string>

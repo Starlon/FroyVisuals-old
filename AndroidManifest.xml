@@ -38,7 +38,7 @@
 
     <!-- Indicate minimum and target sdk versions. -->
     <uses-sdk android:minSdkVersion="8" 
-              android:targetSdkVersion="8" />
+              android:targetSdkVersion="15" />
 
     <!-- Indicate that landscape view requires GL version 2.0. -->
     <uses-feature android:name="android.hardware.screen.landscape"

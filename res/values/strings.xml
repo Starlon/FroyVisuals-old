@@ -5,8 +5,17 @@
     <!-- Preferences -->
     <string name="preferences_name">StarVisuals Preferences</string>
     <string name="prefs_title_general">General</string>
-    <string name="prefs_morph_enabled">Enable Morphs</string>
+    <string name="prefs_title_actor">Actor Plugins</string>
+    <string name="prefs_title_input">Input Plugins</string>
+    <string name="prefs_title_morph">Morph Plugins</string>
+    <string name="prefs_summary_general">General Settings</string>
+    <string name="prefs_summary_actor">Actor Settings</string>
+    <string name="prefs_summary_input">Input Settings</string>
+    <string name="prefs_summary_morph">Morph Settings</string>
+    <string name="prefs_morph_enabled">Enable Morph</string>
+    <string name="prefs_morph_steps">Morph Steps</string>
     <string name="prefs_summary_morph_enabled">Check to enable morphs.</string>
+    <string name="prefs_summary_morph_steps">Steps to perform when morphing.</string>
     <string name="prefs_actor_selection">Choose an Actor</string>
     <string name="prefs_actor_selection_summary">Actors are the visualizations themselves.</string>
     <string name="prefs_input_selection">Choose an Input</string>
@@ -15,16 +24,16 @@
     <string name="prefs_morph_selection_summary">Morphs indicate the style in which actors are changed.</string>
 
     <!-- Info -->
-    <string name="info_name">Plugin Information</string>
-
-    <!-- Input -->
-    <string name="input_name">Input Plugin</string>
-
-    <!-- Morph -->
-    <string name="morph_name">Morph Plugin</string>
+    <string name="title_plugin_singular">Plugin Information</string>
 
     <!-- Actor -->
-    <string name="actor_name">Actor Plugin</string>
+    <string name="title_actor_singular">Actor Plugin</string>
+
+    <!-- Input -->
+    <string name="title_input_singular">Input Plugin</string>
+
+    <!-- Morph -->
+    <string name="title_morph_singular">Morph Plugin</string>
 
     <!-- Plugin header titles -->
     <string name="title_plugin_name">Name</string>

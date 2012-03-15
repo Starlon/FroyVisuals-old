@@ -3,7 +3,7 @@
 
 APPNAME = StarVisuals
 ACTIVITY = StarVisuals
-TARGET = android-10
+TARGET = android-15
 
 all:
 	@ndk-build

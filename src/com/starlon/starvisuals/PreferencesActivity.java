@@ -1,14 +1,16 @@
 package com.starlon.starvisuals;
 
 import android.content.Intent;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
+//import android.preference.CheckBoxPreference;
+//import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceScreen;
-import android.preference.PreferenceManager;
+//import android.preference.PreferenceCategory;
+//import android.preference.PreferenceScreen;
+//import android.preference.PreferenceManager;
+import android.preference.PreferenceFragment;
 import android.os.Bundle;
 import android.util.Log;
+import java.util.List;
 
 
 public class PreferencesActivity extends PreferenceActivity
@@ -28,7 +30,14 @@ public class PreferencesActivity extends PreferenceActivity
             //PreferenceManager prefManager = getPreferenceManager();
             //prefManager.setSharedPreferencesName(PREFS); 
 
-            setPreferenceScreen(createPreferenceHierarchy());
+            //setPreferenceScreen(createPreferenceHierarchy());
+            addPreferencesFromResource(R.xml.preferences);
+        }
+
+        @Override
+        public void onBuildHeaders(List<Header> target)
+        {
+            //loadHeadersFromResource(R.xml.preference_headers, target);
         }
 
         /** another activity comes over this activity */
@@ -42,6 +51,38 @@ public class PreferencesActivity extends PreferenceActivity
             sendBroadcast(i);
         }
 
+        public static class ActorFragment extends PreferenceFragment {
+        
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+        
+                // Load the preferences from an XML resource
+                addPreferencesFromResource(R.xml.preferences_actor);
+            }
+        }
+        public static class InputFragment extends PreferenceFragment {
+        
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+        
+                // Load the preferences from an XML resource
+                addPreferencesFromResource(R.xml.preferences_input);
+            }
+        }
+
+        public static class MorphFragment extends PreferenceFragment {
+        
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+        
+                // Load the preferences from an XML resource
+                addPreferencesFromResource(R.xml.preferences_morph);
+            }
+        }
+/*
         private PreferenceScreen createPreferenceHierarchy()
         {
             CharSequence[] entries;
@@ -123,4 +164,5 @@ public class PreferencesActivity extends PreferenceActivity
             return root;
         }
         
+*/
 }

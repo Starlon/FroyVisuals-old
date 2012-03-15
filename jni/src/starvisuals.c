@@ -1587,7 +1587,7 @@ void app_main(int w, int h)
         visual_object_unref(VISUAL_OBJECT(v.bin->input));
         visual_object_unref(VISUAL_OBJECT(v.bin->actor));
         //FIXME We need valgrind pronto... 
-        visual_object_unref(VISUAL_OBJECT(v.bin));
+        //visual_object_unref(VISUAL_OBJECT(v.bin));
     }
 
     v.bin    = visual_bin_new ();
