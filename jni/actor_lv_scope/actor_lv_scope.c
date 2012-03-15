@@ -29,6 +29,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <gettext.h>
+#include <math.h>
 
 #include <libvisual/libvisual.h>
 
@@ -37,6 +38,9 @@
 typedef struct {
 	VisPalette	pal;
 	VisBuffer	pcm;
+    double n, b, x, y, i, v, w, h, red, green, blue, linesize, skip, drawmode, t, d;
+    double zo, z1, r1, r2, r3, speed;
+    int channel_source, needs_init;
 } ScopePrivate;
 
 int lv_scope_init (VisPluginData *plugin);
@@ -94,6 +98,8 @@ int lv_scope_init (VisPluginData *plugin)
 	visual_palette_allocate_colors (&priv->pal, 256);
 
 	visual_buffer_init_allocate (&priv->pcm, sizeof (float) * PCM_SIZE, visual_buffer_destroyer_free);
+
+    priv->needs_init = TRUE;
 
 	return 0;
 }
@@ -175,18 +181,68 @@ VisPalette *lv_scope_palette (VisPluginData *plugin)
 	return &priv->pal;
 }
 
+void run_init(ScopePrivate *priv)
+{
+    priv->n = 64;
+    priv->zo = 0;
+    priv->speed = 0.0005;
+    priv->r1=1/7.0;priv->r2=4/9.0;priv->r3=5/3.0;
+}
+
+void run_frame(ScopePrivate *priv)
+{
+    priv->zo=priv->zo+priv->speed/5.0;
+}
+
+void run_beat(ScopePrivate *priv)
+{
+    priv->zo = (priv->zo + 10) * 1.2;
+}
+
+void run_point(ScopePrivate *priv)
+{
+    priv->r1=priv->r2*9333.2312311+priv->r3*33222.93329; priv->r1=priv->r1-floor(priv->r1);
+    priv->r2=priv->r3*6233.73553+priv->r1*9423.1323219; priv->r2=priv->r2-floor(priv->r2);
+    priv->r3=priv->r1*373.871324+priv->r2*43322.4323441; priv->r3=priv->r3-floor(priv->r3);
+    priv->z1=priv->r3-priv->zo;priv->z1=.5/(priv->z1-floor(priv->z1)+.2);
+    priv->x=(priv->r2*2-1)*priv->z1;
+    priv->y=(priv->r1*2-1)*priv->z1;
+    priv->red=(1-exp(-priv->z1*priv->z1)) * 255.0; priv->green=priv->red; priv->blue=priv->red;
+}
+
+static __inline int makeint(double t)
+{
+  if (t <= 0.0) return 0;
+  if (t >= 1.0) return 255;
+  return (int)(t*255.0);
+}
+
 int lv_scope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
 	ScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+
 	VisColor col;
 	float *pcmbuf;
-	int i, y, y_old;
+	int i, y, y_old, x;
 	uint8_t *buf;
+    int isBeat = 0;
+
+    int a, l, lx = 0, ly = 0;
+    int ws=(priv->channel_source&4)?1:0;
+    int xorv=(ws*128)^128;
+    int size=video->width/4.0;
+
 
 	if (video == NULL)
 		return -1;
 
 	y = video->height >> 1;
+
+    if(priv->needs_init)
+    {
+        run_init(priv);
+        priv->needs_init = FALSE;
+    }
 
 	visual_audio_get_sample_mixed (audio, &priv->pcm, TRUE, 2,
 			VISUAL_AUDIO_CHANNEL_LEFT,
@@ -200,9 +256,48 @@ int lv_scope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 
 	buf = (uint8_t *) visual_video_get_pixels (video);
 
+    priv->h = video->height;
+    priv->w = video->width;
+    priv->b = 0;
+
+    run_frame(priv);
+
+    if(isBeat)
+        run_beat(priv);
+
+    l = priv->n;
+
+    if(l >= 128*size)
+        l = 128*size - 1;
+
+
+    for(a = 0; a < l; a++)
+    {
+        double r=(a*size)/(double)l;
+        double s1=r-(int)r;
+        int val1 = (pcmbuf[(int)r]/(float)UCHAR_MAX + 1) / 2.0 * 128;
+        int val2 = (pcmbuf[(int)r+1]/(float)UCHAR_MAX + 1) / 2.0 * 128;
+        double yr = (val1^xorv)*(1.0-s1)+(val2^xorv)*(s1);
+        priv->y = yr/128.0;
+        priv->i = (double)a/(double)(l-1);
+
+        run_point(priv);
+
+        uint32_t this_color = makeint(priv->blue) | (makeint(priv->green) << 8) | (makeint(priv->red) << 16) | (255 << 24);
+
+        x = (int)((priv->x + 1) * (double)video->width * 0.5);
+        y = (int)((priv->y + 1) * (double)video->height * 0.5);
+
+        if(y >= 0 && y < video->height && x >= 0 && x < video->width)
+        {
+            buf[x+y*video->width] = this_color;
+        }
+    }
+
 	y_old = video->height / 2;
 	for (i = 0; i < video->width; i++) {
 		int j;
+        run_point(priv);
 
 		y = (video->height / 2) + (pcmbuf[(i >> 1) % PCM_SIZE] * (video->height / 4));
 

@@ -28,7 +28,7 @@
 
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
-#define ACTOR "bumpscope"
+#define ACTOR "lv_scope"
 #define INPUT "mic"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
