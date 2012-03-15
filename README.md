@@ -23,4 +23,6 @@ Visit [this](http://starlon.lyrical.net/froyvisuals.php) page with your device a
   run 'make keygen' and 'make sign' before 'make install'.
 * If you received no error messages, then StarVisuals should be on your device.
 
-
+## Examples ##
+Although this is slightly unrelated to StarVisuals, I find this is a great resource of example code for Android:
+http://www.vogella.de/code/code.html

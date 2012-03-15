@@ -192,7 +192,7 @@ void run_init(ScopePrivate *priv)
 
 void run_frame(ScopePrivate *priv)
 {
-    priv->zo=visual_timer_elapsed_msecs(&priv->timer) / 1000.0;
+    priv->zo=visual_timer_elapsed_usecs(&priv->timer) / 1000.0 / 1000.0;
     priv->r1=1/7.0;
     priv->r2=4/9.0;
     priv->r3=5/3.0;
