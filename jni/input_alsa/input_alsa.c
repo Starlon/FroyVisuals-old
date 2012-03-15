@@ -275,7 +275,7 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 
                 for(i = 0; i < size; i++)
                 {
-                    scaled[i] = data[size] / (float)SHRT_MAX * CHAR_MAX;
+                    scaled[i] = data[i] / (float)SHRT_MAX * CHAR_MAX;
                 }
 
                 // FIXME Beat detection isn't working real well. It also slows us down.
