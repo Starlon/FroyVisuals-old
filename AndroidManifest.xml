@@ -31,7 +31,7 @@
 
         <!-- about plugins activity -->
         <activity 
-              android:name="AboutPluginActivity" android:label="@string/title_plugin_singular">
+              android:name="AboutPluginsActivity" android:label="@string/title_plugin_singular">
         </activity>
 
         <!-- about actor plugins activity -->

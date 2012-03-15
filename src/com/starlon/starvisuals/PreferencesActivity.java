@@ -37,21 +37,20 @@ public class PreferencesActivity extends ListActivity
             super.onCreate(savedInstanceState);
             setContentView(R.layout.preferences);
 
-            //final Context mContext = (Context)this;
+            final Context mContext = (Context)this;
 
             ListView listView = (ListView) findViewById(android.R.id.list);
             String[] values = new String[] { "About Plugins" };
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
             listView.setAdapter(adapter);
         
-/*
             listView.setOnItemClickListener(new OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) 
                 {
-                    String item = (String) getListAdapter().getItem(position);
+                    String item = (String) adapter.getItem(position);
 
                     if(item.equals("About Plugins"))
                         startActivity(new Intent(mContext, AboutPluginsActivity.class));
@@ -59,7 +58,6 @@ public class PreferencesActivity extends ListActivity
                 }
             });
 
-*/
         }
 }
 

@@ -21,7 +21,8 @@ public class AboutPluginsActivity extends ListActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        ListView listView = (ListView) findViewById(R.id.plugin_list);
+        setContentView(R.layout.about_plugins);
+        ListView listView = (ListView) findViewById(android.R.id.list);
 
         final LayoutInflater factory = getLayoutInflater();
 
@@ -29,8 +30,8 @@ public class AboutPluginsActivity extends ListActivity
             "Actors", "Inputs", "Morphs"
         };
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.about_plugins, R.id.plugin_list, names);
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, names);
 
         listView.setAdapter(adapter);
     }
@@ -38,7 +39,7 @@ public class AboutPluginsActivity extends ListActivity
     @Override
     protected void onListItemClick(ListView listView, View view, int position, long id)
     {
-        String item = (String) getListAdapter().getItem(position);
+        String item = (String) listView.getAdapter().getItem(position);
         if(item.equals("Actors"))
                 startActivity(new Intent(this, ActorPreferencesActivity.class));
         else if(item.equals("Inputs"))

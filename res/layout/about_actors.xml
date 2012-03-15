@@ -34,51 +34,11 @@
         android:layout_marginTop="10dip"
         android:layout_marginBottom="10dip">
 
-            <TextView
-                android:text="@string/title_plugin_long_name"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-            <TextView
-                android:id="@+id/actor_long_name"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-
-            <TextView
-                android:text="@string/title_plugin_author"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-            <TextView
-                android:id="@+id/actor_author"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-
-            <TextView
-                android:text="@string/title_plugin_version"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-            <TextView
-                android:id="@+id/actor_version"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-
-            <TextView
-                android:text="@string/title_plugin_about"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-            <TextView
-                android:id="@+id/actor_about"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-
-            <TextView
-                android:text="@string/title_plugin_help"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-            <TextView
-                android:id="@+id/actor_help"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"/>
-
+         <ListView
+            android:id="@+id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+       
 
     </LinearLayout>
 </LinearLayout>

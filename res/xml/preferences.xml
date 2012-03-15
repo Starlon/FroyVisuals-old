@@ -27,7 +27,7 @@
                     <PreferenceScreen
                         android:fragment="com.starlon.starvisuals.PreferenceActivity$InputFragment"
                         android:title="@string/title_input_singular"
-                        android:layout="@layout/about_input"
+                        android:layout="@layout/about_inputs"
                         android:enabled="false">
                     
                     </PreferenceScreen>
@@ -57,7 +57,7 @@
                     <PreferenceScreen
                         android:fragment="com.starlon.starvisuals.PreferenceActivity$MorphFragment"
                         android:title="@string/title_morph_singular"
-                        android:layout="@layout/about_morph"
+                        android:layout="@layout/about_morphs"
                         android:enabled="false">
                     </PreferenceScreen>
 

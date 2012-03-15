@@ -5,7 +5,7 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.SimpleAdapter;
-import android.widget.ListAdapter;
+import android.widget.ArrayAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.app.ListActivity;
@@ -32,13 +32,9 @@ public class ActorPreferencesActivity extends ListActivity
         {
             super.onCreate(savedInstanceState);
 
-            /** create prefs from xml */
+            setContentView(R.layout.about_actors);
 
-            //PreferenceManager prefManager = getPreferenceManager();
-            //prefManager.setSharedPreferencesName(PREFS); 
-
-            //setPreferenceScreen(createPreferenceHierarchy());
-
+            ListView listView = (ListView) findViewById(android.R.id.list);
 
             int current = NativeHelper.actorGetCurrent();
 
@@ -48,44 +44,21 @@ public class ActorPreferencesActivity extends ListActivity
             String about_string = NativeHelper.actorGetAbout(current);
             String help_string = NativeHelper.actorGetHelp(current);
 
-            List<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
-
-            HashMap<String, String> map = new HashMap<String, String>();
-
-            map.put(" ", long_name_string);
-            map.put(" ", author_string);
-            map.put(" ", version_string);
-            map.put(" ", about_string);
-            map.put(" ", help_string);
-
-            list.add(map);
-
-            String[] from = new String[]{"Name", "Author", "Version", "About", "Help"};
-
-            int[] to = new int[]{
-                R.id.actor_long_name,
-                R.id.actor_author,
-                R.id.actor_version,
-                R.id.actor_about,
-                R.id.actor_help
-            };
+            String[] values = new String[]{"Name: " + long_name_string,
+                                     "Author: " + author_string, 
+                                    "Version: " + version_string, 
+                                    "About: " +  about_string,
+                                    "Help: " + help_string};
 
             
-            LayoutInflater inflater = getLayoutInflater();
+            View view = (ListView) findViewById(android.R.id.list);
 
-            View view = (View)inflater.inflate(R.layout.about_actors, null, false);
 
-            SimpleAdapter adapter = new SimpleAdapter(
-                this, list, R.id.actor_info_list, from, to); 
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, values);
 
             setListAdapter(adapter);
 
-            setContentView(R.layout.about_actors);
         }
 
-        @Override
-        protected void onListItemClick(ListView l, View v, int position, long id)
-        {
-
-        }
 }
