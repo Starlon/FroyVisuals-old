@@ -14,7 +14,7 @@ LOCAL_CFLAGS += $(OPTIM_FLAGS)
 
 LOCAL_SRC_FILES := starvisuals.c
 
-LOCAL_SHARED_LIBRARIES := libvisual
+LOCAL_SHARED_LIBRARIES := visual
 LOCAL_STATIC_LIBRARIES := tinyalsa
 
 LOCAL_LDLIBS := -lGLESv1_CM -lm -llog -ljnigraphics
