@@ -29,7 +29,7 @@
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
 #define ACTOR "bumpscope"
-#define INPUT "mic"
+#define INPUT "alsa"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
 #define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
@@ -239,7 +239,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCur
     if(visual_input_valid_by_name(input))
     {
         v.input_name = input;
-        set_input();
         return TRUE;
     }
     return FALSE;
@@ -999,7 +998,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorSetCur
     if(visual_actor_valid_by_name(actor))
     {
         v.actor_name = actor;
-
         return TRUE;
     }
     return FALSE;
@@ -1585,12 +1583,11 @@ void app_main(int w, int h)
         visual_video_free_buffer(v.video);
         visual_object_unref(VISUAL_OBJECT(v.video));
         v.video = NULL; // Will thread activity blowup in native_render() if we do this? Speifically free_buffer(). hmm This whole block of code is wrong.
-/*
+
         visual_object_unref(VISUAL_OBJECT(v.bin->input));
         visual_object_unref(VISUAL_OBJECT(v.bin->actor));
-*/
         //FIXME We need valgrind pronto... 
-        //visual_object_unref(VISUAL_OBJECT(v.bin));
+        visual_object_unref(VISUAL_OBJECT(v.bin));
     }
 
     v.bin    = visual_bin_new ();

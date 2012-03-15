@@ -78,6 +78,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 int inp_alsa_init (VisPluginData *plugin)
 {
+    visual_log(VISUAL_LOG_CRITICAL, "inp_alsa_init biiiiiiiiiiiiiiitch");
     alsaPrivate *priv = visual_mem_new0 (alsaPrivate, 1);
     unsigned int channels = 2;
     unsigned int rate = 44100;
