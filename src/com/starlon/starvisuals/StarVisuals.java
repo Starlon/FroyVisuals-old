@@ -218,7 +218,7 @@ public class StarVisuals extends Activity implements OnClickListener
             NativeHelper.setMorphStyle(mDoMorph);
     
             mMorph = settings.getString("prefs_morph_selection", "alphablend");
-            mInput = settings.getString("prefs_input_selection", "mic");
+            mInput = settings.getString("prefs_input_selection", "dummy");
             mActor = settings.getString("prefs_actor_selection", "avs");
     
             NativeHelper.morphSetCurrentByName(mMorph);
@@ -243,7 +243,7 @@ public class StarVisuals extends Activity implements OnClickListener
 
         String input = settings.getString("prefs_input_selection", "mic");
 
-        enableMic(input);
+        //enableMic(input);
 
         getAlbumArt();
 
@@ -402,7 +402,6 @@ public class StarVisuals extends Activity implements OnClickListener
     /* load our native library */
     static {
         System.loadLibrary("visual");
-        //System.loadLibrary("common");
         System.loadLibrary("main");
     }
 

@@ -73,6 +73,12 @@ mem:
 start:
 	@adb shell am start -n com.starlon.froyvisuals/.StarVisuals
 
+start_dev:
+	@adb -d shell am start -n com.starlon.froyvisuals/.StarVisuals
+
+start_emu:
+	@adb -e shell am start -n com.starlon.froyvisuals/.StarVisuals
+
 valgrind:
 	@adb shell setprop wrap.com.starlon.froyvisuals "logwrapper valgrind"
 

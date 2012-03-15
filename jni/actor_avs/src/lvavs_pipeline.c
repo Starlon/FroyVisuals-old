@@ -271,7 +271,7 @@ int lvavs_pipeline_run (LVAVSPipeline *pipeline, VisVideo *video, VisAudio *audi
     }
 
     float beatdata[BEAT_MAX_SIZE];
-    unsigned char visdata[BEAT_MAX_SIZE];
+    char visdata[BEAT_MAX_SIZE];
 
     memcpy(beatdata, data[1][0], size * sizeof(float));
     memcpy(beatdata + size, data[1][1], size * sizeof(float));
