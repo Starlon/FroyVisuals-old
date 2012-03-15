@@ -39,8 +39,9 @@ typedef struct {
 	VisPalette	pal;
 	VisBuffer	pcm;
     double n, b, x, y, i, v, w, h, red, green, blue, linesize, skip, drawmode, t, d;
-    double zo, z1, r1, r2, r3, speed;
+    double zo, z1, r1, r2, r3;
     int channel_source, needs_init;
+    VisTimer timer;
 } ScopePrivate;
 
 int lv_scope_init (VisPluginData *plugin);
@@ -100,6 +101,7 @@ int lv_scope_init (VisPluginData *plugin)
 	visual_buffer_init_allocate (&priv->pcm, sizeof (float) * PCM_SIZE, visual_buffer_destroyer_free);
 
     priv->needs_init = TRUE;
+    visual_timer_init(&priv->timer);
 
 	return 0;
 }
@@ -185,26 +187,34 @@ void run_init(ScopePrivate *priv)
 {
     priv->n = 64;
     priv->zo = 0;
-    priv->speed = 0.0005;
-    priv->r1=1/7.0;priv->r2=4/9.0;priv->r3=5/3.0;
+    visual_timer_start(&priv->timer);
 }
 
 void run_frame(ScopePrivate *priv)
 {
-    priv->zo=priv->zo+priv->speed/5.0;
+    priv->zo=visual_timer_elapsed_msecs(&priv->timer) / 1000.0;
+    priv->r1=1/7.0;
+    priv->r2=4/9.0;
+    priv->r3=5/3.0;
 }
 
 void run_beat(ScopePrivate *priv)
 {
-    priv->zo = (priv->zo + 10) * 1.2;
+    priv->zo = visual_timer_elapsed_msecs(&priv->timer) + 1000;
 }
 
 void run_point(ScopePrivate *priv)
 {
-    priv->r1=priv->r2*9333.2312311+priv->r3*33222.93329; priv->r1=priv->r1-floor(priv->r1);
-    priv->r2=priv->r3*6233.73553+priv->r1*9423.1323219; priv->r2=priv->r2-floor(priv->r2);
-    priv->r3=priv->r1*373.871324+priv->r2*43322.4323441; priv->r3=priv->r3-floor(priv->r3);
-    priv->z1=priv->r3-priv->zo;priv->z1=.5/(priv->z1-floor(priv->z1)+.2);
+    priv->r1=priv->r2*9333.2312311+priv->r3*33222.93329; 
+    priv->r1=priv->r1-floor(priv->r1);
+    priv->r2=priv->r3*6233.73553+priv->r1*9423.1323219; 
+    priv->r2=priv->r2-floor(priv->r2);
+    priv->r3=priv->r1*373.871324+priv->r2*43322.4323441; 
+    priv->r3=priv->r3-floor(priv->r3);
+
+    priv->z1=priv->r3-priv->zo;
+    priv->z1=.5/(priv->z1-floor(priv->z1)+.2);
+
     priv->x=(priv->r2*2-1)*priv->z1;
     priv->y=(priv->r1*2-1)*priv->z1;
     priv->red=(1-exp(-priv->z1*priv->z1)) * 255.0; priv->green=priv->red; priv->blue=priv->red;
@@ -283,7 +293,8 @@ int lv_scope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 
         run_point(priv);
 
-        uint32_t this_color = makeint(priv->blue) | (makeint(priv->green) << 8) | (makeint(priv->red) << 16) | (255 << 24);
+        //uint32_t this_color = (makeint(priv->blue) | (makeint(priv->green) << 8) | (makeint(priv->red) << 16) | (255 << 24));
+        uint8_t this_color = (77 * makeint(priv->red) + 158 * priv->green * priv->blue);
 
         x = (int)((priv->x + 1) * (double)video->width * 0.5);
         y = (int)((priv->y + 1) * (double)video->height * 0.5);
