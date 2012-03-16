@@ -1,5 +1,4 @@
 #include "evaluator.h"
-#include "visscript.h"
 
 #include <stdlib.h>
 #include <stdio.h>

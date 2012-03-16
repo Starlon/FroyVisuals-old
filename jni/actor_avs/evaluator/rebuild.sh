@@ -1,3 +1,3 @@
 #!/bin/sh
 
-gcc -o test test.c libvisscript.a -lm -g
+gcc -o test test.c evaluator.c -lm -g

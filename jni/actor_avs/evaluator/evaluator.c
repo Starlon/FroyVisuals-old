@@ -77,6 +77,7 @@
 #include <ctype.h>
 #include <math.h>
 #include <setjmp.h>
+#include <time.h>
 //#include <android/log.h>
 
 #include "evaluator.h"
