@@ -132,14 +132,13 @@ int act_avs_init (VisPluginData *plugin)
         visual_list_add(preset->main->members, blur4);
         visual_list_add(preset->main->members, superscope);
 
-/*
 
         static VisParamEntry params[] = {
-            VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 1000;"),
+            VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 32;"),
             VISUAL_PARAM_LIST_END
         };
         visual_param_container_add_many(superscope->pcont, params);
-*/
+
         priv->lvtree = preset;
     }
 
