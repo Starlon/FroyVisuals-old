@@ -50,10 +50,13 @@ double PI = M_PI;
 #define MASK_SH2 (~(((3<<6)|(3<<14)|(3<<22))<<2))
 #define MASK_SH3 (~(((7<<5)|(7<<13)|(7<<21))<<3))
 #define MASK_SH4 (~(((15<<4)|(15<<12)|(15<<20))<<4))
+
+#ifndef NO_MMX
 static unsigned int mmx_mask1[2]={MASK_SH1,MASK_SH1};
 static unsigned int mmx_mask2[2]={MASK_SH2,MASK_SH2};
 static unsigned int mmx_mask3[2]={MASK_SH3,MASK_SH3};
 static unsigned int mmx_mask4[2]={MASK_SH4,MASK_SH4};
+#endif
 
 #define DIV_2(x) ((( x ) & MASK_SH1)>>1)
 #define DIV_4(x) ((( x ) & MASK_SH2)>>2)
@@ -82,118 +85,121 @@ VISUAL_PLUGIN_API_VERSION_VALIDATOR
 const VisPluginInfo *get_plugin_info(int *count);
 const VisPluginInfo *get_plugin_info (int *count)
 {
-	static const VisTransformPlugin transform[] = {{
-		.palette = lv_blur_palette,
-		.video = lv_blur_video,
-		.vidoptions.depth =
-			VISUAL_VIDEO_DEPTH_32BIT,
-		.requests_audio = TRUE
-	}};
+    static const VisTransformPlugin transform[] = {{
+        .palette = lv_blur_palette,
+        .video = lv_blur_video,
+        .vidoptions.depth =
+            VISUAL_VIDEO_DEPTH_32BIT,
+        .requests_audio = TRUE
+    }};
 
-	static const VisPluginInfo info[] = {{
-		.type = VISUAL_PLUGIN_TYPE_TRANSFORM,
+    static const VisPluginInfo info[] = {{
+        .type = VISUAL_PLUGIN_TYPE_TRANSFORM,
 
-		.plugname = "avs_blur",
-		.name = "Libvisual AVS Transform: blur element",
-		.author = "",
-		.version = "0.1",
-		.about = "The Libvisual AVS Transform: blur element",
-		.help = "This is the blur element for the libvisual AVS system",
+        .plugname = "avs_blur",
+        .name = "Libvisual AVS Transform: blur element",
+        .author = "",
+        .version = "0.1",
+        .about = "The Libvisual AVS Transform: blur element",
+        .help = "This is the blur element for the libvisual AVS system",
 
-		.init = lv_blur_init,
-		.cleanup = lv_blur_cleanup,
-		.events = lv_blur_events,
+        .init = lv_blur_init,
+        .cleanup = lv_blur_cleanup,
+        .events = lv_blur_events,
 
-		.plugin = VISUAL_OBJECT (&transform[0])
-	}};
+        .plugin = VISUAL_OBJECT (&transform[0])
+    }};
 
-	*count = sizeof (info) / sizeof (*info);
+    *count = sizeof (info) / sizeof (*info);
 
-	return info;
+    return info;
 }
 
 int lv_blur_init (VisPluginData *plugin)
 {
-	BlurPrivate *priv;
-	VisParamContainer *paramcontainer = visual_plugin_get_params (plugin);
-	int i;
+    BlurPrivate *priv;
+    VisParamContainer *paramcontainer = visual_plugin_get_params (plugin);
 
-	static VisParamEntry params[] = {
-		VISUAL_PARAM_LIST_ENTRY_INTEGER ("enabled", 2),
-		VISUAL_PARAM_LIST_ENTRY_INTEGER ("roundmode", 0),
-		VISUAL_PARAM_LIST_END
-	};
+    static VisParamEntry params[] = {
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("enabled", 2),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER ("roundmode", 0),
+        VISUAL_PARAM_LIST_END
+    };
 
-	priv = visual_mem_new0 (BlurPrivate, 1);
+    priv = visual_mem_new0 (BlurPrivate, 1);
 
-	priv->pipeline = (LVAVSPipeline *)visual_object_get_private(VISUAL_OBJECT(plugin));
-	visual_object_ref(VISUAL_OBJECT(priv->pipeline));
+    priv->pipeline = (LVAVSPipeline *)visual_object_get_private(VISUAL_OBJECT(plugin));
+    visual_object_ref(VISUAL_OBJECT(priv->pipeline));
 
-	visual_object_set_private (VISUAL_OBJECT (plugin), priv);
+    visual_object_set_private (VISUAL_OBJECT (plugin), priv);
 
-	visual_param_container_add (paramcontainer, params);
+    visual_param_container_add (paramcontainer, params);
 
-	return 0;
+    return 0;
 }
 
 int lv_blur_cleanup (VisPluginData *plugin)
 {
-	BlurPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    BlurPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
-	visual_mem_free (priv);
+    visual_mem_free (priv);
 
-	return 0;
+    return 0;
 }
 
 int lv_blur_events (VisPluginData *plugin, VisEventQueue *events)
 {
-	BlurPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
-	VisParamEntry *param;
-	VisEvent ev;
+    BlurPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    VisParamEntry *param;
+    VisEvent ev;
 
-	while (visual_event_queue_poll (events, &ev)) {
-		switch (ev.type) {
-			case VISUAL_EVENT_PARAM:
-				param = ev.event.param.param;
+    while (visual_event_queue_poll (events, &ev)) {
+        switch (ev.type) {
+            case VISUAL_EVENT_PARAM:
+                param = ev.event.param.param;
                 if (visual_param_entry_is (param, "enabled"))
                     priv->enabled = visual_param_entry_get_integer(param);
                 else if (visual_param_entry_is (param, "roundmode"))
                     priv->roundmode = visual_param_entry_get_integer(param);
 
-				break;
+                break;
 
-			default:
-				break;
-		}
-	}
+            default:
+                break;
+        }
+    }
 
-	return 0;
+    return 0;
 }
 
 int lv_blur_palette (VisPluginData *plugin, VisPalette *pal, VisAudio *audio)
 {
-	return 0;
+    return 0;
 }
 
 int lv_blur_video (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
-	BlurPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
-    	uint8_t isBeat = priv->pipeline->isBeat;
-#if __OPENMP
+    BlurPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+
+#ifdef __OPENMP
 #   pragma omp parallel 
 #endif
-{
-#if __OPENMP
-	int i = 0, num_threads = omp_get_num_threads();
+    {
+#ifdef __OPENMP
+        int i = 0, num_threads = omp_get_num_threads();
 #else
-    int i = 0, num_threads = 1;
+        int i = 0, num_threads = 1;
+#endif
+
+#if __OPENMP
 #   pragma omp for
 #endif
         for(i = num_threads - 1; i>=0; i--)
-		smp_render(i, num_threads, priv, priv->pipeline->audiodata, priv->pipeline->isBeat, priv->pipeline->framebuffer, priv->pipeline->fbout, video->width, video->height);
-	priv->pipeline->swap = 1;
-}
-	return 0;
+            smp_render(i, num_threads, priv, priv->pipeline->audiodata, priv->pipeline->isBeat, priv->pipeline->framebuffer, priv->pipeline->fbout, video->width, video->height);
+
+        priv->pipeline->swap = 1;
+    }
+    return 0;
 }
 
 void smp_render(int this_thread, int max_threads, BlurPrivate *priv, float visdata[2][2][1024], int isBeat, int *framebuffer, int *fbout, int w, int h)
@@ -237,22 +243,22 @@ void smp_render(int this_thread, int max_threads, BlurPrivate *priv, float visda
       if (roundmode) { adj_tl = 0x03030303; adj_tl2 = 0x04040404; }
       // top left
       *of++=DIV_2(f[0])+DIV_4(f[0])+DIV_8(f[1])+DIV_8(f2[0]) + adj_tl; f++; f2++;
-	    // top center
+        // top center
       x=(w-2)/4;
-	    while (x--)
-	    {
-		    of[0]=DIV_2(f[0]) + DIV_8(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + adj_tl2;
-		    of[1]=DIV_2(f[1]) + DIV_8(f[1]) + DIV_8(f[2]) + DIV_8(f[0]) + DIV_8(f2[1]) + adj_tl2;
-		    of[2]=DIV_2(f[2]) + DIV_8(f[2]) + DIV_8(f[3]) + DIV_8(f[1]) + DIV_8(f2[2]) + adj_tl2;
-		    of[3]=DIV_2(f[3]) + DIV_8(f[3]) + DIV_8(f[4]) + DIV_8(f[2]) + DIV_8(f2[3]) + adj_tl2;
+        while (x--)
+        {
+            of[0]=DIV_2(f[0]) + DIV_8(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + adj_tl2;
+            of[1]=DIV_2(f[1]) + DIV_8(f[1]) + DIV_8(f[2]) + DIV_8(f[0]) + DIV_8(f2[1]) + adj_tl2;
+            of[2]=DIV_2(f[2]) + DIV_8(f[2]) + DIV_8(f[3]) + DIV_8(f[1]) + DIV_8(f2[2]) + adj_tl2;
+            of[3]=DIV_2(f[3]) + DIV_8(f[3]) + DIV_8(f[4]) + DIV_8(f[2]) + DIV_8(f2[3]) + adj_tl2;
         f+=4;
         f2+=4;
         of+=4;
-	    }
+        }
       x=(w-2)&3;
-	    while (x--)
-	    {
-		    *of++=DIV_2(f[0]) + DIV_8(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + adj_tl2;
+        while (x--)
+        {
+            *of++=DIV_2(f[0]) + DIV_8(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + adj_tl2;
         f++;
         f2++;
       }
@@ -261,10 +267,10 @@ void smp_render(int this_thread, int max_threads, BlurPrivate *priv, float visda
     }
 
 
-	  // middle block
+      // middle block
     {
       int y=outh-at_top-at_bottom;
-      unsigned int adj_tl1=0,adj_tl2=0;
+      unsigned long adj_tl1=0,adj_tl2=0;
       unsigned long adj2=0;
       if (roundmode) { adj_tl1=0x04040404; adj_tl2=0x05050505; adj2=0x0505050505050505; }
       while (y--)
@@ -281,12 +287,12 @@ void smp_render(int this_thread, int max_threads, BlurPrivate *priv, float visda
         x=(w-2)/4;
         if (roundmode)
         {
-	        while (x--)
-	        {
-		        of[0]=DIV_2(f[0]) + DIV_4(f[0]) + DIV_16(f[1]) + DIV_16(f[-1]) + DIV_16(f2[0]) + DIV_16(f3[0]) + 0x05050505;
-		        of[1]=DIV_2(f[1]) + DIV_4(f[1]) + DIV_16(f[2]) + DIV_16(f[0]) + DIV_16(f2[1]) + DIV_16(f3[1]) + 0x05050505;
-		        of[2]=DIV_2(f[2]) + DIV_4(f[2]) + DIV_16(f[3]) + DIV_16(f[1]) + DIV_16(f2[2]) + DIV_16(f3[2]) + 0x05050505;
-		        of[3]=DIV_2(f[3]) + DIV_4(f[3]) + DIV_16(f[4]) + DIV_16(f[2]) + DIV_16(f2[3]) + DIV_16(f3[3]) + 0x05050505;
+            while (x--)
+            {
+                of[0]=DIV_2(f[0]) + DIV_4(f[0]) + DIV_16(f[1]) + DIV_16(f[-1]) + DIV_16(f2[0]) + DIV_16(f3[0]) + 0x05050505;
+                of[1]=DIV_2(f[1]) + DIV_4(f[1]) + DIV_16(f[2]) + DIV_16(f[0]) + DIV_16(f2[1]) + DIV_16(f3[1]) + 0x05050505;
+                of[2]=DIV_2(f[2]) + DIV_4(f[2]) + DIV_16(f[3]) + DIV_16(f[1]) + DIV_16(f2[2]) + DIV_16(f3[2]) + 0x05050505;
+                of[3]=DIV_2(f[3]) + DIV_4(f[3]) + DIV_16(f[4]) + DIV_16(f[2]) + DIV_16(f2[3]) + DIV_16(f3[3]) + 0x05050505;
             f+=4;
             f2+=4;
             f3+=4;
@@ -295,12 +301,12 @@ void smp_render(int this_thread, int max_threads, BlurPrivate *priv, float visda
         }
         else
         {
-	        while (x--)
-	        {
-		        of[0]=DIV_2(f[0]) + DIV_4(f[0]) + DIV_16(f[1]) + DIV_16(f[-1]) + DIV_16(f2[0]) + DIV_16(f3[0]);
-		        of[1]=DIV_2(f[1]) + DIV_4(f[1]) + DIV_16(f[2]) + DIV_16(f[0]) + DIV_16(f2[1]) + DIV_16(f3[1]);
-		        of[2]=DIV_2(f[2]) + DIV_4(f[2]) + DIV_16(f[3]) + DIV_16(f[1]) + DIV_16(f2[2]) + DIV_16(f3[2]);
-		        of[3]=DIV_2(f[3]) + DIV_4(f[3]) + DIV_16(f[4]) + DIV_16(f[2]) + DIV_16(f2[3]) + DIV_16(f3[3]);
+            while (x--)
+            {
+                of[0]=DIV_2(f[0]) + DIV_4(f[0]) + DIV_16(f[1]) + DIV_16(f[-1]) + DIV_16(f2[0]) + DIV_16(f3[0]);
+                of[1]=DIV_2(f[1]) + DIV_4(f[1]) + DIV_16(f[2]) + DIV_16(f[0]) + DIV_16(f2[1]) + DIV_16(f3[1]);
+                of[2]=DIV_2(f[2]) + DIV_4(f[2]) + DIV_16(f[3]) + DIV_16(f[1]) + DIV_16(f2[2]) + DIV_16(f3[2]);
+                of[3]=DIV_2(f[3]) + DIV_4(f[3]) + DIV_16(f[4]) + DIV_16(f[2]) + DIV_16(f2[3]) + DIV_16(f3[3]);
             f+=4;
             f2+=4;
             f3+=4;
@@ -414,9 +420,9 @@ mmx_light_blur_loop:
         }
 #endif
         x=(w-2)&3;
-	      while (x--)
-	      {
-		      *of++=DIV_2(f[0]) + DIV_4(f[0]) + DIV_16(f[1]) + DIV_16(f[-1]) + DIV_16(f2[0]) + DIV_16(f3[0]) + adj_tl2;
+          while (x--)
+          {
+              *of++=DIV_2(f[0]) + DIV_4(f[0]) + DIV_16(f[1]) + DIV_16(f[-1]) + DIV_16(f2[0]) + DIV_16(f3[0]) + adj_tl2;
           f++;
           f2++;
           f3++;
@@ -424,7 +430,7 @@ mmx_light_blur_loop:
 
         // right block
         *of++=DIV_2(f[0])+DIV_8(f[0])+DIV_8(f[-1])+DIV_8(f2[0])+DIV_8(f3[0])+adj_tl1; f++;
-	    }
+        }
     }
     // bottom block
     if (at_bottom)
@@ -435,22 +441,22 @@ mmx_light_blur_loop:
       if (roundmode) { adj_tl = 0x03030303; adj_tl2 = 0x04040404; }
       // bottom left
       *of++=DIV_2(f[0])+DIV_4(f[0])+DIV_8(f[1])+DIV_8(f2[0]) + adj_tl; f++; f2++;
-	    // bottom center
+        // bottom center
       x=(w-2)/4;
-	    while (x--)
-	    {
-		    of[0]=DIV_2(f[0]) + DIV_8(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + adj_tl2;
-		    of[1]=DIV_2(f[1]) + DIV_8(f[1]) + DIV_8(f[2]) + DIV_8(f[0]) + DIV_8(f2[1]) + adj_tl2;
-		    of[2]=DIV_2(f[2]) + DIV_8(f[2]) + DIV_8(f[3]) + DIV_8(f[1]) + DIV_8(f2[2])+adj_tl2;
-		    of[3]=DIV_2(f[3]) + DIV_8(f[3]) + DIV_8(f[4]) + DIV_8(f[2]) + DIV_8(f2[3])+adj_tl2;
+        while (x--)
+        {
+            of[0]=DIV_2(f[0]) + DIV_8(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + adj_tl2;
+            of[1]=DIV_2(f[1]) + DIV_8(f[1]) + DIV_8(f[2]) + DIV_8(f[0]) + DIV_8(f2[1]) + adj_tl2;
+            of[2]=DIV_2(f[2]) + DIV_8(f[2]) + DIV_8(f[3]) + DIV_8(f[1]) + DIV_8(f2[2])+adj_tl2;
+            of[3]=DIV_2(f[3]) + DIV_8(f[3]) + DIV_8(f[4]) + DIV_8(f[2]) + DIV_8(f2[3])+adj_tl2;
         f+=4;
         f2+=4;
         of+=4;
-	    }
+        }
       x=(w-2)&3;
-	    while (x--)
-	    {
-		    *of++=DIV_2(f[0]) + DIV_8(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0])+adj_tl2;
+        while (x--)
+        {
+            *of++=DIV_2(f[0]) + DIV_8(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0])+adj_tl2;
         f++;
         f2++;
       }
@@ -468,22 +474,22 @@ mmx_light_blur_loop:
       if (roundmode) { adj_tl = 0x02020202; adj_tl2 = 0x01010101; }
       // top left
       *of++=DIV_2(f[1])+DIV_2(f2[0]) + adj_tl2; f++; f2++;
-	    // top center
+        // top center
       x=(w-2)/4;
-	    while (x--)
-	    {
-		    of[0]=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_2(f2[0]) + adj_tl;
-		    of[1]=DIV_4(f[2]) + DIV_4(f[0]) + DIV_2(f2[1]) +adj_tl;
-		    of[2]=DIV_4(f[3]) + DIV_4(f[1]) + DIV_2(f2[2]) + adj_tl;
-		    of[3]=DIV_4(f[4]) + DIV_4(f[2]) + DIV_2(f2[3]) + adj_tl;
+        while (x--)
+        {
+            of[0]=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_2(f2[0]) + adj_tl;
+            of[1]=DIV_4(f[2]) + DIV_4(f[0]) + DIV_2(f2[1]) +adj_tl;
+            of[2]=DIV_4(f[3]) + DIV_4(f[1]) + DIV_2(f2[2]) + adj_tl;
+            of[3]=DIV_4(f[4]) + DIV_4(f[2]) + DIV_2(f2[3]) + adj_tl;
         f+=4;
         f2+=4;
         of+=4;
-	    }
+        }
       x=(w-2)&3;
-	    while (x--)
-	    {
-		    *of++=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_2(f2[0])+adj_tl;
+        while (x--)
+        {
+            *of++=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_2(f2[0])+adj_tl;
         f++;
         f2++;
       }
@@ -492,7 +498,7 @@ mmx_light_blur_loop:
     }
 
 
-	  // middle block
+      // middle block
     {
       int y=outh-at_top-at_bottom;
       int adj_tl1=0,adj_tl2=0;
@@ -513,23 +519,23 @@ mmx_light_blur_loop:
         x=(w-2)/4;
         if (roundmode)
         {
-	        while (x--)
-	        {
-		        of[0]=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + DIV_4(f3[0]) + 0x03030303;
-		        of[1]=DIV_4(f[2]) + DIV_4(f[0]) + DIV_4(f2[1]) + DIV_4(f3[1]) + 0x03030303;
-		        of[2]=DIV_4(f[3]) + DIV_4(f[1]) + DIV_4(f2[2]) + DIV_4(f3[2]) + 0x03030303;
-		        of[3]=DIV_4(f[4]) + DIV_4(f[2]) + DIV_4(f2[3]) + DIV_4(f3[3]) + 0x03030303;
+            while (x--)
+            {
+                of[0]=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + DIV_4(f3[0]) + 0x03030303;
+                of[1]=DIV_4(f[2]) + DIV_4(f[0]) + DIV_4(f2[1]) + DIV_4(f3[1]) + 0x03030303;
+                of[2]=DIV_4(f[3]) + DIV_4(f[1]) + DIV_4(f2[2]) + DIV_4(f3[2]) + 0x03030303;
+                of[3]=DIV_4(f[4]) + DIV_4(f[2]) + DIV_4(f2[3]) + DIV_4(f3[3]) + 0x03030303;
             f+=4; f2+=4; f3+=4; of+=4;
           }
         }
         else
         {
-	        while (x--)
-	        {
-		        of[0]=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + DIV_4(f3[0]);
-		        of[1]=DIV_4(f[2]) + DIV_4(f[0]) + DIV_4(f2[1]) + DIV_4(f3[1]);
-		        of[2]=DIV_4(f[3]) + DIV_4(f[1]) + DIV_4(f2[2]) + DIV_4(f3[2]);
-		        of[3]=DIV_4(f[4]) + DIV_4(f[2]) + DIV_4(f2[3]) + DIV_4(f3[3]);
+            while (x--)
+            {
+                of[0]=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + DIV_4(f3[0]);
+                of[1]=DIV_4(f[2]) + DIV_4(f[0]) + DIV_4(f2[1]) + DIV_4(f3[1]);
+                of[2]=DIV_4(f[3]) + DIV_4(f[1]) + DIV_4(f2[2]) + DIV_4(f3[2]);
+                of[3]=DIV_4(f[4]) + DIV_4(f[2]) + DIV_4(f2[3]) + DIV_4(f3[3]);
             f+=4; f2+=4; f3+=4; of+=4;
           }
         }
@@ -621,9 +627,9 @@ mmx_heavy_blur_loop:
         }
 #endif
         x=(w-2)&3;
-	      while (x--)
-	      {
-		      *of++=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + DIV_4(f3[0]) + adj_tl2;
+          while (x--)
+          {
+              *of++=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + DIV_4(f3[0]) + adj_tl2;
           f++;
           f2++;
           f3++;
@@ -631,7 +637,7 @@ mmx_heavy_blur_loop:
 
         // right block
         *of++=DIV_2(f[-1])+DIV_4(f2[0])+DIV_4(f3[0]) + adj_tl1; f++;
-	    }
+        }
     }
 
     // bottom block
@@ -643,22 +649,22 @@ mmx_heavy_blur_loop:
       if (roundmode) { adj_tl = 0x02020202; adj_tl2 = 0x01010101; }
       // bottom left
       *of++=DIV_2(f[1])+DIV_2(f2[0]) + adj_tl2; f++; f2++;
-	    // bottom center
+        // bottom center
       x=(w-2)/4;
-	    while (x--)
-	    {
-		    of[0]=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_2(f2[0])+adj_tl;
-		    of[1]=DIV_4(f[2]) + DIV_4(f[0]) + DIV_2(f2[1])+adj_tl;
-		    of[2]=DIV_4(f[3]) + DIV_4(f[1]) + DIV_2(f2[2])+adj_tl;
-		    of[3]=DIV_4(f[4]) + DIV_4(f[2]) + DIV_2(f2[3])+adj_tl;
+        while (x--)
+        {
+            of[0]=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_2(f2[0])+adj_tl;
+            of[1]=DIV_4(f[2]) + DIV_4(f[0]) + DIV_2(f2[1])+adj_tl;
+            of[2]=DIV_4(f[3]) + DIV_4(f[1]) + DIV_2(f2[2])+adj_tl;
+            of[3]=DIV_4(f[4]) + DIV_4(f[2]) + DIV_2(f2[3])+adj_tl;
         f+=4;
         f2+=4;
         of+=4;
-	    }
+        }
       x=(w-2)&3;
-	    while (x--)
-	    {
-		    *of++=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_2(f2[0])+adj_tl;
+        while (x--)
+        {
+            *of++=DIV_4(f[1]) + DIV_4(f[-1]) + DIV_2(f2[0])+adj_tl;
         f++;
         f2++;
       }
@@ -677,22 +683,22 @@ mmx_heavy_blur_loop:
       if (roundmode) { adj_tl = 0x02020202; adj_tl2 = 0x03030303; }
       // top left
       *of++=DIV_2(f[0])+DIV_4(f[1])+DIV_4(f2[0]) + adj_tl; f++; f2++;
-	    // top center
+        // top center
       x=(w-2)/4;
-	    while (x--)
-	    {
-		    of[0]=DIV_4(f[0]) + DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + adj_tl2;
-		    of[1]=DIV_4(f[1]) + DIV_4(f[2]) + DIV_4(f[0]) + DIV_4(f2[1]) + adj_tl2;
-		    of[2]=DIV_4(f[2]) + DIV_4(f[3]) + DIV_4(f[1]) + DIV_4(f2[2]) + adj_tl2;
-		    of[3]=DIV_4(f[3]) + DIV_4(f[4]) + DIV_4(f[2]) + DIV_4(f2[3]) + adj_tl2;
+        while (x--)
+        {
+            of[0]=DIV_4(f[0]) + DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + adj_tl2;
+            of[1]=DIV_4(f[1]) + DIV_4(f[2]) + DIV_4(f[0]) + DIV_4(f2[1]) + adj_tl2;
+            of[2]=DIV_4(f[2]) + DIV_4(f[3]) + DIV_4(f[1]) + DIV_4(f2[2]) + adj_tl2;
+            of[3]=DIV_4(f[3]) + DIV_4(f[4]) + DIV_4(f[2]) + DIV_4(f2[3]) + adj_tl2;
         f+=4;
         f2+=4;
         of+=4;
-	    }
+        }
       x=(w-2)&3;
-	    while (x--)
-	    {
-		    *of++=DIV_4(f[0]) + DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + adj_tl2;
+        while (x--)
+        {
+            *of++=DIV_4(f[0]) + DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + adj_tl2;
         f++;
         f2++;
       }
@@ -701,7 +707,7 @@ mmx_heavy_blur_loop:
     }
 
 
-	  // middle block
+      // middle block
     {
       int y=outh-at_top-at_bottom;
       int adj_tl1=0,adj_tl2=0;
@@ -721,23 +727,23 @@ mmx_heavy_blur_loop:
         x=(w-2)/4;
         if (roundmode)
         {
-	        while (x--)
-	        {
-		        of[0]=DIV_2(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + DIV_8(f3[0]) + 0x04040404;
-		        of[1]=DIV_2(f[1]) + DIV_8(f[2]) + DIV_8(f[0]) + DIV_8(f2[1]) + DIV_8(f3[1]) + 0x04040404;
-		        of[2]=DIV_2(f[2]) + DIV_8(f[3]) + DIV_8(f[1]) + DIV_8(f2[2]) + DIV_8(f3[2]) + 0x04040404;
-		        of[3]=DIV_2(f[3]) + DIV_8(f[4]) + DIV_8(f[2]) + DIV_8(f2[3]) + DIV_8(f3[3]) + 0x04040404;
+            while (x--)
+            {
+                of[0]=DIV_2(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + DIV_8(f3[0]) + 0x04040404;
+                of[1]=DIV_2(f[1]) + DIV_8(f[2]) + DIV_8(f[0]) + DIV_8(f2[1]) + DIV_8(f3[1]) + 0x04040404;
+                of[2]=DIV_2(f[2]) + DIV_8(f[3]) + DIV_8(f[1]) + DIV_8(f2[2]) + DIV_8(f3[2]) + 0x04040404;
+                of[3]=DIV_2(f[3]) + DIV_8(f[4]) + DIV_8(f[2]) + DIV_8(f2[3]) + DIV_8(f3[3]) + 0x04040404;
             f+=4; f2+=4; f3+=4; of+=4;
           }
         }
         else
         {
-	        while (x--)
-	        {
-		        of[0]=DIV_2(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + DIV_8(f3[0]);
-		        of[1]=DIV_2(f[1]) + DIV_8(f[2]) + DIV_8(f[0]) + DIV_8(f2[1]) + DIV_8(f3[1]);
-		        of[2]=DIV_2(f[2]) + DIV_8(f[3]) + DIV_8(f[1]) + DIV_8(f2[2]) + DIV_8(f3[2]);
-		        of[3]=DIV_2(f[3]) + DIV_8(f[4]) + DIV_8(f[2]) + DIV_8(f2[3]) + DIV_8(f3[3]);
+            while (x--)
+            {
+                of[0]=DIV_2(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + DIV_8(f3[0]);
+                of[1]=DIV_2(f[1]) + DIV_8(f[2]) + DIV_8(f[0]) + DIV_8(f2[1]) + DIV_8(f3[1]);
+                of[2]=DIV_2(f[2]) + DIV_8(f[3]) + DIV_8(f[1]) + DIV_8(f2[2]) + DIV_8(f3[2]);
+                of[3]=DIV_2(f[3]) + DIV_8(f[4]) + DIV_8(f[2]) + DIV_8(f2[3]) + DIV_8(f3[3]);
             f+=4; f2+=4; f3+=4; of+=4;
           }
         }
@@ -835,9 +841,9 @@ mmx_normal_blur_loop:
         }
 #endif
         x=(w-2)&3;
-	      while (x--)
-	      {
-		      *of++=DIV_2(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + DIV_8(f3[0]) + adj_tl2;
+          while (x--)
+          {
+              *of++=DIV_2(f[0]) + DIV_8(f[1]) + DIV_8(f[-1]) + DIV_8(f2[0]) + DIV_8(f3[0]) + adj_tl2;
           f++;
           f2++;
           f3++;
@@ -845,7 +851,7 @@ mmx_normal_blur_loop:
 
         // right block
         *of++=DIV_4(f[0])+DIV_4(f[-1])+DIV_4(f2[0])+DIV_4(f3[0]) + adj_tl1; f++;
-	    }
+        }
     }
 
     // bottom block
@@ -857,22 +863,22 @@ mmx_normal_blur_loop:
       int x;
       // bottom left
       *of++=DIV_2(f[0])+DIV_4(f[1])+DIV_4(f2[0]) + adj_tl; f++; f2++;
-	    // bottom center
+        // bottom center
       x=(w-2)/4;
-	    while (x--)
-	    {
-		    of[0]=DIV_4(f[0]) + DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + adj_tl2;
-		    of[1]=DIV_4(f[1]) + DIV_4(f[2]) + DIV_4(f[0]) + DIV_4(f2[1]) + adj_tl2;
-		    of[2]=DIV_4(f[2]) + DIV_4(f[3]) + DIV_4(f[1]) + DIV_4(f2[2]) + adj_tl2;
-		    of[3]=DIV_4(f[3]) + DIV_4(f[4]) + DIV_4(f[2]) + DIV_4(f2[3]) + adj_tl2;
+        while (x--)
+        {
+            of[0]=DIV_4(f[0]) + DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + adj_tl2;
+            of[1]=DIV_4(f[1]) + DIV_4(f[2]) + DIV_4(f[0]) + DIV_4(f2[1]) + adj_tl2;
+            of[2]=DIV_4(f[2]) + DIV_4(f[3]) + DIV_4(f[1]) + DIV_4(f2[2]) + adj_tl2;
+            of[3]=DIV_4(f[3]) + DIV_4(f[4]) + DIV_4(f[2]) + DIV_4(f2[3]) + adj_tl2;
         f+=4;
         f2+=4;
         of+=4;
-	    }
+        }
       x=(w-2)&3;
-	    while (x--)
-	    {
-		    *of++=DIV_4(f[0]) + DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + adj_tl2;
+        while (x--)
+        {
+            *of++=DIV_4(f[0]) + DIV_4(f[1]) + DIV_4(f[-1]) + DIV_4(f2[0]) + adj_tl2;
         f++;
         f2++;
       }
@@ -885,7 +891,7 @@ mmx_normal_blur_loop:
   __asm emms;
 #endif
   
-	//timingLeave(0);
+    //timingLeave(0);
 }
 
 

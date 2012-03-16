@@ -1,15 +1,15 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE	:= transform_avs_blur
-LOCAL_SRC_FILES := transform_avs_blur.c
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/../../../common \
     $(LOCAL_PATH)/../../../include \
     $(LOCAL_PATH)/../../../src\
     $(LOCAL_PATH)/../../../evaluator
+LOCAL_MODULE	:= transform_avs_blur
+LOCAL_SRC_FILES := transform_avs_blur.c
 LOCAL_CFLAGS	:= -Wall -O0 -g
+LOCAL_SHARED_LIBRARIES := libvisual common
 LOCAL_STATIC_LIBRARIES := evaluator
-LOCAL_SHARED_LIBRARIES := common libvisual
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 

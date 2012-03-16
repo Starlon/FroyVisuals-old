@@ -1,10 +1,15 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_C_INCLUDES := ./include
+LOCAL_C_INCLUDES := \
+    $(LOCAL_PATH)/../../../common \
+    $(LOCAL_PATH)/../../../include \
+    $(LOCAL_PATH)/../../../src\
+    $(LOCAL_PATH)/../../../evaluator
 LOCAL_MODULE	:= transform_avs_water
 LOCAL_SRC_FILES := transform_avs_water.c
-LOCAL_CFLAGS	:= -Wall -O0 -g
-LOCAL_STATIC_LIBRARIES := libvisual common
-#include $(BUILD_SHARED_LIBRARY)
+LOCAL_CFLAGS	:= -Wall -O0 -g -DNO_MMX
+LOCAL_SHARED_LIBRARIES := libvisual common
+LOCAL_STATIC_LIBRARIES := evaluator
+include $(BUILD_SHARED_LIBRARY)
 
