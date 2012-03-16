@@ -108,12 +108,15 @@ int act_avs_init (VisPluginData *plugin)
         LVAVSPresetElement *ring;
         LVAVSPresetElement *clearscreen;
         LVAVSPresetElement *analyzer;
+        LVAVSPresetElement *bumpscope;
+        
         superscope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
         ring = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_ring");
         timescope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_timescope");
         stars = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_stars");
         analyzer = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "lv_analyzer");
         clearscreen = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_clearscreen");
+        bumpscope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "bumpscope");
         blur1 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
         blur2 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
         blur3 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
@@ -122,15 +125,15 @@ int act_avs_init (VisPluginData *plugin)
         preset = lvavs_preset_new ();
         preset->main = lvavs_preset_container_new ();
 
-        visual_list_add(preset->main->members, clearscreen);
-        //visual_list_add(preset->main->members, analyzer);
+        //visual_list_add(preset->main->members, clearscreen);
+        visual_list_add(preset->main->members, bumpscope);
         //visual_list_add(preset->main->members, stars);
-        visual_list_add(preset->main->members, ring);
-        //visual_list_add(preset->main->members, blur1);
+        //visual_list_add(preset->main->members, ring);
+        visual_list_add(preset->main->members, blur1);
         //visual_list_add(preset->main->members, blur2);
         //visual_list_add(preset->main->members, blur3);
-        visual_list_add(preset->main->members, blur4);
-        visual_list_add(preset->main->members, superscope);
+        //visual_list_add(preset->main->members, blur4);
+        //visual_list_add(preset->main->members, superscope);
 
 
         static VisParamEntry params[] = {
