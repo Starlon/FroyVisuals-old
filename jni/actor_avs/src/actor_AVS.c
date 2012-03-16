@@ -101,16 +101,18 @@ int act_avs_init (VisPluginData *plugin)
         LVAVSPresetElement *blur;
         LVAVSPresetElement *superscope;
         LVAVSPresetElement *stars;
+        LVAVSPresetElement *clearscreen;
         stars = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_stars");
         superscope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
+        clearscreen = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_clearscreen");
         //blur = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
 
         preset = lvavs_preset_new ();
         preset->main = lvavs_preset_container_new ();
 
-        visual_list_add(preset->main->members, superscope);
+        visual_list_add(preset->main->members, clearscreen);
+        //visual_list_add(preset->main->members, superscope);
         visual_list_add(preset->main->members, stars);
-        //visual_list_add(preset->main->members, blur);
 
         static VisParamEntry params[] = {
             VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 1000;"),

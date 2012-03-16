@@ -33,21 +33,20 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <math.h>
-#include <omp.h>
 
 #include <libvisual/libvisual.h>
 
 #include "avs_common.h"
 #include "lvavs_pipeline.h"
-#include "avs.h"
 
 typedef struct {
     LVAVSPipeline *pipeline;
+/*
     AvsRunnableContext *ctx;
     AvsRunnableVariableManager *vm;
     AvsRunnable *runnable;
     AvsNumber beat, clear;
-
+*/
     // params
     char *enabled;
 
@@ -63,150 +62,154 @@ int lv_clear_video (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
+/*
 static int load_runnable(ClearPrivate *priv, char *buf) {
-	AvsRunnable *obj = avs_runnable_new(priv->ctx);
-	avs_runnable_set_variable_manager(obj, priv->vm);
-	priv->runnable = obj;
-	avs_runnable_compile(obj, (unsigned char *)buf, strlen(buf));
-	return 0;
+    AvsRunnable *obj = avs_runnable_new(priv->ctx);
+    avs_runnable_set_variable_manager(obj, priv->vm);
+    priv->runnable = obj;
+    avs_runnable_compile(obj, (unsigned char *)buf, strlen(buf));
+    return 0;
 }
 
 static int run_runnable(ClearPrivate *priv) {
-	avs_runnable_execute(priv->runnable);
-	return 0;
+    avs_runnable_execute(priv->runnable);
+    return 0;
 }
+*/
 
 const VisPluginInfo *get_plugin_info(int *count);
 const VisPluginInfo *get_plugin_info (int *count)
 {
-	static const VisTransformPlugin transform[] = {{
-		.palette = lv_clear_palette,
-		.video = lv_clear_video,
-		.vidoptions.depth =
-			VISUAL_VIDEO_DEPTH_32BIT,
-		.requests_audio = TRUE
-	}};
+    static const VisTransformPlugin transform[] = {{
+        .palette = lv_clear_palette,
+        .video = lv_clear_video,
+        .vidoptions.depth =
+            VISUAL_VIDEO_DEPTH_32BIT,
+        .requests_audio = TRUE
+    }};
 
-	static const VisPluginInfo info[] = {{
-		.type = VISUAL_PLUGIN_TYPE_TRANSFORM,
+    static const VisPluginInfo info[] = {{
+        .type = VISUAL_PLUGIN_TYPE_TRANSFORM,
 
-		.plugname = "avs_clearscreen",
-		.name = "Libvisual AVS Transform: clear element",
-		.author = "",
-		.version = "0.1",
-		.about = "The Libvisual AVS Transform: clear element",
-		.help = "This is the clear element for the libvisual AVS system",
+        .plugname = "avs_clearscreen",
+        .name = "Libvisual AVS Transform: clear element",
+        .author = "",
+        .version = "0.1",
+        .about = "The Libvisual AVS Transform: clear element",
+        .help = "This is the clear element for the libvisual AVS system",
 
-		.init = lv_clear_init,
-		.cleanup = lv_clear_cleanup,
-		.events = lv_clear_events,
+        .init = lv_clear_init,
+        .cleanup = lv_clear_cleanup,
+        .events = lv_clear_events,
 
-		.plugin = VISUAL_OBJECT (&transform[0])
-	}};
+        .plugin = VISUAL_OBJECT (&transform[0])
+    }};
 
-	*count = sizeof (info) / sizeof (*info);
+    *count = sizeof (info) / sizeof (*info);
 
-	return info;
+    return info;
 }
 
 int lv_clear_init (VisPluginData *plugin)
 {
-	ClearPrivate *priv;
-	VisParamEntry *entry;
-	VisParamContainer *paramcontainer = visual_plugin_get_params (plugin);
-	int i;
+    ClearPrivate *priv;
+    //VisParamEntry *entry;
+    VisParamContainer *paramcontainer = visual_plugin_get_params (plugin);
 
-	static VisParamEntry params[] = {
-		VISUAL_PARAM_LIST_ENTRY_STRING ("enabled", "clear=1;"),
-		VISUAL_PARAM_LIST_ENTRY_INTEGER("test", 1),
-		VISUAL_PARAM_LIST_END
-	};
+    static VisParamEntry params[] = {
+        VISUAL_PARAM_LIST_ENTRY_STRING ("enabled", "clear=1;"),
+        VISUAL_PARAM_LIST_ENTRY_INTEGER("test", 1),
+        VISUAL_PARAM_LIST_END
+    };
 
-	priv = visual_mem_new0 (ClearPrivate, 1);
+    priv = visual_mem_new0 (ClearPrivate, 1);
 
-	priv->pipeline = (LVAVSPipeline *)visual_object_get_private(VISUAL_OBJECT(plugin));
-	visual_object_ref(VISUAL_OBJECT(priv->pipeline));
+    priv->pipeline = (LVAVSPipeline *)visual_object_get_private(VISUAL_OBJECT(plugin));
+    visual_object_ref(VISUAL_OBJECT(priv->pipeline));
 
-	visual_object_set_private (VISUAL_OBJECT (plugin), priv);
+    visual_object_set_private (VISUAL_OBJECT (plugin), priv);
 
-	visual_param_container_add_many (paramcontainer, params);
+    visual_param_container_add_many (paramcontainer, params);
 
 /*
-	entry = visual_param_container_get(paramcontainer, "test");
-	visual_param_entry_min_set_integer(entry, -0xf7);
-	visual_param_entry_max_set_integer(entry, 0xf7);
-	visual_param_entry_set_annotation(entry, "Test and test again damnit yyyyyeaaaaahhhh");
-	visual_param_entry_default_set_integer(entry, 35);
+    entry = visual_param_container_get(paramcontainer, "test");
+    visual_param_entry_min_set_integer(entry, -0xf7);
+    visual_param_entry_max_set_integer(entry, 0xf7);
+    visual_param_entry_set_annotation(entry, "Test and test again damnit yyyyyeaaaaahhhh");
+    visual_param_entry_default_set_integer(entry, 35);
 */
-	priv->ctx = avs_runnable_context_new();
-	priv->vm = avs_runnable_variable_manager_new();
+    //priv->ctx = avs_runnable_context_new();
+    //priv->vm = avs_runnable_variable_manager_new();
 
-	avs_runnable_variable_bind(priv->vm, "clear", &priv->clear);
-	avs_runnable_variable_bind(priv->vm, "beat", &priv->beat);
+    //avs_runnable_variable_bind(priv->vm, "clear", &priv->clear);
+    //avs_runnable_variable_bind(priv->vm, "beat", &priv->beat);
 
-	return 0;
+    return 0;
 }
 
 int lv_clear_cleanup (VisPluginData *plugin)
 {
-	ClearPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    ClearPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
-	visual_object_unref(VISUAL_OBJECT(priv->pipeline));
+    visual_object_unref(VISUAL_OBJECT(priv->pipeline));
 
-	if(priv->enabled != NULL)
-		visual_mem_free(priv->enabled);
+    if(priv->enabled != NULL)
+        visual_mem_free(priv->enabled);
 
-	visual_mem_free (priv);
+    visual_mem_free (priv);
 
-	return 0;
+    return 0;
 }
 
 int lv_clear_events (VisPluginData *plugin, VisEventQueue *events)
 {
-	ClearPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
-	VisParamEntry *param;
-	VisEvent ev;
+#if 0
+    ClearPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    VisParamEntry *param;
+    VisEvent ev;
 
-	while (visual_event_queue_poll (events, &ev)) {
-		switch (ev.type) {
-			case VISUAL_EVENT_PARAM:
-				param = ev.event.param.param;
-                                if (visual_param_entry_is (param, "enabled")) {
-				    if(priv->enabled != NULL)
-					visual_mem_free(priv->enabled);
+    while (visual_event_queue_poll (events, &ev)) {
+        switch (ev.type) {
+            case VISUAL_EVENT_PARAM:
+                param = ev.event.param.param;
+                                
+                if (visual_param_entry_is (param, "enabled")) {
+                    //if(priv->enabled != NULL)
+/*
+                    visual_mem_free(priv->enabled);
+                    priv->enabled = strdup(visual_param_entry_get_string(param));
+                    //load_runnable(priv, priv->enabled);
+*/
+                }
 
-                                    priv->enabled = strdup(visual_param_entry_get_string(param));
-				    load_runnable(priv, priv->enabled);
-				}
+                break;
 
-				break;
-
-			default:
-				break;
-		}
-	}
-
-	return 0;
+            default:
+                break;
+        }
+    }
+#endif
+    return 0;
 }
 
 int lv_clear_palette (VisPluginData *plugin, VisPalette *pal, VisAudio *audio)
 {
-	return 0;
+    return 0;
 }
 
 int lv_clear_video (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
-	ClearPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    ClearPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
-	priv->beat = priv->pipeline->isBeat;
+    //priv->beat = priv->pipeline->isBeat;
 
-	run_runnable(priv);
-
-	if(priv->clear) {
-		visual_mem_set(priv->pipeline->fbout, 0, sizeof(int) * video->width * video->height);
-		visual_mem_set(priv->pipeline->framebuffer, 0, sizeof(int) * video->width * video->height);
-		priv->clear = FALSE;
-	}
-	return 0;
+    //run_runnable(priv);
+    
+    //if(TRUE || priv->clear) {
+        visual_mem_set(priv->pipeline->fbout, 0, sizeof(int) * video->width * video->height);
+        visual_mem_set(priv->pipeline->framebuffer, 0, sizeof(int) * video->width * video->height);
+    //    priv->clear = FALSE;
+    //}
+    return 0;
 }
 
