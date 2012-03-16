@@ -358,24 +358,15 @@ public class StarVisuals extends Activity implements OnClickListener
                 return true;
             }
 
-/*
-            case R.id.about_plugins:
-            {
-                startActivity(new Intent(this, AboutPluginsActivity.class));
-                return true;
-            }
-*/
-
-/*
             case R.id.close_app:
             {
                 synchronized(mView.mSynch)
                 {
-                    NativeHelper.visualsQuit(true);
+                    NativeHelper.visualsQuit();
+                    this.finish();
                 }
                 return true;
             }
-*/
 /*
             case R.id.input_stub:
             {

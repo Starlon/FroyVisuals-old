@@ -1540,20 +1540,26 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_newSong(JNIEnv 
 }
 
 
-// Is this even needed? What happens when the app is quietly discarded?
-// Seems in Android 4.0 you can kill an app by swiping it.
 JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNIEnv * env, jobject  obj, jboolean toExit)
 {
-    if(!visual_is_initialized())
-        return;
 
-    visual_video_free_buffer(v.video);
-    visual_object_unref(VISUAL_OBJECT(v.video));
-    visual_object_unref(VISUAL_OBJECT(v.bin));
-    visual_quit();
+    if(v.video != NULL)
+    {
+        visual_video_free_buffer(v.video);
+        visual_object_unref(VISUAL_OBJECT(v.video));
+    }
 
-    if(toExit)
-        exit(0);
+    if(v.bin != NULL && v.bin->actor != NULL)
+        visual_object_unref(VISUAL_OBJECT(v.bin->actor));
+
+    if(v.bin != NULL && v.bin->input != NULL)
+        visual_object_unref(VISUAL_OBJECT(v.bin->input));
+
+    if(v.bin != NULL)
+        visual_object_unref(VISUAL_OBJECT(v.bin));
+
+    if(visual_is_initialized())
+        visual_quit();
 }
 
 void app_main(int w, int h)
