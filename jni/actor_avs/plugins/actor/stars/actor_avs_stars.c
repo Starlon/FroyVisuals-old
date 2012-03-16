@@ -31,7 +31,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <omp.h>
+
+#ifdef __OPENMP
+#   include <omp.h>
+#endif
 
 #include <libvisual/libvisual.h>
 
@@ -251,7 +254,7 @@ int lv_stars_events (VisPluginData *plugin, VisEventQueue *events)
 
 VisPalette *lv_stars_palette (VisPluginData *plugin)
 {
-    StarsPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    //StarsPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
     return NULL;
 }
@@ -290,10 +293,14 @@ int lv_stars_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
     }
     if (isBeat&0x80000000) return 0;
 
-#pragma omp parallel for private(i)
+#ifdef __OPENMP
+#   pragma omp parallel for private(i)
+#endif
     for (i=0;i<priv->MaxStars;i++)
     {
+#ifdef __OPENMP
         #pragma omp critical(nextstar)
+#endif
         if ((int)priv->Stars[i].Z > 0)
         {
             NX = ((priv->Stars[i].X << 7) / (int)priv->Stars[i].Z) + priv->Xoff;

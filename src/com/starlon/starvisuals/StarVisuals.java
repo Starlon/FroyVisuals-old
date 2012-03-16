@@ -157,6 +157,7 @@ public class StarVisuals extends Activity implements OnClickListener
 
         registerReceiver(mReceiver, mIntentFilter);
 
+        updatePrefs();
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -237,7 +238,8 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onResume();
 
-        updatePrefs();
+/*
+        //updatePrefs();
 
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
 
@@ -248,6 +250,7 @@ public class StarVisuals extends Activity implements OnClickListener
         getAlbumArt();
 
         mView.startThread();
+*/
     }
 
     // follows onCreate() and onResume()
