@@ -31,7 +31,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <strotstar.h>
 
 #include <libvisual/libvisual.h>
 
@@ -99,9 +98,9 @@ int lv_rotstar_init (VisPluginData *plugin)
 	VisParamContainer *paramcontainer = visual_plugin_get_params (plugin);
 	int i;
 
-	static VisParamEntryProxy params[] = {
-		VISUAL_PARAM_LIST_ENTRY ("palette", "Colors"),
-		VISUAL_PARAM_LIST_ENTRY_INTEGER ("num_colors", 1, VISUAL_PARAM_LIMIT_NONE, "Number of colors"),
+	static VisParamEntry params[] = {
+		VISUAL_PARAM_LIST_ENTRY_PALETTE ("palette", "Colors"),
+		VISUAL_PARAM_LIST_ENTRY_INTEGER ("num_colors", 1),
 		VISUAL_PARAM_LIST_END
 	};
 
@@ -124,7 +123,7 @@ int lv_rotstar_init (VisPluginData *plugin)
 		priv->pal.colors[i].b = 0xff;
 	}
 
-	visual_param_container_add_many_proxy (paramcontainer, params);
+	visual_param_container_add_many(paramcontainer, params);
 
 	visual_param_entry_set_palette (visual_param_container_get (paramcontainer, "palette"), &priv->pal);
 

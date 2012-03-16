@@ -98,21 +98,39 @@ int act_avs_init (VisPluginData *plugin)
         //priv->lvtree = lvavs_preset_new_from_preset (filename);
     } else {
         LVAVSPreset *preset;
-        LVAVSPresetElement *blur;
+        LVAVSPresetElement *blur1;
+        LVAVSPresetElement *blur2;
+        LVAVSPresetElement *blur3;
+        LVAVSPresetElement *blur4;
         LVAVSPresetElement *superscope;
+        LVAVSPresetElement *timescope;
         LVAVSPresetElement *stars;
+        LVAVSPresetElement *ring;
         LVAVSPresetElement *clearscreen;
-        stars = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_stars");
+        LVAVSPresetElement *analyzer;
         superscope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_superscope");
+        ring = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_ring");
+        timescope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_timescope");
+        stars = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_stars");
+        analyzer = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "lv_analyzer");
         clearscreen = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_clearscreen");
-        //blur = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
+        blur1 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
+        blur2 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
+        blur3 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
+        blur4 = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
 
         preset = lvavs_preset_new ();
         preset->main = lvavs_preset_container_new ();
 
         visual_list_add(preset->main->members, clearscreen);
-        //visual_list_add(preset->main->members, superscope);
+        visual_list_add(preset->main->members, analyzer);
         visual_list_add(preset->main->members, stars);
+        visual_list_add(preset->main->members, ring);
+        visual_list_add(preset->main->members, blur1);
+        visual_list_add(preset->main->members, blur2);
+        visual_list_add(preset->main->members, blur3);
+        visual_list_add(preset->main->members, blur4);
+
 
         static VisParamEntry params[] = {
             VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 1000;"),
@@ -213,27 +231,22 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 
     while (visual_event_queue_poll_by_reference (events, &ev)) {
         switch (ev->type) {
-/*
             case VISUAL_EVENT_RESIZE:
                 act_avs_dimension (plugin, ev->event.resize.video,
                         ev->event.resize.width, ev->event.resize.height);
 
                 break;
-*/
-/*
             case VISUAL_EVENT_KEYDOWN:
             case VISUAL_EVENT_KEYUP:
             case VISUAL_EVENT_MOUSEMOTION:
             case VISUAL_EVENT_MOUSEBUTTONDOWN:
             case VISUAL_EVENT_MOUSEBUTTONUP:
-            //case VISUAL_EVENT_TOUCH:
             case VISUAL_EVENT_NEWSONG:
             case VISUAL_EVENT_QUIT:
             case VISUAL_EVENT_GENERIC:
-*/
             case VISUAL_EVENT_VISIBILITY:
                 if (priv->pipeline != NULL)
-                    //lvavs_pipeline_propagate_event (priv->pipeline, ev);
+                    lvavs_pipeline_propagate_event (priv->pipeline, ev);
                 break;
 
             case VISUAL_EVENT_PARAM:
@@ -283,6 +296,7 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
                     if(priv->pipeline != NULL)
                     priv->pipeline->blendmode = visual_param_entry_get_integer(param);
                 }
+#if 0
                 if (FALSE && visual_param_entry_is (param, "filename")) {
                     char *filename = visual_param_entry_get_string (param);
 
@@ -332,6 +346,7 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 
                     priv->needsnego = TRUE;
                 }
+#endif
 
                 break;
             default: /* to avoid warnings */
@@ -358,17 +373,6 @@ int act_avs_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 
         priv->needsnego = FALSE;
     }
-
-
-    /* Clear screen bit is on, clearscreen every frame (This is from winamp AVS main section) */
-/*
- * A Pipeline element  handles clearing buffers.
- *
-    VisParamEntry *param = visual_param_container_get(LVAVS_PRESET_ELEMENT (priv->lvtree->main)->pcont, "clearscreen");
-    if (param && visual_param_entry_get_integer (param) == 1) {
-            //memset((uint8_t *) visual_video_get_pixels(video), 0, visual_video_get_size(video));
-    }
-*/
 
     lvavs_pipeline_run (priv->pipeline, video, audio);
 

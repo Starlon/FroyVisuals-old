@@ -209,7 +209,7 @@ int lv_ring_events (VisPluginData *plugin, VisEventQueue *events)
 
 VisPalette *lv_ring_palette (VisPluginData *plugin)
 {
-	RingPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+	//RingPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
 	return NULL;
 }

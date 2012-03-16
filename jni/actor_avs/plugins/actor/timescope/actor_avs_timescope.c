@@ -25,6 +25,8 @@
  *
  * config UI.
  */
+// FIXME This isn't working!
+
 #include <math.h>
 
 #include <stdio.h>
@@ -102,7 +104,6 @@ int lv_timescope_init (VisPluginData *plugin)
 {
 	TimescopePrivate *priv;
 	VisParamContainer *paramcontainer = visual_plugin_get_params (plugin);
-	int i;
 
 	static VisParamEntry params[] = {
 		VISUAL_PARAM_LIST_ENTRY_INTEGER ("enabled", 1),
@@ -164,6 +165,7 @@ int lv_timescope_events (VisPluginData *plugin, VisEventQueue *events)
 				break;
 
 			case VISUAL_EVENT_PARAM:
+                visual_log(VISUAL_LOG_CRITICAL, "event param ----------- dog");
 				param = ev.event.param.param;
 
 				if (visual_param_entry_is (param, "enabled"))
@@ -191,7 +193,7 @@ int lv_timescope_events (VisPluginData *plugin, VisEventQueue *events)
 
 VisPalette *lv_timescope_palette (VisPluginData *plugin)
 {
-	TimescopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+	//TimescopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
 	return NULL;
 }
@@ -209,8 +211,10 @@ int lv_timescope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio
     char center_channel[576];
     unsigned char *fa_data;
 
+/*
     if (!priv->enabled) return 0;
     if (pipeline->isBeat&0x80000000) return 0;
+*/
 
     if (priv->which_ch >=2)
     {
