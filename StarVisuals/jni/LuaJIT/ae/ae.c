@@ -27,6 +27,7 @@ void ae_open(void)
  lua_pushnil(L);
  lua_setglobal(L,LUA_MATHLIBNAME);
  lua_settop(L,0);
+ lua_base(L);
  lua_pushnil(L);			/* slot for error message */
  if(luaL_loadfile(L, "math.lua") || lua_pcall(L, 0, 0, 0))
     printf("lua ae: Cannot run math lib: %s", lua_tostring(L, -1));
