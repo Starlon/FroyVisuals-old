@@ -35,6 +35,7 @@
 #include <limits.h>
 
 #include <libvisual/libvisual.h>
+#include <lua/lua.h>
 
 #include "avs_common.h"
 #include "evaluator.h"
@@ -50,6 +51,7 @@ enum scope_runnable {
 };
 
 typedef struct {
+    lua_State *lua;
     void *init;
     void *frame;
     void *beat;
@@ -234,6 +236,9 @@ int lv_superscope_init (VisPluginData *plugin)
 
     visual_palette_free_colors (&priv->pal);
 
+    luaJIT_setmode(&priv->lua, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_ON)
+
+/*
     init_evaluator();
 
     SetVariableNumeric("n", 32);
@@ -252,7 +257,7 @@ int lv_superscope_init (VisPluginData *plugin)
     SetVariableNumeric("linesize", 1);
     SetVariableNumeric("skip", 1);
     SetVariableNumeric("drawmode", 1);
-
+*/
     priv->needs_init = TRUE;
 
     return 0;

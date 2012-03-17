@@ -10,6 +10,6 @@ LOCAL_MODULE	:= actor_avs_superscope
 LOCAL_SRC_FILES := actor_avs_superscope.c
 LOCAL_CFLAGS	:= -Wall -O0 -g
 LOCAL_SHARED_LIBRARIES := libvisual common
-LOCAL_STATIC_LIBRARIES := evaluator
+LOCAL_STATIC_LIBRARIES := lua
 include $(BUILD_SHARED_LIBRARY)
 
