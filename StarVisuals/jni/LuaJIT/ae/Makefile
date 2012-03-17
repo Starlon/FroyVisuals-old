@@ -17,7 +17,7 @@ CC= gcc
 CFLAGS= $(INCS) $(WARN) -O2 $G
 WARN= -ansi -pedantic -Wall
 INCS= -I$(LUAINC)
-LIBS= -L$(LUALIB) -lluajit -lm
+LIBS= -L$(LUALIB) -lluajit -lm -ldl
 
 OBJS= ae.o
 TEST= test.ae
