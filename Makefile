@@ -40,7 +40,7 @@ install_debug_dev:
 clean:
 	@ndk-build clean
 	@ant clean
-	@rm -rf bin libs obj gen
+	@rm -rf bin obj gen
 
 update:
 	@android update project --path . --target $(TARGET)

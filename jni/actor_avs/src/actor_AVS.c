@@ -315,7 +315,7 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
                         visual_object_unref (VISUAL_OBJECT (priv->pipeline));
 
 
-                    if (FALSE && filename != NULL) {
+                    if (filename != NULL)
                         priv->lvtree = lvavs_preset_new_from_preset (filename);
 
                     if(priv->pipeline != NULL) {
