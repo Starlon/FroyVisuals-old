@@ -4,7 +4,7 @@
  *
  * Authors: Dennis Smit <ds@nerds-incorporated.org>
  *
- * $Id: actor_lv_scope.c,v 1.21 2006/01/27 20:19:17 synap Exp $
+ * $Id: actor_starscope.c,v 1.21 2006/01/27 20:19:17 synap Exp $
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -43,22 +43,22 @@ typedef struct {
     VisTimer timer;
 } ScopePrivate;
 
-int lv_scope_init (VisPluginData *plugin);
-int lv_scope_cleanup (VisPluginData *plugin);
-int lv_scope_requisition (VisPluginData *plugin, int *width, int *height);
-int lv_scope_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
-int lv_scope_events (VisPluginData *plugin, VisEventQueue *events);
-VisPalette *lv_scope_palette (VisPluginData *plugin);
-int lv_scope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
+int starscope_init (VisPluginData *plugin);
+int starscope_cleanup (VisPluginData *plugin);
+int starscope_requisition (VisPluginData *plugin, int *width, int *height);
+int starscope_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
+int starscope_events (VisPluginData *plugin, VisEventQueue *events);
+VisPalette *starscope_palette (VisPluginData *plugin);
+int starscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
 const VisPluginInfo *get_plugin_info (int *count)
 {
 	static VisActorPlugin actor[] = {{
-		.requisition = lv_scope_requisition,
-		.palette = lv_scope_palette,
-		.render = lv_scope_render,
+		.requisition = starscope_requisition,
+		.palette = starscope_palette,
+		.render = starscope_render,
 		.vidoptions.depth = VISUAL_VIDEO_DEPTH_8BIT
 	}};
 
@@ -69,12 +69,12 @@ const VisPluginInfo *get_plugin_info (int *count)
 		.name = "StarScope",
 		.author = "Dennis Smit <ds@nerds-incorporated.org> with additions by Scott Sibley <sisibley@gmail.com>",
 		.version = "0.1",
-		.about = "Libvisual scope plugin",
-		.help = "This is a test plugin that'll display a simple scope",
+		.about = "Libvisual star scope plugin",
+		.help = "This is a simple scope with a starfield behind it.",
 
-		.init = lv_scope_init,
-		.cleanup = lv_scope_cleanup,
-		.events = lv_scope_events,
+		.init = starscope_init,
+		.cleanup = starscope_cleanup,
+		.events = starscope_events,
 
 		.plugin = VISUAL_OBJECT (&actor[0])
 	}};
@@ -84,7 +84,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 	return info;
 }
 
-int lv_scope_init (VisPluginData *plugin)
+int starscope_init (VisPluginData *plugin)
 {
 	ScopePrivate *priv;
 
@@ -105,7 +105,7 @@ int lv_scope_init (VisPluginData *plugin)
 	return 0;
 }
 
-int lv_scope_cleanup (VisPluginData *plugin)
+int starscope_cleanup (VisPluginData *plugin)
 {
 	ScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
@@ -118,7 +118,7 @@ int lv_scope_cleanup (VisPluginData *plugin)
 	return 0;
 }
 
-int lv_scope_requisition (VisPluginData *plugin, int *width, int *height)
+int starscope_requisition (VisPluginData *plugin, int *width, int *height)
 {
 	int reqw, reqh;
 
@@ -143,21 +143,21 @@ int lv_scope_requisition (VisPluginData *plugin, int *width, int *height)
 	return 0;
 }
 
-int lv_scope_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
+int starscope_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
 {
 	visual_video_set_dimension (video, width, height);
 
 	return 0;
 }
 
-int lv_scope_events (VisPluginData *plugin, VisEventQueue *events)
+int starscope_events (VisPluginData *plugin, VisEventQueue *events)
 {
 	VisEvent ev;
 
 	while (visual_event_queue_poll (events, &ev)) {
 		switch (ev.type) {
 			case VISUAL_EVENT_RESIZE:
-				lv_scope_dimension (plugin, ev.event.resize.video,
+				starscope_dimension (plugin, ev.event.resize.video,
 						ev.event.resize.width, ev.event.resize.height);
 				break;
 			default: /* to avoid warnings */
@@ -168,7 +168,7 @@ int lv_scope_events (VisPluginData *plugin, VisEventQueue *events)
 	return 0;
 }
 
-VisPalette *lv_scope_palette (VisPluginData *plugin)
+VisPalette *starscope_palette (VisPluginData *plugin)
 {
 	ScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	int i;
@@ -340,7 +340,7 @@ static __inline int makeint(double t)
   return (int)(t*255.0);
 }
 
-int lv_scope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
+int starscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
 	ScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
