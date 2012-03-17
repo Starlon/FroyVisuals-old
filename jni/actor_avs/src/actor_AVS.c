@@ -28,7 +28,6 @@
 #include <string.h>
 #include <libvisual/libvisual.h>
 
-//#include "avs_parse.h"
 #include "lvavs_preset.h"
 #include "lvavs_pipeline.h"
 
@@ -300,45 +299,24 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
                     if(priv->pipeline != NULL)
                     priv->pipeline->blendmode = visual_param_entry_get_integer(param);
                 }
-#if 0
-                if (FALSE && visual_param_entry_is (param, "filename")) {
+                if (visual_param_entry_is (param, "filename")) {
                     char *filename = visual_param_entry_get_string (param);
 
+                    //FIXME what's wtree?
                     if (priv->wtree != NULL)
                         visual_object_unref (VISUAL_OBJECT (priv->wtree));
 
-                    if (priv->lvtree != NULL)
-                        ;//visual_object_unref (VISUAL_OBJECT (priv->lvtree));
+                    priv->wtree = NULL;
+
+                    if (priv->lvtree != NULL) // FIXME Why was this unref commented? 
+                        visual_object_unref (VISUAL_OBJECT (priv->lvtree));
 
                     if (priv->pipeline != NULL)
                         visual_object_unref (VISUAL_OBJECT (priv->pipeline));
 
-                    priv->wtree = NULL;
 
                     if (FALSE && filename != NULL) {
-                        //priv->lvtree = lvavs_preset_new_from_preset (filename);
-                    } else {
-                        LVAVSPreset *preset;
-                        LVAVSPresetElement *blur;
-                        //LVAVSPresetElement *starscope;
-                        LVAVSPresetElement *superscope;
-                        //starscope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "superscope");
-                        superscope = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "superscope");
-                        blur = lvavs_preset_element_new(LVAVS_PRESET_ELEMENT_TYPE_PLUGIN, "avs_blur");
-                        preset = lvavs_preset_new ();
-                        preset->main = lvavs_preset_container_new ();
-
-                        visual_list_add(preset->main->members, superscope);
-                        visual_list_add(preset->main->members, blur);
-
-                        static VisParamEntry params[] = {
-                            VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 1000;"),
-                            VISUAL_PARAM_LIST_END
-                        };
-                        visual_param_container_add_many(superscope->pcont, params);
-
-                        priv->lvtree = preset;
-                    }
+                        priv->lvtree = lvavs_preset_new_from_preset (filename);
 
                     if(priv->pipeline != NULL) {
                         visual_object_unref(VISUAL_OBJECT(priv->pipeline));
@@ -350,8 +328,6 @@ int act_avs_events (VisPluginData *plugin, VisEventQueue *events)
 
                     priv->needsnego = TRUE;
                 }
-#endif
-
                 break;
             default: /* to avoid warnings */
                 break;
