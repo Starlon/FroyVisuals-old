@@ -54,10 +54,17 @@ enum scope_runnable {
 
 typedef struct {
     lua_State *lua;
+/*
     void *init;
     void *frame;
     void *beat;
     void *point;
+*/
+    char *init;
+    char *frame;
+    char *beat;
+    char *point;
+
     double n, b, x, y, i, v, w, h, red, green, blue, linesize, skip, drawmode, t, d; 
     LVAVSPipeline *pipeline;
 
@@ -117,20 +124,28 @@ int scope_load_runnable(SuperScopePrivate *priv, ScopeRunnable runnable, char *b
 {
     switch(runnable) {
         case SCOPE_RUNNABLE_INIT:
+/*
             if(priv->init) DelTree(priv->init);
             Compile(buf, &priv->init);
+*/
         break;
         case SCOPE_RUNNABLE_FRAME:
+/*
             if(priv->frame) DelTree(priv->frame);
             Compile(buf, &priv->frame);
+*/
         break;
         case SCOPE_RUNNABLE_BEAT:
+/*
             if(priv->beat) DelTree(priv->beat);
             Compile(buf, &priv->beat);
+*/
         break;
         case SCOPE_RUNNABLE_POINT:
+/*
             if(priv->point) DelTree(priv->point);
             Compile(buf, &priv->point);
+*/
         break;
 
     }
@@ -139,38 +154,39 @@ int scope_load_runnable(SuperScopePrivate *priv, ScopeRunnable runnable, char *b
 
 void set_vars(SuperScopePrivate *priv)
 {
-    VARIABLE *var = FindVariable("n");
-    priv->n = R2N(var->value);
-    var = FindVariable("b");
-    priv->b = R2N(var->value);
-    var = FindVariable("x");
-    priv->x = R2N(var->value);
-    var = FindVariable("y");
-    priv->y = R2N(var->value);
-    var = FindVariable("i");
-    priv->i = R2N(var->value);
-    var = FindVariable("v");
-    priv->v = R2N(var->value);
-    var = FindVariable("w");
-    priv->w = R2N(var->value);
-    var = FindVariable("h");
-    priv->h = R2N(var->value);
-    var = FindVariable("t");
-    priv->t = R2N(var->value);
-    var = FindVariable("d");
-    priv->d = R2N(var->value);
-    var = FindVariable("red");
-    priv->red = R2N(var->value);
-    var = FindVariable("green");
-    priv->green = R2N(var->value);
-    var = FindVariable("blue");
-    priv->blue = R2N(var->value);
-    var = FindVariable("linesize");
-    priv->linesize = R2N(var->value);
-    var = FindVariable("skip");
-    priv->skip = R2N(var->value);
-    var = FindVariable("drawmode");
-    priv->drawmode = R2N(var->value);
+    lua_getglobal(priv->lua, "n");
+    lua_getglobal(priv->lua, "b");
+    lua_getglobal(priv->lua, "x");
+    lua_getglobal(priv->lua, "y");
+    lua_getglobal(priv->lua, "i");
+    lua_getglobal(priv->lua, "v");
+    lua_getglobal(priv->lua, "w");
+    lua_getglobal(priv->lua, "h");
+    lua_getglobal(priv->lua, "t");
+    lua_getglobal(priv->lua, "d");
+    lua_getglobal(priv->lua, "red");
+    lua_getglobal(priv->lua, "green");
+    lua_getglobal(priv->lua, "blue");
+    lua_getglobal(priv->lua, "linesize");
+    lua_getglobal(priv->lua, "skip");
+    lua_getglobal(priv->lua, "drawmode");
+    priv->n = lua_tonumber(priv->lua, -16); 
+    priv->b = lua_tonumber(priv->lua, -15);
+    priv->x = lua_tonumber(priv->lua, -14);
+    priv->y = lua_tonumber(priv->lua, -13);
+    priv->i = lua_tonumber(priv->lua, -12);
+    priv->v = lua_tonumber(priv->lua, -11);
+    priv->w = lua_tonumber(priv->lua, -10);
+    priv->h = lua_tonumber(priv->lua, -9);
+    priv->t = lua_tonumber(priv->lua, -8);
+    priv->d = lua_tonumber(priv->lua, -7);
+    priv->red = lua_tonumber(priv->lua, -6);
+    priv->green = lua_tonumber(priv->lua, -5);
+    priv->blue = lua_tonumber(priv->lua, -4);
+    priv->linesize = lua_tonumber(priv->lua, -3);
+    priv->skip = lua_tonumber(priv->lua, -2);
+    priv->drawmode = lua_tonumber(priv->lua, -1);
+    lua_settop(priv->lua, 0);
 }
 
 int scope_run(SuperScopePrivate *priv, ScopeRunnable runnable)
