@@ -298,28 +298,28 @@ int lv_superscope_init (VisPluginData *plugin)
      * top of the stack.
      */
     for (i = 1; i <= 5; i++) {
-        lua_pushnumber(L, i);   /* Push the table index */
-        lua_pushnumber(L, i*2); /* Push the cell value */
-        lua_rawset(L, -3);      /* Stores the pair in the table */
+        lua_pushnumber(priv->lua, i);   /* Push the table index */
+        lua_pushnumber(priv->lua, i*2); /* Push the cell value */
+        lua_rawset(priv->lua, -3);      /* Stores the pair in the table */
     }
 
     /* By what name is the script going to reference our table? */
-    lua_setglobal(L, "foo");
+    lua_setglobal(priv->lua, "foo");
 
     /* Ask Lua to run our little script */
-    result = lua_pcall(L, 0, LUA_MULTRET, 0);
+    result = lua_pcall(priv->lua, 0, LUA_MULTRET, 0);
     if (result) {
-        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(L, -1));
+        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(priv->lua, -1));
         exit(1);
     }
 
     /* Get the returned value at the top of the stack (index -1) */
-    sum = lua_tonumber(L, -1);
+    sum = lua_tonumber(priv->lua, -1);
 
     printf("Script returned: %.0f\n", sum);
 
-    lua_pop(L, 1);  /* Take the returned value out of the stack */
-    lua_close(L);   /* Cya, Lua */
+    lua_pop(priv->lua, 1);  /* Take the returned value out of the stack */
+    lua_close(priv->lua);   /* Cya, Lua */
 
     return 0;
 }
