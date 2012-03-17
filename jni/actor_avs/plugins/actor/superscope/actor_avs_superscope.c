@@ -36,6 +36,8 @@
 
 #include <libvisual/libvisual.h>
 #include <lua/lua.h>
+#include <lua/lauxlib.h>
+#include <lua/lualib.h>
 
 #include "avs_common.h"
 #include "evaluator.h"
@@ -236,9 +238,44 @@ int lv_superscope_init (VisPluginData *plugin)
 
     visual_palette_free_colors (&priv->pal);
 
-    luaJIT_setmode(&priv->lua, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_ON)
+    /* Declare the Lua libraries we wish to use. */
+    /* Note: If you are opening and running a file containing Lua code */
+    /* using 'lua_dofile(l, "myfile.lua") - you must delcare all the libraries */
+    /* used in that file here also. */
+    static const luaL_reg lualibs[] =
+    {
+            { "base",       luaopen_base },
+            { NULL,         NULL }
+    };
 
-/*
+    /* A function to open up all the Lua libraries you declared above. */
+    static void openlualibs(lua_State *l)
+    {
+            const luaL_reg *lib;
+
+            for (lib = lualibs; lib->func != NULL; lib++)
+        {
+                    lib->func(l);
+                    lua_settop(l, 0);
+            }
+    }
+
+    /* Declare a Lua State, open the Lua State and load the libraries (see above). */
+    priv->lua = lua_open();
+    openlualibs(priv->lua);
+
+    /* You can do what you want here. Note: Remember to update the libraries used (see above) */
+    /* if you add to your program and use new Lua libraries. */
+    /* In the lines below, I load and run the Lua code contained in the file */
+    /* "script.lua". */
+    /* Plus print some text directly from C. */
+    printf("This line in directly from C\n\n");
+    //lua_dofile(priv->lua, "script.lua");
+    printf("\nBack to C again\n\n");
+
+    /* Remember to destroy the Lua State */
+    lua_close(priv->lua);
+
     init_evaluator();
 
     SetVariableNumeric("n", 32);
@@ -257,7 +294,7 @@ int lv_superscope_init (VisPluginData *plugin)
     SetVariableNumeric("linesize", 1);
     SetVariableNumeric("skip", 1);
     SetVariableNumeric("drawmode", 1);
-*/
+
     priv->needs_init = TRUE;
 
     return 0;
