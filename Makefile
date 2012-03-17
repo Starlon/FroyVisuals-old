@@ -37,6 +37,7 @@ install_debug_emu:
 install_debug_dev:
 	@adb -d install -r bin/$(APPNAME)-debug.apk
  
+#Don't delete libs/
 clean:
 	@ndk-build clean
 	@ant clean
