@@ -1,0 +1,20 @@
+Identifier = "LibScriptableLCD_1_0"
+
+Name = "LibScriptableLCD-1.0"
+
+Description = "Rift library providing users lower-level UI configurations."
+
+Author = "Scott Sibley (Starlon)"
+Website = ""
+Email = "sisibley@gmail.com"
+
+Environment = "1.3"
+
+Embed = {
+	["LibScriptableLCDCoreLite-1.0"] = true,
+	["LibScriptableLCDCore-1.0"] = true,
+	["LibScriptableLCDText-1.0"] = true,
+	["LibScriptableLCDDriver-1.0"] = true,
+	["LibScriptableLCDDriverCharacter-1.0"] = true,
+	["LibScriptableLCDFont-1.0"] = true
+}

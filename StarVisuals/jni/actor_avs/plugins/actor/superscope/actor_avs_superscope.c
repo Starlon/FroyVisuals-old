@@ -258,20 +258,16 @@ int lv_superscope_init (VisPluginData *plugin)
 
     priv->needs_init = TRUE;
 
-    int status, result;
-    double sum;
-    lua_State *L;
-
     /*
      * All Lua contexts are held in this structure. We work with it almost
      * all the time.
      */
-    L = luaL_newstate();
+    priv->lua = luaL_newstate();
 
-    luaL_openlibs(L); /* Load Lua libraries */
+    luaL_openlibs(priv->lua); /* Load Lua libraries */
 
     /* Load the file containing the script we are going to run */
-    status = luaL_loadfile(L, "script.lua");
+    status = luaL_loadfile(priv->lua, "script.lua");
     if (status) {
         /* If something went wrong, error message is at the top of */
         /* the stack */
@@ -284,7 +280,7 @@ int lv_superscope_init (VisPluginData *plugin)
      * That is, we first have to prepare Lua's virtual stack the way we
      * want the script to receive it, then ask Lua to run it.
      */
-    lua_newtable(L);    /* We will pass a table */
+    lua_newtable(priv->lua);    /* We will pass a table */
 
     /*
      * To put values into the table, we first push the index, then the

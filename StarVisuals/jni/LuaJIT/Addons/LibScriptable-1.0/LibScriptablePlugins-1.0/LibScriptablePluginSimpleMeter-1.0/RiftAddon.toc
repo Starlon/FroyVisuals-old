@@ -1,0 +1,24 @@
+Identifier = "LibScriptablePluginSimpleMeter_1_0"
+
+Name = "LibScriptablePluginSimpleMeter-1.0"
+
+Description = "SimpleMeter library providing users lower-level UI configurations."
+
+Author = "Scott Sibley (Starlon)"
+Website = ""
+Email = "sisibley@gmail.com"
+
+Version = "1.0"
+
+Environment = "1.3"
+
+RunOnStartup = {
+	"LibScriptablePluginSimpleMeter-1.0.lua",
+}
+
+-- This line would set up dependencies with several other addons.
+Dependencies = {
+  LibStub = {"required", "before"}, 
+  LibCallbackHandler = {"required", "before"},   
+  LibScriptablePluginDPS_1_0 = {"required", "before"}
+}

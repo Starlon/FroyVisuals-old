@@ -1,0 +1,15 @@
+﻿Identifier = "LibStub"
+
+Name = "LibStub"
+
+Description = "Universal Library Stub"
+
+Author = "Lorandii aka Myrroddin"
+Website = "http://rift.curseforge.com/addons/libstub/"
+Email = "psvander@gmail.com"
+
+Environment = "1.3"
+
+RunOnStartup = {
+	"LibStub.lua",
+}
