@@ -33,6 +33,9 @@
 #include <fcntl.h>
 #include <string.h>
 #include <limits.h>
+#include <lua/lua.h>
+#include <lua/lauxlib.h>
+#include <lua/lualib.h>
 
 #include <libvisual/libvisual.h>
 
@@ -50,6 +53,7 @@ enum scope_runnable {
 };
 
 typedef struct {
+    lua_State *lua;
     void *init;
     void *frame;
     void *beat;
