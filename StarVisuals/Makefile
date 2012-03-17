@@ -1,4 +1,5 @@
 # Android Makefile v0.1 (c) 2011 - Daniel Hiepler <daniel@niftylight.de>
+# Additions v0.2 (c) 2012 made by Scott Sibley <sisibley@gmail.com>
 
 
 APPNAME = StarVisuals
