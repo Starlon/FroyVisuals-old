@@ -124,8 +124,8 @@ int act_avs_init (VisPluginData *plugin)
         preset = lvavs_preset_new ();
         preset->main = lvavs_preset_container_new ();
 
-        //visual_list_add(preset->main->members, clearscreen);
-        visual_list_add(preset->main->members, bumpscope);
+        visual_list_add(preset->main->members, clearscreen);
+        visual_list_add(preset->main->members, superscope);
         //visual_list_add(preset->main->members, stars);
         //visual_list_add(preset->main->members, ring);
         visual_list_add(preset->main->members, blur1);

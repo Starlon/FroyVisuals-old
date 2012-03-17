@@ -1,14 +1,5 @@
-local MAJOR = "LibScriptablePluginMath-1.0" 
-local MINOR = 19
 
-local PluginMath = LibStub:NewLibrary(MAJOR, MINOR)
-if not PluginMath then return end
-
-local math = _G.math
-
-if not PluginMath.__index then
-	PluginMath.__index = PluginMath
-end
+local PluginMath = {}
 
 local ScriptEnv = {}
 
@@ -21,38 +12,6 @@ function PluginMath:New(environment)
 	for k, v in pairs(ScriptEnv) do
 		environment[k] = v
 	end
-		
-	environment.abs = math.abs
-	environment.acos = math.acos
-	environment.asin = math.asin
-	environment.atan = math.atan
-	environment.atan2 = math.atan2
-	environment.ceil = math.ceil
-	environment.cos = math.cos
-	environment.cosh = math.cosh
-	environment.deg = math.deg
-	environment.exp = math.exp
-	environment.floor = math.floor
-	environment.fmod = math.fmod
-	environment.frexp = math.frexp
-	environment.huge = math.huge
-	environment.ldexp = math.ldexp
-	environment.log = math.log
-	environment.log10 = math.log10
-	environment.max = math.max
-	environment.min = math.min
-	environment.mod = math.mod
-	environment.modf = math.modf
-	environment.pi = math.pi
-	environment.pow = math.pow
-	environment.rad = math.rad
-	environment.random = math.random
-	environment.randomseed = math.randomseed
-	environment.sin = math.sin
-	environment.sinh = math.sinh
-	environment.sqrt = math.sqrt
-	environment.tan = math.tan
-	environment.tanh = math.tanh
 
 	environment.PI = 3.14159265358979323846
 	environment.E = 2.71828
@@ -121,3 +80,5 @@ local function rand(val)
 	return random() * val
 end
 ScriptEnv.rand = rand
+
+PluginMath:New(_G); -- Now populate global environment.

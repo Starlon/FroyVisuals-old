@@ -28,6 +28,8 @@ void ae_open(void)
  lua_setglobal(L,LUA_MATHLIBNAME);
  lua_settop(L,0);
  lua_pushnil(L);			/* slot for error message */
+ if(luaL_loadfile(L, "math.lua") || lua_pcall(L, 0, 0, 0))
+    printf("lua ae: Cannot run math lib: %s", lua_tostring(L, -1));
 }
 
 void ae_close(void)
@@ -42,6 +44,13 @@ double ae_set(const char* name, double value)
  lua_pushnumber(L,value);
  lua_setglobal(L,name);
  return value;
+}
+
+double ae_get(const char* name)
+{
+ if(L==NULL) return 0;
+ lua_getglobal(L, name);
+ return lua_tonumber(L, -1);
 }
 
 typedef struct LoadS

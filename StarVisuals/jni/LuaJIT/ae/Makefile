@@ -7,17 +7,17 @@ LUALIB= $(LUA)/src
 LUABIN= $(LUA)/src
 
 # these will probably work if Lua has been installed globally
-#LUA= /usr/local
-#LUAINC= $(LUA)/include
-#LUALIB= $(LUA)/lib
-#LUABIN= $(LUA)/bin
+LUA= ../
+LUAINC= $(LUA)../../include/
+LUALIB= $(LUA)/x86
+LUABIN= $(LUA)/bin
 
 # probably no need to change anything below here
 CC= gcc
 CFLAGS= $(INCS) $(WARN) -O2 $G
 WARN= -ansi -pedantic -Wall
 INCS= -I$(LUAINC)
-LIBS= -L$(LUALIB) -llua -lm
+LIBS= -L$(LUALIB) -lluajit -lm
 
 OBJS= ae.o
 TEST= test.ae

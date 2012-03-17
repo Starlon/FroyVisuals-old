@@ -33,37 +33,24 @@
 #include <fcntl.h>
 #include <string.h>
 #include <limits.h>
-#include <luajit/lua.h>
-#include <luajit/lauxlib.h>
-#include <luajit/lualib.h>
+#include <lua/ae.h>
 
 #include <libvisual/libvisual.h>
 
 #include "avs_common.h"
-#include "evaluator.h"
 #include "lvavs_pipeline.h"
 
 typedef enum scope_runnable ScopeRunnable;
 
 enum scope_runnable {
-    SCOPE_RUNNABLE_INIT,
+    SCOPE_RUNNABLE_INIT = 0,
     SCOPE_RUNNABLE_FRAME,
     SCOPE_RUNNABLE_BEAT,
     SCOPE_RUNNABLE_POINT,
 };
 
 typedef struct {
-    lua_State *lua;
-/*
-    void *init;
-    void *frame;
-    void *beat;
-    void *point;
-*/
-    char *init;
-    char *frame;
-    char *beat;
-    char *point;
+    char *runnables[4];
 
     double n, b, x, y, i, v, w, h, red, green, blue, linesize, skip, drawmode, t, d; 
     LVAVSPipeline *pipeline;
@@ -120,96 +107,44 @@ const VisPluginInfo *get_plugin_info (int *count)
     return info;
 }
 
+void set_vars(SuperScopePrivate *priv)
+{
+    // Some of these don't need to be set.
+    priv->n = ae_get("n");
+    //priv->b = ae_get("b");
+    priv->x = ae_get("x");
+    priv->y = ae_get("y");
+    //priv->i = ae_get("i");
+    priv->v = ae_get("v");
+    //priv->w = ae_get("w"); 
+    //priv->h = ae_get("h");
+    priv->t = ae_get("t");
+    priv->d = ae_get("d");
+    priv->red = ae_get("red");
+    priv->green = ae_get("green");
+    priv->blue = ae_get("blue");
+    priv->linesize = ae_get("linesize");
+    priv->skip = ae_get("skip");
+    priv->drawmode = ae_get("drawmode");
+}
+
 int scope_load_runnable(SuperScopePrivate *priv, ScopeRunnable runnable, char *buf)
 {
-    switch(runnable) {
-        case SCOPE_RUNNABLE_INIT:
-/*
-            if(priv->init) DelTree(priv->init);
-            Compile(buf, &priv->init);
-*/
-        break;
-        case SCOPE_RUNNABLE_FRAME:
-/*
-            if(priv->frame) DelTree(priv->frame);
-            Compile(buf, &priv->frame);
-*/
-        break;
-        case SCOPE_RUNNABLE_BEAT:
-/*
-            if(priv->beat) DelTree(priv->beat);
-            Compile(buf, &priv->beat);
-*/
-        break;
-        case SCOPE_RUNNABLE_POINT:
-/*
-            if(priv->point) DelTree(priv->point);
-            Compile(buf, &priv->point);
-*/
-        break;
+    visual_log_return_val_if_fail(buf != NULL, VISUAL_ERROR_GENERAL);
 
-    }
+    if(priv->runnables[runnable] != NULL)
+        free(priv->runnables[runnable]);
+    priv->runnables[runnable] = strdup(buf);
+
     return 0;
 }
 
-void set_vars(SuperScopePrivate *priv)
-{
-    lua_getglobal(priv->lua, "n");
-    lua_getglobal(priv->lua, "b");
-    lua_getglobal(priv->lua, "x");
-    lua_getglobal(priv->lua, "y");
-    lua_getglobal(priv->lua, "i");
-    lua_getglobal(priv->lua, "v");
-    lua_getglobal(priv->lua, "w");
-    lua_getglobal(priv->lua, "h");
-    lua_getglobal(priv->lua, "t");
-    lua_getglobal(priv->lua, "d");
-    lua_getglobal(priv->lua, "red");
-    lua_getglobal(priv->lua, "green");
-    lua_getglobal(priv->lua, "blue");
-    lua_getglobal(priv->lua, "linesize");
-    lua_getglobal(priv->lua, "skip");
-    lua_getglobal(priv->lua, "drawmode");
-    priv->n = lua_tonumber(priv->lua, -16); 
-    priv->b = lua_tonumber(priv->lua, -15);
-    priv->x = lua_tonumber(priv->lua, -14);
-    priv->y = lua_tonumber(priv->lua, -13);
-    priv->i = lua_tonumber(priv->lua, -12);
-    priv->v = lua_tonumber(priv->lua, -11);
-    priv->w = lua_tonumber(priv->lua, -10);
-    priv->h = lua_tonumber(priv->lua, -9);
-    priv->t = lua_tonumber(priv->lua, -8);
-    priv->d = lua_tonumber(priv->lua, -7);
-    priv->red = lua_tonumber(priv->lua, -6);
-    priv->green = lua_tonumber(priv->lua, -5);
-    priv->blue = lua_tonumber(priv->lua, -4);
-    priv->linesize = lua_tonumber(priv->lua, -3);
-    priv->skip = lua_tonumber(priv->lua, -2);
-    priv->drawmode = lua_tonumber(priv->lua, -1);
-    lua_settop(priv->lua, 0);
-}
 
 int scope_run(SuperScopePrivate *priv, ScopeRunnable runnable)
 {
-    
-    RESULT result;
-    memset(&result, 0, sizeof(RESULT));
-    switch(runnable) {
-        case SCOPE_RUNNABLE_INIT:
-            Eval(priv->init, &result);
-        break;
-        case SCOPE_RUNNABLE_FRAME:
-            Eval(priv->frame, &result);
-        break;
-        case SCOPE_RUNNABLE_BEAT:
-            Eval(priv->beat, &result);
-        break;
-        case SCOPE_RUNNABLE_POINT:
-            Eval(priv->point, &result);
-        break;
+    visual_log_return_val_if_fail(priv->runnables[runnable] != NULL, VISUAL_ERROR_GENERAL);
 
-    }
-
+    ae_eval(priv->runnables[runnable]);
 
     set_vars(priv);
 
@@ -243,9 +178,9 @@ int lv_superscope_init (VisPluginData *plugin)
     visual_palette_allocate_colors (&priv->pal, 1);
 
     for (i = 0; i < priv->pal.ncolors; i++) {
-        priv->pal.colors[i].r = 0xff;
-        priv->pal.colors[i].g = 0xff;
-        priv->pal.colors[i].b = 0xff;
+        priv->pal.colors[i].r = i;
+        priv->pal.colors[i].g = i;
+        priv->pal.colors[i].b = i;
         priv->pal.colors[i].a = 0xff;
     }
 
@@ -253,89 +188,9 @@ int lv_superscope_init (VisPluginData *plugin)
 
     visual_palette_free_colors (&priv->pal);
 
-    init_evaluator();
-
-    SetVariableNumeric("n", 32);
-    SetVariableNumeric("b", 1);
-    SetVariableNumeric("x", 1);
-    SetVariableNumeric("y", 1);
-    SetVariableNumeric("i", 1);
-    SetVariableNumeric("v", 1);
-    SetVariableNumeric("w", 1);
-    SetVariableNumeric("h", 1);
-    SetVariableNumeric("t", 1);
-    SetVariableNumeric("d", 1);
-    SetVariableNumeric("red", 77/256);
-    SetVariableNumeric("green", 177/256);
-    SetVariableNumeric("blue", 77/256);
-    SetVariableNumeric("linesize", 1);
-    SetVariableNumeric("skip", 1);
-    SetVariableNumeric("drawmode", 1);
-
     priv->needs_init = TRUE;
 
-    /*
-     * All Lua contexts are held in this structure. We work with it almost
-     * all the time.
-     */
-    priv->lua = luaL_newstate();
-
-    luaL_openlibs(priv->lua); /* Load Lua libraries */
-
-    /* Load the file containing the script we are going to run */
-    status = luaL_loadfile(priv->lua, "script.lua");
-    if (status) {
-        /* If something went wrong, error message is at the top of */
-        /* the stack */
-        fprintf(stderr, "Couldn't load file: %s\n", lua_tostring(L, -1));
-        exit(1);
-    }
-
-    /*
-     * Ok, now here we go: We pass data to the lua script on the stack.
-     * That is, we first have to prepare Lua's virtual stack the way we
-     * want the script to receive it, then ask Lua to run it.
-     */
-    lua_newtable(priv->lua);    /* We will pass a table */
-
-    /*
-     * To put values into the table, we first push the index, then the
-     * value, and then call lua_rawset() with the index of the table in the
-     * stack. Let's see why it's -3: In Lua, the value -1 always refers to
-     * the top of the stack. When you create the table with lua_newtable(),
-     * the table gets pushed into the top of the stack. When you push the
-     * index and then the cell value, the stack looks like:
-     *
-     * <- [stack bottom] -- table, index, value [top]
-     *
-     * So the -1 will refer to the cell value, thus -3 is used to refer to
-     * the table itself. Note that lua_rawset() pops the two last elements
-     * of the stack, so that after it has been called, the table is at the
-     * top of the stack.
-     */
-    for (i = 1; i <= 5; i++) {
-        lua_pushnumber(priv->lua, i);   /* Push the table index */
-        lua_pushnumber(priv->lua, i*2); /* Push the cell value */
-        lua_rawset(priv->lua, -3);      /* Stores the pair in the table */
-    }
-
-    /* By what name is the script going to reference our table? */
-    lua_setglobal(priv->lua, "foo");
-
-    /* Ask Lua to run our little script */
-    result = lua_pcall(priv->lua, 0, LUA_MULTRET, 0);
-    if (result) {
-        fprintf(stderr, "Failed to run script: %s\n", lua_tostring(priv->lua, -1));
-        exit(1);
-    }
-
-    /* Get the returned value at the top of the stack (index -1) */
-    sum = lua_tonumber(priv->lua, -1);
-
-    printf("Script returned: %.0f\n", sum);
-
-    lua_pop(priv->lua, 1);  /* Take the returned value out of the stack */
-    lua_close(priv->lua);   /* Cya, Lua */
+    ae_open();
 
     return 0;
 }
@@ -343,11 +198,19 @@ int lv_superscope_init (VisPluginData *plugin)
 int lv_superscope_cleanup (VisPluginData *plugin)
 {
     SuperScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
-
+    int i;
     if(priv->pipeline != NULL)
         visual_object_unref(VISUAL_OBJECT(priv->pipeline));
 
+    for(i = 0; i < 4; i++)
+    {
+        if(priv->runnables[i] != NULL)
+            visual_mem_free(priv->runnables[i]);
+    }
+
     visual_mem_free (priv);
+
+    ae_close();
 
     return 0;
 }
@@ -381,19 +244,19 @@ int lv_superscope_events (VisPluginData *plugin, VisEventQueue *events)
                 param = ev.event.param.param;
 
                 if (visual_param_entry_is (param, "point")) {
-                    char *point = strdup(visual_param_entry_get_string (param));
+                    char *point = (visual_param_entry_get_string (param));
                     scope_load_runnable(priv, SCOPE_RUNNABLE_POINT, point);
 
                 } else if (visual_param_entry_is (param, "frame")) {
-                    char *frame = strdup(visual_param_entry_get_string (param));
+                    char *frame = (visual_param_entry_get_string (param));
                     scope_load_runnable(priv, SCOPE_RUNNABLE_FRAME, frame);
 
                 } else if (visual_param_entry_is (param, "beat")) {
-                    char *beat = strdup(visual_param_entry_get_string (param));
+                    char *beat = (visual_param_entry_get_string (param));
                     scope_load_runnable(priv, SCOPE_RUNNABLE_BEAT, beat);
 
                 } else if (visual_param_entry_is (param, "init")) {
-                    char *init = strdup(visual_param_entry_get_string (param));
+                    char *init = (visual_param_entry_get_string (param));
                     scope_load_runnable(priv, SCOPE_RUNNABLE_INIT, init);
                     priv->needs_init = TRUE;
 
@@ -432,16 +295,7 @@ int lv_superscope_events (VisPluginData *plugin, VisEventQueue *events)
 
     return 0;
 }
-/*
-static int makeint(AvsNumber t)
-{
-    if (t <= 0.0)
-        return 0;
-    if (t >= 1.0)
-        return 255;
-    return (int)(t*255.0);
-}
-*/
+
 VisPalette *lv_superscope_palette (VisPluginData *plugin)
 {
     //SuperScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
@@ -522,15 +376,16 @@ int lv_superscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
     priv->linesize = (double) ((priv->pipeline->blendmode&0xff0000)>>16);
     priv->drawmode = priv->drawmode ? 1.0 : 0.0;
 
-    SetVariableNumeric("h", priv->h);
-    SetVariableNumeric("w", priv->w);
-    SetVariableNumeric("b", priv->b);
-    SetVariableNumeric("blue", priv->blue);
-    SetVariableNumeric("green", priv->green);
-    SetVariableNumeric("red", priv->red);
-    SetVariableNumeric("skip", priv->skip);
-    SetVariableNumeric("linesize", priv->linesize);
-    SetVariableNumeric("drawmode", priv->drawmode);
+    
+    ae_set("h", priv->h);
+    ae_set("w", priv->w);
+    ae_set("b", priv->b);
+    ae_set("blue", priv->blue);
+    ae_set("green", priv->green);
+    ae_set("red", priv->red);
+    ae_set("skip", priv->skip);
+    ae_set("linesize", priv->linesize);
+    ae_set("drawmode", priv->drawmode);
 
     scope_run(priv, SCOPE_RUNNABLE_FRAME);
 
@@ -554,9 +409,9 @@ int lv_superscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
         priv->i = a/(double)(l-1);
         priv->skip = 0.0;
 
-        SetVariableNumeric("v", priv->v);
-        SetVariableNumeric("i", priv->i);
-        SetVariableNumeric("skip", priv->skip);
+        ae_set("v", priv->v);
+        ae_set("i", priv->i);
+        ae_set("skip", priv->skip);
 
         scope_run(priv, SCOPE_RUNNABLE_POINT);
 

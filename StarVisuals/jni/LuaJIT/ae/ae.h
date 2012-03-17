@@ -9,6 +9,7 @@
 void		ae_open		(void);
 void		ae_close	(void);
 double		ae_set		(const char* name, double value);
+double      ae_get      (const char* name);
 double		ae_eval		(const char* expression);
 const char* 	ae_error	(void);
 
