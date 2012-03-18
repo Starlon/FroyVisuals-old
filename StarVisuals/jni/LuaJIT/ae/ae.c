@@ -31,6 +31,7 @@ void ae_open(void)
  if(luaL_loadfile(L, "library/LibStub.lua") || lua_pcall(L, 0, 0, 0));
  if(luaL_loadfile(L, "library/PluginMath.lua") || lua_pcall(L, 0, 0, 0));
  if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/PluginMath.lua") || lua_pcall(L, 0, 0, 0));
+ if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/LibStub.lua") || lua_pcall(L, 0, 0, 0));
  
 }
 
