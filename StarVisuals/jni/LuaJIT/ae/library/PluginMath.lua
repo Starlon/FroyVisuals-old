@@ -1,8 +1,14 @@
+local ffi = require("ffi")
+ffi.cdef[[
+int printf(const char *fmt, ...);
+]]
+ffi.C.printf("Hello %s!", "world")
 
-local PluginMath = {}
+_G.PluginMath = {}
 
 local ScriptEnv = {}
 
+local math = math
 -- Populate an environment with this plugin's fields
 -- @usage :New(environment) 
 -- @parma environment This will be the environment when setfenv is called.
@@ -12,6 +18,38 @@ function PluginMath:New(environment)
 	for k, v in pairs(ScriptEnv) do
 		environment[k] = v
 	end
+		
+	environment.abs = math.abs
+	environment.acos = math.acos
+	environment.asin = math.asin
+	environment.atan = math.atan
+	environment.atan2 = math.atan2
+	environment.ceil = math.ceil
+	environment.cos = math.cos
+	environment.cosh = math.cosh
+	environment.deg = math.deg
+	environment.exp = math.exp
+	environment.floor = math.floor
+	environment.fmod = math.fmod
+	environment.frexp = math.frexp
+	environment.huge = math.huge
+	environment.ldexp = math.ldexp
+	environment.log = math.log
+	environment.log10 = math.log10
+	environment.max = math.max
+	environment.min = math.min
+	environment.mod = math.mod
+	environment.modf = math.modf
+	environment.pi = math.pi
+	environment.pow = math.pow
+	environment.rad = math.rad
+	environment.random = math.random
+	environment.randomseed = math.randomseed
+	environment.sin = math.sin
+	environment.sinh = math.sinh
+	environment.sqrt = math.sqrt
+	environment.tan = math.tan
+	environment.tanh = math.tanh
 
 	environment.PI = 3.14159265358979323846
 	environment.E = 2.71828
@@ -74,13 +112,11 @@ local function equal(a, b)
 end
 ScriptEnv.equal = equal
 
-local random = random
-local seed = randomseed
+local random = math.random
 local function rand(val)
 	val = val or 100
-    seed(os.time())
 	return random() * val
 end
 ScriptEnv.rand = rand
 
-PluginMath:New(_G); -- Now populate global environment.
+PluginMath:New(_G)

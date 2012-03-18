@@ -24,26 +24,13 @@ void ae_open(void)
  if (L!=NULL) return;
  L=lua_open();
  luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_ON);
- lua_pushvalue(L,LUA_GLOBALSINDEX);	/* open math in global scope */
- lua_setglobal(L,LUA_MATHLIBNAME);
- luaopen_math(L);
- luaopen_mathx(L);
- luaopen_base(L);
- luaopen_table(L);
- luaopen_bit(L);
- luaopen_ffi(L);
- luaopen_io(L);
- luaopen_os(L);
- luaopen_debug(L);
- luaopen_string(L);
- lua_pushnil(L);
- lua_setglobal(L,LUA_MATHLIBNAME);
- lua_settop(L,0);
- lua_pushnil(L);			/* slot for error message */
- if(luaL_loadfile(L, "math.lua") || lua_pcall(L, 0, 0, 0))
-    printf("lua ae: Cannot load math lib\n");
- if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/math.lua") || lua_pcall(L, 0, 0, 0))
-    printf("lua ae: Cannot load math lib\n");
+ LUAJIT_VERSION_SYM();  /* linker-enforced version check */
+ lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
+ luaL_openlibs(L);  /* open libraries */
+ lua_gc(L, LUA_GCRESTART, -1);
+ if(luaL_loadfile(L, "library/LibStub.lua") || lua_pcall(L, 0, 0, 0));
+ if(luaL_loadfile(L, "library/PluginMath.lua") || lua_pcall(L, 0, 0, 0));
+ if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/PluginMath.lua") || lua_pcall(L, 0, 0, 0));
  
 }
 

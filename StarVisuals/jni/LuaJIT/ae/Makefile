@@ -15,7 +15,7 @@ LUABIN= $(LUA)/bin
 # probably no need to change anything below here
 CC= gcc
 CFLAGS= $(INCS) $(WARN) -O2 $G
-WARN= -ansi -pedantic -Wall
+WARN= -Wall
 INCS= -I$(LUAINC)
 LIBS= -L$(LUALIB) -lluajit -lm -ldl
 
