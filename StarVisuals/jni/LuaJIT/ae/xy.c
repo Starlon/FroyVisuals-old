@@ -13,7 +13,7 @@ int main(void)
 {
  double x;
  ae_open();
- ae_set("a",1);
+ ae_set("a",20);
  ae_set("b",-5);
  ae_set("c",6);
  for (x=0.0; x<4.0; x+=0.25)
@@ -22,8 +22,10 @@ int main(void)
   printf("%g\t%g\n",x,ae_eval("a*x^2+b*x+c", 1));
  }
  
- printf("above(PI, -E) = %f\n", ae_eval("above(PI, -E)", 1));
- printf("value of b=%f\n", ae_get("b"));
+ ae_eval("a = 400", 0);
+ 
+ printf("error : %s\n", ae_error());
+ printf("value of a=%f - %s\n", ae_get("a"));
  ae_close();
  return 0;
 }

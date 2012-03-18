@@ -126,6 +126,7 @@ void set_vars(SuperScopePrivate *priv)
     priv->linesize = ae_get("linesize");
     priv->skip = ae_get("skip");
     priv->drawmode = ae_get("drawmode");
+
 }
 
 int scope_load_runnable(SuperScopePrivate *priv, ScopeRunnable runnable, char *buf)
@@ -161,10 +162,10 @@ int lv_superscope_init (VisPluginData *plugin)
     int i;
 
     static VisParamEntry params[] = {
-        VISUAL_PARAM_LIST_ENTRY_STRING ("point", "d=i+v*0.2; r=t+i*PI*4*count; x = cos(r)*d; y = sin(r) * d"),
-        VISUAL_PARAM_LIST_ENTRY_STRING ("frame", "t=t-0.01;count=count+1"),
+        VISUAL_PARAM_LIST_ENTRY_STRING ("point", "d=i+v*0.2; r=t+i*PI*4*count; x = cos(r)*d; y = sin(r)*d;"),
+        VISUAL_PARAM_LIST_ENTRY_STRING ("frame", "t=t-0.01;count=(count or 0)+1;"),
         VISUAL_PARAM_LIST_ENTRY_STRING ("beat", ""),
-        VISUAL_PARAM_LIST_ENTRY_STRING ("init", "n=800"),
+        VISUAL_PARAM_LIST_ENTRY_STRING ("init", "n=800;"),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("channel_source", 0),
         VISUAL_PARAM_LIST_ENTRY ("palette"),
         VISUAL_PARAM_LIST_ENTRY_INTEGER ("drawmode", 1),
@@ -194,7 +195,25 @@ int lv_superscope_init (VisPluginData *plugin)
     priv->needs_init = TRUE;
 
     ae_open();
+    
+    ae_set("n", 32);
+    ae_set("b", 1);
+    ae_set("x", 1);
+    ae_set("y", 1);
+    ae_set("i", 1);
+    ae_set("v", 1);
+    ae_set("w", 1);
+    ae_set("h", 1);
+    ae_set("t", 1);
+    ae_set("d", 1);
+    ae_set("red", 255);
+    ae_set("green", 255);
+    ae_set("blue", 255);
+    ae_set("linesize", 1);
+    ae_set("skip", 1);
+    ae_set("drawmode", 0);
 
+    visual_log(VISUAL_LOG_CRITICAL, "what the eff %f %s", ae_eval("nil or 10000", TRUE), ae_error());
     return 0;
 }
 
@@ -436,6 +455,7 @@ int lv_superscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
                 if (y >= 0 && y < video->height && x >= 0 && x < video->width &&
                     ly >= 0 && ly < video->height && lx >= 0 && lx < video->width) {
                         VisColor color;
+                        this_color = 0xffffffff;
                         visual_color_from_uint32(&color, this_color);
 
                         avs_gfx_line_ints(video, lx, ly, x, y, &color);

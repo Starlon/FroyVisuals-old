@@ -125,18 +125,15 @@ int act_avs_init (VisPluginData *plugin)
         preset->main = lvavs_preset_container_new ();
 
         visual_list_add(preset->main->members, clearscreen);
-        visual_list_add(preset->main->members, ring);
-        visual_list_add(preset->main->members, superscope);
-        //visual_list_add(preset->main->members, stars);
-        visual_list_add(preset->main->members, blur1);
-        //visual_list_add(preset->main->members, blur2);
-        //visual_list_add(preset->main->members, blur3);
+        //visual_list_add(preset->main->members, ring);
+        visual_list_add(preset->main->members, stars);
+        visual_list_add(preset->main->members, blur3);
         //visual_list_add(preset->main->members, blur4);
-        //visual_list_add(preset->main->members, superscope);
+        visual_list_add(preset->main->members, superscope);
 
 
         static VisParamEntry params[] = {
-            VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 32;"),
+            VISUAL_PARAM_LIST_ENTRY_STRING("init", "n = 50;"),
             VISUAL_PARAM_LIST_END
         };
         visual_param_container_add_many(superscope->pcont, params);

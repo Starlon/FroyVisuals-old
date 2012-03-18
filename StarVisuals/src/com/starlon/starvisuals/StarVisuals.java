@@ -39,6 +39,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.FileDescriptor;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
@@ -83,11 +86,39 @@ public class StarVisuals extends Activity implements OnClickListener
 
     private StarVisualsView mView;
 
+    private void makeFile(String file, int id)
+    {
+        InputStream inputStream = getResources().openRawResource(id);
+     
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        
+     
+        int i;
+        try {
+            i = inputStream.read();
+            while (i != -1)
+            {
+                outputStream.write(i);
+                i = inputStream.read();
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle state)
     {
         super.onCreate(state);
+        makeFile("/data/data/com.starlon.starvisuals/math.lua", R.raw.math);
 
         mSettings = new Settings(this);
 

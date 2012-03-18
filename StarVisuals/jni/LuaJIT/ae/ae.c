@@ -33,7 +33,10 @@ void ae_open(void)
  lua_settop(L,0);
  lua_pushnil(L);			/* slot for error message */
  if(luaL_loadfile(L, "math.lua") || lua_pcall(L, 0, 0, 0))
-    printf("lua ae: Cannot run math lib: %s", lua_tostring(L, -1));
+    printf("lua ae: Cannot load math lib\n");
+ if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/math.lua") || lua_pcall(L, 0, 0, 0))
+    printf("lua ae: Cannot load math lib\n");
+ 
 }
 
 void ae_close(void)
@@ -94,8 +97,8 @@ double ae_eval(const char* expression, int flag)
     }
     else
     {
-        S.text[0]="";
-        S.size[0]=0;
+        S.text[0]=" ";
+        S.size[0]=1;
     }
     
 	S.text[1]=expression;	S.size[1]=strlen(expression);
