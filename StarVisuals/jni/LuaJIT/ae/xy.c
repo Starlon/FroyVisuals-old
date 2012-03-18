@@ -21,6 +21,8 @@ int main(void)
   ae_set("x",x);
   printf("%g\t%g\n",x,ae_eval("a*x^2+b*x+c"));
  }
+ 
+ printf("value of b=%f\n", ae_get("b"));
  ae_close();
  return 0;
 }

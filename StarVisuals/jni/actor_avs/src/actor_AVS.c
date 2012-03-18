@@ -126,9 +126,9 @@ int act_avs_init (VisPluginData *plugin)
 
         visual_list_add(preset->main->members, clearscreen);
         visual_list_add(preset->main->members, superscope);
-        //visual_list_add(preset->main->members, stars);
-        //visual_list_add(preset->main->members, ring);
-        visual_list_add(preset->main->members, blur1);
+        visual_list_add(preset->main->members, stars);
+        visual_list_add(preset->main->members, ring);
+        //visual_list_add(preset->main->members, blur1);
         //visual_list_add(preset->main->members, blur2);
         //visual_list_add(preset->main->members, blur3);
         //visual_list_add(preset->main->members, blur4);
