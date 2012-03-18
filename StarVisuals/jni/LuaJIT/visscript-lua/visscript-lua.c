@@ -100,7 +100,7 @@ double visscript_eval(const char* expression, int flag)
 	S.text[1]=expression;	S.size[1]=strlen(expression);
 	S.text[2]=NULL;		S.size[2]=0;
 	S.i=0;
-	error=lua_load(L,getS,&S,"=visscript"); if (error) break;
+	error=lua_load(L,getS,&S,"=ae"); if (error) break;
 	lua_pushvalue(L,-1);
 	lua_setglobal(L,expression);
   }

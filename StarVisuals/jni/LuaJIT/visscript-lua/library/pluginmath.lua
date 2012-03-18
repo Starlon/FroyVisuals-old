@@ -115,6 +115,7 @@ ScriptEnv.equal = equal
 local random = math.random
 local function rand(val)
 	val = val or 100
+    randomseed(os.time());
 	return random() * val
 end
 ScriptEnv.rand = rand
