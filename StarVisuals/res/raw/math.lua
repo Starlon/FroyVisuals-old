@@ -74,7 +74,7 @@ local function equal(a, b)
 end
 ScriptEnv.equal = equal
 
-local random = math.random
+local random = random
 local function rand(val)
 	val = val or 100
 	return random() * val

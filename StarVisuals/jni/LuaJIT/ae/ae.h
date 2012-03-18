@@ -10,7 +10,7 @@ void		ae_open		(void);
 void		ae_close	(void);
 double		ae_set		(const char* name, double value);
 double      ae_get      (const char* name);
-double		ae_eval		(const char* expression);
+double		ae_eval		(const char* expression, int flag);
 const char* 	ae_error	(void);
 
 /*
@@ -25,8 +25,10 @@ const char* 	ae_error	(void);
 	Sets the value of a variable.
 	The value persists until it is set again or ae_close is called.
 
-  ae_eval(expression)
+  ae_eval(expression, flag)
 	Evaluates the given expression and returns its value.
+    Use flag as a boolean. True or 1 means return the expression's value.
+    Otherwise just evaluate the expression and return 0.
 	Returns 0 if there is an error.
 	Call ae_error to get the error message in case of errors.
 	Once ae has seen an expression, ae can evaluate it repeatedly quickly.

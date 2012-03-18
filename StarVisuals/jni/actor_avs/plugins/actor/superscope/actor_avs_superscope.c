@@ -111,13 +111,13 @@ void set_vars(SuperScopePrivate *priv)
 {
     // Some of these don't need to be set.
     priv->n = ae_get("n");
-    //priv->b = ae_get("b");
+    priv->b = ae_get("b");
     priv->x = ae_get("x");
     priv->y = ae_get("y");
-    //priv->i = ae_get("i");
+    priv->i = ae_get("i");
     priv->v = ae_get("v");
-    //priv->w = ae_get("w"); 
-    //priv->h = ae_get("h");
+    priv->w = ae_get("w"); 
+    priv->h = ae_get("h");
     priv->t = ae_get("t");
     priv->d = ae_get("d");
     priv->red = ae_get("red");
@@ -144,7 +144,10 @@ int scope_run(SuperScopePrivate *priv, ScopeRunnable runnable)
 {
     visual_log_return_val_if_fail(priv->runnables[runnable] != NULL, VISUAL_ERROR_GENERAL);
 
-    ae_eval(priv->runnables[runnable]);
+    ae_eval(priv->runnables[runnable], FALSE);
+
+    if(ae_error())
+        visual_log(VISUAL_LOG_CRITICAL, "Lua expression caused an error: %s", ae_error());
 
     set_vars(priv);
 

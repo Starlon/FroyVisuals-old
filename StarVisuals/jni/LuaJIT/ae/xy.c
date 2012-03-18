@@ -19,9 +19,10 @@ int main(void)
  for (x=0.0; x<4.0; x+=0.25)
  {
   ae_set("x",x);
-  printf("%g\t%g\n",x,ae_eval("a*x^2+b*x+c"));
+  printf("%g\t%g\n",x,ae_eval("a*x^2+b*x+c", 1));
  }
  
+ printf("above(PI, -E) = %f\n", ae_eval("above(PI, -E)", 1));
  printf("value of b=%f\n", ae_get("b"));
  ae_close();
  return 0;

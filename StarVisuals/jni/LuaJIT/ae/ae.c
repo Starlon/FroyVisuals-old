@@ -16,6 +16,8 @@
 
 static lua_State *L=NULL;
 
+#define RETURN		"return "
+
 void ae_open(void)
 {
  if (L!=NULL) return;
@@ -53,8 +55,8 @@ double ae_get(const char* var)
  char str[256];
  if(L==NULL) return 0;
  memcpy(str, var, strlen(var));
- memcpy(str + strlen(var), "\0", 1);
- return ae_eval(str);
+ str[strlen(var)] = '\0';
+ return ae_eval(str, 1);
 }
 
 typedef struct LoadS
@@ -73,9 +75,8 @@ static const char *getS (lua_State *L, void *data, size_t *size)
  return S->text[i];
 }
 
-#define RETURN		"return "
 
-double ae_eval(const char* expression)
+double ae_eval(const char* expression, int flag)
 {
  double value;
  int error=0;
@@ -86,7 +87,17 @@ double ae_eval(const char* expression)
   case LUA_TNIL:			/* no: compile, cache, and call it */
   {
 	LoadS S;
-	S.text[0]=RETURN;	S.size[0]=sizeof(RETURN)-1;
+    if(flag)
+    {
+    	S.text[0]=RETURN;	
+        S.size[0]=sizeof(RETURN)-1;
+    }
+    else
+    {
+        S.text[0]="";
+        S.size[0]=0;
+    }
+    
 	S.text[1]=expression;	S.size[1]=strlen(expression);
 	S.text[2]=NULL;		S.size[2]=0;
 	S.i=0;
@@ -110,7 +121,6 @@ double ae_eval(const char* expression)
  else
  {
   value=0.0;
-  lua_pushliteral(L,"not a number");
  }
  lua_replace(L,1);			/* save error message */
  lua_settop(L,1);
