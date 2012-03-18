@@ -15,5 +15,7 @@ LOCAL_CFLAGS += $(OPTIM_FLAGS)
 LOCAL_LDLIBS += -L$(call host-path, $(LOCAL_PATH))/$(TARGET_ARCH_ABI) -lluajit -ldl
 LOCAL_SHARED_LIBRARIES := libvisual common
 LOCAL_STATIC_LIBRARIES := visscript-lua
-include $(BUILD_SHARED_LIBRARY)
 
+ifneq ($(TARGET_ARCH_ABI),x86)
+    include $(BUILD_SHARED_LIBRARY)
+endif
