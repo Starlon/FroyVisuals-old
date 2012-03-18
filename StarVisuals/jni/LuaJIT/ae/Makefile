@@ -26,8 +26,8 @@ T=tae
 
 all:	test
 
-test:	tae xy
-	./tae < $(TEST)
+test:	xy
+	#./tae < $(TEST)
 	./xy
 
 o:	$(OBJS)

@@ -22,10 +22,10 @@ int main(void)
   printf("%g\t%g\n",x,ae_eval("a*x^2+b*x+c", 1));
  }
  
- ae_eval("a = 400", 0);
+ ae_eval("a = rand(400)", 0);
  
  printf("error : %s\n", ae_error());
- printf("value of a=%f - %s\n", ae_get("a"));
+ printf("value of a=%f - %s\n", ae_get("rand(2000)"));
  ae_close();
  return 0;
 }

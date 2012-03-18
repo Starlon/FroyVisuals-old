@@ -10,6 +10,7 @@
 #include <lua/lua.h>
 #include <lua/lualib.h>
 #include <lua/lauxlib.h>
+#include <lua/luajit.h>
 #include "ae.h"
 
 #define luaopen_mathx(L)	/* delete this line if you have mathx */
@@ -22,12 +23,15 @@ void ae_open(void)
 {
  if (L!=NULL) return;
  L=lua_open();
+ luaJIT_setmode(L, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_ON);
  lua_pushvalue(L,LUA_GLOBALSINDEX);	/* open math in global scope */
  lua_setglobal(L,LUA_MATHLIBNAME);
  luaopen_math(L);
  luaopen_mathx(L);
  luaopen_base(L);
  luaopen_table(L);
+ luaopen_bit(L);
+ luaopen_ffi(L);
  lua_pushnil(L);
  lua_setglobal(L,LUA_MATHLIBNAME);
  lua_settop(L,0);
