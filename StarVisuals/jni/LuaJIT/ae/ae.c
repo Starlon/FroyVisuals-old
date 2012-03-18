@@ -32,6 +32,10 @@ void ae_open(void)
  luaopen_table(L);
  luaopen_bit(L);
  luaopen_ffi(L);
+ luaopen_io(L);
+ luaopen_os(L);
+ luaopen_debug(L);
+ luaopen_string(L);
  lua_pushnil(L);
  lua_setglobal(L,LUA_MATHLIBNAME);
  lua_settop(L,0);
