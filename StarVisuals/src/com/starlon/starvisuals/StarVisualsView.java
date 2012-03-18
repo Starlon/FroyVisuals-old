@@ -189,7 +189,7 @@ public class StarVisualsView extends View {
                             mLock.unlock();
                             mStatsNative.endFrame();
                         }
-                        Thread.sleep(10);
+                        Thread.sleep(8);
                     } 
                     catch(Exception e)
                     {
