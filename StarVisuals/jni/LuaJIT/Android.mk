@@ -10,8 +10,8 @@ LOCAL_CFLAGS += $(OPTIM_FLAGS)
 
 LOCAL_LDLIBS += -L$(call host-path, $(LOCAL_PATH))/$(TARGET_ARCH_ABI) -llibluajit
 
-LOCAL_MODULE	:= ae
-LOCAL_SRC_FILES := ae/ae.c
+LOCAL_MODULE	:= visscript-lua
+LOCAL_SRC_FILES := visscript-lua/visscript-lua.c
 
 LOCAL_SHARED_LIBRARIES := visual
 

@@ -1,5 +1,5 @@
 /*
-* ae.c
+* visscript.c
 * general purpose arithmetic expression package based on Lua
 * Luiz Henrique de Figueiredo <lhf@tecgraf.puc-rio.br>
 * 29 Aug 2009 00:20:10
@@ -11,7 +11,7 @@
 #include <lua/lualib.h>
 #include <lua/lauxlib.h>
 #include <lua/luajit.h>
-#include "ae.h"
+#include "visscript.h"
 
 #define luaopen_mathx(L)	/* delete this line if you have mathx */
 
@@ -19,7 +19,7 @@ static lua_State *L=NULL;
 
 #define RETURN		"return "
 
-void ae_open(void)
+void visscript_open(void)
 {
  if (L!=NULL) return;
  L=lua_open();
@@ -35,27 +35,27 @@ void ae_open(void)
  
 }
 
-void ae_close(void)
+void visscript_close(void)
 {
  if (L==NULL) return;
  lua_close(L);
  L=NULL;
 }
 
-double ae_set(const char* name, double value)
+double visscript_set(const char* name, double value)
 {
  lua_pushnumber(L,value);
  lua_setglobal(L,name);
  return value;
 }
 
-double ae_get(const char* var)
+double visscript_get(const char* var)
 {
  char str[256];
  if(L==NULL) return 0;
  memcpy(str, var, strlen(var));
  str[strlen(var)] = '\0';
- return ae_eval(str, 1);
+ return visscript_eval(str, 1);
 }
 
 typedef struct LoadS
@@ -75,7 +75,7 @@ static const char *getS (lua_State *L, void *data, size_t *size)
 }
 
 
-double ae_eval(const char* expression, int flag)
+double visscript_eval(const char* expression, int flag)
 {
  double value;
  int error=0;
@@ -100,7 +100,7 @@ double ae_eval(const char* expression, int flag)
 	S.text[1]=expression;	S.size[1]=strlen(expression);
 	S.text[2]=NULL;		S.size[2]=0;
 	S.i=0;
-	error=lua_load(L,getS,&S,"=ae"); if (error) break;
+	error=lua_load(L,getS,&S,"=visscript"); if (error) break;
 	lua_pushvalue(L,-1);
 	lua_setglobal(L,expression);
   }
@@ -126,7 +126,7 @@ double ae_eval(const char* expression, int flag)
  return value;
 }
 
-const char* ae_error(void)
+const char* visscript_error(void)
 {
  return lua_tostring(L,1);
 }

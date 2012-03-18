@@ -1,0 +1,23 @@
+Identifier = "LibScriptablePluginString_1_0"
+
+Name = "LibScriptablePluginString-1.0"
+
+Description = "Rift library providing users lower-level UI configurations."
+
+Author = "Scott Sibley (Starlon)"
+Website = ""
+Email = "sisibley@gmail.com"
+
+Version = "1.0"
+
+Environment = "1.3"
+
+RunOnStartup = {
+	"LibScriptablePluginString-1.0.lua",
+}
+
+-- This line would set up dependencies with several other addons.
+Dependencies = {
+  LibStub = {"required", "before"}, 
+  LibCallbackHandler = {"required", "before"},   
+}
