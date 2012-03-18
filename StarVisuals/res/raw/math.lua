@@ -75,8 +75,10 @@ end
 ScriptEnv.equal = equal
 
 local random = random
+local seed = randomseed
 local function rand(val)
 	val = val or 100
+    seed(os.time())
 	return random() * val
 end
 ScriptEnv.rand = rand
