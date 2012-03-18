@@ -1,7 +1,9 @@
 /*
 * visscript.c
 * general purpose arithmetic expression package based on Lua
+* Originally named ae.
 * Luiz Henrique de Figueiredo <lhf@tecgraf.puc-rio.br>
+* Modified and renamed by Scott Sibley <sisibley@gmail.com>
 * 29 Aug 2009 00:20:10
 * This code is hereby placed in the public domain.
 */
@@ -12,8 +14,6 @@
 #include <lua/lauxlib.h>
 #include <lua/luajit.h>
 #include "visscript-lua.h"
-
-#define luaopen_mathx(L)	/* delete this line if you have mathx */
 
 static lua_State *L=NULL;
 
@@ -51,7 +51,7 @@ double visscript_set(const char* name, double value)
 
 double visscript_get(const char* var)
 {
- char str[256];
+ char str[strlen(var) + 1];
  if(L==NULL) return 0;
  memcpy(str, var, strlen(var));
  str[strlen(var)] = '\0';

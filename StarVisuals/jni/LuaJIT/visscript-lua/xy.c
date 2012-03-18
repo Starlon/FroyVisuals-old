@@ -7,26 +7,26 @@
 */
 
 #include <stdio.h>
-#include "ae.h"
+#include "visscript-lua.h"
 
 int main(void)
 {
  double x;
- ae_open();
- ae_set("a",20);
- ae_set("b",-5);
- ae_set("c",6);
+ visscript_open();
+ visscript_set("a",20);
+ visscript_set("b",-5);
+ visscript_set("c",6);
  for (x=0.0; x<4.0; x+=0.25)
  {
-  ae_set("x",x);
-  printf("%g\t%g\n",x,ae_eval("a*x^2+b*x+c", 1));
+  visscript_set("x",x);
+  printf("%g\t%g\n",x,visscript_eval("a*x^2+b*x+c", 1));
  }
  
- ae_eval("a = tonumber(string.format('%d', rand(500000)))", 0);
- printf("error1 : %s\n", ae_error());
+ visscript_eval("a = tonumber(string.format('%d', rand(500000)))", 0);
+ printf("error1 : %s\n", visscript_error());
 
- printf("value of a=%f\n", ae_get("a"));
- printf("error2 : %s\n", ae_error());
- ae_close();
+ printf("value of a=%f\n", visscript_get("a"));
+ printf("error2 : %s\n", visscript_error());
+ visscript_close();
  return 0;
 }
