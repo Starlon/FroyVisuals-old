@@ -118,7 +118,8 @@ public class StarVisuals extends Activity implements OnClickListener
     protected void onCreate(Bundle state)
     {
         super.onCreate(state);
-        makeFile("/data/data/com.starlon.starvisuals/math.lua", R.raw.math);
+        makeFile("/data/data/com.starlon.starvisuals/libstub.lua", R.raw.libstub);
+        makeFile("/data/data/com.starlon.starvisuals/pluginmath.lua", R.raw.pluginmath);
 
         mSettings = new Settings(this);
 

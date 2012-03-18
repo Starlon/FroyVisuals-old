@@ -33,7 +33,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <limits.h>
-#include <lua/ae.h>
+#include <lua/visscript-lua.h>
 
 #include <libvisual/libvisual.h>
 
@@ -110,22 +110,22 @@ const VisPluginInfo *get_plugin_info (int *count)
 void set_vars(SuperScopePrivate *priv)
 {
     // Some of these don't need to be set.
-    priv->n = ae_get("n");
-    priv->b = ae_get("b");
-    priv->x = ae_get("x");
-    priv->y = ae_get("y");
-    priv->i = ae_get("i");
-    priv->v = ae_get("v");
-    priv->w = ae_get("w"); 
-    priv->h = ae_get("h");
-    priv->t = ae_get("t");
-    priv->d = ae_get("d");
-    priv->red = ae_get("red");
-    priv->green = ae_get("green");
-    priv->blue = ae_get("blue");
-    priv->linesize = ae_get("linesize");
-    priv->skip = ae_get("skip");
-    priv->drawmode = ae_get("drawmode");
+    priv->n = visscript_get("n");
+    priv->b = visscript_get("b");
+    priv->x = visscript_get("x");
+    priv->y = visscript_get("y");
+    priv->i = visscript_get("i");
+    priv->v = visscript_get("v");
+    priv->w = visscript_get("w"); 
+    priv->h = visscript_get("h");
+    priv->t = visscript_get("t");
+    priv->d = visscript_get("d");
+    priv->red = visscript_get("red");
+    priv->green = visscript_get("green");
+    priv->blue = visscript_get("blue");
+    priv->linesize = visscript_get("linesize");
+    priv->skip = visscript_get("skip");
+    priv->drawmode = visscript_get("drawmode");
 
 }
 
@@ -145,10 +145,10 @@ int scope_run(SuperScopePrivate *priv, ScopeRunnable runnable)
 {
     visual_log_return_val_if_fail(priv->runnables[runnable] != NULL, VISUAL_ERROR_GENERAL);
 
-    ae_eval(priv->runnables[runnable], FALSE);
+    visscript_eval(priv->runnables[runnable], FALSE);
 
-    if(ae_error())
-        visual_log(VISUAL_LOG_CRITICAL, "Lua expression caused an error: %s", ae_error());
+    if(visscript_error())
+        visual_log(VISUAL_LOG_CRITICAL, "Lua expression caused an error: %s", visscript_error());
 
     set_vars(priv);
 
@@ -194,26 +194,25 @@ int lv_superscope_init (VisPluginData *plugin)
 
     priv->needs_init = TRUE;
 
-    ae_open();
+    visscript_open();
     
-    ae_set("n", 32);
-    ae_set("b", 1);
-    ae_set("x", 1);
-    ae_set("y", 1);
-    ae_set("i", 1);
-    ae_set("v", 1);
-    ae_set("w", 1);
-    ae_set("h", 1);
-    ae_set("t", 1);
-    ae_set("d", 1);
-    ae_set("red", 255);
-    ae_set("green", 255);
-    ae_set("blue", 255);
-    ae_set("linesize", 1);
-    ae_set("skip", 1);
-    ae_set("drawmode", 0);
+    visscript_set("n", 32);
+    visscript_set("b", 1);
+    visscript_set("x", 1);
+    visscript_set("y", 1);
+    visscript_set("i", 1);
+    visscript_set("v", 1);
+    visscript_set("w", 1);
+    visscript_set("h", 1);
+    visscript_set("t", 1);
+    visscript_set("d", 1);
+    visscript_set("red", 255);
+    visscript_set("green", 255);
+    visscript_set("blue", 255);
+    visscript_set("linesize", 1);
+    visscript_set("skip", 1);
+    visscript_set("drawmode", 0);
 
-    visual_log(VISUAL_LOG_CRITICAL, "what the eff %f %s", ae_eval("nil or 10000", TRUE), ae_error());
     return 0;
 }
 
@@ -232,7 +231,7 @@ int lv_superscope_cleanup (VisPluginData *plugin)
 
     visual_mem_free (priv);
 
-    ae_close();
+    visscript_close();
 
     return 0;
 }
@@ -399,15 +398,15 @@ int lv_superscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
     priv->drawmode = priv->drawmode ? 1.0 : 0.0;
 
     
-    ae_set("h", priv->h);
-    ae_set("w", priv->w);
-    ae_set("b", priv->b);
-    ae_set("blue", priv->blue);
-    ae_set("green", priv->green);
-    ae_set("red", priv->red);
-    ae_set("skip", priv->skip);
-    ae_set("linesize", priv->linesize);
-    ae_set("drawmode", priv->drawmode);
+    visscript_set("h", priv->h);
+    visscript_set("w", priv->w);
+    visscript_set("b", priv->b);
+    visscript_set("blue", priv->blue);
+    visscript_set("green", priv->green);
+    visscript_set("red", priv->red);
+    visscript_set("skip", priv->skip);
+    visscript_set("linesize", priv->linesize);
+    visscript_set("drawmode", priv->drawmode);
 
     scope_run(priv, SCOPE_RUNNABLE_FRAME);
 
@@ -431,9 +430,9 @@ int lv_superscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audi
         priv->i = a/(double)(l-1);
         priv->skip = 0.0;
 
-        ae_set("v", priv->v);
-        ae_set("i", priv->i);
-        ae_set("skip", priv->skip);
+        visscript_set("v", priv->v);
+        visscript_set("i", priv->i);
+        visscript_set("skip", priv->skip);
 
         scope_run(priv, SCOPE_RUNNABLE_POINT);
 

@@ -11,7 +11,7 @@
 #include <lua/lualib.h>
 #include <lua/lauxlib.h>
 #include <lua/luajit.h>
-#include "visscript.h"
+#include "visscript-lua.h"
 
 #define luaopen_mathx(L)	/* delete this line if you have mathx */
 
