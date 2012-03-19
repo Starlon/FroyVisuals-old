@@ -283,7 +283,7 @@ int lvavs_pipeline_run (LVAVSPipeline *pipeline, VisVideo *video, VisAudio *audi
         visdata[i] = (beatdata[i] + 1) / 2.0 * CHAR_MAX;
     }
 
-    pipeline->isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, visdata, BEAT_MAX_SIZE);
+    pipeline->isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, visdata, BEAT_MAX_SIZE/2);
 
     pipeline_container_run (LVAVS_PIPELINE_CONTAINER (pipeline->container), video, audio);
 
