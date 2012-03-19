@@ -190,6 +190,8 @@ public class StarVisuals extends Activity implements OnClickListener
         registerReceiver(mReceiver, mIntentFilter);
 
         updatePrefs();
+
+        enableMic("mic");
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -251,7 +253,7 @@ public class StarVisuals extends Activity implements OnClickListener
             NativeHelper.setMorphStyle(mDoMorph);
     
             mMorph = settings.getString("prefs_morph_selection", "alphablend");
-            mInput = settings.getString("prefs_input_selection", "dummy");
+            mInput = settings.getString("prefs_input_selection", "mic");
             mActor = settings.getString("prefs_actor_selection", "lv_analyzer");
     
             NativeHelper.morphSetCurrentByName(mMorph);
