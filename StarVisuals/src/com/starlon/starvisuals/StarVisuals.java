@@ -190,8 +190,6 @@ public class StarVisuals extends Activity implements OnClickListener
         registerReceiver(mReceiver, mIntentFilter);
 
         updatePrefs();
-
-        enableMic("mic");
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -272,6 +270,8 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onResume();
 
+        enableMic("mic");
+
         getAlbumArt();
 
         mView.startThread();
@@ -314,7 +314,6 @@ public class StarVisuals extends Activity implements OnClickListener
 
         releaseAlbumArt();
 
-        disableMic();
 
         mView.stopThread();
     }
@@ -336,6 +335,7 @@ public class StarVisuals extends Activity implements OnClickListener
 
         unregisterReceiver(mReceiver);
 
+
     }
 
     // Last method before shut down. Clean up LibVisual from here.
@@ -343,11 +343,7 @@ public class StarVisuals extends Activity implements OnClickListener
     protected void onDestroy()
     {
         super.onDestroy();
-        synchronized(mView.mSynch) // The thread should be stopped, but sync anyways.
-        {
-            // FIXME - call visual_quit() then call visual_init() -- crash. bad strdup mem in __lv_plugpaths
-            //NativeHelper.visualsQuit(false); // false to prevent exit(0);
-        }
+        disableMic();
     }
 
     // Create options menu.

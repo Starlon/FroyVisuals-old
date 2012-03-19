@@ -1630,7 +1630,8 @@ int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, char 
                 char *f = (char*)(visdata + ch * size);
                 for(x = 0; x < size; x++)
                 {
-                        int r = *f++^128;
+                        f++;
+                        int r = *f^128;
                         r-=128;
                         if(r<0)r=-r;
                         lt[ch]+=r;

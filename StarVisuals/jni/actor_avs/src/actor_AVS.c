@@ -125,10 +125,10 @@ int act_avs_init (VisPluginData *plugin)
         preset->main = lvavs_preset_container_new ();
 
         visual_list_add(preset->main->members, clearscreen);
-        visual_list_add(preset->main->members, stars);
+        //visual_list_add(preset->main->members, stars);
         visual_list_add(preset->main->members, ring);
-        visual_list_add(preset->main->members, blur3);
-        visual_list_add(preset->main->members, blur4);
+        //visual_list_add(preset->main->members, blur3);
+        //visual_list_add(preset->main->members, blur4);
         //visual_list_add(preset->main->members, superscope);
 
 
@@ -343,13 +343,17 @@ VisPalette *act_avs_palette (VisPluginData *plugin)
 
 int act_avs_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
+    static int c = 0;
     AVSPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
     if (priv->needsnego == TRUE) {
         lvavs_pipeline_negotiate (priv->pipeline, video);
 
         priv->needsnego = FALSE;
+        return 0;
     }
+
+    if(c++ < 100) return;
 
     lvavs_pipeline_run (priv->pipeline, video, audio);
 

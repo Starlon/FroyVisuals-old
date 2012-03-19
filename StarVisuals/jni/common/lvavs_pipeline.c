@@ -275,13 +275,12 @@ int lvavs_pipeline_run (LVAVSPipeline *pipeline, VisVideo *video, VisAudio *audi
 
     memcpy(beatdata, data[1][0], size * sizeof(float));
     memcpy(beatdata + size, data[1][1], size * sizeof(float));
-
 #ifdef _OPENMP
 #pragma omp parallel for private(i)
 #endif
 
     for(i = BEAT_MAX_SIZE - 1; i >= 0; i--) {
-        visdata[i] = (beatdata[i] + 1) / 2.0 * UCHAR_MAX;
+        visdata[i] = (beatdata[i] + 1) / 2.0 * CHAR_MAX;
     }
 
     pipeline->isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, visdata, BEAT_MAX_SIZE);
