@@ -2,7 +2,6 @@ package com.starlon.starvisuals;
 
 import android.content.Context;
 import android.view.View;
-//import android.view.Display;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Typeface;
@@ -39,7 +38,7 @@ public class StarVisualsView extends View {
     private Matrix mMatrix = null;
     //private Display mDisplay = null;
     private boolean mActive = false;
-    private boolean mDoBeat = true;
+    private boolean mDoBeat = false;
     public short mMicData[] = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
@@ -243,7 +242,7 @@ public class StarVisualsView extends View {
                 int confidence = NativeHelper.getBPMConfidence();
                 boolean isBeat = NativeHelper.isBeat();
     
-                if(bpm > 0)
+                if(bpm > 0 && confidence > 10)
                     text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : " ");
                 else
                     text = "Learning... (" + confidence + "%)";
