@@ -251,7 +251,7 @@ public class StarVisuals extends Activity implements OnClickListener
             NativeHelper.setMorphStyle(mDoMorph);
     
             mMorph = settings.getString("prefs_morph_selection", "alphablend");
-            mInput = settings.getString("prefs_input_selection", "alsa");
+            mInput = settings.getString("prefs_input_selection", "mic");
             mActor = settings.getString("prefs_actor_selection", "avs");
     
             NativeHelper.morphSetCurrentByName(mMorph);
@@ -270,11 +270,6 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onResume();
 
-        enableMic("alsa");
-
-        getAlbumArt();
-
-        mView.startThread();
     }
 
     // follows onCreate() and onResume()
@@ -282,6 +277,12 @@ public class StarVisuals extends Activity implements OnClickListener
     protected void onStart() 
     {   
         super.onStart();
+
+        getAlbumArt();
+
+        mView.startThread();
+
+        enableMic("mic");
 
         registerReceiver(mReceiver, mIntentFilter);
     }
@@ -332,6 +333,7 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onStop();
 
+        disableMic();
 
         unregisterReceiver(mReceiver);
 
@@ -343,7 +345,6 @@ public class StarVisuals extends Activity implements OnClickListener
     protected void onDestroy()
     {
         super.onDestroy();
-        disableMic();
     }
 
     // Create options menu.
