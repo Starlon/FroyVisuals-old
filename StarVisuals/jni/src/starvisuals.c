@@ -130,10 +130,32 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_log_return_val_if_fail(audio != NULL, VISUAL_ERROR_GENERAL);
     visual_log_return_val_if_fail(pcm_ref.pcm_data != NULL, VISUAL_ERROR_GENERAL);
 
+    VisParamContainer *paramcontainer = visual_plugin_get_params(input->plugin);
+
     VisBuffer buf;
 
     visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
+
+    if(paramcontainer != NULL)
+    {
+        VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
+        if(entry == NULL)
+        {
+            entry = visual_param_entry_new("isBeat");
+            visual_param_container_add(paramcontainer, entry);
+        }
+
+        char scaled[pcm_ref.size];
+        int i, isBeat;
+
+        for(i = 0; i < pcm_ref.size; i++)
+        {
+            scaled[i] = pcm_ref.pcm_data[i] / (float)FLT_MAX * CHAR_MAX;
+        }
+        isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, pcm_ref.size);
+        visual_param_entry_set_integer(entry, isBeat);
+    }
 
     return 0;
 }
@@ -1611,8 +1633,6 @@ void app_main(int w, int h)
 
     if(strstr(v.input_name, "mic"))
     {
-        visual_object_unref(VISUAL_OBJECT(input));
-        input = visual_input_new(NULL);
     	if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
 
     	    visual_log(VISUAL_LOG_CRITICAL, "Unable to set mic input callback.");	
