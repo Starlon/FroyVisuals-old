@@ -264,12 +264,13 @@ int lvavs_pipeline_run (LVAVSPipeline *pipeline, VisVideo *video, VisAudio *audi
 #endif
 
     for(i = size - 1; i >= 0; i--) {
-    pipeline->audiodata[0][0][i] = (data[0][0][i] + 1) / 2;
-    pipeline->audiodata[1][0][i] = (data[1][0][i] + 1) / 2;
-    pipeline->audiodata[0][1][i] = (data[0][1][i] + 1) / 2;
-    pipeline->audiodata[1][1][i] = (data[1][1][i] + 1) / 2;
+        pipeline->audiodata[0][0][i] = (data[0][0][i] + 1) / 2.0;
+        pipeline->audiodata[1][0][i] = (data[1][0][i] + 1) / 2.0;
+        pipeline->audiodata[0][1][i] = (data[0][1][i] + 1) / 2.0;
+        pipeline->audiodata[1][1][i] = (data[1][1][i] + 1) / 2.0;
     }
 
+/*
     float beatdata[BEAT_MAX_SIZE];
     char visdata[BEAT_MAX_SIZE];
 
@@ -284,6 +285,7 @@ int lvavs_pipeline_run (LVAVSPipeline *pipeline, VisVideo *video, VisAudio *audi
     }
 
     pipeline->isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, visdata, BEAT_MAX_SIZE/2);
+*/
 
     pipeline_container_run (LVAVS_PIPELINE_CONTAINER (pipeline->container), video, audio);
 
