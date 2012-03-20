@@ -65,7 +65,5 @@
 #include "lv_math.h"
 #include "lv_os.h"
 #include "lv_common.h"
-#include "lvavs_pipeline.h"
-#include "lvavs_preset.h"
 
 #endif /* LV_LIBVISUAL_H */

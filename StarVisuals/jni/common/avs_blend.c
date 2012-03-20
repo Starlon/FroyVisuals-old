@@ -94,7 +94,7 @@ static int FASTMIN(int x, int y)
 
 #endif
 
-__inline int  BLEND_MAX(int a, int b)
+int  BLEND_MAX(int a, int b)
 {
 	register int t;
   int _a=a&0xff;
@@ -107,7 +107,7 @@ __inline int  BLEND_MAX(int a, int b)
 	return t;
 }
 
-__inline int  BLEND_MIN(int a, int b)
+int  BLEND_MIN(int a, int b)
 {
 #if 1
 	register int t;
@@ -171,7 +171,7 @@ __inline int  BLEND_MIN(int a, int b)
 #endif
 
 
-__inline int  BLEND_AVG(int a, int b)
+int  BLEND_AVG(int a, int b)
 {
 	return ((a>>1)&~((1<<7)|(1<<15)|(1<<23)))+((b>>1)&~((1<<7)|(1<<15)|(1<<23)));
 }

@@ -38,7 +38,7 @@
 
 #include "lvavs_preset.h"
 #include "lvavs_pipeline.h"
-#include "avs_common.h"
+#include "avs_blend.h"
 
 /* Prototypes */
 static int lvavs_pipeline_dtor (VisObject *object);
@@ -130,7 +130,6 @@ static int lvavs_pipeline_container_dtor (VisObject *object)
 LVAVSPipeline *lvavs_pipeline_new ()
 {
     LVAVSPipeline *pipeline;
-    VisColor *col = visual_color_black();
     int i,j;
     
 
@@ -536,7 +535,6 @@ static int render_now(LVAVSPipelineContainer *container, VisVideo *video, VisAud
     int count = visual_list_count(container->members);
     for(i = 0; i < count; i++) {
         LVAVSPipelineElement *element = visual_list_get(container->members, i);
-        VisVideo *tmpvid;
 
         if(s) {
             pipeline->framebuffer = visual_video_get_pixels(pipeline->dummy_vid);
@@ -584,13 +582,15 @@ static int render_now(LVAVSPipelineContainer *container, VisVideo *video, VisAud
 int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, VisAudio *audio)
 {
     int i, s = 0;
-    VisListEntry *le = NULL;
+    //VisListEntry *le = NULL;
+/*
     LVAVSPipelineElement *element;
     VisBuffer pcmbuf1;
     VisBuffer pcmbuf2;
     VisBuffer spmbuf1;
     VisBuffer spmbuf2;
     VisBuffer tmp;
+*/
     int *fbout;
     int *framebuffer;
     LVAVSPipeline *pipeline = LVAVS_PIPELINE_ELEMENT(container)->pipeline;
@@ -672,7 +672,7 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
             break;
             case 7:
             {
-                int y=h/2;
+                //int y=h/2;
                 while(x-- > 0)
                 {
                     visual_mem_copy(o,tfb,w*sizeof(int));
@@ -742,7 +742,7 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
         }
     }
     int x;
-    int line_blend_mode_save=pipeline->blendmode;
+    //int line_blend_mode_save=pipeline->blendmode;
     //if(!is_preinit) pipeline->blendmode = 0;
 
     s = render_now(container, video, audio, s);

@@ -28,8 +28,6 @@
 
 #include "lvavs_preset.h"
 
-#include "avs_globals.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

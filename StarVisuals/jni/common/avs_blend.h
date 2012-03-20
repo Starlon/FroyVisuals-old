@@ -31,7 +31,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _R_BLEND_H_
 
 #include "config.h"
-#include "avs_globals.h"
+
 
 int  BLEND(int a, int b);
 int  BLEND_MAX(int a, int b);
