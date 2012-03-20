@@ -137,7 +137,8 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
-#if 0 FIXME Beat detection isn't very good. No need to perform these steps.
+#if 0 
+    //FIXME Beat detection isn't very good. No need to perform these steps.
     if(paramcontainer != NULL)
     {
         VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
