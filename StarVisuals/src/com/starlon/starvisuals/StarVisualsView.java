@@ -39,7 +39,7 @@ public class StarVisualsView extends View {
     private Matrix mMatrix = null;
     //private Display mDisplay = null;
     private boolean mActive = false;
-    private boolean mDoBeat = false;
+    private boolean mDoBeat = true;
     public short mMicData[] = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
@@ -244,9 +244,9 @@ public class StarVisualsView extends View {
                 boolean isBeat = NativeHelper.isBeat();
     
                 if(bpm > 0)
-                    text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : "");
+                    text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : " ");
                 else
-                    text = "Learning...";
+                    text = "Learning... (" + confidence + "%)";
     
                 textWidth = mPaint.measureText(text);
                 startPositionX = (canvasWidth / 2 - textWidth / 2);
