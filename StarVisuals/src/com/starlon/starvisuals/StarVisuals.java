@@ -252,7 +252,7 @@ public class StarVisuals extends Activity implements OnClickListener
     
             mMorph = settings.getString("prefs_morph_selection", "alphablend");
             mInput = settings.getString("prefs_input_selection", "mic");
-            mActor = settings.getString("prefs_actor_selection", "avs");
+            mActor = settings.getString("prefs_actor_selection", "lv_analyzer");
     
             NativeHelper.morphSetCurrentByName(mMorph);
             NativeHelper.inputSetCurrentByName(mInput);
