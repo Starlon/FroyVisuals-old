@@ -137,8 +137,6 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
-#if 0 
-    //FIXME Beat detection isn't very good. No need to perform these steps.
     if(paramcontainer != NULL)
     {
         VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
@@ -148,17 +146,16 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
             visual_param_container_add(paramcontainer, entry);
         }
 
-        char scaled[pcm_ref.size];
+        unsigned char scaled[pcm_ref.size];
         int i, isBeat;
 
         for(i = 0; i < pcm_ref.size; i++)
         {
-            scaled[i] = pcm_ref.pcm_data[i] / (float)FLT_MAX * CHAR_MAX;
+            scaled[i] = pcm_ref.pcm_data[i] / (float)FLT_MAX * UCHAR_MAX;
         }
         isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, pcm_ref.size);
         visual_param_entry_set_integer(entry, isBeat);
     }
-#endif
 
     return 0;
 }

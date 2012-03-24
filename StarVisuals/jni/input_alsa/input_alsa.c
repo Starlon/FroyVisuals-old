@@ -263,7 +263,7 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
         if(size > 0)
         {
             int16_t data[size];
-            char scaled[size];
+            unsigned char scaled[size];
             if(!(pcm_read(priv->pcmstream, data, size)))
             {
         
@@ -276,10 +276,9 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 
                 for(i = 0; i < size; i++)
                 {
-                    scaled[i] = data[i] / (float)SHRT_MAX * CHAR_MAX;
+                    scaled[i] = data[i] / (float)SHRT_MAX * UCHAR_MAX;
                 }
 
-                // FIXME Beat detection isn't working real well. It also slows us down.
                 isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, size);
 
                 visual_param_entry_set_integer(entry, isBeat);

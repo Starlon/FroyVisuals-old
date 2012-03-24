@@ -1382,7 +1382,7 @@ static int input_interleaved_stereo (VisAudioSamplePool *samplepool, VisBuffer *
 
 //out is in the format of [spectrum:0,wave:1][channel][band]
 //returns TRUE if there's a beat, FALSE otherwise.
-int visual_audio_get_cheap_audio_data(VisAudio *audio, char out[2][2][576])
+int visual_audio_get_cheap_audio_data(VisAudio *audio, unsigned char out[2][2][576])
 {
     int i, ch;
     VisBuffer pcmbuf1;
@@ -1391,7 +1391,7 @@ int visual_audio_get_cheap_audio_data(VisAudio *audio, char out[2][2][576])
     VisBuffer spmbuf2;
     VisBuffer tmp;
     int size = 576;
-    char visdata[size*2];
+    unsigned char visdata[size*2];
     float data[2][2][size];
 
     visual_buffer_init_allocate(&tmp, sizeof(float) * size, visual_buffer_destroyer_free);
@@ -1569,7 +1569,7 @@ int visual_audio_is_beat(VisAudio *audio, VisBeatAlgorithm algo)
 
     VisBuffer pcm;
     float buffer[BEAT_MAX_SIZE];
-    char visdata[BEAT_MAX_SIZE];
+    unsigned char visdata[BEAT_MAX_SIZE];
     int i;
 
     visual_buffer_set_data_pair(&pcm, buffer, BEAT_MAX_SIZE * sizeof(float));
@@ -1582,12 +1582,12 @@ int visual_audio_is_beat(VisAudio *audio, VisBeatAlgorithm algo)
 
     for(i = 0; i < BEAT_MAX_SIZE; i++)
     {
-        visdata[i] = (buffer[i] + 1) / 2.0 * CHAR_MAX;
+        visdata[i] = (buffer[i] + 1) / 2.0 * UCHAR_MAX;
     }
     return visual_audio_is_beat_with_data(audio, algo, visdata, BEAT_MAX_SIZE);
 }
 
-int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, char *visdata, int size)
+int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, unsigned char *visdata, int size)
 {
     static int outPtr = 0, inPtr = 0;
     char outBuf[9], inBuf[9];
@@ -1627,7 +1627,7 @@ int visual_audio_is_beat_with_data(VisAudio *audio, VisBeatAlgorithm algo, char 
     {
         for(ch = 0; ch < 2; ch++)
         {
-                char *f = (char*)(visdata + ch * size);
+                unsigned char *f = (unsigned char*)(visdata + ch * size);
                 for(x = 0; x < size; x++)
                 {
                         f++;

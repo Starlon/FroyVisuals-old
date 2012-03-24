@@ -38,7 +38,7 @@ public class StarVisualsView extends View {
     private Matrix mMatrix = null;
     //private Display mDisplay = null;
     private boolean mActive = false;
-    private boolean mDoBeat = false;
+    private boolean mDoBeat = true;
     public short mMicData[] = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
