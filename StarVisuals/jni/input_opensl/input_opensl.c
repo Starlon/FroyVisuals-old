@@ -19,18 +19,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include <config.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <pthread.h>
 #include <jni.h>
-#include <libvisual/libvisual.h>
 
 // for native audio
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
+
+#include <libvisual/libvisual.h>
 
 // Recording States
 #define RECORDING_STATE_STOPPED 1
@@ -40,6 +35,7 @@
 #define SAMPLES 1024
 #define BUFFERS 2
 
+#if 0
 typedef struct {
     VisMutex *mutex;
 
@@ -204,12 +200,6 @@ int inp_opensl_cleanup (VisPluginData *plugin)
     return 0;
 }
 
-static int frame(inp_opensl_priv *priv, int inc)
-{
-    if(inc) 
-        priv->currentFrame++;
-    return (priv->currentFrame) % 2;
-}
 
 static int inp_opensl_upload (VisPluginData *plugin, VisAudio *audio)
 {
@@ -218,7 +208,7 @@ static int inp_opensl_upload (VisPluginData *plugin, VisAudio *audio)
 
     visual_mutex_lock(priv->mutex);
 
-    visual_buffer_init (&buffer, priv->recordBuffer + frame(priv, FALSE), SAMPLES, NULL);
+    visual_buffer_init (&buffer, priv->pcm_data, SAMPLES, NULL);
     visual_audio_samplepool_input (audio->samplepool, &buffer, 
         VISUAL_AUDIO_SAMPLE_RATE_48000,
         VISUAL_AUDIO_SAMPLE_FORMAT_S16, 
@@ -229,6 +219,12 @@ static int inp_opensl_upload (VisPluginData *plugin, VisAudio *audio)
     return 0;
 }
 
+static int frame(inp_opensl_priv *priv, int inc)
+{
+    if(inc) 
+        priv->currentFrame++;
+    return (priv->currentFrame) % 2;
+}
 
 // this callback handler is called every time a buffer finishes recording
 void bqRecorderCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
@@ -324,4 +320,4 @@ void startRecording(inp_opensl_priv *priv)
     return;
 }
 
-
+#endif
