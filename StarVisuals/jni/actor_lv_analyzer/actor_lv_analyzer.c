@@ -76,10 +76,10 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "lv_analyzer",
 		.name = "libvisual analyzer",
-		.author = N_("Dennis Smit <ds@nerds-incorporated.org>"),
+		.author = ("Dennis Smit <ds@nerds-incorporated.org>"),
 		.version = "1.0",
-		.about = N_("Libvisual analyzer plugin"),
-		.help = N_("A nice simple spectrum analyzer plugin."),
+		.about = ("Libvisual analyzer plugin"),
+		.help = ("A nice simple spectrum analyzer plugin."),
 		.license = VISUAL_PLUGIN_LICENSE_LGPL,
 
 		.init = lv_analyzer_init,
@@ -108,7 +108,7 @@ static int lv_analyzer_init (VisPluginData *plugin)
 #endif
 
 	AnalyzerPrivate *priv = visual_mem_new0 (AnalyzerPrivate, 1);
-	visual_return_val_if_fail(priv != NULL, -1);
+	visual_log_return_val_if_fail(priv != NULL, -1);
 
 	visual_object_set_private (VISUAL_OBJECT (plugin), priv);
 
@@ -117,7 +117,7 @@ static int lv_analyzer_init (VisPluginData *plugin)
 
 	/* get plugins param-container */
 	VisParamContainer *paramcontainer = visual_plugin_get_params (plugin);
-	visual_return_val_if_fail(paramcontainer != NULL, -1);
+	visual_log_return_val_if_fail(paramcontainer != NULL, -1);
 
 	/* save paramcontainer */
 	priv->paramcontainer = paramcontainer;
