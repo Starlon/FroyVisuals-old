@@ -41,15 +41,17 @@
 #include "draw_low_level.h"
 #include "jess.h"
 
-int act_jess_init (VisPluginData *plugin);
-int act_jess_cleanup (VisPluginData *plugin);
-int act_jess_requisition (VisPluginData *plugin, int *width, int *height);
-int act_jess_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
-int act_jess_events (VisPluginData *plugin, VisEventQueue *events);
-VisPalette *act_jess_palette (VisPluginData *plugin);
-int act_jess_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
+const VisPluginInfo *get_plugin_info (int *count);
 
-void jess_init (JessPrivate *priv);
+static int act_jess_init (VisPluginData *plugin);
+static int act_jess_cleanup (VisPluginData *plugin);
+static int act_jess_requisition (VisPluginData *plugin, int *width, int *height);
+static int act_jess_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
+static int act_jess_events (VisPluginData *plugin, VisEventQueue *events);
+static VisPalette *act_jess_palette (VisPluginData *plugin);
+static int act_jess_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
+
+static void jess_init (JessPrivate *priv);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
@@ -69,10 +71,10 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "jess",
 		.name = "jess plugin",
-		.author = "Original by: Remi Arquier <arquier@crans.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>",
+		.author = ("Original by: Remi Arquier <arquier@crans.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>"),
 		.version = "0.1",
-		.about = "Jess visual plugin",
-		.help = "This is the libvisual plugin for the jess visual",
+		.about = ("Jess visual plugin"),
+		.help = ("This is the libvisual plugin for the jess visual"),
 		.license = VISUAL_PLUGIN_LICENSE_GPL,
 
 		.init = act_jess_init,
@@ -87,7 +89,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 	return info;
 }
 
-int act_jess_init (VisPluginData *plugin)
+static int act_jess_init (VisPluginData *plugin)
 {
 	JessPrivate *priv;
 
@@ -100,7 +102,7 @@ int act_jess_init (VisPluginData *plugin)
 	priv = visual_mem_new0 (JessPrivate, 1);
 
 	if (priv == NULL) {
-		visual_log (VISUAL_LOG_CRITICAL,
+		visual_log (VISUAL_LOG_ERROR,
 				_("The given plugin doesn't have private info"));
 		return -1;
 	}
@@ -149,7 +151,7 @@ int act_jess_init (VisPluginData *plugin)
 	return 0;
 }
 
-int act_jess_cleanup (VisPluginData *plugin)
+static int act_jess_cleanup (VisPluginData *plugin)
 {
 	JessPrivate *priv;
 	int i;
@@ -158,7 +160,7 @@ int act_jess_cleanup (VisPluginData *plugin)
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	if (priv == NULL) {
-		visual_log (VISUAL_LOG_CRITICAL,
+		visual_log (VISUAL_LOG_ERROR,
 				_("The given plugin doesn't have private info"));
 		return -1;
 	}
@@ -194,7 +196,7 @@ int act_jess_cleanup (VisPluginData *plugin)
 	return 0;
 }
 
-int act_jess_requisition (VisPluginData *plugin, int *width, int *height)
+static int act_jess_requisition (VisPluginData *plugin, int *width, int *height)
 {
 	int reqw, reqh;
 
@@ -222,7 +224,7 @@ int act_jess_requisition (VisPluginData *plugin, int *width, int *height)
 	return 0;
 }
 
-int act_jess_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
+static int act_jess_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
 {
 	JessPrivate *priv;
 
@@ -230,7 +232,7 @@ int act_jess_dimension (VisPluginData *plugin, VisVideo *video, int width, int h
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	if (priv == NULL) {
-		visual_log (VISUAL_LOG_CRITICAL,
+		visual_log (VISUAL_LOG_ERROR,
 				_("The given plugin doesn't have private info"));
 		return -1;
 	}
@@ -265,7 +267,7 @@ int act_jess_dimension (VisPluginData *plugin, VisVideo *video, int width, int h
 	return 0;
 }
 
-int act_jess_events (VisPluginData *plugin, VisEventQueue *events)
+static int act_jess_events (VisPluginData *plugin, VisEventQueue *events)
 {
 	VisEvent ev;
 
@@ -283,7 +285,7 @@ int act_jess_events (VisPluginData *plugin, VisEventQueue *events)
 	return 0;
 }
 
-VisPalette *act_jess_palette (VisPluginData *plugin)
+static VisPalette *act_jess_palette (VisPluginData *plugin)
 {
 	JessPrivate *priv;
 
@@ -291,7 +293,7 @@ VisPalette *act_jess_palette (VisPluginData *plugin)
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	if (priv == NULL) {
-		visual_log (VISUAL_LOG_CRITICAL,
+		visual_log (VISUAL_LOG_ERROR,
 				_("The given plugin doesn't have private info"));
 		return NULL;
 	}
@@ -299,7 +301,7 @@ VisPalette *act_jess_palette (VisPluginData *plugin)
 	return &priv->jess_pal;
 }
 
-int act_jess_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
+static int act_jess_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
 	JessPrivate *priv;
 	VisBuffer fbuf[2];
@@ -314,7 +316,7 @@ int act_jess_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
 	if (priv == NULL) {
-		visual_log (VISUAL_LOG_CRITICAL,
+		visual_log (VISUAL_LOG_ERROR,
 				_("The given plugin doesn't have priv info"));
 		return -1;
 	}
@@ -350,7 +352,7 @@ int act_jess_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 	return 0;
 }
 
-void jess_init (JessPrivate *priv)
+static void jess_init (JessPrivate *priv)
 {
 	visual_log_return_if_fail (priv != NULL);
 

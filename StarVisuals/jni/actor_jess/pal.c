@@ -1,5 +1,5 @@
 /* Libvisual-plugins - Standard plugins for libvisual
- * 
+ *
  * Copyright (C) 2000, 2001 Remi Arquier <arquier@crans.org>
  *
  * Authors: Remi Arquier <arquier@crans.org>
@@ -29,6 +29,7 @@
 #include "struct.h"
 #include "analyser_struct.h"
 #include "jess.h"
+#include "pal.h"
 
 const float __magic = 2.0 * PI / 256;
 
@@ -38,7 +39,7 @@ uint8_t courbes_palette(JessPrivate *priv, uint8_t i, int no_courbe)
 	switch(no_courbe)
 	{
 		case 0:
-			return (i * i * i) >> 16; 
+			return (i * i * i) >> 16;
 			break;
 		case 1:
 			return (i * i) >> 8;
@@ -61,11 +62,11 @@ void random_palette(JessPrivate *priv)
 	int i,j,k,l;
 
 again_mister:
-	;  
+	;
 
 	if (priv->conteur.psy == 1)
 		i = 5;
-	else 
+	else
 		i = 3;
 
 	j=visual_random_context_int(priv->rcontext) % i;

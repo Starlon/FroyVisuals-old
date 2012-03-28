@@ -284,12 +284,11 @@ void render_deformation(JessPrivate *priv, int defmode)
 {
 	intptr_t bmax;
 	uint32_t *tab1 = NULL, *tab2, *tab3, *tab4, i;
-	uint8_t *pix = priv->pixel, *buf = priv->buffer, *aux;
+	uint8_t *pix = priv->pixel, *aux;
 
 	/**************** BUFFER DEFORMATION ****************/
 	if (priv->video == 8)
 	{
-		buf = priv->buffer;
 		tab1 = priv->table1;
 		tab2 = priv->table2;
 		tab3 = priv->table3;
@@ -388,13 +387,14 @@ void render_blur(JessPrivate *priv, int blur)
 	if (priv->video == 8)
 	{
 		bmax = priv->resx * (priv->resy-1) + (intptr_t) priv->pixel;
+
 		if (visual_cpu_get_mmx ()) {
 #if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 			__asm __volatile
 				("\n\t pxor %%mm6, %%mm6"
 				 ::);
 
-			for (pix = priv->pixel; pix < (uint8_t *) bmax-1; pix += 8)
+			for (pix = priv->pixel; pix < (uint8_t *) bmax-9; pix += 8)
 			{
 				__asm __volatile
 					("\n\t movq %[pix1], %%mm0"
@@ -432,7 +432,7 @@ void render_blur(JessPrivate *priv, int blur)
 				("\n\t pxor %%mm6, %%mm6"
 				 ::);
 
-			for (pix = priv->pixel; pix < (uint8_t *) bmax-4; )
+			for (pix = priv->pixel; pix < (uint8_t *) bmax-12; )
 			{
 				__asm __volatile
 					("\n\t movq %[pix1], %%mm0"

@@ -69,7 +69,7 @@ void fusee(JessPrivate *priv, uint8_t * buffer, int new)
 		while (priv->life[i] > 0)
 		{
 			i++;
-			if (i == FUSEE_MAX+1)
+			if (i == FUSEE_MAX)
 				return;
 		}
 		priv->xi[i] = visual_random_context_int(priv->rcontext) % priv->resx - priv->xres2;
@@ -303,7 +303,6 @@ void l2_grilles_3d (JessPrivate *priv, uint8_t * buffer, float data[2][512], flo
 
 	float x, y, z, xres4 = (float) (priv->resx >> 2);
 	short ax = 0, ay = 0, ix, iy, i, j, nb_x, nb_y;
-	int tx[16][16], ty[16][16];
 	uint8_t color[16][16];
 
 	int resx = priv->resx;
@@ -328,9 +327,6 @@ void l2_grilles_3d (JessPrivate *priv, uint8_t * buffer, float data[2][512], flo
 
 			ix = (int) x;
 			iy = (int) y;
-
-			tx[i][j] = ix;
-			ty[i][j] = iy;
 
 			if (j != 0)
 			{
@@ -551,7 +547,7 @@ void stars_manage(JessPrivate *priv, uint8_t *buffer, int new,  float alpha, flo
 		float gamma, int persp, int dist_cam)
 {
 	float x[STARS_MAX], y[STARS_MAX], z[STARS_MAX], xres2 = (float) (priv->resx >> 1), yres2 = (float) (priv->resy >> 1);
-	float x_t = 0, y_t = 0, z_t = 0;
+	float x_t, y_t, z_t;
 	float mult;
 	int ix, iy, i, color, taille;
 
@@ -621,7 +617,7 @@ void stars_manage(JessPrivate *priv, uint8_t *buffer, int new,  float alpha, flo
 /**************** OSCILLO ******************************************/
 /*******************************************************************/
 
-uint8_t couleur (JessPrivate *priv, short x)
+static uint8_t couleur (JessPrivate *priv, short x)
 {
 	int resx = priv->resx;
 
