@@ -35,17 +35,14 @@
 #define SAMPLES 1024
 #define BUFFERS 2
 
-#if 0
 typedef struct {
     VisMutex *mutex;
 
-    // engine interfaces
-    SLObjectItf engineObject = NULL;
+    SLObjectItf engineObject;
     SLEngineItf engineEngine;
 
 
-    // recorder interfaces
-    SLObjectItf recorderObject = NULL;
+    SLObjectItf recorderObject;
     SLRecordItf recorderRecord;
     SLAndroidSimpleBufferQueueItf recorderBufferQueue;
 
@@ -60,17 +57,17 @@ static int inp_opensl_init (VisPluginData *plugin);
 static int inp_opensl_cleanup (VisPluginData *plugin);
 static int inp_opensl_upload (VisPluginData *plugin, VisAudio *audio);
 
-void bqRecorderCallback(SLAndroidSimpleBufferQueueItf bq, void *context);
-void stopRecording(inp_opensl_priv *priv);
-void startRecording(inp_opensl_priv *priv);
-void record(void *data);
+static void bqRecorderCallback(SLAndroidSimpleBufferQueueItf bq, void *context);
+static void stopRecording(inp_opensl_priv *priv);
+static void startRecording(inp_opensl_priv *priv);
+static void record(void *data);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
 const VisPluginInfo *get_plugin_info (int *count)
 {
     static VisInputPlugin input[] = {{
-        .upload = inp_alsa_upload
+        .upload = inp_opensl_upload
     }};
 
     static VisPluginInfo info[] = {{
@@ -176,25 +173,21 @@ int inp_opensl_cleanup (VisPluginData *plugin)
     inp_opensl_priv *priv = visual_object_get_private(VISUAL_OBJECT(plugin));
     visual_log_return_val_if_fail(priv != NULL, -1);
 
-    priv->active = FALSE;
-
     stopRecording(priv);
 
-    visual_thread_join(priv->thread);
-
     // destroy audio recorder object, and invalidate all associated interfaces
-    if (recorderObject != NULL) {
-        (*recorderObject)->Destroy(recorderObject);
-        recorderObject = NULL;
-        recorderRecord = NULL;
-        recorderBufferQueue = NULL;
+    if (priv->recorderObject != NULL) {
+        (*priv->recorderObject)->Destroy(priv->recorderObject);
+        priv->recorderObject = NULL;
+        priv->recorderRecord = NULL;
+        priv->recorderBufferQueue = NULL;
     }
 
     // destroy engine object, and invalidate all associated interfaces
-    if (engineObject != NULL) {
-        (*engineObject)->Destroy(engineObject);
-        engineObject = NULL;
-        engineEngine = NULL;
+    if (priv->engineObject != NULL) {
+        (*priv->engineObject)->Destroy(priv->engineObject);
+        priv->engineObject = NULL;
+        priv->engineEngine = NULL;
     }
 
     return 0;
@@ -231,14 +224,14 @@ void bqRecorderCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
 {
     inp_opensl_priv *priv = context;
 
-    visual_return_if_fail(bq == priv->bqRecorderBufferQueue);
+    visual_log_return_if_fail(bq == priv->recorderBufferQueue);
 
     visual_mutex_lock(priv->mutex);
 
     (*priv->recorderBufferQueue)->Enqueue(priv->recorderBufferQueue,
-        priv->recorderBuffer + frame(priv, FALSE) * SAMPLES, SAMPLES * sizeof(short));
+        priv->recordBuffer + frame(priv, FALSE) * SAMPLES, SAMPLES * sizeof(short));
 
-    memcpy(priv->pcm_data, priv->recorderBuffer + frame(priv, TRUE) * SAMPLES, SAMPLES * sizeof(short));
+    memcpy(priv->pcm_data, priv->recordBuffer + frame(priv, TRUE) * SAMPLES, SAMPLES * sizeof(short));
 
     visual_mutex_unlock(priv->mutex);
 }
@@ -249,14 +242,14 @@ void stopRecording(inp_opensl_priv *priv)
 
    // in case already recording, stop recording and clear buffer queue
     SLAndroidSimpleBufferQueueState state;
-    (*recorderBufferQueue)->GetState(recorderBufferQueue, &state);
+    (*priv->recorderBufferQueue)->GetState(priv->recorderBufferQueue, &state);
     if (state.count == 0) {
         priv->recordingState = RECORDING_STATE_STOPPED;
     } else {
         priv->recordingState = RECORDING_STATE_STOPPING;
     }
 
-    result = (*recorderRecord)->SetRecordState(recorderRecord, SL_RECORDSTATE_STOPPED);
+    result = (*priv->recorderRecord)->SetRecordState(priv->recorderRecord, SL_RECORDSTATE_STOPPED);
     if (SL_RESULT_SUCCESS == result) {
        // We're done
     }
@@ -264,7 +257,7 @@ void stopRecording(inp_opensl_priv *priv)
 
 SLresult enqueueBuffer(inp_opensl_priv *priv, int i) {
     return (*priv->recorderBufferQueue)->Enqueue(priv->recorderBufferQueue,
-            priv->recorderBuffer + i * SAMPLES, SAMPLES * sizeof(short));
+            priv->recordBuffer + i * SAMPLES, SAMPLES * sizeof(short));
 }
 
 // set the recording state for the audio recorder
@@ -279,9 +272,9 @@ void startRecording(inp_opensl_priv *priv)
 
     // in case already recording, stop recording and clear buffer queue
     result = (*priv->recorderRecord)->SetRecordState(priv->recorderRecord, SL_RECORDSTATE_STOPPED);
-    visual_return_if_fail(SL_RESULT_SUCCESS == result);
+    visual_log_return_if_fail(SL_RESULT_SUCCESS == result);
     result = (*priv->recorderBufferQueue)->Clear(priv->recorderBufferQueue);
-    visual_return_if_fail(SL_RESULT_SUCCESS == result);
+    visual_log_return_if_fail(SL_RESULT_SUCCESS == result);
 
     // enqueue an empty buffer to be filled by the recorder
     // (for streaming recording, we would enqueue at least 2 empty buffers to start things off)
@@ -305,7 +298,7 @@ void startRecording(inp_opensl_priv *priv)
 
     // start recording
     result = (*priv->recorderRecord)->SetRecordState(priv->recorderRecord, SL_RECORDSTATE_RECORDING);
-    visual_return_if_fail(SL_RESULT_SUCCESS == result);
+    visual_log_return_if_fail(SL_RESULT_SUCCESS == result);
 
     priv->currentFrame = 0;
     priv->recordingState = RECORDING_STATE_RECORDING;
@@ -319,5 +312,3 @@ void startRecording(inp_opensl_priv *priv)
 
     return;
 }
-
-#endif

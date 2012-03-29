@@ -21,7 +21,7 @@ install_dev:
 	@adb -d install -r bin/$(APPNAME)-debug.apk
 
 debug:
-	@ndk-build APP_OPTIM=debug NDK_DEBUG=1
+	@ndk-build APP_OPTIM=debug NDK_DEBUG=1 V=1
 	@ant clean
 	@ant debug
 
