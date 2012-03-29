@@ -18,7 +18,7 @@ install_emu:
 	@adb -e install -r bin/$(APPNAME).apk
 
 install_dev:
-	@adb -d install -r bin/$(APPNAME)-debug.apk
+	@adb -d install -r bin/$(APPNAME).apk
 
 debug:
 	@ndk-build APP_OPTIM=debug NDK_DEBUG=1 V=1
