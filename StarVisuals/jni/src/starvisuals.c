@@ -87,15 +87,6 @@ static void my_error_handler (const char *msg, const char *funcname, void *privd
     LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
 }
 
-VisVideo *new_video(int w, int h, VisVideoDepth depth, void *pixels)
-{
-    VisVideo *video = visual_video_new();
-    visual_video_set_depth(video, depth);
-    visual_video_set_dimension(video, w, h);
-    visual_video_set_pitch(video, visual_video_bpp_from_depth(depth) * w);
-    visual_video_set_buffer(video, pixels);
-    return video;
-}
 
 static void v_cycleActor (int prev)
 {
@@ -1681,6 +1672,16 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_initApp(JNIEnv 
     app_main(w, h);
 }
 
+VisVideo *new_video(int w, int h, VisVideoDepth depth, void *pixels)
+{
+    VisVideo *video = visual_video_new();
+    visual_video_set_depth(video, depth);
+    visual_video_set_dimension(video, w, h);
+    visual_video_set_pitch(video, visual_video_bpp_from_depth(depth) * w);
+    visual_video_set_buffer(video, pixels);
+    return video;
+}
+
 // Render the view's bitmap image.
 JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIEnv * env, jobject  obj, jobject bitmap, jint dur)
 {
@@ -1733,7 +1734,22 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
     }
 
     //visual_video_blit_overlay(vid, v.video, 0, 0, FALSE);
-    visual_video_depth_transform(vid, v.video);
+    VisVideo *swap = visual_video_new();
+    visual_video_clone(swap, vid);
+    visual_video_allocate_buffer(swap);
+    visual_video_depth_transform(swap, v.video);
+    int i;
+    int tmp;
+    int8_t *s = visual_video_get_pixels(swap);
+    int8_t *d = visual_video_get_pixels(vid);
+    for(i = 0; i < vid->width * vid->height * 4; i+=4)
+    {
+        d[i] = s[i+2];
+        d[i+1] = s[i+1];
+        d[i+2] = s[i];
+        d[i+3] = 0xff;
+    }
+    visual_video_free_buffer(swap);
 
     visual_object_unref(VISUAL_OBJECT(vid));
 

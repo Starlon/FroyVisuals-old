@@ -27,10 +27,6 @@
 #include <stdlib.h>
 #include <gettext.h>
 
-#if defined(HAVE_NEON)
-#    include <arm_neon.h>
-#endif
-
 #include "lv_mem.h"
 #include "lv_common.h"
 #include "lv_log.h"
@@ -46,28 +42,29 @@ static void *mem_copy_mmx (void *dest, const void *src, visual_size_t n);
 static void *mem_copy_mmx2 (void *dest, const void *src, visual_size_t n);
 static void *mem_copy_3dnow (void *dest, const void *src, visual_size_t n);
 static void *mem_copy_altivec (void *dest, const void *src, visual_size_t n);
-static void *mem_copy_neon (void *dest, const void *src, visual_size_t n);
+
+static void *mem_swap16_c (void *dest, const void *src, visual_size_t n, int sign);
+static void *mem_swap32_c (void *dest, const void *src, visual_size_t n, int sign);
 
 static void *mem_set8_c (void *dest, int c, visual_size_t n);
 static void *mem_set8_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set8_mmx2 (void *dest, int c, visual_size_t n);
 static void *mem_set8_altivec (void *dest, int c, visual_size_t n);
-static void *mem_set8_neon (void *dest, int c, visual_size_t n);
 
 static void *mem_set16_c (void *dest, int c, visual_size_t n);
 static void *mem_set16_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set16_mmx2 (void *dest, int c, visual_size_t n);
 static void *mem_set16_altivec (void *dest, int c, visual_size_t n);
-static void *mem_set16_neon (void *dest, int c, visual_size_t n);
 
 static void *mem_set32_c (void *dest, int c, visual_size_t n);
 static void *mem_set32_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set32_mmx2 (void *dest, int c, visual_size_t n);
 static void *mem_set32_altivec (void *dest, int c, visual_size_t n);
-static void *mem_set32_neon (void *dest, int c, visual_size_t n);
 
 /* Optimal performance functions set by visual_mem_initialize(). */
 VisMemCopyFunc visual_mem_copy = mem_copy_c;
+VisMemSwapFunc visual_mem_swap16 = mem_swap16_c;
+VisMemSwapFunc visual_mem_swap32 = mem_swap32_c;
 VisMemSet8Func visual_mem_set = mem_set8_c;
 VisMemSet16Func visual_mem_set16 = mem_set16_c;
 VisMemSet32Func visual_mem_set32 = mem_set32_c;
@@ -95,6 +92,8 @@ int visual_mem_initialize ()
 	 * every time */
 
 	visual_mem_copy = mem_copy_c;
+    visual_mem_swap16 = mem_swap16_c;
+    visual_mem_swap32 = mem_swap32_c;
 	visual_mem_set = mem_set8_c;
 	visual_mem_set16 = mem_set16_c;
 	visual_mem_set32 = mem_set32_c;
@@ -124,13 +123,6 @@ int visual_mem_initialize ()
         visual_mem_set = mem_set8_altivec;
         visual_mem_set16 = mem_set16_altivec;
         visual_mem_set32 = mem_set32_altivec;
-    }
-
-    if (visual_cpu_get_neon() > 0) {
-        visual_mem_copy = mem_copy_neon;
-        visual_mem_set = mem_set8_neon;
-        visual_mem_set16 = mem_set16_neon;
-        visual_mem_set32 = mem_set32_neon;
     }
 
 	return VISUAL_OK;
@@ -401,43 +393,85 @@ static void *mem_copy_altivec (void *dest, const void *src, visual_size_t n)
     return NULL;
 }
 
-static void *mem_copy_neon (void *dest, const void *src, visual_size_t n)
+//! Byte swap unsigned short
+__inline uint16_t swap_uint16( uint16_t val ) 
 {
-    memcpy(dest, src, n);
+    return (val << 8) | (val >> 8 );
+}
+
+//! Byte swap short
+__inline int16_t swap_int16( int16_t val ) 
+{
+    return (val << 8) | ((val >> 8) & 0xFF);
+}
+
+//! Byte swap unsigned int
+__inline uint32_t swap_uint32( uint32_t val )
+{
+    val = ((val << 8) & 0xFF00FF00 ) | ((val >> 8) & 0xFF00FF ); 
+    return (val << 16) | (val >> 16);
+}
+
+//! Byte swap int
+__inline int32_t swap_int32( int32_t val )
+{
+    val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF ); 
+    return (val << 16) | ((val >> 16) & 0xFFFF);
+}
+
+static void *mem_swap16_c (void *dest, const void *src, visual_size_t n, int sign)
+{
+    int i;
+    int count = n / sizeof(uint16_t);
+    
+
+    if(sign)
+    {
+        int16_t *d = dest;
+        int16_t *s = src;
+        for(i = 0; i < count; i++)
+        {
+            d[i] = swap_int16(s[i]);
+        }
+    }
+    else
+    {
+        uint16_t *d = dest;
+        uint16_t *s = src;
+        for(i = 0; i < count; i++)
+        {
+            d[i] = swap_uint16(s[i]);
+        }
+    }
+
     return dest;
-#if 0
-	uint32_t *d = dest;
-	const uint32_t *s = src;
-	uint8_t *dc = dest;
-	const uint8_t *sc = src;
+}
 
-#ifdef VISUAL_ARCH_ARM
-	while (n >= 64) {
-        __asm __volatile(
-        "\n\t ldmia %[source]!, {r4-r7}"
-        "\n\t stmia %[dest]!, {r4-r7}"
-        "\n\t ldmia %[source]!, {r4-r7}"
-        "\n\t stmia %[dest]!, {r4-r7}"
-        "\n\t ldmia %[source]!, {r4-r7}"
-        "\n\t stmia %[dest]!, {r4-r7}"
-        "\n\t ldmia %[source]!, {r4-r7}"
-        "\n\t stmia %[dest]!, {r4-r7}"
-        :: [dest] "r" (d), [source] "r" (s) : "r4", "r5", "r6", "r7" );
+static void *mem_swap32_c (void *dest, const void *src, visual_size_t n, int sign)
+{
+    int i;
+    int count = n / sizeof(uint32_t);
 
-        d+=16;
-        s+=16;
-		n -= 64;
-	}
-#endif
+    if(sign)
+    {
+        int32_t *d = dest;
+        int32_t *s = src;
+        for(i = 0; i < count; i++)
+        {
+            d[i] = swap_int32(s[i]);
+        }
+    }
+    else
+    {
+        uint32_t *d = dest;
+        uint32_t *s = src;
+        for(i = 0; i < count; i++)
+        {
+            d[i] = swap_uint32(s[i]);
+        }
+    }
 
-	dc = (uint8_t *) d;
-	sc = (const uint8_t *) s;
-
-	while (n--)
-		*dc++ = *sc++;
-
-	return dest;
-#endif
+    return dest;
 }
 
 /* Memset functions, 1 byte memset */
@@ -591,57 +625,6 @@ static void *mem_set8_altivec (void *dest, int c, visual_size_t n)
     return NULL;
 }
 
-/* Memset functions, 1 byte memset */
-static void *mem_set8_neon (void *dest, int c, visual_size_t n)
-{
-
-    memset(dest, c, n);
-    return dest;
-#if 0
-	uint32_t *d = dest;
-	uint8_t *dc = dest;
-	uint32_t setflag32 =
-		(c & 0xff) |
-		((c << 8) & 0xff00) |
-		((c << 16) & 0xff0000) |
-		((c << 24) & 0xff000000);
-	uint8_t setflag8 = c & 0xff;
-
-#if defined(VISUAL_ARCH_ARM)
-
-	while (n >= 32) {
-		__asm __volatile
-        (
-            "\n\t mov r4, %[flag]"
-            "\n\t mov r5, r4"
-            "\n\t mov r6, r4"
-            "\n\t mov r7, r4"
-            "\n\t stmia %[dst]!,{r4-r7}"
-            "\n\t stmia %[dst]!,{r4-r7}"
-        :: [dst] "r" (d), [flag] "r" (&setflag32) : "r4", "r5", "r6", "r7");
-
-		d += 8;
-
-		n -= 32;
-	}
-
-#endif /* VISUAL_ARCH_ARM */
-
-	while (n >= 4) {
-		*d++ = setflag32;
-		n -= 4;
-	}
-
-	dc = (uint8_t *) d;
-
-	while (n--)
-		*dc++ = setflag8;
-
-	return dest;
-#endif
-}
-
-
 /* Memset functions, 2 byte memset */
 static void *mem_set16_c (void *dest, int c, visual_size_t n)
 {
@@ -787,29 +770,6 @@ static void *mem_set16_altivec (void *dest, int c, visual_size_t n)
     return NULL;
 }
 
-/* Memset functions, 2 byte memset */
-static void *mem_set16_neon (void *dest, int c, visual_size_t n)
-{
-    memset(dest, c, n);
-    return dest;
-#if 0
-	uint32_t *d = dest;
-	uint16_t *dc = dest;
-	uint32_t setflag32 =
-		(c & 0xffff) |
-		((c << 16) & 0xffff0000);
-	uint16_t setflag16 = c & 0xffff;
-
-
-	dc = (uint16_t *) d;
-
-	while (n--)
-		*dc++ = setflag16;
-
-	return dest;
-#endif
-}
-
 /* Memset functions, 4 byte memset */
 static void *mem_set32_c (void *dest, int c, visual_size_t n)
 {
@@ -920,22 +880,6 @@ static void *mem_set32_altivec (void *dest, int c, visual_size_t n)
 {
 
     return NULL;
-}
-
-/* Memset functions, 4 byte memset */
-static void *mem_set32_neon (void *dest, int c, visual_size_t n)
-{
-    memset(dest, c, n);
-    return dest;
-#if 0
-	uint32_t *d = dest;
-	uint32_t setflag32 = c;
-
-	while (n--)
-		*d++ = setflag32;
-
-	return dest;
-#endif
 }
 
 /**
