@@ -1749,6 +1749,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
         d[i+2] = s[i];
         d[i+3] = 0xff;
     }
+
     visual_object_unref(VISUAL_OBJECT(vid));
     visual_object_unref(VISUAL_OBJECT(swap));
 
