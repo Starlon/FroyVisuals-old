@@ -1733,7 +1733,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
         visual_bin_run (v.bin);
     }
 
-    //visual_video_blit_overlay(vid, v.video, 0, 0, FALSE);
     VisVideo *swap = visual_video_new();
     visual_video_clone(swap, vid);
     visual_video_allocate_buffer(swap);
