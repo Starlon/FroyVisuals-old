@@ -1744,7 +1744,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
     for(i = 0; i < vid->width * vid->height * 4; i+=4)
     {
         d[i] = s[i+2];
-        //d[i+1] = s[i+1]; Hide this step since it does nothing.
+        d[i+1] = s[i+1];
         d[i+2] = s[i];
         d[i+3] = 0xff;
     }

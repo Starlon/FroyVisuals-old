@@ -490,12 +490,13 @@ int visual_dft_perform (VisDFT *dft, float *output, float *input)
     kiss_fft_cpx *bufout=(kiss_fft_cpx*)KISS_FFT_MALLOC(nbytes);
     kiss_fft_cfg state = kiss_fft_alloc(nfft, isinverse, 0, 0);
 
+/*
 	if (dft->brute_force)
 		perform_dft_brute_force (dft, output, input);
 	else
 		perform_fft_radix2_dit (dft, output, input);
+*/
 
-/*
     memset(buf, 0, nbytes);
 
 
@@ -513,7 +514,6 @@ int visual_dft_perform (VisDFT *dft, float *output, float *input)
         dft->real[i] = bufout[i].r;
         dft->imag[i] = bufout[i].i;
     }
-*/
 
 	visual_math_vectorized_complex_to_norm_scale (output, dft->real, dft->imag,
 			dft->spectrum_size / 2, 1.0 / dft->spectrum_size);
