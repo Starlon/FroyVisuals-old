@@ -129,7 +129,8 @@ static int lcd_init (VisPluginData *plugin)
 	/* parameter-description */
 	static VisParamEntry params[] =
 	{
-		VISUAL_PARAM_LIST_ENTRY_INTEGER ("bars", BARS_DEFAULT),
+		VISUAL_PARAM_LIST_ENTRY_INTEGER ("width", BARS_DEFAULT),
+		VISUAL_PARAM_LIST_ENTRY_INTEGER ("height", BARS_DEFAULT),
 		VISUAL_PARAM_LIST_END
 	};
 
@@ -168,78 +169,6 @@ static int lcd_requisition (VisPluginData *plugin, int *width, int *height)
 	*width = reqw;
 
 	return 0;
-}
-
-static int _validate_bars(VisPluginData *plugin, int *bars)
-{
-	AnalyzerPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
-
-	if(*bars > 0 && *bars < priv->width)
-		return 1;
-
-	return 0;
-}
-
-static void _change_bars(VisPluginData *plugin,
-                       VisParamEntry *p, int (*validator)(VisPluginData *plugin, void *value))
-{
-	AnalyzerPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
-
-	int integer = visual_param_entry_get_integer(p);
-
-	if(!validator || validator(plugin, &integer))
-    {
-		priv->bars = integer;
-        return;
-    }
-    /* reset to previous value */
-    else
-        visual_param_entry_set_integer(p, priv->bars);
-}
-
-static void _change_param(VisPluginData *plugin, VisParamEntry *p)
-{
-	/**
-     * structure defining handler functions for configuration values
-     */
-    struct
-    {
-        /* parameter-name */
-        char *name;
-        /* validator function */
-        int (*validator)(void *value);
-        /* function called to change parameter */
-        void (*change)(VisPluginData *plugin,
-                       VisParamEntry *parameter, int (*validator)(void *value));
-        /* function called after parameter change */
-        void (*postchange)(VisPluginData *plugin);
-    } parms[] =
-    {
-        {"bars", (void *) _validate_bars, (void *) _change_bars, NULL},
-    };
-
-
-
-    /** look for parameter in our structure */
-    int i;
-    for(i = 0; i < QTY(parms); i++)
-    {
-        /* not our parameter? -> continue the quest */
-        if(!visual_param_entry_is(p, parms[i].name))
-            continue;
-
-        /* call this parameters' change handler */
-        if(parms[i].change)
-            parms[i].change(plugin, p, parms[i].validator);
-
-        /* call this parameters' post-change handler */
-        if(parms[i].postchange)
-            parms[i].postchange(plugin);
-
-        return;
-    }
-
-    visual_log(VISUAL_LOG_WARNING, "Unknown param '%s'", visual_param_entry_get_name(p));
 }
 
 static int lcd_events (VisPluginData *plugin, VisEventQueue *events)
@@ -309,26 +238,6 @@ static VisPalette *lcd_palette (VisPluginData *plugin)
 	return &priv->pal;
 }
 
-static inline void draw_bar (VisVideo *video, int x, int width, float amplitude)
-{
-	/* NOTES:
-	 * - We use 16:16 fixed point to incrementally calculate the color at each y
-	 * - Bar row color must be in [1,126]
-	*/
-	int y	   = (1.0 - amplitude) * video->height;
-	int color  = (1 << 16) + (amplitude * (125 << 16));
-	int dcolor = (125 << 16) / video->height;
-
-	uint8_t *row = video->pixel_rows[y] + x;
-
-	while (y < video->height) {
-		visual_mem_set (row, color >> 16, width);
-
-		y++; row += video->pitch;
-		color -= dcolor;
-	}
-}
-
 /**
  * render analyzer - calledback
  */
@@ -351,18 +260,5 @@ static int lcd_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 
 	visual_audio_get_spectrum_for_sample (&buffer, &pcmb, TRUE);
 
-/*
-	int i;
-	int spaces = BARS_DEFAULT_SPACE * (bars - 1);
-	int width  = (video->width - spaces) / bars;
-	int x	   = ((video->width - spaces) % bars) / 2;
-
-	visual_video_fill_color (video, NULL);
-
-	for (i = 0; i < bars; i++) {
-		draw_bar (video, x, width, freq[i]);
-		x += width + BARS_DEFAULT_SPACE;
-	}
-*/
 	return 0;
 }
