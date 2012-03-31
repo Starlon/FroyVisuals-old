@@ -77,4 +77,3 @@ void PluginUname::Connect(Evaluator *visitor) {
 */
 }
 
-Q_EXPORT_PLUGIN2(_PluginUname, PluginUname)

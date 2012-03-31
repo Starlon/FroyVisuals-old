@@ -24,7 +24,7 @@
 #ifndef __PLUGIN_FILE_H__
 #define __PLUGIN_FILE_H__
 
-#include "PluginInterface.h"
+#include <string>
 
 namespace LCD {
 
@@ -35,8 +35,7 @@ class PluginFile {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
-    string Readline(string arg1, int arg2);
+    std::string Readline(std::string arg1, int arg2);
 };
 
 }; // End namespace

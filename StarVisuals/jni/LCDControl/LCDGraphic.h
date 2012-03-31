@@ -44,6 +44,7 @@ class SpecialChar;
 
 class LCDCore;
 
+/*
 class LCDGraphicInterface {
     public:
     virtual ~LCDGraphicInterface() {}
@@ -52,23 +53,24 @@ class LCDGraphicInterface {
     virtual void LayoutChangeBefore() = 0;
     virtual void LayoutChangeAfter() = 0;
 };
-
-class LCDGraphicWrapper public LCDGraphicInterface {
+*/
+/*
+class LCDGraphicWrapper {
     LCDGraphicInterface *wrappedObject_;
     public:
     LCDGraphicWrapper(LCDGraphicInterface *visitor) { wrappedObject_ = visitor; }
 
-    public slots:
     void ResizeBefore(int rows, int cols) { wrappedObject_->ResizeBefore(rows, cols); }
     void ResizeAfter() { wrappedObject_->ResizeAfter(); }
     void LayoutChangeBefore() { wrappedObject_->LayoutChangeBefore(); }
     void LayoutChangeAfter() { wrappedObject_->LayoutChangeAfter(); }
 
 };
+*/
 
 class LCDGraphicUpdateThread;
 
-class LCDGraphic : public LCDBase, public LCDGraphicInterface {
+class LCDGraphic : public LCDBase {
 
     struct _GraphicWindow {
         int R;
@@ -80,7 +82,7 @@ class LCDGraphic : public LCDBase, public LCDGraphicInterface {
     float tentacle_move_;
 
     LCDGraphicUpdateThread *update_thread_;
-    LCDGraphicWrapper *graphic_wrapper_;
+    //LCDGraphicWrapper *graphic_wrapper_;
     int refresh_rate_;
 
     int shmid_display_;

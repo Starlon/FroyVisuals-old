@@ -23,7 +23,6 @@
 #include <iostream>
 #include <stdio.h>
 #include <json/json.h>
-#include <QtScript>
 
 #include "CFG.h"
 #include "debug.h"
@@ -143,8 +142,9 @@ Json::Value *CFG::CFG_Fetch(Json::Value *section, std::string key,
         if( defval ) delete defval;
         return val;
     } else if ( val->isString() ) {
-        QScriptValue val2(engine_->evaluate(val->asCString()));
+        //QScriptValue val2(engine_->evaluate(val->asCString()));
         Json::Value *val3 = NULL;
+/*
         if(val2.isError()) {
             QScriptValue error = engine_->uncaughtException();
             LCDError("CFG: Uncaught exception in '%s': %s", key.c_str(), error.toString().toStdString().c_str());
@@ -167,6 +167,7 @@ Json::Value *CFG::CFG_Fetch(Json::Value *section, std::string key,
         } else if(val2.isNull()) {
             val3 = defval;
         }
+*/
         return val3 ? val3 : defval;
     }
     return defval;

@@ -32,15 +32,18 @@
 #include "PluginCpuinfo.h"
 
 using namespace LCD;
+using namespace std;
 
 int PluginCpuinfo::ParseCpuinfo(void)
 {
     int age;
 
     /* reread every second only */
+#if 0
     age = hash_age(&CPUinfo, NULL);
     if (age > 0 && age <= 1000)
         return 0;
+
 
     if (stream == NULL)
         stream = fopen("/proc/cpuinfo", "r");
@@ -77,11 +80,12 @@ int PluginCpuinfo::ParseCpuinfo(void)
         hash_put(&CPUinfo, key, val);
 
     }
+#endif
     return 0;
 }
 
 
-string * PluginCpuinfo::Cpuinfo(string * key)
+std::string PluginCpuinfo::Cpuinfo(std::string key)
 {
     const char *val;
 
@@ -100,7 +104,7 @@ PluginCpuinfo::PluginCpuinfo()
 {
     stream = NULL;
     hash_create(&CPUinfo);
-    AddFunction("cpuinfo", 1, my_cpuinfo);
+    //AddFunction("cpuinfo", 1, my_cpuinfo);
 }
 
 PluginCpuinfo::~PluginCpuinfo()
@@ -121,4 +125,3 @@ void PluginCpuinfo::Connect(Evaluator *visitor) {
 */
 }
 
-//Q_EXPORT_PLUGIN2(_PluginCpuinfo, PluginCpuinfo);

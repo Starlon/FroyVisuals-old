@@ -22,8 +22,9 @@
 #ifndef __PLUGIN_NETSTAT_H__
 #define __PLUGIN_NETSTAT_H__
 
+#include <cstring>
+#include <string>
 #include "Hash.h"
-#include "PluginInterface.h"
 
 namespace LCD {
 
@@ -44,8 +45,7 @@ class PluginNetStat {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
-    char *Netstat(char *arg1, char *arg2);
+    std::string Netstat(std::string arg1, std::string arg2);
     int LineCount();
 };
 

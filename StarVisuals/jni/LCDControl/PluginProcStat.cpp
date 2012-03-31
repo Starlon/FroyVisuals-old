@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <cstring>
+#include <string>
 #include <ctype.h>
 #include <errno.h>
 
@@ -200,7 +201,7 @@ int PluginProcStat::ParseProcStat(void) {
 }
 
 
-string PluginProcStat::ProcStat(string arg1) {
+std::string PluginProcStat::ProcStat(std::string arg1) {
     char *string;
 
     string = hash_get(&Stat, arg1.c_str(), NULL);
@@ -209,7 +210,7 @@ string PluginProcStat::ProcStat(string arg1) {
     return string;
 }
 
-double PluginProcStat::ProcStat(string arg1, double arg2)
+double PluginProcStat::ProcStat(std::string arg1, double arg2)
 {
     double number;
 
@@ -219,7 +220,7 @@ double PluginProcStat::ProcStat(string arg1, double arg2)
 }
 
 
-double PluginProcStat::Cpu(string arg1, int arg2) {
+double PluginProcStat::Cpu(std::string arg1, int arg2) {
     //const char *key;
     std::string key = arg1();
     int delay = arg2;
@@ -271,7 +272,7 @@ double PluginProcStat::Cpu(string arg1, int arg2) {
 }
 
 
-double PluginProcStat::Disk(string arg1, string arg2, double arg3) {
+double PluginProcStat::Disk(std::string arg1, std::string arg2, double arg3) {
     const char *dev, *key;
     char buffer[32];
     int delay;
@@ -307,10 +308,11 @@ PluginProcStat::~PluginProcStat() {
 }
 
 void PluginProcStat::Connect(Evaluator *visitor) {
+/*
     QScriptEngine *engine = visitor->GetEngine();
     QScriptValue val = engine->newObject();
     QScriptValue objVal = engine->newQObject(val, this);
     engine->globalObject().setProperty("procstat", objVal);
+*/
 }
 
-Q_EXPORT_PLUGIN2(_PluginProcStat, PluginProcStat)

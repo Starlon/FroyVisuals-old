@@ -24,6 +24,7 @@
 #include <cstring>
 #include <ctype.h>
 #include <errno.h>
+#include <math.h>
 
 #include "debug.h"
 #include "qprintf.h"
@@ -113,7 +114,7 @@ int PluginNetStat::ParseNetStat() {
     return 0;
 }
 
-string PluginNetStat::Netstat(string arg1, string arg2) {
+std::string PluginNetStat::Netstat(std::string arg1, std::string arg2) {
     std::string line, column;
 
     if(ParseNetStat() < 0) {
@@ -178,10 +179,11 @@ PluginNetStat::~PluginNetStat() {
 }
 
 void PluginNetStat::Connect(Evaluator *visitor) {
+/*
     QScriptEngine *engine = visitor->GetEngine();
     QScriptValue val = engine->newObject();
     QScriptValue objVal = engine->newQObject(val, this);
     engine->globalObject().setProperty("netstat", objVal);
+*/
 }
 
-Q_EXPORT_PLUGIN2(_PluginNetStat, PluginNetStat)

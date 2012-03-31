@@ -24,7 +24,6 @@
 
 #include <map>
 #include <vector>
-#include <QApplication>
 #include <json/json.h>
 
 #include "CFG.h"
@@ -36,14 +35,13 @@ class Evaluator;
 
 class LCDControl : public CFG {
 
-    QApplication *app_;
     bool active_;
     std::map<std::string, LCDCore *> devices_;
     std::vector<std::string> display_keys_;
     void ConfigSetup();
 
     public:
-    LCDControl(QApplication *app);
+    LCDControl();
     ~LCDControl();
     int Start();
     void Stop();

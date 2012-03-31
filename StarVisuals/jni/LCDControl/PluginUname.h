@@ -38,7 +38,6 @@ class PluginUname {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
     string Uname(string arg1);
 
 };

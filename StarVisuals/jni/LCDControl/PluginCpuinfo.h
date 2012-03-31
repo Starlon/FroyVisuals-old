@@ -24,16 +24,14 @@
 #ifndef __PLUGIN_CPUINFO_H__
 #define __PLUGIN_CPUINFO_H__
 
+#include <string>
 #include "Hash.h"
-#include "PluginInterface.h"
 
 namespace LCD {
 
 class Evaluator;
 
-class PluginCpuinfo :public QObject, public PluginInterface {
-    Q_OBJECT
-    Q_INTERFACES(LCD::PluginInterface);
+class PluginCpuinfo {
 
     HASH CPUinfo;
     FILE *stream;
@@ -45,8 +43,7 @@ class PluginCpuinfo :public QObject, public PluginInterface {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
-    string Cpuinfo(string key);
+    std::string Cpuinfo(std::string key);
 };
 
 }; // End namespace

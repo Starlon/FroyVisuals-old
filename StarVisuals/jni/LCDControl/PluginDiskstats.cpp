@@ -90,14 +90,14 @@ int PluginDiskstats::ParseDiskstats()
 }
 
 
-double PluginDiskstats::Diskstats(string arg1, string arg2, int arg3)
+double PluginDiskstats::Diskstats(std::string arg1, std::string arg2, int arg3)
 {
     char dev[256], key[256];
     int delay;
     double value = 0;
 
-    strncpy(dev, arg1.toAscii().data(), sizeof(dev));
-    strncpy(key, arg2.toAscii().data(), sizeof(key));
+    strncpy(dev, arg1.c_str(), sizeof(dev));
+    strncpy(key, arg2.c_str(), sizeof(key));
     delay = arg3;
 
     if (ParseDiskstats() < 0) {
@@ -139,10 +139,11 @@ PluginDiskstats::~PluginDiskstats()
 }
 
 void PluginDiskstats::Connect(Evaluator *visitor) {
+/*
     QScriptEngine *engine = visitor->GetEngine();
     QScriptValue val = engine->newObject();
     QScriptValue objVal = engine->newQObject(val, this);
     engine->globalObject().setProperty("diskstats", objVal);
+*/
 }
 
-Q_EXPORT_PLUGIN2(_PluginDiskstats, PluginDiskstats)

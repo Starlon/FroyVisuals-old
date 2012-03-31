@@ -27,7 +27,6 @@
 #include <cstring>
 #include <map>
 
-#include "WidgetVisualization.h"
 #include "LCDCore.h"
 #include "LCDBase.h"
 #include "LCDText.h"
@@ -36,9 +35,7 @@
 #include "WidgetHistogram.h"
 #include "WidgetIcon.h"
 #include "WidgetBignums.h"
-#include "WidgetGif.h"
 #include "Widget.h"
-#include "LCDWrapper.h"
 #include "RGBA.h"
 #include "debug.h"
 
@@ -56,16 +53,18 @@ LCDText::LCDText(LCDCore *visitor) {
     LayoutFB = 0;
     TransitionFB = 0;
     DisplayFB = 0;
+/*
     wrapper_ = new LCDWrapper((LCDInterface *)this, 0);
     QObject::connect(visitor->GetWrapper(), SIGNAL(_LayoutChangeBefore()), 
         wrapper_, SLOT(LayoutChangeBefore()));
     QObject::connect(visitor->GetWrapper(), SIGNAL(_LayoutChangeAfter()),
         wrapper_, SLOT(LayoutChangeAfter()));
     transitioning_ = false;
+*/
 }
 
 LCDText::~LCDText() {
-    delete wrapper_;
+    //delete wrapper_;
     if(!LayoutFB) return;
     for(int l = 0; l < LAYERS; l++) {
         free(LayoutFB[l]);
@@ -121,7 +120,7 @@ void LCDText::TextSetSpecialChars() {
         }
         TextSpecialCharChanged(i);
     } 
-    emit static_cast<LCDEvents *>(wrapper_)->_TextSpecialCharsSet();
+    //emit static_cast<LCDEvents *>(wrapper_)->_TextSpecialCharsSet();
 }
 
 void LCDText::TextSpecialCharChanged(int ch) {
@@ -445,6 +444,7 @@ void LCD::TextBignumsDraw(WidgetBignums *widget) {
         lcd->TextBlit(row, col, 2, 4);
 }
 
+/*
 void LCD::TextGifDraw(WidgetGif *widget) {
     LCDText *lcdText = (LCDText *)widget->GetVisitor()->GetLCD();
 
@@ -504,7 +504,9 @@ void LCD::TextGifDraw(WidgetGif *widget) {
     if(!lcdText->IsTransitioning())
         lcdText->TextBlit(row, col, widget->GetRows(), widget->GetCols());
 }
+*/
 
+/*
 void TextVisualizationPeakDraw(WidgetVisualization *widget) {
     LCDText *lcdText = (LCDText *)widget->GetVisitor()->GetLCD();
 
@@ -568,7 +570,9 @@ void TextVisualizationPeakDraw(WidgetVisualization *widget) {
     if(!lcdText->IsTransitioning())
         lcdText->TextBlit(row, col, height, width);
 }
+*/
 
+/*
 void TextVisualizationPCMDraw(WidgetVisualization *widget) {
     LCDText *lcdText = (LCDText *)widget->GetVisitor()->GetLCD();
 LCDError("hahaha------------------------");
@@ -689,6 +693,7 @@ void TextVisualizationDraw(WidgetVisualization *widget) {
     else if(widget->GetStyle() == STYLE_SPECTRUM) 
         TextVisualizationSpectrumDraw(widget);
 }
+*/
 
 void LCDText::Transition() {
     switch(visitor_->GetDirection()) {
@@ -763,8 +768,8 @@ void LCDText::TransitionLeftRight() {
     if( ++transition_tick_ >= (int)LCOLS ) {
         transitioning_ = false;
         transition_tick_ = 0;
-        emit static_cast<LCDEvents *>(
-            visitor_->GetWrapper())->_TransitionFinished();
+        //emit static_cast<LCDEvents *>(
+        //    visitor_->GetWrapper())->_TransitionFinished();
         for(int l = 0; l < LAYERS; l++) {
             memcpy(LayoutFB[l], TransitionFB[l], LCOLS * LROWS);
             memset(TransitionFB[l], ' ', LCOLS * LROWS);
@@ -819,8 +824,8 @@ void LCDText::TransitionUpDown() {
     if( ++transition_tick_ >= (int)LROWS ) {
         transitioning_ = false;
         transition_tick_ = 0;
-        emit static_cast<LCDEvents *>(
-            visitor_->GetWrapper())->_TransitionFinished();
+        //emit static_cast<LCDEvents *>(
+        //    visitor_->GetWrapper())->_TransitionFinished();
         memset(DisplayFB, ' ', LCOLS * LROWS);
         for(int l = 0; l < LAYERS; l++) {
             memcpy(LayoutFB[l], TransitionFB[l], LCOLS * LROWS);
@@ -916,8 +921,8 @@ void LCDText::TransitionTentacle() {
     if( ++transition_tick_ >= (int)LCOLS ) {
         transitioning_ = false;
         transition_tick_ = 0;
-        emit static_cast<LCDEvents *>(
-            visitor_->GetWrapper())->_TransitionFinished();
+        //emit static_cast<LCDEvents *>(
+        //    visitor_->GetWrapper())->_TransitionFinished();
         memset(DisplayFB, (int)'*', LCOLS * LROWS);
 
         for(int l = 0; l < LAYERS; l++) {

@@ -33,7 +33,6 @@
 #include <map>
 #include <stdlib.h>
 #include <iostream>
-#include <QObject>
 
 #include "CFG.h"
 #include "Evaluator.h"
@@ -64,7 +63,7 @@ struct widget_template {
     int layer;
 };
 
-class LCDCore: public virtual Evaluator, public CFG, public LCDInterface {
+class LCDCore: public virtual Evaluator, public CFG {
     std::vector<std::string> layouts_;
     std::string current_layout_;
     std::string last_layout_;
@@ -79,9 +78,10 @@ class LCDCore: public virtual Evaluator, public CFG, public LCDInterface {
     bool is_transitioning_;
     bool clear_on_layout_change_;
     bool transitions_off_;
-    LCDWrapper *wrapper_;
+/*
     QTimer *timer_;
     QTimer *transition_timer_;
+*/
     PluginLCD *pluginLCD;
     LCDControl *app_;
 
@@ -103,7 +103,6 @@ class LCDCore: public virtual Evaluator, public CFG, public LCDInterface {
     virtual void TakeDown(){};
     std::map<std::string, Widget *> GetWidgets();
     std::string CFG_Key();
-    LCDWrapper *GetWrapper() { return wrapper_; }
     std::vector<std::string> GetLayouts() { return layouts_; }
     int GetDirection() { return direction_; }
     std::string GetCurrentLayout() { return current_layout_; }

@@ -54,18 +54,17 @@ WidgetTimer::WidgetTimer(LCDCore *v, std::string n, Json::Value *section) :
 WidgetTimer::~WidgetTimer() {
     Stop();
     delete expression_;
-    delete timer_;
 }
 
 void WidgetTimer::Start() {
     if( update_ < 0)
         return;
-    timer_->start();
+    //timer_->start();
     Update();
 }
 
 void WidgetTimer::Stop() {
-    timer_->stop();
+    //timer_->stop();
 }
 
 void WidgetTimer::Update() {

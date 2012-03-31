@@ -129,4 +129,3 @@ void PluginMeminfo::Connect(Evaluator *visitor) {
 */
 }
 
-Q_EXPORT_PLUGIN2(_PluginMeminfo, PluginMeminfo)

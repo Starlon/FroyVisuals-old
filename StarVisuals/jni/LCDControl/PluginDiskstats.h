@@ -25,7 +25,7 @@
 #define __PLUGIN_DISKSTATS_H__
 
 #include "Hash.h"
-#include "PluginInterface.h"
+#include <string>
 
 namespace LCD {
 
@@ -43,8 +43,7 @@ class PluginDiskstats {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
-    double Diskstats(string arg1, string arg2, int arg3);
+    double Diskstats(std::string arg1, std::string arg2, int arg3);
 };
 
 }; // End namespace

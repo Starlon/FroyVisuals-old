@@ -24,7 +24,6 @@
 #include "lua.h"
 
 #include "Evaluator.h"
-#include "PluginInterface.h"
 #include "SpecialChar.h"
 #include "debug.h"
 
@@ -103,12 +102,12 @@ Evaluator::~Evaluator() {
 */
 }
 
-QScriptValue Evaluator::Eval(std::string str) {
+std::string Evaluator::Eval(std::string str) {
 /*
     QScriptValue tmp = engine_->evaluate(string(str.c_str()));
     if(tmp.isError()) LCDError("Error in evaluation: %s", tmp.toString().toStdString().c_str());
 */
-    return tmp;
+    return "";
 }
 
 
@@ -122,12 +121,13 @@ void Evaluator::AddAccessor(std::string name,
 }
 */
 
-void Evaluator::AddValue(std::string name, int value) {
 /*
+void Evaluator::AddValue(std::string name, int value) {
     LCDInfo("AddValue: %s, %f", name.c_str(), (double)val.toNumber());
     engine_->globalObject().setProperty(string(name.c_str()), val);
-*/
 }
+*/
+
 /*
 QScriptEngine Evaluator::Engine() {
     return engine_;

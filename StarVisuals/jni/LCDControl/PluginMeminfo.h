@@ -24,16 +24,15 @@
 #ifndef __PLUGIN_MEMINFO_H__
 #define __PLUGIN_MEMINFO_H__
 
+#include <string>
+
 #include "Hash.h"
-#include "PluginInterface.h"
 
 namespace LCD {
 
 class Evaluator;
 
 class PluginMeminfo {
-    
-    (LCD::PluginInterface)
 
     HASH MemInfo;
     FILE *stream;
@@ -45,8 +44,7 @@ class PluginMeminfo {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
-    string Meminfo(string arg1);
+    std::string Meminfo(std::string arg1);
         
 };
 

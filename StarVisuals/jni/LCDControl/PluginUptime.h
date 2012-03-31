@@ -46,7 +46,6 @@ class PluginUptime {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
     double Uptime();
     char *Uptime(string format);
 };

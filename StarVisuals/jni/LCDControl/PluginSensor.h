@@ -35,7 +35,6 @@ class PluginFile {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
     char *Readline(std::string arg1, int arg2);
 };
 

@@ -86,7 +86,6 @@ class Widget {
     bool GetBGValid() const { return bg_valid_; }
     int WidgetColor(Json::Value *section, std::string name, RGBA *color); 
 
-    public slots:
     virtual void Update() = 0;
     virtual void TextScroll() = 0;
 };

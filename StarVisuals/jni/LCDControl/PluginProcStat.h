@@ -25,7 +25,6 @@
 #define __PLUGIN_PROC_STAT_H__
 
 #include "Hash.h"
-#include "PluginInterface.h"
 
 namespace LCD {
 
@@ -49,11 +48,10 @@ class PluginProcStat {
         void Connect(Evaluator *visitor);
         void Disconnect() {}
 
-    public slots:
-        char *ProcStat(char *arg1);
-        double ProcStat(char *arg1, double arg2);
-        double Cpu(char *arg1, int arg2);
-        double Disk(char *arg1, char *arg2, double arg3);
+        char *ProcStat(std::string arg1);
+        double ProcStat(std::string arg1, double arg2);
+        double Cpu(std::string arg1, int arg2);
+        double Disk(std::string arg1, std::string arg2, double arg3);
 };
 
 }; // End namespace

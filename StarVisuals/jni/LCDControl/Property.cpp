@@ -39,6 +39,7 @@ using namespace LCD;
 Property::Property(LCDCore *v, Json::Value *section, std::string name, 
     Json::Value *defval) {
 
+/*
     visitor_ = v;
     name_ = name;
     is_valid = false;
@@ -55,16 +56,19 @@ Property::Property(LCDCore *v, Json::Value *section, std::string name,
         LCDError("Property: <%s> has no expression_ or is not a string field.", name.c_str());
         LCDError("%s", expression_->toStyledString().c_str());
     }
+*/
 }
 
 Property::Property(const Property &prop) {
+/*
     is_valid = prop.is_valid;
     result_ = prop.result_;
     expression_ = prop.expression_;
+*/
 }
 
 Property::~Property() {
-    delete expression_;
+    //delete expression_;
 }
 
 bool Property::Valid() {
@@ -92,19 +96,25 @@ int Property::Eval() {
 }
 
 double Property::P2N() {
+/*
     if(!is_valid || result_.isError()) return 0.0;
     return result_.toNumber();
+*/
 }
 
 int Property::P2INT() {
+/*
     if(!is_valid || result_.isError()) return 0;
     return result_.toInteger();
+*/
 }
 
 std::string Property::P2S() {
+/*
     if(!is_valid || result_.isError() || 
         result_.toString() == "undefined") return "";
     return result_.toString().toStdString();
+*/
 }
 
 

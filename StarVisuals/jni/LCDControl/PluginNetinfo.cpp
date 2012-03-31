@@ -67,7 +67,7 @@ int PluginNetinfo::OpenNet() {
 }
 
 
-double PluginNetinfo::Exists(string arg1) {
+double PluginNetinfo::Exists(std::string arg1) {
     char buf[10240];
     struct ifconf ifcnf;
     struct ifreq *ifreq;
@@ -113,7 +113,7 @@ double PluginNetinfo::Exists(string arg1) {
 
 
 /* get MAC address (hardware address) of network device */
-string PluginNetinfo::Hwaddr(string arg1) {
+std::string PluginNetinfo::Hwaddr(std::string arg1) {
     static int errcount = 0;
     struct ifreq ifreq;
     unsigned char *hw;
@@ -142,7 +142,7 @@ string PluginNetinfo::Hwaddr(string arg1) {
 
 
 /* get ip address of network device */
-string PluginNetinfo::Ipaddr(string arg1) {
+std::string PluginNetinfo::Ipaddr(std::string arg1) {
     static int errcount = 0;
     struct ifreq ifreq;
     struct sockaddr_in *sin;
@@ -170,7 +170,7 @@ string PluginNetinfo::Ipaddr(string arg1) {
 
 
 /* get ip netmask of network device */
-string PluginNetinfo::Netmask(string arg1) {
+std::string PluginNetinfo::Netmask(std::string arg1) {
     static int errcount = 0;
     struct ifreq ifreq;
     struct sockaddr_in *sin;
@@ -199,7 +199,7 @@ string PluginNetinfo::Netmask(string arg1) {
 
 
 /* get ip broadcast address of network device */
-string PluginNetinfo::Bcaddr(string arg1) {
+std::string PluginNetinfo::Bcaddr(std::string arg1) {
     static int errcount = 0;
     struct ifreq ifreq;
     struct sockaddr_in *sin;
@@ -244,4 +244,3 @@ void PluginNetinfo::Connect(Evaluator *visitor) {
 */
 }
 
-Q_EXPORT_PLUGIN2(_PluginNetinfo, PluginNetinfo)

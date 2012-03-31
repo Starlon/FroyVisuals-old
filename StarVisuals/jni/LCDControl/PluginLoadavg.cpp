@@ -116,10 +116,11 @@ PluginLoadavg::~PluginLoadavg() {
 }
 
 void PluginLoadavg::Connect(Evaluator *visitor) {
+/*
     QScriptEngine *engine = visitor->GetEngine();
     QScriptValue val = engine->newObject();
     QScriptValue objVal = engine->newQObject(val, this);
     engine->globalObject().setProperty("loadavg", objVal);
+*/
 }
 
-Q_EXPORT_PLUGIN2(_PluginLoadavg, PluginLoadavg)

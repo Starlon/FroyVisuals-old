@@ -122,7 +122,6 @@ WidgetIcon::WidgetIcon(LCDCore *v, std::string n,
 WidgetIcon::~WidgetIcon() {
     Stop();
     delete visible_;
-    delete timer_;
     delete bitmap_;
 }
 
@@ -131,8 +130,8 @@ void WidgetIcon::Resize(int rows, int cols, int old_rows, int old_cols) {
     int xres = visitor_->GetLCD()->XRES;
     float r = row_ * yres / (float)old_rows;
     float c = col_ * xres / (float)old_cols;
-    row_ = round(rows * r / yres);
-    col_ = round(cols * c / xres);
+    row_ = (int)((rows * r / yres) + 0.5);
+    col_ = (int)((cols * c / xres) + 0.5);
     Update();
 }
 
@@ -181,14 +180,14 @@ void WidgetIcon::Start() {
         }
     }
     if(!started_) {
-        timer_->start();
+        //timer_->start();
         started_ = true;
     } 
     Update();
 }
 
 void WidgetIcon::Stop() {
-    timer_->stop();
+    //timer_->stop();
     started_ = false;
     ch_ = -1;
 }

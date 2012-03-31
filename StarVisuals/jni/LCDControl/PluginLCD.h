@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "SpecialChar.h"
+using namespace std;
 
 namespace LCD {
 
@@ -42,7 +43,7 @@ class PluginLCD {
     PluginLCD(LCDCore *visitor);
     ~PluginLCD();
 
-    public slots:
+    public :
     void Transition(int i);
     void SelectLayout(string layout);
     int RemoveWidget(string widget);
@@ -66,7 +67,6 @@ class PluginLCD {
     void TickUpdate();
     void SetTimeout(int val);
 
-    signals:
     void _TickUpdate();
     void _KeypadEvent(const int);
 };

@@ -37,7 +37,7 @@ using namespace LCD;
 /* takes two arguments, file name and line number */
 /* returns text of that line */
 
-string PluginFile::Readline(string arg1, int arg2) {
+std::string PluginFile::Readline(std::string arg1, int arg2) {
     char value[80], val2[80];
     FILE *fp;
     int reqline, i, size;
@@ -66,10 +66,11 @@ string PluginFile::Readline(string arg1, int arg2) {
 }
 
 void PluginFile::Connect(Evaluator *visitor) {
+/*
     QScriptEngine *engine = visitor->GetEngine();
     QScriptValue val = engine->newObject();
     QScriptValue objVal = engine->newQObject(val, this);
     engine->globalObject().setProperty("file", objVal);
+*/
 }
 
-Q_EXPORT_PLUGIN2(_PluginFile, PluginFile)

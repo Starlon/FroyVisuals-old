@@ -24,8 +24,6 @@
 #ifndef __PLUGIN_LOADAVG_H__
 #define __PLUGIN_LOADAVG_H__
 
-#include "PluginInterface.h"
-
 namespace LCD {
 
 class Evaluator;
@@ -40,7 +38,6 @@ class PluginLoadavg {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
     double Loadavg(int arg1);
 };
 

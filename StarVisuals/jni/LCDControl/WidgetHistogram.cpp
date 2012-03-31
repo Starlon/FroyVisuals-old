@@ -92,6 +92,7 @@ WidgetHistogram::WidgetHistogram(LCDCore *v, std::string n, Json::Value *section
    
     history_.resize(cols_);
 
+/*
     timer_ = new QTimer();
     timer_->setSingleShot(false);
     timer_->setInterval(update_);
@@ -99,6 +100,7 @@ WidgetHistogram::WidgetHistogram(LCDCore *v, std::string n, Json::Value *section
 
     QObject::connect(v->GetWrapper(), SIGNAL(_ResizeLCD(int, int, int, int)),
         this, SLOT(Resize(int, int, int, int)));
+*/
 }
 
 WidgetHistogram::~WidgetHistogram() {
@@ -106,7 +108,6 @@ WidgetHistogram::~WidgetHistogram() {
     delete expression_;
     delete expr_min_;
     delete expr_max_;
-    delete timer_;
 }
 
 void WidgetHistogram::SetupChars() {
@@ -149,10 +150,10 @@ void WidgetHistogram::Resize(int rows, int cols, int old_rows, int old_cols) {
     float x = cols_ * xres / (float)old_cols;
     float r = row_ * yres / (float)old_rows;
     float c = col_ * xres / (float)old_cols;
-    rows_ = round(rows * y / yres);
-    cols_ = round(cols * x / xres);
-    row_ = round(rows * r / yres);
-    col_ = round(cols * c / yres);
+    rows_ = (int)((rows * y / yres) + 0.5);
+    cols_ = (int)((cols * x / xres) + 0.5);
+    row_ = (int)((rows * r / yres) + 0.5);
+    col_ = (int)((cols * c / yres) + 0.5);
     history_.resize(cols_);
     Update();
 }
@@ -225,12 +226,12 @@ void WidgetHistogram::Update() {
 void WidgetHistogram::Start() {
     if(update_ < 0)
         return;
-    timer_->start();
+    //timer_->start();
     Update();
 }
 
 void WidgetHistogram::Stop() {
-    timer_->stop();
+    //timer_->stop();
     ch_.clear();
 }
 

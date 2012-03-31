@@ -28,7 +28,6 @@
 #include <string>
 #include "LCDBase.h"
 #include "SpecialChar.h"
-#include "LCDWrapper.h"
 
 namespace LCD {
 
@@ -37,14 +36,12 @@ class WidgetIcon;
 class WidgetBar;
 class WidgetHistogram;
 class WidgetBignums;
-class WidgetGif;
 
 class LCDCore;
 
 class LCDGraphic;
 
-class LCDText: public LCDBase, public LCDInterface {
-    LCDWrapper *wrapper_;
+class LCDText: public LCDBase {
     std::string transition_layout_;
     public:
     unsigned char **LayoutFB;
@@ -111,8 +108,6 @@ void TextHistogramDraw(WidgetHistogram *w);
 void TextIconDraw(WidgetIcon *w);
 
 void TextBignumsDraw(WidgetBignums *w);
-
-void TextGifDraw(WidgetGif *w);
 
 }; // End namespace
 

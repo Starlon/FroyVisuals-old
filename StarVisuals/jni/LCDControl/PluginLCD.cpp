@@ -34,7 +34,7 @@ using namespace LCD;
 using namespace std;
 
 void PluginLCD::TickUpdate() {
-    emit _TickUpdate();
+    //emit _TickUpdate();
 }
 
 void PluginLCD::Transition(int i) {
@@ -68,6 +68,7 @@ int PluginLCD::ResizeLCD(int rows, int cols) {
 
 void PluginLCD::SendData(int row, int col, 
     int layer, string val) {
+/*
     QByteArray data = val.toAscii();
     if(type_ == LCD_TEXT) {
         LCDText *lcd = (LCDText *)visitor_->GetLCD();
@@ -98,6 +99,7 @@ void PluginLCD::SendData(int row, int col,
 	lcd->GraphicRender(layer, row, col, fg_, bg_, val.c_str(), 0, 0, GetCurrentLayout().c_str());
 	lcd->GraphicBlit(0, 0, lcd->LROWS, lcd->LCOLS); 
     }
+*/
 }
 
 void PluginLCD::SetSpecialChar(int ch, SpecialChar matrix) {
@@ -170,26 +172,30 @@ string PluginLCD::GetType() {
 }
 
 void PluginLCD::SetTimeout(int val) {
+/*
     tick_timer_->setInterval(val);
     tick_timer_->start();
+*/
 }
 
 PluginLCD::PluginLCD(LCDCore *visitor) {
     visitor_ = visitor;
     type_ = visitor_->GetType();
 
+/*
     QObject::connect(visitor_->GetWrapper(), SIGNAL(_KeypadEvent(const int)),
         this, SIGNAL(_KeypadEvent(const int)));
+*/
 
+/*
     tick_timer_ = new QTimer();
     tick_timer_->setInterval(500);
     QObject::connect(tick_timer_, SIGNAL(timeout()),
         this, SLOT(TickUpdate()));
     tick_timer_->start();
-
+*/
 }
 
 PluginLCD::~PluginLCD() {
-    delete tick_timer_;
 }
 

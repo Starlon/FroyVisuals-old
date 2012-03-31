@@ -35,7 +35,6 @@ class PluginStatfs {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
     double Statfs(std::string arg1, std::string arg2);
 };
 

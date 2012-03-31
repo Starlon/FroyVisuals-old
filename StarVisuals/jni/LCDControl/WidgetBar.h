@@ -86,7 +86,6 @@ class WidgetBar : public Widget {
     void Update();
     void TextScroll() {};
 
-    public slots:
     void Resize(int rows, int cols, int old_rows, int old_cols);
 };
 

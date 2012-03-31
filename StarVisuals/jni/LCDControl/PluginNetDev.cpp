@@ -123,7 +123,7 @@ int PluginNetDev::ParseNetDev()
     return 0;
 }
 
-double PluginNetDev::Regex(string arg1, string arg2, int arg3)
+double PluginNetDev::Regex(std::string arg1, std::string arg2, int arg3)
 {
     std::string dev, key;
     int delay;
@@ -142,7 +142,7 @@ double PluginNetDev::Regex(string arg1, string arg2, int arg3)
     return value;
 }
 
-double PluginNetDev::Fast(string arg1, string arg2, int arg3)
+double PluginNetDev::Fast(std::string arg1, std::string arg2, int arg3)
 {
     std::string dev, key;
     int delay;

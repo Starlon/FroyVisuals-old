@@ -31,6 +31,7 @@
 #include "LCDGraphic.h"
 #include "WidgetText.h"
 #include "LCDCore.h"
+#include "debug.h"
 
 using namespace LCD;
 
@@ -55,8 +56,6 @@ WidgetText::WidgetText(LCDCore *v, std::string name, Json::Value *config,
         Draw = TextDraw;
     else if (lcd_type_ == LCD_GRAPHIC)
         Draw = GraphicDraw;
-    else
-        Draw = NULL;
 
     string_ = "";
     offset_ = 0;
@@ -160,8 +159,8 @@ WidgetText::~WidgetText() {
     delete postfix_;
     delete style_;
     delete value_;
-    delete timer_;
-    delete scroll_timer;
+    //delete timer_;
+    //delete scroll_timer;
 }
 
 void WidgetText::Resize(int rows, int cols, int old_rows, int old_cols) {
@@ -172,9 +171,9 @@ void WidgetText::Resize(int rows, int cols, int old_rows, int old_cols) {
     float r  = row_ * yres / (float)old_rows;
     float c = col_ * xres / (float)old_cols;
     LCDInfo("WidgetText::REsize cols: %d, row: %d, col: %d, x: %f, r: %f, c: %f", cols_, row_, col_, x, r, c);
-    cols_ = round(cols * x / xres);
-    row_ = round(rows * r / yres);
-    col_ = round(cols * c / xres);
+    cols_ = (int)((cols * x / xres) + 0.5);
+    row_ = (int)((rows * r / yres) + 0.5);
+    col_ = (int)((cols * c / xres) + 0.5);
     LCDInfo("WidgetText::REsize cols: %d, row: %d, col: %d, x: %f, r: %f, c: %f", cols_, row_, col_, x, r, c);
     Update();
 }
@@ -378,7 +377,7 @@ void WidgetText::Update()
         int precision = precision_;
         /* print zero bytes so we can specify NULL as target  */
         /* and get the length of the resulting str */
-        int size = snprintf(NULL, 0, "%.*f", precision, number);
+        int size = snprintf((char *)NULL, 0, (char *)"%.*f", precision, number);
         /* number does not fit into field width: try to reduce precision */
         if (width < 0)
             width = 0;
@@ -428,13 +427,13 @@ void WidgetText::Update()
 }
 
 void WidgetText::Start() {
-    timer_->start();
-    scroll_timer->start();
+    //timer_->start();
+    //scroll_timer->start();
     Update();
 }
 
 void WidgetText::Stop() {
-    timer_->stop();
-    scroll_timer->stop();
+    //timer_->stop();
+    //scroll_timer->stop();
 }
 

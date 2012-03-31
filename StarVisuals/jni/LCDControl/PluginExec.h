@@ -27,7 +27,6 @@
 #include <list>
 #include <string>
 
-#include "PluginInterface.h"
 #include "Hash.h"
 
 namespace LCD {
@@ -38,7 +37,7 @@ class PluginExecThread;
 
 class PluginExec {
     HASH hash_;
-    std::list<PluginExecThread *> threads_;
+    //std::list<PluginExecThread *> threads_;
     int DoExec(char *cmd, char *key, int delay);
 
     public:
@@ -47,13 +46,13 @@ class PluginExec {
     void Connect(Evaluator *visitor);
     void Disconnect();
 
-    public slots:
-    string Exec(string arg1, int timeout);
+    std::string Exec(std::string arg1, int timeout);
 
 };
 
 #define MEM_SIZE 4096
 
+/*
 class PluginExecThread {
     bool running_;
     char *cmd_;
@@ -84,6 +83,7 @@ class PluginExecThread {
         return storage_.localData();
     }
 };
+*/
 
 };
 

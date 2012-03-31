@@ -28,6 +28,7 @@
 #include "LCDText.h"
 #include "LCDGraphic.h"
 #include "LCDCore.h"
+#include "debug.h"
 
 using namespace LCD;
 

@@ -31,11 +31,9 @@
 
 namespace LCD {
 
-class PluginInterface;
-
 class Evaluator {
     void LoadPlugins();
-    std::list<PluginInterface *> plugins_;
+    //std::list<PluginInterface *> plugins_;
 
     protected:
 /*
@@ -44,7 +42,6 @@ class Evaluator {
 */
 
     public:
-    Evaluator();
     Evaluator();
     virtual ~Evaluator();
     virtual std::string Eval(std::string str);

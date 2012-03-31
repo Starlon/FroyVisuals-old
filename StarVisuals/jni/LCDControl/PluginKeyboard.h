@@ -47,7 +47,6 @@ class PluginKeyboard {
     ~PluginKeyboard();
     void PluginPoll();
 
-    signals:
     void _KeyPressed(const char key);
     void _KeyReleased(const char key);
 };

@@ -67,7 +67,6 @@ class WidgetBignums : public Widget {
     std::vector<char> GetFB() { return FB_; }
     std::vector<char> GetCh() { return ch_; }
 
-    public slots:
     void Resize(int rows, int cols, int old_rows, int old_cols);
 };
 

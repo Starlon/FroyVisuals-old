@@ -25,7 +25,7 @@
 #define __PLUGIN_NETDEV_H__
 
 #include "Hash.h"
-#include "PluginInterface.h"
+#include <cstring>
 
 namespace LCD {
 
@@ -45,9 +45,8 @@ class PluginNetDev {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
-    string Regex(string arg1, string arg2, int arg3);
-    string Fast(string arg1, string arg2, int arg3);
+    double Regex(std::string arg1, std::string arg2, int arg3);
+    double Fast(std::string arg1, std::string arg2, int arg3);
 };
 
 };

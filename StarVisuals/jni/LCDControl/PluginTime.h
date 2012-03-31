@@ -36,7 +36,6 @@ class PluginTime {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
     unsigned int Time();
     char *Strftime(char * arg1, double arg2);
     char *Strftime_tz(char * arg1, double arg2, char * arg3);

@@ -59,6 +59,7 @@ WidgetBignums::WidgetBignums(LCDCore *v, std::string n, Json::Value *section,
 
     min_ = max_ = 0.0;
 
+/*
     timer_ = new QTimer();
     timer_->setSingleShot(false);
     timer_->setInterval(update_);
@@ -66,11 +67,11 @@ WidgetBignums::WidgetBignums(LCDCore *v, std::string n, Json::Value *section,
 
     QObject::connect(visitor_->GetWrapper(), SIGNAL(_ResizeLCD(int, int, int, int)),
         this, SLOT(Resize(int, int, int, int)));
+*/
 }
 
 WidgetBignums::~WidgetBignums() {
     Stop();
-    delete timer_;
     delete expression_;
     delete expr_min_;
     delete expr_max_;
@@ -81,8 +82,8 @@ void WidgetBignums::Resize(int rows, int cols, int old_rows, int old_cols) {
     int xres = visitor_->GetLCD()->XRES;
     float r = row_ * yres / (float)old_rows;
     float c = col_ * xres / (float)old_cols;
-    row_ = round(rows * r / yres);
-    col_ = round(cols * c / xres);
+    row_ = (int)((rows * r / yres) + 0.5);
+    col_ = (int)((cols * c / xres) + 0.5);
     Update();
 }
 
@@ -166,9 +167,9 @@ void WidgetBignums::Update() {
 void WidgetBignums::Start() {
     if(update_ < 0)
         return;
-    timer_->start();
+    //timer_->start();
 }
 
 void WidgetBignums::Stop() {
-    timer_->stop();
+    //timer_->stop();
 }

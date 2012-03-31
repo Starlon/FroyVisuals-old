@@ -22,11 +22,11 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <QApplication>
 #include <json/json.h>
 
 #include "Property.h"
 #include "LCDControl.h"
+/*
 #include "DrvCrystalfontz.h"
 #include "DrvQt.h"
 #include "DrvQtGraphic.h"
@@ -34,36 +34,37 @@
 #include "DrvPicoGraphic.h"
 #include "DrvLCDProc.h"
 #include "DrvSDL.h"
+*/
 #include "Evaluator.h"
 #include "debug.h"
 #include <X11/Xlib.h>
 
 using namespace LCD;
 
-LCDControl::LCDControl(QApplication *app) {
-    app_ = app;
+LCDControl::LCDControl() {
     active_ = true;
 }
 
 LCDControl::~LCDControl() {
     active_ = false;
     Shutdown();
+/*
     for(std::vector<std::string>::iterator it = display_keys_.begin();
         it != display_keys_.end(); it++) {
         if(devices_.find(*it) != devices_.end() && devices_[*it])
             delete devices_[*it];
     }
+*/
 }
 
 int LCDControl::Start() {
     CFG_Init("config.js");
     //XInitThreads();
     ConfigSetup();
-    return app_->exec();
+    return 1;
 }
 
 void LCDControl::Stop() {
-    app_->exit(0);
 }
 
 /*
@@ -169,6 +170,7 @@ void LCDControl::ConfigSetup() {
 
             Json::Value *model = CFG_Fetch_Raw(display, "model");
             if(driver->asString() == "crystalfontz") {
+/*
                 if(model) {
                     devices_[*it] = DrvCrystalfontz::Get(*it, this, 
                         CFG_Get_Root(), model->asString(), layers->asInt());
@@ -197,6 +199,7 @@ void LCDControl::ConfigSetup() {
                     layers->asInt());
             } else if(driver->asString() == "lcdproc") {
                 devices_[*it] = new DrvLCDProc(*it, this, CFG_Get_Root(), layers->asInt());
+*/
             } else {
                 continue;
             }
@@ -209,6 +212,7 @@ void LCDControl::ConfigSetup() {
         
     }
 
+/*
     for(std::map<std::string, LCDCore *>::iterator it = 
         devices_.begin(); it != devices_.end(); it++) {
         display_keys_.push_back(it->first);
@@ -220,13 +224,16 @@ void LCDControl::ConfigSetup() {
         device->BuildLayouts();
         device->StartLayout();
     }
+*/
 }
 
 void LCDControl::Shutdown() {
+/*
     for(std::map<std::string, LCDCore *>::iterator it =
         devices_.begin(); it != devices_.end(); it++ ) {
         it->second->TakeDown();
     }
+*/
 }
 
 LCDCore *LCDControl::FindDisplay(std::string name) {

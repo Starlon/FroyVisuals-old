@@ -27,16 +27,12 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "WidgetVisualization.h" // boost requires this be included before QObject
-#include <QObject>
-
 #include "LCDCore.h"
 #include "LCDControl.h"
 #include "CFG.h"
 #include "Evaluator.h"
 #include "LCDText.h"
 #include "LCDGraphic.h"
-#include "LCDWrapper.h"
 #include "PluginLCD.h"
 
 #include "Widget.h"
@@ -45,7 +41,6 @@
 #include "WidgetIcon.h"
 #include "WidgetHistogram.h"
 #include "WidgetBignums.h"
-#include "WidgetGif.h"
 #include "WidgetKey.h"
 #include "WidgetTimer.h"
 #include "WidgetScript.h"
@@ -65,6 +60,7 @@ LCDCore::LCDCore(LCDControl *app, std::string name, Json::Value *config, int t, 
     transitions_off_ = false;
     // initialize true so property initialization doesn't trigger transitions
     is_transitioning_ = false;
+/*
     wrapper_ = new LCDWrapper((LCDInterface *)this, (QObject *)NULL);
     timer_ = new QTimer();
     timer_->setSingleShot(true);
@@ -83,6 +79,7 @@ LCDCore::LCDCore(LCDControl *app, std::string name, Json::Value *config, int t, 
     QScriptValue val = engine_->newObject();
     QScriptValue objVal = engine_->newQObject(val, pluginLCD);
     engine_->globalObject().setProperty("lcd", objVal);
+*/
 
     if( !CFG_Init("config.js") ) {
         LCDError("Couldn't load configuration.");
@@ -91,12 +88,7 @@ LCDCore::LCDCore(LCDControl *app, std::string name, Json::Value *config, int t, 
 }
 
 LCDCore::~LCDCore() {
-    delete wrapper_;
     delete pluginLCD;
-    timer_->stop();
-    transition_timer_->stop();
-    delete timer_;
-    delete transition_timer_;
     for(std::map<std::string, Widget *>::iterator w = widgets_.begin(); 
         w != widgets_.end(); w++) {
         delete w->second;
@@ -318,12 +310,6 @@ void LCDCore::BuildLayouts() {
            } else if (type->asString() == "bignums") {
                widget = (Widget *) new WidgetBignums(this, name, widget_v,
                    widgets[i].row, widgets[i].col, widgets[i].layer);
-           } else if (type->asString() == "gif") {
-               widget = (Widget *) new WidgetGif(this, name, widget_v,
-                   widgets[i].row, widgets[i].col, widgets[i].layer);
-           } else if (type->asString() == "visualization") {
-               widget = (Widget *) new WidgetVisualization(this, name, widget_v,
-                   widgets[i].row, widgets[i].col, widgets[i].layer);
            } else if (type->asString() == "key") {
                widget = (Widget *) new WidgetKey(this, name, widget_v);
            } else if (type->asString() == "timer") {
@@ -349,7 +335,7 @@ void LCDCore::StartLayout(std::string key) {
     }
 
     LCDError("StartLayout: %s", current_layout_.c_str());
-    emit static_cast<LCDEvents *>(wrapper_)->_LayoutChangeBefore();
+    //emit static_cast<LCDEvents *>(wrapper_)->_LayoutChangeBefore();
     std::map<std::string, Widget *> widgets = widgets_;
     for(std::map<std::string,Widget *>::iterator w = widgets.begin(); 
         w != widgets.end(); w++){
@@ -365,13 +351,15 @@ void LCDCore::StartLayout(std::string key) {
     	}
     }
 
-    emit static_cast<LCDEvents *>(wrapper_)->_LayoutChangeAfter();
+    //emit static_cast<LCDEvents *>(wrapper_)->_LayoutChangeAfter();
 
     Json::Value *timeout = CFG_Fetch(CFG_Get_Root(), 
         current_layout_ + ".timeout", new Json::Value(layout_timeout_));
 
+/*
     if(timeout->asInt() > 0)
         timer_->start(timeout->asInt());
+*/
 
     delete timeout;
 
@@ -398,7 +386,7 @@ void LCDCore::StopLayout(std::string layout) {
 
 void LCDCore::ChangeLayout() {
     if(is_transitioning_) {
-        timer_->start(100);
+        //timer_->start(100);
         return;
     }
     LCDError("ChangeLayout");
@@ -467,8 +455,8 @@ void LCDCore::StartTransition(std::string transition) {
         current_layout_ + ".transition-speed", new Json::Value(transition_speed_));
     int speed = val->asInt();
     delete val;
-    transition_timer_->setInterval(speed);
-    transition_timer_->start();
+    //transition_timer_->setInterval(speed);
+    //transition_timer_->start();
     LayoutTransition();
     LCDError("Transition started -- speed: %d", transition_speed_);
 }
@@ -478,11 +466,11 @@ void LCDCore::LayoutTransition() {
 }
 
 void LCDCore::TransitionFinished() {
-    transition_timer_->stop();
+    //transition_timer_->stop();
     StopLayout(last_layout_);
     is_transitioning_ = false;
     lcd_->SignalTransitionEnd();
-    timer_->start();
+    //timer_->start();
 }
 
 std::map<std::string, Widget *> LCDCore::GetWidgets() {
@@ -514,7 +502,7 @@ int LCDCore::ResizeLCD(int rows, int cols) {
     int old_rows = lcd_->LROWS;
     int old_cols = lcd_->LCOLS;
     if(lcd_->ResizeLCD(rows, cols) == 0) {
-        emit static_cast<LCDEvents *>(wrapper_)->_ResizeLCD(rows, cols, old_rows, old_cols);
+        //emit static_cast<LCDEvents *>(wrapper_)->_ResizeLCD(rows, cols, old_rows, old_cols);
     } else {
         LCDError("LCDCore::ResizeLCD: Unable to resize LCD");
         return -1;
@@ -585,12 +573,6 @@ std::string LCDCore::AddWidget(std::string layout, int row,
                    row, col, layer);
            } else if (type->asString() == "bignums") {
                widget = (Widget *) new WidgetBignums(this, name, root,
-                   row, col, layer);
-           } else if (type->asString() == "gif") {
-               widget = (Widget *) new WidgetGif(this, name, root, 
-                   row, col, layer);
-           } else if (type->asString() == "visualization") {
-               widget = (Widget *) new WidgetVisualization(this, name, root,
                    row, col, layer);
            } else if (type->asString() == "key") {
                widget = (Widget *) new WidgetKey(this, name, root);

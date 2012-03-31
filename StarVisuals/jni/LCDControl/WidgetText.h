@@ -25,6 +25,7 @@
 #define _WIDGET_TEXT_H_
 
 #include <string>
+#include <libvisual/libvisual.h>
 
 #include "Property.h"
 #include "Widget.h"
@@ -72,7 +73,6 @@ class WidgetText : public Widget {
     void Update();
     void TextScroll();
 
-    public slots:
     void Resize(int rows, int cols, int old_rows, int old_cols);
 };
 

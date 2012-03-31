@@ -149,7 +149,7 @@ void PluginFifo::StartFifo(void)
 }
 
 
-string PluginFifo::Fiforead()
+std::string PluginFifo::Fiforead()
 {
     char buf[FIFO_BUFFER_SIZE];
     unsigned int i;
@@ -193,10 +193,11 @@ PluginFifo::~PluginFifo() {
 }
 
 void PluginFifo::Connect(Evaluator *visitor) {
+/*
     visitor_ = dynamic_cast<CFG *>(visitor);
     QScriptEngine *engine = visitor->GetEngine();
     QScriptValue val = engine->newObject();
     QScriptValue objVal = engine->newQObject(val, this);
     engine->globalObject().setProperty("fifo", objVal);
+*/
 }
-Q_EXPORT_PLUGIN2(_PluginFifo, PluginFifo)

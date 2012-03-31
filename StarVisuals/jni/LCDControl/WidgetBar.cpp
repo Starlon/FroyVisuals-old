@@ -109,6 +109,7 @@ WidgetBar::WidgetBar(LCDCore *v, std::string n, Json::Value *section,
     val1_ = val2_ = 0.0;
     min_ = max_ = 0.0;
 
+/*
     timer_ = new QTimer();
     timer_->setSingleShot(false);
     timer_->setInterval(update_);
@@ -116,11 +117,12 @@ WidgetBar::WidgetBar(LCDCore *v, std::string n, Json::Value *section,
 
     QObject::connect(visitor_->GetWrapper(), SIGNAL(_ResizeLCD(int, int, int, int)),
         this, SLOT(Resize(int, int, int, int)));
+*/
 }
 
 WidgetBar::~WidgetBar() {
     Stop();
-    delete timer_;
+    //delete timer_;
     delete expression_;
     delete expression2_;
     delete expr_min_;
@@ -134,10 +136,10 @@ void WidgetBar::Resize(int rows, int cols, int old_rows, int old_cols) {
     float x = cols_ * xres / (float)old_cols;
     float r = row_ * yres / (float)old_rows;
     float c = col_ * xres / (float)old_cols;
-    rows_ = round(visitor_->GetLCD()->LROWS * y / yres);
-    cols_ = round(visitor_->GetLCD()->LCOLS * x / xres);
-    row_ = round(visitor_->GetLCD()->LROWS * r / yres);
-    col_ = round(visitor_->GetLCD()->LCOLS * c / xres);
+    rows_ = (int)((visitor_->GetLCD()->LROWS * y / yres) + 0.5);
+    cols_ = (int)((visitor_->GetLCD()->LCOLS * x / xres) + 0.5);
+    row_ = (int)((visitor_->GetLCD()->LROWS * r / yres) + 0.5);
+    col_ = (int)((visitor_->GetLCD()->LCOLS * c / xres) + 0.5);
     Update();
 }
 
@@ -226,13 +228,13 @@ void WidgetBar::SetupChars() {
 void WidgetBar::Start() {
     if( update_ < 0 )
         return;
-    timer_->start();
+    //timer_->start();
     Update();
 }
 
 void WidgetBar::Stop() {
     ch_.clear();
-    timer_->stop();
+    //timer_->stop();
 }
 
 void WidgetBar::Update() {

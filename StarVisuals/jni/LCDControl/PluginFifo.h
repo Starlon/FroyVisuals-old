@@ -27,8 +27,8 @@
 #define FIFO_BUFFER_SIZE 80
 
 #include <json/json.h>
+#include <string>
 
-#include "PluginInterface.h"
 #include "CFG.h"
 
 namespace LCD {
@@ -63,8 +63,7 @@ class PluginFifo{
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
-    string Fiforead();
+    std::string Fiforead();
     int Test(char *foo);
 
 };

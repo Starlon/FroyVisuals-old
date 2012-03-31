@@ -24,6 +24,7 @@
 #include <sys/time.h>
 #include <list>
 #include <errno.h>
+#include <string>
 
 #include "PluginExec.h"
 #include "Evaluator.h"
@@ -62,13 +63,14 @@ int PluginExec::DoExec(char *cmd, char *key, int delay) {
         if(delay < 10)
             delay = 10;
 
-        threads_.push_back(new PluginExecThread(cmd, key, delay));
+        //threads_.push_back(new PluginExecThread(cmd, key, delay));
         return 0;
     }
 
     if(age < 10)
         return 0;
 
+/*
     for(std::list<PluginExecThread *>::iterator it = threads_.begin();
         it != threads_.end(); it++) {
         if(strcmp(key, (*it)->GetKey()) == 0) {
@@ -78,12 +80,13 @@ int PluginExec::DoExec(char *cmd, char *key, int delay) {
             return 0;
         }
     }
+*/
 
     LCDError("internal error: could not find thread exec-%s", key);
     return -1;
 }
 
-string PluginExec::Exec(string arg1, int delay)
+std::string PluginExec::Exec(std::string arg1, int delay)
 {
     const char *cmd;
     char key[5], *val;
@@ -101,6 +104,7 @@ string PluginExec::Exec(string arg1, int delay)
 }
 
 
+/*
 void PluginExecThread::run() {
     running_ = true;
     FILE *pipe;
@@ -137,6 +141,7 @@ void PluginExecThread::run() {
         usleep(delay_);
     }
 }
+*/
 
 void PluginExec::Connect(Evaluator *visitor) {
 /*
@@ -148,9 +153,11 @@ void PluginExec::Connect(Evaluator *visitor) {
 }
 
 void PluginExec::Disconnect() {
+/*
     for(std::list<PluginExecThread *>::iterator it = threads_.begin();
         it != threads_.end(); it++) {
         (*it)->Stop();
     }
+*/
 }
 

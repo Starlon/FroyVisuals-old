@@ -32,7 +32,6 @@
 #include <sstream>
 #include <json/json.h>
 
-#include "WidgetVisualization.h"
 #include "LCDCore.h"
 #include "LCDGraphic.h"
 #include "RGBA.h"
@@ -42,7 +41,6 @@
 #include "WidgetIcon.h"
 #include "WidgetHistogram.h"
 #include "WidgetBignums.h"
-#include "WidgetGif.h"
 //#include "WidgetNifty.h"
 #include "debug.h"
 
@@ -116,6 +114,7 @@ LCDGraphic::LCDGraphic(LCDCore *v) :
     //QObject::connect(&wrapper_, SIGNAL(_GraphicUpdate(int, int, int, int)),
     //    &wrapper_, SLOT(GraphicUpdate(int, int, int, int)));
 
+/*
     update_thread_ = new LCDGraphicUpdateThread(this);
 
     graphic_wrapper_ = new LCDGraphicWrapper(this);
@@ -128,11 +127,11 @@ LCDGraphic::LCDGraphic(LCDCore *v) :
         graphic_wrapper_, SLOT(LayoutChangeBefore()));
     QObject::connect(v->GetWrapper(), SIGNAL(_LayoutChangeAfter()),
         graphic_wrapper_, SLOT(LayoutChangeAfter()));
-
+*/
 }
 
 LCDGraphic::~LCDGraphic() {
-    update_thread_->wait();
+    //update_thread_->wait();
     for(int l = 0; l < LAYERS; l++ ) {
         free(DisplayFB[l]);
         free(LayoutFB[l]);
@@ -152,7 +151,7 @@ void LCDGraphic::LayoutChangeAfter() {
 
 void LCDGraphic::GraphicStart() {
     is_resizing_ = false;
-    update_thread_->start();
+    //update_thread_->start();
 }
 
 void LCDGraphic::GraphicInit(const int rows, const int cols,
@@ -302,9 +301,9 @@ void LCDGraphic::GraphicDraw() {
             continue;
         }
 	
-        graphic_mutex_.lock();
+        //graphic_mutex_.lock();
         GraphicBlit(update_window_.R, update_window_.C, update_window_.H, update_window_.W);
-        graphic_mutex_.unlock();
+        //graphic_mutex_.unlock();
         update_window_.R = LROWS - 1;
         update_window_.C = LCOLS - 1;
         update_window_.H = 0;
@@ -561,12 +560,13 @@ void LCD::GraphicDraw(WidgetText *w) {
     fg = w->GetFGValid() ? w->GetFGColor() : lcd->FG_COL;
     bg = w->GetBGValid() ? w->GetBGColor() : lcd->BG_COL;
 
+/*
     lcd->graphic_mutex_.lock();
     lcd->GraphicRender(w->GetLayer(), lcd->YRES * w->GetRow(), 
         lcd->XRES * w->GetCol(), fg, bg, w->GetBuffer().c_str(), 
         w->GetBold(), w->GetOffset(), w->GetLayoutBase());
     lcd->graphic_mutex_.unlock();
-
+*/
 }
 
 void LCD::GraphicIconDraw(WidgetIcon *w) {
@@ -604,7 +604,7 @@ void LCD::GraphicIconDraw(WidgetIcon *w) {
     else
         fb = lcd->LayoutFB[layer];
 
-    lcd->graphic_mutex_.lock();
+    //lcd->graphic_mutex_.lock();
 
     /* render icon */
     for (y = 0; y < lcd->YRES; y++) {
@@ -623,7 +623,7 @@ void LCD::GraphicIconDraw(WidgetIcon *w) {
         }
     }
 
-    lcd->graphic_mutex_.unlock();
+    //lcd->graphic_mutex_.unlock();
 
     /* flush area */
     if(!lcd->IsTransitioning())
@@ -691,7 +691,7 @@ void LCD::GraphicBarDraw(WidgetBar *w) {
         rev = 1;
 
     case DIR_EAST:
-	lcd->graphic_mutex_.lock();
+	//lcd->graphic_mutex_.lock();
         for (y = 0; y < lcd->YRES; y++) {
             int val = y < lcd->YRES / 2 ? val1 : val2;
             RGBA bc = y < lcd->YRES / 2 ? bar[0] : bar[1];
@@ -712,7 +712,7 @@ void LCD::GraphicBarDraw(WidgetBar *w) {
                 fb[layer][(row + y) * lcd->LCOLS + col + max - 1] = fg;
             }
         }
-	lcd->graphic_mutex_.unlock();
+	//lcd->graphic_mutex_.unlock();
         break;
 
     case DIR_NORTH:
@@ -721,7 +721,7 @@ void LCD::GraphicBarDraw(WidgetBar *w) {
         rev = 1;
 
     case DIR_SOUTH:
-	lcd->graphic_mutex_.lock();
+	//lcd->graphic_mutex_.lock();
         for (x = 0; x < lcd->XRES; x++) {
             int val = x < lcd->XRES / 2 ? val1 : val2;
             RGBA bc = x < lcd->XRES / 2 ? bar[0] : bar[1];
@@ -740,7 +740,7 @@ void LCD::GraphicBarDraw(WidgetBar *w) {
                 fb[layer][(row + max - 1) * lcd->LCOLS + col + x] = fg;
             }
         }
-	lcd->graphic_mutex_.unlock();
+	//lcd->graphic_mutex_.unlock();
         break;
     }
 
@@ -785,7 +785,7 @@ void LCD::GraphicHistogramDraw(WidgetHistogram *w) {
     else
         fb = lcd->LayoutFB[layer];
 
-    lcd->graphic_mutex_.lock();
+    //lcd->graphic_mutex_.lock();
     for(int c = 0; c < width / lcd->XRES; c++) {
         int base = (int)(w->GetHistory()[c] * height);
         int top = round((w->GetHistory()[c] * height - base) * lcd->YRES);
@@ -810,7 +810,7 @@ void LCD::GraphicHistogramDraw(WidgetHistogram *w) {
             }
         }
     }
-    lcd->graphic_mutex_.unlock();
+    //lcd->graphic_mutex_.unlock();
 
     if(!lcd->IsTransitioning())
         lcd->GraphicUpdate(row, col, height, width);
@@ -841,7 +841,7 @@ void LCD::GraphicBignumsDraw(WidgetBignums *w) {
     else
         fb = lcd->LayoutFB[layer];
 
-    lcd->graphic_mutex_.lock();
+    //lcd->graphic_mutex_.lock();
     for(int r = 0; r < 16 && row + r < lcd->LROWS; r++) {
         for(int c = 0; c < 24 && col + c < lcd->LCOLS; c++) {
             int n = (row + r) * lcd->LCOLS + col + c;
@@ -852,12 +852,13 @@ void LCD::GraphicBignumsDraw(WidgetBignums *w) {
             }
         }
     }
-    lcd->graphic_mutex_.unlock();
+    //lcd->graphic_mutex_.unlock();
 
    if(!lcd->IsTransitioning())
         lcd->GraphicUpdate(row, col, 16, 24);
 }
 
+/*
 void LCD::GraphicGifDraw(WidgetGif *w) {
     LCDGraphic *lcd = (LCDGraphic *)w->GetVisitor()->GetLCD();
     int layer, row, col, width, height, x, y;
@@ -906,7 +907,9 @@ void LCD::GraphicGifDraw(WidgetGif *w) {
     if(!lcd->IsTransitioning())
         lcd->GraphicUpdate(row, col, height, width);
 }
+*/
 
+/*
 void GraphicVisualizationPeakDraw(WidgetVisualization *widget) {
     LCDGraphic *lcd = (LCDGraphic *)widget->GetVisitor()->GetLCD();
 
@@ -1002,7 +1005,8 @@ void GraphicVisualizationPeakDraw(WidgetVisualization *widget) {
     }
     lcd->graphic_mutex_.unlock();
 }
-
+*/
+/*
 template <class T>
 void GraphicVisualizationPCMDraw(WidgetVisualization *widget) {
     LCDGraphic *lcd = (LCDGraphic *)widget->GetVisitor()->GetLCD();
@@ -1049,7 +1053,9 @@ void GraphicVisualizationPCMDraw(WidgetVisualization *widget) {
    if(!lcd->IsTransitioning())
         lcd->GraphicUpdate(row, col, height, width);
 }
+*/
 
+/*
 void GraphicVisualizationSpectrumDraw(WidgetVisualization *w) {
     LCDGraphic *lcd = (LCDGraphic *)w->GetVisitor()->GetLCD();
 
@@ -1089,8 +1095,8 @@ void GraphicVisualizationSpectrumDraw(WidgetVisualization *w) {
             height * lcd->YRES, width * lcd->XRES);
 
 }
-
-
+*/
+/*
 void GraphicVisualizationDraw(WidgetVisualization *widget) {
     if(widget->GetStyle() == STYLE_PEAK)
         GraphicVisualizationPeakDraw(widget);
@@ -1103,6 +1109,7 @@ void GraphicVisualizationDraw(WidgetVisualization *widget) {
     } else if(widget->GetStyle() == STYLE_SPECTRUM)
         GraphicVisualizationSpectrumDraw(widget);
 }
+*/
 /*
 void GraphicNiftyDraw(WidgetNifty *widget) {
     LCDGraphic *lcd = (LCDGraphic *)widget->GetVisitor()->GetLCD();
@@ -1199,8 +1206,8 @@ void LCDGraphic::TransitionLeftRight() {
     transition_tick_+=XRES;
     if( transition_tick_ >= (int)LCOLS) {
         transition_tick_ = 0;
-        emit static_cast<LCDEvents *>(
-            visitor_->GetWrapper())->_TransitionFinished();
+        //emit static_cast<LCDEvents *>(
+        //    visitor_->GetWrapper())->_TransitionFinished();
         for(int l = 0; l < LAYERS; l++) {
             memcpy(LayoutFB[l], TransitionFB[l], LCOLS * LROWS * sizeof(RGBA));
             for(int n = 0; n < LCOLS * LROWS; n++)
@@ -1253,8 +1260,8 @@ void LCDGraphic::TransitionUpDown() {
     if( transition_tick_ >= (int)LROWS) {
 
         transition_tick_ = 0;
-        emit static_cast<LCDEvents *>(
-            visitor_->GetWrapper())->_TransitionFinished();
+        //emit static_cast<LCDEvents *>(
+        //    visitor_->GetWrapper())->_TransitionFinished();
         for(int l = 0; l < LAYERS; l++) {
             memcpy(LayoutFB[l], TransitionFB[l], LCOLS * LROWS * sizeof(RGBA));
             for(int n = 0; n < LROWS * LCOLS; n++) {
@@ -1333,8 +1340,8 @@ void LCDGraphic::TransitionTentacle() {
     transition_tick_+=XRES;
     if( transition_tick_ >= (int)LCOLS) {
         transition_tick_ = 0;
-        emit static_cast<LCDEvents *>(
-            visitor_->GetWrapper())->_TransitionFinished();
+        //emit static_cast<LCDEvents *>(
+        //    visitor_->GetWrapper())->_TransitionFinished();
         for(int l = 0; l < LAYERS; l++) {
             memcpy(LayoutFB[l], TransitionFB[l], LCOLS * LROWS * sizeof(RGBA));
             for(int n = 0; n < LCOLS * LROWS; n++)
@@ -1387,8 +1394,8 @@ void LCDGraphic::TransitionAlphaBlend() {
     transition_tick_+=XRES;
     if( transition_tick_ >= (int)LCOLS) {
         transition_tick_ = 0;
-        emit static_cast<LCDEvents *>(
-            visitor_->GetWrapper())->_TransitionFinished();
+        //emit static_cast<LCDEvents *>(
+        //    visitor_->GetWrapper())->_TransitionFinished();
         for(int l = 0; l < LAYERS; l++) {
             memcpy(LayoutFB[l], TransitionFB[l], LCOLS * LROWS * sizeof(RGBA));
             for(int n = 0; n < LCOLS * LROWS; n++) {

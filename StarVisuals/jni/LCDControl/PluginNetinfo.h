@@ -24,7 +24,7 @@
 #ifndef __PLUGIN_NETINFO_H__
 #define __PLUGIN_NETINFO_H__
 
-#include "PluginInterface.h"
+#include <string>
 
 namespace LCD {
 
@@ -41,12 +41,11 @@ class PluginNetinfo {
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    public slots:
-    double Exists(char *arg1);
-    char *Hwaddr(char *arg1);
-    char *Ipaddr(char *arg1);
-    char *Netmask(char *arg1);
-    char *Bcaddr(char * arg1);
+    double Exists(std::string arg1);
+    std::string Hwaddr(std::string arg1);
+    std::string Ipaddr(std::string arg1);
+    std::string Netmask(std::string arg1);
+    std::string Bcaddr(std::string arg1);
 };
 
 }; // End namespace

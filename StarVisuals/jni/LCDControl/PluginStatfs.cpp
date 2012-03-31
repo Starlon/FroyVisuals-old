@@ -83,10 +83,11 @@ double PluginStatfs::Statfs(string arg1, string arg2)
 }
 
 void PluginStatfs::Connect(Evaluator *visitor) {
+/*
     QScriptEngine *engine = visitor->GetEngine();
     QScriptValue val = engine->newObject();
     QScriptValue objVal = engine->newQObject(val, this);
     engine->globalObject().setProperty("statfs", objVal);
+*/
 }
 
-Q_EXPORT_PLUGIN2(_PluginStatfs, PluginStatfs)
