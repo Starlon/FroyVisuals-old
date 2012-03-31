@@ -1,5 +1,5 @@
 /* Libvisual - The audio visualisation framework.
- * 
+ *
  * Copyright (C) 2004, 2005, 2006 Dennis Smit <ds@nerds-incorporated.org>
  *
  * Authors: Dennis Smit <ds@nerds-incorporated.org>
@@ -27,7 +27,10 @@
 
 /* FIXME: clean this entire file up */
 
-#include "lvconfig.h"
+#include "config.h"
+#include "lv_cpu.h"
+#include "lv_common.h"
+#include "gettext.h"
 
 #if defined(VISUAL_ARCH_POWERPC)
 #if defined(VISUAL_OS_DARWIN)
@@ -57,27 +60,18 @@
 #include <windows.h>
 #endif
 
-#if defined(VISUAL_ARCH_ARM)
+#if defined(VISUAL_OS_ANDROID)
 #include <cpu-features.h>
 #endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
-#include "gettext.h"
-
-#include "lv_log.h"
-#include "lv_error.h"
-#include "lv_cpu.h"
 
 static VisCPU __lv_cpu_caps;
 static int __lv_cpu_initialized = FALSE;
 
-#if defined(VISUAL_ARCH_X86)
 static int has_cpuid (void);
 static int cpuid (unsigned int ax, unsigned int *p);
+
+#if defined(VISUAL_OS_WIN32)
+LONG CALLBACK win32_sig_handler_sse(EXCEPTION_POINTERS* ep);
 #endif
 
 /* The sigill handlers */
@@ -122,7 +116,7 @@ LONG CALLBACK win32_sig_handler_sse(EXCEPTION_POINTERS* ep)
 {
 	if(ep->ExceptionRecord->ExceptionCode==EXCEPTION_ILLEGAL_INSTRUCTION){
 		ep->ContextRecord->Eip +=3;
-		__lv_cpu_caps.hasSSE=0;       
+		__lv_cpu_caps.hasSSE=0;
 		return EXCEPTION_CONTINUE_EXECUTION;
 	}
 	return EXCEPTION_CONTINUE_SEARCH;
@@ -155,7 +149,7 @@ static void check_os_altivec_support( void )
 	visual_size_t len = sizeof(has_vu);
 	int err;
 
-	err = sysctl (sels, 2, &has_vu, &len, NULL, 0);   
+	err = sysctl (sels, 2, &has_vu, &len, NULL, 0);
 
 	if (err == 0)
 		if (has_vu != 0)
@@ -188,10 +182,9 @@ static void check_os_altivec_support( void )
  * and RedHat patched 2.2 kernels that have broken exception handling
  * support for user space apps that do SSE.
  */
-void check_os_katmai_support( void )
-{
-//	printf ("omg\n");
 #if defined(VISUAL_ARCH_X86)
+static void check_os_katmai_support( void )
+{
 #if defined(VISUAL_OS_FREEBSD)
 	int has_sse=0, ret;
 	visual_size_t len=sizeof(has_sse);
@@ -233,9 +226,6 @@ void check_os_katmai_support( void )
 		SetUnhandledExceptionFilter(exc_fil);
 	}
 #elif defined(VISUAL_OS_LINUX)
-#if 0 // FIXME This doesn't seem supported on Android x86? _POSIX_SOURCE is not defined.
-//	printf ("omg1\n");
-//	printf ("omg2\n");
 	struct sigaction saved_sigill;
 	struct sigaction saved_sigfpe;
 
@@ -278,23 +268,20 @@ void check_os_katmai_support( void )
 	*/
 	sigaction( SIGILL, &saved_sigill, NULL );
 	sigaction( SIGFPE, &saved_sigfpe, NULL );
-#endif
+
 #else
-//	printf ("hier dan3\n");
 	/* We can't use POSIX signal handling to test the availability of
 	 * SSE, so we disable it by default.
 	 */
 	__lv_cpu_caps.hasSSE=0;
 #endif /* __linux__ */
-//	printf ("hier dan\n");
-#endif
-//	printf ("hier dan ha\n");
 }
+#endif /* VISUAL_ARCH_X86 */
 
 
-#if defined(VISUAL_ARCH_X86)
-int has_cpuid (void)
+static int has_cpuid (void)
 {
+#if defined(VISUAL_ARCH_X86)
 	int a, c;
 
 	__asm __volatile
@@ -311,14 +298,16 @@ int has_cpuid (void)
 		 : "cc");
 
 	return a != c;
-}
+#elif defined(VISUAL_ARCH_X86_64)
+	return TRUE;
+#else
+	return FALSE;
 #endif
+}
 
-#if defined(VISUAL_ARCH_X86)
-int cpuid (unsigned int ax, unsigned int *p)
+static int cpuid (unsigned int ax, unsigned int *p)
 {
-	uint32_t flags;
-
+#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	__asm __volatile
 		("movl %%ebx, %%esi\n\t"
 		 "cpuid\n\t"
@@ -328,29 +317,20 @@ int cpuid (unsigned int ax, unsigned int *p)
 		 : "0" (ax));
 
 	return VISUAL_OK;
-	//return -VISUAL_ERROR_CPU_INVALID_CODE;
-}
+#else
+	return -VISUAL_ERROR_CPU_INVALID_CODE;
 #endif
+}
 
-/**
- * @defgroup VisCPU VisCPU
- * @{
- */
-
-/**
- * Initializes the VisCPU caps structure by detecting the CPU features and flags.
- *
- * This is normally called by visual_init() and is needed by visual_mem_initialize() in order to
- * detect the most optimal mem_copy and mem_set functions.
- */
 void visual_cpu_initialize ()
 {
-	uint32_t cpu_flags;
 	unsigned int regs[4];
 	unsigned int regs2[4];
 
+#if defined(VISUAL_OS_NETBSD) || defined(VISUAL_OS_FREEBSD) || defined(VISUAL_OS_OPENBSD)
 	int mib[2], ncpu;
 	visual_size_t len;
+#endif
 
 	visual_mem_set (&__lv_cpu_caps, 0, sizeof (VisCPU));
 
@@ -366,10 +346,30 @@ void visual_cpu_initialize ()
 #elif defined(VISUAL_ARCH_POWERPC)
 	__lv_cpu_caps.type = VISUAL_CPU_TYPE_POWERPC;
 #elif defined(VISUAL_ARCH_ARM)
-    __lv_cpu_caps.type = VISUAL_CPU_TYPE_ARM;
+	__lv_cpu_caps.type = VISUAL_CPU_TYPE_ARM;
 #else
 	__lv_cpu_caps.type = VISUAL_CPU_TYPE_OTHER;
 #endif
+
+#if defined(VISUAL_OS_ANDROID) && defined(VISUAL_ARCH_ARM)
+	if (android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM) {
+		uint64_t type = android_getCpuFeatures ();
+
+		if (type & ANDROID_CPU_ARM_FEATURE_ARMv7)
+			__lv_cpu_caps.hasARMv7 = 1;
+
+		if (type & ANDROID_CPU_ARM_FEATURE_VFPv3)
+			__lv_cpu_caps.hasVFPv3 = 1;
+
+		if (type & ANDROID_CPU_ARM_FEATURE_NEON)
+			__lv_cpu_caps.hasNeon = 1;
+
+		if(type & ANDROID_CPU_ARM_FEATURE_LDREX_STREX)
+			__lv_cpu_caps.hasLDREX_STREX = 1;
+
+		__lv_cpu_caps.nrcpu = android_getCpuCount();
+	}
+#endif /* VISUAL_OS_ANDROID && VISUAL_ARCH_ARM */
 
 	/* Count the number of CPUs in system */
 #if !defined(VISUAL_OS_WIN32) && !defined(VISUAL_OS_UNKNOWN) && defined(_SC_NPROCESSORS_ONLN)
@@ -380,7 +380,7 @@ void visual_cpu_initialize ()
 #elif defined(VISUAL_OS_NETBSD) || defined(VISUAL_OS_FREEBSD) || defined(VISUAL_OS_OPENBSD)
 
 	mib[0] = CTL_HW;
-	mib[1] = HW_NCPU; 
+	mib[1] = HW_NCPU;
 
 	len = sizeof (ncpu);
 	sysctl (mib, 2, &ncpu, &len, NULL, 0);
@@ -389,17 +389,17 @@ void visual_cpu_initialize ()
 #else
 	__lv_cpu_caps.nrcpu = 1;
 #endif
-	
-#if defined(VISUAL_ARCH_X86)
+
+#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	/* No cpuid, old 486 or lower */
 	if (has_cpuid () == 0)
 		return;
 
 	__lv_cpu_caps.cacheline = 32;
-	
+
 	/* Get max cpuid level */
 	cpuid (0x00000000, regs);
-	
+
 	if (regs[0] >= 0x00000001) {
 		unsigned int cacheline;
 
@@ -408,7 +408,7 @@ void visual_cpu_initialize ()
 		__lv_cpu_caps.x86cpuType = (regs2[0] >> 8) & 0xf;
 		if (__lv_cpu_caps.x86cpuType == 0xf)
 		    __lv_cpu_caps.x86cpuType = 8 + ((regs2[0] >> 20) & 255); /* use extended family (P4, IA64) */
-		
+
 		/* general feature flags */
 		__lv_cpu_caps.hasTSC  = (regs2[3] & (1 << 8  )) >>  8; /* 0x0000010 */
 		__lv_cpu_caps.hasMMX  = (regs2[3] & (1 << 23 )) >> 23; /* 0x0800000 */
@@ -420,13 +420,13 @@ void visual_cpu_initialize ()
 		if (cacheline > 0)
 			__lv_cpu_caps.cacheline = cacheline;
 	}
-	
+
 	cpuid (0x80000000, regs);
-	
+
 	if (regs[0] >= 0x80000001) {
 
 		cpuid (0x80000001, regs2);
-		
+
 		__lv_cpu_caps.hasMMX  |= (regs2[3] & (1 << 23 )) >> 23; /* 0x0800000 */
 		__lv_cpu_caps.hasMMX2 |= (regs2[3] & (1 << 22 )) >> 22; /* 0x400000 */
 		__lv_cpu_caps.has3DNow    = (regs2[3] & (1 << 31 )) >> 31; /* 0x80000000 */
@@ -438,38 +438,21 @@ void visual_cpu_initialize ()
 		__lv_cpu_caps.cacheline = regs2[2] & 0xFF;
 	}
 
-
-#if defined(VISUAL_OS_LINUX) || defined(VISUAL_OS_FREEBSD) || defined(VISUAL_OS_NETBSD) || defined(VISUAL_OS_CYGWIN) || defined(VISUAL_OS_OPENBSD)
+#if defined(VISUAL_ARCH_X86)
 	if (__lv_cpu_caps.hasSSE)
 		check_os_katmai_support ();
 
 	if (!__lv_cpu_caps.hasSSE)
 		__lv_cpu_caps.hasSSE2 = 0;
 #else
-	__lv_cpu_caps.hasSSE=0;
+	__lv_cpu_caps.hasSSE = 0;
 	__lv_cpu_caps.hasSSE2 = 0;
 #endif
-#endif /* VISUAL_ARCH_X86 */
+#endif /* VISUAL_ARCH_X86 || VISUAL_ARCH_X86_64 */
 
 #if defined(VISUAL_ARCH_POWERPC)
 	check_os_altivec_support ();
 #endif /* VISUAL_ARCH_POWERPC */
-
-#if defined(VISUAL_ARCH_ARM)
-    if(android_getCpuFamily() == ANDROID_CPU_FAMILY_ARM)
-    {
-	    uint64_t type = android_getCpuFeatures();
-        if(type & ANDROID_CPU_ARM_FEATURE_ARMv7)
-	            __lv_cpu_caps.hasARMv7 = 1;
-        if(type & ANDROID_CPU_ARM_FEATURE_VFPv3)
-                __lv_cpu_caps.hasVFPv3 = 1;
-        if(type & ANDROID_CPU_ARM_FEATURE_NEON)
-                __lv_cpu_caps.hasNeon = 1;
-        if(type & ANDROID_CPU_ARM_FEATURE_LDREX_STREX)
-                __lv_cpu_caps.hasLDREX_STREX = 1;
-		__lv_cpu_caps.nrcpu = android_getCpuCount();
-    }
-#endif
 
 	/* Synchronizing enabled flags with has flags */
 	__lv_cpu_caps.enabledTSC	= __lv_cpu_caps.hasTSC;
@@ -478,15 +461,17 @@ void visual_cpu_initialize ()
 	__lv_cpu_caps.enabledSSE	= __lv_cpu_caps.hasSSE;
 	__lv_cpu_caps.enabledSSE2	= __lv_cpu_caps.hasSSE2;
 	__lv_cpu_caps.enabled3DNow	= __lv_cpu_caps.has3DNow;
-	__lv_cpu_caps.enabled3DNowExt	= __lv_cpu_caps.has3DNowExt;
-	__lv_cpu_caps.enabledAltiVec	= __lv_cpu_caps.hasAltiVec;
-    __lv_cpu_caps.enabledARMv7      = __lv_cpu_caps.hasARMv7;
-    __lv_cpu_caps.enabledVFPv3   = __lv_cpu_caps.hasVFPv3;
-    __lv_cpu_caps.enabledNeon    = __lv_cpu_caps.hasNeon;
-    __lv_cpu_caps.enabledLDREX_STREX    = __lv_cpu_caps.hasLDREX_STREX;
-	
+	__lv_cpu_caps.enabled3DNowExt    = __lv_cpu_caps.has3DNowExt;
+	__lv_cpu_caps.enabledAltiVec     = __lv_cpu_caps.hasAltiVec;
+	__lv_cpu_caps.enabledARMv7       = __lv_cpu_caps.hasARMv7;
+	__lv_cpu_caps.enabledVFPv3       = __lv_cpu_caps.hasVFPv3;
+	__lv_cpu_caps.enabledNeon        = __lv_cpu_caps.hasNeon;
+	__lv_cpu_caps.enabledLDREX_STREX = __lv_cpu_caps.hasLDREX_STREX;
+
 	visual_log (VISUAL_LOG_DEBUG, "CPU: Number of CPUs: %d", __lv_cpu_caps.nrcpu);
 	visual_log (VISUAL_LOG_DEBUG, "CPU: type %d", __lv_cpu_caps.type);
+
+#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	visual_log (VISUAL_LOG_DEBUG, "CPU: X86 type %d", __lv_cpu_caps.x86cpuType);
 	visual_log (VISUAL_LOG_DEBUG, "CPU: cacheline %d", __lv_cpu_caps.cacheline);
 	visual_log (VISUAL_LOG_DEBUG, "CPU: TSC %d", __lv_cpu_caps.hasTSC);
@@ -496,21 +481,18 @@ void visual_cpu_initialize ()
 	visual_log (VISUAL_LOG_DEBUG, "CPU: SSE2 %d", __lv_cpu_caps.hasSSE2);
 	visual_log (VISUAL_LOG_DEBUG, "CPU: 3DNow %d", __lv_cpu_caps.has3DNow);
 	visual_log (VISUAL_LOG_DEBUG, "CPU: 3DNowExt %d", __lv_cpu_caps.has3DNowExt);
+#elif defined(VISUAL_ARCH_POWERPC)
 	visual_log (VISUAL_LOG_DEBUG, "CPU: AltiVec %d", __lv_cpu_caps.hasAltiVec);
+#elif defined(VISUAL_ARCH_ARM)
 	visual_log (VISUAL_LOG_DEBUG, "CPU: ARM v7 %d", __lv_cpu_caps.hasARMv7);
 	visual_log (VISUAL_LOG_DEBUG, "CPU: ARM VFPv3 %d", __lv_cpu_caps.hasVFPv3);
 	visual_log (VISUAL_LOG_DEBUG, "CPU: ARM NEON %d", __lv_cpu_caps.hasNeon);
 	visual_log (VISUAL_LOG_DEBUG, "CPU: ARM LDREX_STREX %d", __lv_cpu_caps.hasLDREX_STREX);
+#endif /* VISUAL_ARCH_X86 || VISUAL_ARCH_X86_64 */
 
 	__lv_cpu_initialized = TRUE;
 }
 
-/**
- * Function to get the VisCPU caps initialized by visual_cpu_initialize(), this contains information
- * regarding the CPU features and flags.
- *
- * @return The VisCPU caps structure.
- */
 VisCPU *visual_cpu_get_caps ()
 {
 	if (__lv_cpu_initialized == FALSE)
@@ -519,392 +501,97 @@ VisCPU *visual_cpu_get_caps ()
 	return &__lv_cpu_caps;
 }
 
-/* The getters and setters for feature flags */
-/**
- * Function to retrieve if the tsc CPU feature is enabled.
- *
- * @return Whether tsc is enabled or not.
- */
 int visual_cpu_get_tsc ()
 {
 	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+		visual_log (VISUAL_LOG_ERROR, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledTSC;
 }
 
-/**
- * Function to retrieve if the mmx CPU feature is enabled.
- *
- * @return Whether mmx is enabled or not.
- */
 int visual_cpu_get_mmx ()
 {
 	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+		visual_log (VISUAL_LOG_ERROR, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledMMX;
 }
 
-/**
- * Function to retrieve if the mmx2 CPU feature is enabled.
- *
- * @return Whether mmx2 is enabled or not.
- */
 int visual_cpu_get_mmx2 ()
 {
 	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+		visual_log (VISUAL_LOG_ERROR, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledMMX2;
 }
 
-/**
- * Function to retrieve if the sse CPU feature is enabled.
- *
- * @return Whether sse is enabled or not.
- */
 int visual_cpu_get_sse ()
 {
 	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+		visual_log (VISUAL_LOG_ERROR, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledSSE;
 }
-
-/**
- * Function to retrieve if the sse2 CPU feature is enabled.
- *
- * @return Whether sse2 is enabled or not.
- */
 int visual_cpu_get_sse2 ()
 {
 	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+		visual_log (VISUAL_LOG_ERROR, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledSSE2;
 }
 
-/**
- * Function to retrieve if the 3dnow CPU feature is enabled.
- *
- * @return Whether 3dnow is enabled or not.
- */
 int visual_cpu_get_3dnow ()
 {
 	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+		visual_log (VISUAL_LOG_ERROR, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabled3DNow;
 }
 
-/**
- * Function to retrieve if the 3dnowext CPU feature is enabled.
- *
- * @return Whether 3dnowext is enabled or not.
- */
 int visual_cpu_get_3dnow2 ()
 {
 	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+		visual_log (VISUAL_LOG_ERROR, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabled3DNowExt;
 }
 
-/**
- * Function to retrieve if the altivec CPU feature is enabled.
- *
- * @return Whether altivec is enabled or not.
- */
 int visual_cpu_get_altivec ()
 {
 	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+		visual_log (VISUAL_LOG_ERROR, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledAltiVec;
 }
 
-/**
- * Function to retrieve if the ARM v7 feature is enabled.
- *
- * @return Whether altivec is enabled or not.
- */
-int visual_cpu_get_armv7 ()
+int visual_cpu_get_armv7 (void)
 {
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+    if (__lv_cpu_initialized == FALSE)
+	    visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledARMv7;
 }
 
-/**
- * Function to retrieve if the ARM VFPv3 feature is enabled.
- *
- * @return Whether altivec is enabled or not.
- */
-int visual_cpu_get_vfpv3 ()
+int visual_cpu_get_vfpv3 (void)
 {
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+    if (__lv_cpu_initialized == FALSE)
+	    visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledVFPv3;
 }
 
-/**
- * Function to retrieve if the ARM Neon feature is enabled.
- *
- * @return Whether altivec is enabled or not.
- */
-int visual_cpu_get_neon ()
+int visual_cpu_get_neon (void)
 {
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+    if (__lv_cpu_initialized == FALSE)
+        visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledNeon;
 }
 
-/**
- * Function to retrieve if the ARM LDREX_STREX feature is enabled.
- *
- * @return Whether altivec is enabled or not.
- */
-int visual_cpu_get_ldrex_strex ()
+int visual_cpu_get_ldrex_strex (void)
 {
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
+    if (__lv_cpu_initialized == FALSE)
+	    visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
 
 	return __lv_cpu_caps.enabledLDREX_STREX;
 }
-
-/**
- * Function to set if the tsc feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */
-int visual_cpu_set_tsc (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasTSC == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledTSC = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the MMX feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_mmx (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasMMX == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledMMX = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the MMX2 feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_mmx2 (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasMMX2 == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledMMX2 = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the SSE feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */  
-int visual_cpu_set_sse (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasSSE == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledSSE = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the SSE2 feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_sse2 (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasSSE2 == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledSSE2 = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the 3DNow feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_3dnow (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.has3DNow == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabled3DNow = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the 3dnowext feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_3dnow2 (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.has3DNowExt == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabled3DNowExt = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the altivec feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_altivec (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasAltiVec == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledAltiVec = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the ARM VFPv3 (hardware floats) feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_armv7 (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasARMv7 == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledARMv7 = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the ARM VFPv3 (hardware floats) feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_vfpv3 (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasVFPv3 == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledVFPv3 = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the ARM Neon feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_neon (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasNeon == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledNeon = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * Function to set if the ARM Neon feature should be enabled or not, this function will also check
- * if the feature is actually available.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED on failure.
- */ 
-int visual_cpu_set_ldrex_strex (int enabled)
-{
-	if (__lv_cpu_initialized == FALSE)
-		visual_log (VISUAL_LOG_CRITICAL, _("The VisCPU system is not initialized."));
-
-	if (__lv_cpu_caps.hasLDREX_STREX == FALSE)
-		return -VISUAL_ERROR_CPU_FEATURE_NOT_SUPPORTED;
-
-	__lv_cpu_caps.enabledLDREX_STREX = enabled;
-
-	return VISUAL_OK;
-}
-
-/**
- * @}
- */
-

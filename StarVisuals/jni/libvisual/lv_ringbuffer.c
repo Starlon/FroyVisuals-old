@@ -1,5 +1,5 @@
 /* Libvisual - The audio visualisation framework.
- * 
+ *
  * Copyright (C) 2004, 2005, 2006 Dennis Smit <ds@nerds-incorporated.org>
  *
  * Authors: Dennis Smit <ds@nerds-incorporated.org>
@@ -21,17 +21,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <fcntl.h>
-#include <gettext.h>
-
-#include <lvconfig.h>
+#include "config.h"
 #include "lv_ringbuffer.h"
-#include "lv_log.h"
-#include "lv_mem.h"
+#include "lv_common.h"
+#include "gettext.h"
 
 static int ringbuffer_dtor (VisObject *object);
 static int ringbuffer_entry_dtor (VisObject *object);
@@ -77,17 +70,6 @@ static int ringbuffer_entry_dtor (VisObject *object)
 	return VISUAL_OK;
 }
 
-/**
- * @defgroup VisRingBuffer VisRingBuffer
- * @{
- */
-
-/**
- * Creates a new VisRingBuffer structure.
- * The VisRingBuffer system is a double linked ringbuffer implementation.
- *
- * @return A newly allocated VisRingBuffer.
- */
 VisRingBuffer *visual_ringbuffer_new ()
 {
 	VisRingBuffer *ringbuffer;
@@ -105,7 +87,7 @@ VisRingBuffer *visual_ringbuffer_new ()
 
 int visual_ringbuffer_init (VisRingBuffer *ringbuffer)
 {
-	visual_log_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
 
 	/* Do the VisObject initialization */
 	visual_object_clear (VISUAL_OBJECT (ringbuffer));
@@ -118,61 +100,33 @@ int visual_ringbuffer_init (VisRingBuffer *ringbuffer)
 	return VISUAL_OK;
 }
 
-/**
- * Adds a VisRingBufferEntry to the end of the ringbuffer.
- *
- * @param ringbuffer The VisRingBuffer to which the VisRingBufferEntry is added.
- * @param entry The VisRingBufferEntry that is added to the end of the ringbuffer.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_RINGBUFFER_NULL or -VISUAL_ERROR_RINGBUFFER_ENTRY_NULL
- *	on failure.
- */
 int visual_ringbuffer_add_entry (VisRingBuffer *ringbuffer, VisRingBufferEntry *entry)
 {
-	visual_log_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
-	visual_log_return_val_if_fail (entry != NULL, -VISUAL_ERROR_RINGBUFFER_ENTRY_NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
+	visual_return_val_if_fail (entry != NULL, -VISUAL_ERROR_RINGBUFFER_ENTRY_NULL);
 
 	visual_list_add (ringbuffer->entries, entry);
 
 	return VISUAL_OK;
 }
 
-/**
- * Adds a VisBuffer to the end of the ringbuffer.
- *
- * @param ringbuffer The VisRingBuffer to which the VisBuffer is added.
- * @param buffer The VisBuffer that is added to the VisRingBuffer.
- *
- * @return VISUAL_OK on succes or -VISUAL_ERROR_RINGBUFFER_NULL, -VISUAL_ERROR_RINGBUFFER_ENTRY_NULL
- *	on failure.
- */
 int visual_ringbuffer_add_buffer (VisRingBuffer *ringbuffer, VisBuffer *buffer)
 {
 	VisRingBufferEntry *entry;
 
-	visual_log_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
 
 	entry = visual_ringbuffer_entry_new (buffer);
 
 	return visual_ringbuffer_add_entry (ringbuffer, entry);
 }
 
-/**
- * Adds a portion of data to the ringbuffer of nbytes byte size.
- *
- * @param ringbuffer Pointer to the ringbuffer to which the data is added.
- * @param data Pointer to the data that is added to the ringbuffer.
- * @param nbytes The size of the data that is added to the ringbuffer.
- *
- * @return VISUAL_OK on succes or -VISUAL_ERROR_RINGBUFFER_NULL, -VISUAL_ERROR_NULL,
- *	-VISUAL_ERROR_RINGBUFFER_ENTRY_NULL on failure.
- */
 int visual_ringbuffer_add_buffer_by_data (VisRingBuffer *ringbuffer, void *data, int nbytes)
 {
 	VisBuffer *buffer;
 
-	visual_log_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
-	visual_log_return_val_if_fail (data != NULL, -VISUAL_ERROR_NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
+	visual_return_val_if_fail (data != NULL, -VISUAL_ERROR_NULL);
 
 	buffer = visual_buffer_new_with_buffer (data, nbytes, NULL);
 
@@ -187,8 +141,8 @@ int visual_ringbuffer_add_function (VisRingBuffer *ringbuffer,
 {
 	VisRingBufferEntry *entry;
 
-	visual_log_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
-	visual_log_return_val_if_fail (datafunc != NULL, -VISUAL_ERROR_RINGBUFFER_DATAFUNC_NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
+	visual_return_val_if_fail (datafunc != NULL, -VISUAL_ERROR_RINGBUFFER_DATAFUNC_NULL);
 
 	entry = visual_ringbuffer_entry_new_function (datafunc, destroyfunc, sizefunc, functiondata);
 
@@ -201,7 +155,7 @@ int visual_ringbuffer_get_size (VisRingBuffer *ringbuffer)
 	VisRingBufferEntry *entry;
 	int totalsize = 0;
 
-	visual_log_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
 
 	while ((entry = visual_list_next (ringbuffer->entries, &le)) != NULL) {
 		int bsize = 0;
@@ -229,16 +183,9 @@ int visual_ringbuffer_get_size (VisRingBuffer *ringbuffer)
 	return totalsize;
 }
 
-/**
- * Gets a list of all ringbuffer fragments that are currently in the ringbuffer.
- *
- * @param ringbuffer Pointer to the VisRingBuffer of which the fragments are requested.
- *
- * @return A VisList of VisRingBufferEntry items or NULL on failure.
- */
 VisList *visual_ringbuffer_get_list (VisRingBuffer *ringbuffer)
 {
-	visual_log_return_val_if_fail (ringbuffer != NULL, NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, NULL);
 
 	return ringbuffer->entries;
 }
@@ -253,13 +200,11 @@ int visual_ringbuffer_get_data_offset (VisRingBuffer *ringbuffer, VisBuffer *dat
 	VisListEntry *le = NULL;
 	VisRingBufferEntry *entry;
 	int curposition = 0;
-	//int curoffset = 0;
-	//int positioncorr = 0;
 	int startat = 0;
 	int buffercorr = 0;
 
-	visual_log_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
-	visual_log_return_val_if_fail (data != NULL, -VISUAL_ERROR_BUFFER_NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
+	visual_return_val_if_fail (data != NULL, -VISUAL_ERROR_BUFFER_NULL);
 
 	/* Fixate possible partial buffer */
 	if (offset > 0)
@@ -275,9 +220,9 @@ int visual_ringbuffer_get_data_offset (VisRingBuffer *ringbuffer, VisBuffer *dat
 		/* return immediately if there are no elements in the list */
 		if(visual_list_count(ringbuffer->entries) == 0)
 			return VISUAL_OK;
-			
+
 		while ((entry = visual_list_next (ringbuffer->entries, &le)) != NULL) {
-			VisBuffer *tempbuf;
+			VisBuffer *tempbuf = NULL;
 
 			lindex++;
 
@@ -341,7 +286,6 @@ static int fixate_with_partial_data_request (VisRingBuffer *ringbuffer, VisBuffe
 {
 	VisListEntry *le = NULL;
 	VisRingBufferEntry *entry;
-	//int curposition = 0;
 	int curoffset = 0;
 	int startat = 0;
 
@@ -431,7 +375,7 @@ int visual_ringbuffer_get_data_without_wrap (VisRingBuffer *ringbuffer, VisBuffe
 	int ringsize;
 	int amount = nbytes;
 
-	visual_log_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, -VISUAL_ERROR_RINGBUFFER_NULL);
 
 	if ((ringsize = visual_ringbuffer_get_size (ringbuffer)) < nbytes)
 		amount = ringsize;
@@ -443,7 +387,7 @@ VisBuffer *visual_ringbuffer_get_data_new (VisRingBuffer *ringbuffer, int nbytes
 {
 	VisBuffer *buffer;
 
-	visual_log_return_val_if_fail (ringbuffer != NULL, NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, NULL);
 
 	buffer = visual_buffer_new_allocate (nbytes, NULL);
 
@@ -458,7 +402,7 @@ VisBuffer *visual_ringbuffer_get_data_new_without_wrap (VisRingBuffer *ringbuffe
 	int ringsize;
 	int amount = nbytes;
 
-	visual_log_return_val_if_fail (ringbuffer != NULL, NULL);
+	visual_return_val_if_fail (ringbuffer != NULL, NULL);
 
 	if ((ringsize = visual_ringbuffer_get_size (ringbuffer)) < nbytes)
 		amount = ringsize;
@@ -487,7 +431,7 @@ VisRingBufferEntry *visual_ringbuffer_entry_new (VisBuffer *buffer)
 
 int visual_ringbuffer_entry_init (VisRingBufferEntry *entry, VisBuffer *buffer)
 {
-	visual_log_return_val_if_fail (entry != NULL, -VISUAL_ERROR_RINGBUFFER_ENTRY_NULL);
+	visual_return_val_if_fail (entry != NULL, -VISUAL_ERROR_RINGBUFFER_ENTRY_NULL);
 
 	/* Do the VisObject initialization */
 	visual_object_clear (VISUAL_OBJECT (entry));
@@ -530,7 +474,7 @@ int visual_ringbuffer_entry_init_function (VisRingBufferEntry *entry,
 		VisRingBufferSizeFunc sizefunc,
 		void *functiondata)
 {
-	visual_log_return_val_if_fail (entry != NULL, -VISUAL_ERROR_RINGBUFFER_ENTRY_NULL);
+	visual_return_val_if_fail (entry != NULL, -VISUAL_ERROR_RINGBUFFER_ENTRY_NULL);
 
 	/* Do the VisObject initialization */
 	visual_object_clear (VISUAL_OBJECT (entry));
@@ -550,12 +494,7 @@ int visual_ringbuffer_entry_init_function (VisRingBufferEntry *entry,
 
 void *visual_ringbuffer_entry_get_functiondata (VisRingBufferEntry *entry)
 {
-	visual_log_return_val_if_fail (entry != NULL, NULL);
+	visual_return_val_if_fail (entry != NULL, NULL);
 
 	return entry->functiondata;
 }
-
-/**
- * @}
- */
-

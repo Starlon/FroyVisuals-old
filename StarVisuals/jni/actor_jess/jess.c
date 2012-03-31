@@ -71,10 +71,10 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "jess",
 		.name = "jess plugin",
-		.author = ("Original by: Remi Arquier <arquier@crans.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>"),
+		.author = N_("Original by: Remi Arquier <arquier@crans.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>"),
 		.version = "0.1",
-		.about = ("Jess visual plugin"),
-		.help = ("This is the libvisual plugin for the jess visual"),
+		.about = N_("Jess visual plugin"),
+		.help = N_("This is the libvisual plugin for the jess visual"),
 		.license = VISUAL_PLUGIN_LICENSE_GPL,
 
 		.init = act_jess_init,
@@ -93,7 +93,7 @@ static int act_jess_init (VisPluginData *plugin)
 {
 	JessPrivate *priv;
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
 
 #if ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
@@ -156,7 +156,7 @@ static int act_jess_cleanup (VisPluginData *plugin)
 	JessPrivate *priv;
 	int i;
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	if (priv == NULL) {
@@ -200,8 +200,8 @@ static int act_jess_requisition (VisPluginData *plugin, int *width, int *height)
 {
 	int reqw, reqh;
 
-	visual_log_return_val_if_fail (width != NULL, -1);
-	visual_log_return_val_if_fail (height != NULL, -1);
+	visual_return_val_if_fail (width != NULL, -1);
+	visual_return_val_if_fail (height != NULL, -1);
 
 	reqw = *width;
 	reqh = *height;
@@ -228,7 +228,7 @@ static int act_jess_dimension (VisPluginData *plugin, VisVideo *video, int width
 {
 	JessPrivate *priv;
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	if (priv == NULL) {
@@ -289,7 +289,7 @@ static VisPalette *act_jess_palette (VisPluginData *plugin)
 {
 	JessPrivate *priv;
 
-	visual_log_return_val_if_fail (plugin != NULL, NULL);
+	visual_return_val_if_fail (plugin != NULL, NULL);
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	if (priv == NULL) {
@@ -309,9 +309,9 @@ static int act_jess_render (VisPluginData *plugin, VisVideo *video, VisAudio *au
 	short freqdata[2][256];
 	int i;
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
-	visual_log_return_val_if_fail (audio != NULL, -1);
-	visual_log_return_val_if_fail (video != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (audio != NULL, -1);
+	visual_return_val_if_fail (video != NULL, -1);
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
@@ -354,7 +354,7 @@ static int act_jess_render (VisPluginData *plugin, VisVideo *video, VisAudio *au
 
 static void jess_init (JessPrivate *priv)
 {
-	visual_log_return_if_fail (priv != NULL);
+	visual_return_if_fail (priv != NULL);
 
 	priv->xres2 = priv->resx / 2;
 	priv->yres2 = priv->resy / 2;

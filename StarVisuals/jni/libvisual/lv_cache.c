@@ -21,13 +21,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
-#include "lv_common.h"
+#include <config.h>
 #include "lv_cache.h"
+#include "lv_common.h"
+
+#include <string.h>
 
 static int cache_dtor (VisObject *object);
 static int cache_remove_list_entry (VisCache *cache, VisListEntry **le);
@@ -91,17 +89,6 @@ static inline void handle_request_reset (VisCache *cache, VisListEntry *le)
 	visual_list_chain_at_begin (cache->list, le);
 }
 
-/**
- * @defgroup VisCache VisCache
- * @{
- */
-
-/**
- * Creates a new VisCache.
- * 
- * @return A newly allocated VisCache.
- */
-
 VisCache *visual_cache_new (VisCollectionDestroyerFunc destroyer, int size, VisTime *maxage, int reqreset)
 {
 	VisCache *cache;
@@ -119,7 +106,7 @@ VisCache *visual_cache_new (VisCollectionDestroyerFunc destroyer, int size, VisT
 
 int visual_cache_init (VisCache *cache, VisCollectionDestroyerFunc destroyer, int size, VisTime *maxage, int reqreset)
 {
-	visual_log_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
+	visual_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
 
 	/* Do the VisObject initialization */
 	visual_object_clear (VISUAL_OBJECT (cache));
@@ -143,7 +130,7 @@ int visual_cache_clear (VisCache *cache)
 {
 	VisListEntry *le = NULL;
 
-	visual_log_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
+	visual_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
 
 	/* Destroy all entries in cache first */
 	while (visual_list_next (cache->list, &le) != NULL)
@@ -163,7 +150,7 @@ int visual_cache_flush_outdated (VisCache *cache)
 	VisCacheEntry *centry;
 	VisListEntry *le;
 
-	visual_log_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
+	visual_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
 
 	if (cache->withmaxage == TRUE) {
 		le = cache->list->tail;
@@ -193,9 +180,9 @@ int visual_cache_put (VisCache *cache, char *key, void *data)
 	VisCacheEntry *centry;
 	VisListEntry *le;
 
-	visual_log_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
-	visual_log_return_val_if_fail (key != NULL, -VISUAL_ERROR_NULL);
-	visual_log_return_val_if_fail (data != NULL, -VISUAL_ERROR_NULL);
+	visual_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
+	visual_return_val_if_fail (key != NULL, -VISUAL_ERROR_NULL);
+	visual_return_val_if_fail (data != NULL, -VISUAL_ERROR_NULL);
 
 	/* Don't try to put in a 0 sized cache */
 	if (cache->size < 1)
@@ -247,8 +234,8 @@ int visual_cache_remove (VisCache *cache, char *key)
 {
 	VisListEntry *le;
 
-	visual_log_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
-	visual_log_return_val_if_fail (key != NULL, -VISUAL_ERROR_NULL);
+	visual_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
+	visual_return_val_if_fail (key != NULL, -VISUAL_ERROR_NULL);
 
 	le = visual_hashmap_get_string (cache->index, key);
 
@@ -263,8 +250,8 @@ void *visual_cache_get (VisCache *cache, char *key)
 	VisCacheEntry *centry;
 	VisListEntry *le;
 
-	visual_log_return_val_if_fail (cache != NULL, NULL);
-	visual_log_return_val_if_fail (key != NULL, NULL);
+	visual_return_val_if_fail (cache != NULL, NULL);
+	visual_return_val_if_fail (key != NULL, NULL);
 
 	le = visual_hashmap_get_string (cache->index, key);
 
@@ -280,14 +267,14 @@ void *visual_cache_get (VisCache *cache, char *key)
 
 int visual_cache_get_size (VisCache *cache)
 {
-	visual_log_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
+	visual_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
 
 	return visual_collection_size (VISUAL_COLLECTION (cache->list));
 }
 
 int visual_cache_set_limits (VisCache *cache, int size, VisTime *maxage)
 {
-	visual_log_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
+	visual_return_val_if_fail (cache != NULL, -VISUAL_ERROR_CACHE_NULL);
 
 	/* FIXME limit size change, rehash the index */
 
@@ -305,12 +292,7 @@ int visual_cache_set_limits (VisCache *cache, int size, VisTime *maxage)
 
 VisList *visual_cache_get_list (VisCache *cache)
 {
-	visual_log_return_val_if_fail (cache != NULL, NULL);
+	visual_return_val_if_fail (cache != NULL, NULL);
 
 	return cache->list;
 }
-
-/**
- * @}
- */
-

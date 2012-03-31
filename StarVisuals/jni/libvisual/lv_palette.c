@@ -21,13 +21,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
-#include "lv_common.h"
+#include "config.h"
 #include "lv_palette.h"
+#include "lv_common.h"
 
 static int palette_dtor (VisObject *object);
 
@@ -43,16 +39,6 @@ static int palette_dtor (VisObject *object)
 	return VISUAL_OK;
 }
 
-/**
- * @defgroup VisPalette VisPalette
- * @{
- */
-
-/**
- * Creates a new VisPalette.
- *
- * @return A newly allocated VisPalette.
- */
 VisPalette *visual_palette_new (int ncolors)
 {
 	VisPalette *pal;
@@ -70,21 +56,9 @@ VisPalette *visual_palette_new (int ncolors)
 	return pal;
 }
 
-/**
- * Initializes a VisPalette, this should not be used to reset a VisPalette.
- * The resulting initialized VisPalette is a valid VisObject even if it was not allocated.
- * Keep in mind that VisPalette structures that were created by visual_palette_new() should not
- * be passed to visual_palette_init().
- *
- * @see visual_palette_new
- *
- * @param pal Pointer to the VisPalette which needs to be initialized.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_PALETTE_NULL on failure.
- */
 int visual_palette_init (VisPalette *pal)
 {
-	visual_log_return_val_if_fail (pal != NULL, -VISUAL_ERROR_PALETTE_NULL);
+	visual_return_val_if_fail (pal != NULL, -VISUAL_ERROR_PALETTE_NULL);
 
 	/* Do the VisObject initialization */
 	visual_object_clear (VISUAL_OBJECT (pal));
@@ -98,36 +72,20 @@ int visual_palette_init (VisPalette *pal)
 	return VISUAL_OK;
 }
 
-/**
- * Copies the colors from one VisPalette to another.
- *
- * @param dest Pointer to the destination VisPalette.
- * @param src Pointer to the source VisPalette from which colors are copied into the destination VisPalette.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_PALETTE_NULL or -VISUAL_ERROR_PALETTE_SIZE on failure.
- */
 int visual_palette_copy (VisPalette *dest, VisPalette *src)
 {
-	visual_log_return_val_if_fail (dest != NULL, -VISUAL_ERROR_PALETTE_NULL);
-	visual_log_return_val_if_fail (src != NULL, -VISUAL_ERROR_PALETTE_NULL);
-	visual_log_return_val_if_fail (dest->ncolors == src->ncolors, -VISUAL_ERROR_PALETTE_SIZE);
+	visual_return_val_if_fail (dest != NULL, -VISUAL_ERROR_PALETTE_NULL);
+	visual_return_val_if_fail (src != NULL, -VISUAL_ERROR_PALETTE_NULL);
+	visual_return_val_if_fail (dest->ncolors == src->ncolors, -VISUAL_ERROR_PALETTE_SIZE);
 
 	visual_mem_copy (dest->colors, src->colors, sizeof (VisColor) * dest->ncolors);
 
 	return VISUAL_OK;
 }
 
-/**
- * Allocate an amount of colors for a VisPalette.
- *
- * @param pal Pointer to the VisPalette for which colors are allocated.
- * @param ncolors The number of colors allocated for the VisPalette.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_PALETTE_NULL on failure.
- */
 int visual_palette_allocate_colors (VisPalette *pal, int ncolors)
 {
-	visual_log_return_val_if_fail (pal != NULL, -VISUAL_ERROR_PALETTE_NULL);
+	visual_return_val_if_fail (pal != NULL, -VISUAL_ERROR_PALETTE_NULL);
 
 	pal->colors = visual_mem_new0 (VisColor, ncolors);
 	pal->ncolors = ncolors;
@@ -135,16 +93,9 @@ int visual_palette_allocate_colors (VisPalette *pal, int ncolors)
 	return VISUAL_OK;
 }
 
-/**
- * Frees allocated colors from a VisPalette.
- * 
- * @param pal Pointer to the VisPalette from which colors need to be freed.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_PALETTE_NULL on failure.
- */
 int visual_palette_free_colors (VisPalette *pal)
 {
-	visual_log_return_val_if_fail (pal != NULL, -VISUAL_ERROR_PALETTE_NULL);
+	visual_return_val_if_fail (pal != NULL, -VISUAL_ERROR_PALETTE_NULL);
 
 	if (pal->colors != NULL)
 		visual_mem_free (pal->colors);
@@ -155,24 +106,13 @@ int visual_palette_free_colors (VisPalette *pal)
 	return VISUAL_OK;
 }
 
-/**
- * This function is capable of morphing from one palette to another.
- *
- * @param dest Pointer to the destination VisPalette, this is where the result of the morph
- * 	  is put.
- * @param src1 Pointer to a VisPalette that acts as the first source for the morph.
- * @param src2 Pointer to a VisPalette that acts as the second source for the morph.
- * @param rate Value that sets the rate of the morph, which is valid between 0 and 1.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_PALETTE_NULL or -VISUAL_ERROR_PALETTE_SIZE on failure.
- */
 int visual_palette_blend (VisPalette *dest, VisPalette *src1, VisPalette *src2, float rate)
 {
 	int i;
 
-	visual_log_return_val_if_fail (dest != NULL, -VISUAL_ERROR_PALETTE_NULL);
-	visual_log_return_val_if_fail (src1 != NULL, -VISUAL_ERROR_PALETTE_NULL);
-	visual_log_return_val_if_fail (src2 != NULL, -VISUAL_ERROR_PALETTE_NULL);
+	visual_return_val_if_fail (dest != NULL, -VISUAL_ERROR_PALETTE_NULL);
+	visual_return_val_if_fail (src1 != NULL, -VISUAL_ERROR_PALETTE_NULL);
+	visual_return_val_if_fail (src2 != NULL, -VISUAL_ERROR_PALETTE_NULL);
 
 	if (src1->ncolors != src2->ncolors)
 		return -VISUAL_ERROR_PALETTE_SIZE;
@@ -189,17 +129,6 @@ int visual_palette_blend (VisPalette *dest, VisPalette *src1, VisPalette *src2, 
 	return VISUAL_OK;
 }
 
-/**
- * Can be used to cycle through the colors of a VisPalette and blend between elements. The rate is from 0.0 to number of
- * VisColors in the VisPalette. The VisColor is newly allocated so you have to unref it. The last VisColor in the VisPalette is
- * morphed with the first.
- *
- * @param pal Pointer to the VisPalette in which the VisColors are cycled.
- * @param rate Selection of the VisColor from the VisPalette, goes from 0.0 to number of VisColors in the VisPalette
- * 	and morphs between colors if needed.
- *
- * @return A new VisColor, possibly a morph between two VisColors, NULL on failure.
- */
 VisColor *visual_palette_color_cycle (VisPalette *pal, float rate)
 {
 	VisColor *color, *tmp1, *tmp2;
@@ -207,7 +136,7 @@ VisColor *visual_palette_color_cycle (VisPalette *pal, float rate)
 	unsigned char alpha;
 	float rdiff = rate - irate;
 
-	visual_log_return_val_if_fail (pal != NULL, NULL);
+	visual_return_val_if_fail (pal != NULL, NULL);
 
 	irate = irate % pal->ncolors;
 	alpha = rdiff * 255;
@@ -246,8 +175,4 @@ int visual_palette_find_color (VisPalette *pal, VisColor *color)
 
 	return -1;
 }
-
-/**
- * @}
- */
 

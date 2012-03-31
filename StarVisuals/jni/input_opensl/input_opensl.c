@@ -94,11 +94,11 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 int inp_opensl_init (VisPluginData *plugin)
 {
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     inp_opensl_priv *priv = visual_mem_new0 (inp_opensl_priv, 1);
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
 
     visual_object_set_private(VISUAL_OBJECT (plugin), priv);
 
@@ -168,10 +168,10 @@ int inp_opensl_init (VisPluginData *plugin)
 
 int inp_opensl_cleanup (VisPluginData *plugin)
 {
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     inp_opensl_priv *priv = visual_object_get_private(VISUAL_OBJECT(plugin));
-    visual_log_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
 
     stopRecording(priv);
 
@@ -224,7 +224,7 @@ void bqRecorderCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
 {
     inp_opensl_priv *priv = context;
 
-    visual_log_return_if_fail(bq == priv->recorderBufferQueue);
+    visual_return_if_fail(bq == priv->recorderBufferQueue);
 
     visual_mutex_lock(priv->mutex);
 
@@ -272,9 +272,9 @@ void startRecording(inp_opensl_priv *priv)
 
     // in case already recording, stop recording and clear buffer queue
     result = (*priv->recorderRecord)->SetRecordState(priv->recorderRecord, SL_RECORDSTATE_STOPPED);
-    visual_log_return_if_fail(SL_RESULT_SUCCESS == result);
+    visual_return_if_fail(SL_RESULT_SUCCESS == result);
     result = (*priv->recorderBufferQueue)->Clear(priv->recorderBufferQueue);
-    visual_log_return_if_fail(SL_RESULT_SUCCESS == result);
+    visual_return_if_fail(SL_RESULT_SUCCESS == result);
 
     // enqueue an empty buffer to be filled by the recorder
     // (for streaming recording, we would enqueue at least 2 empty buffers to start things off)
@@ -298,7 +298,7 @@ void startRecording(inp_opensl_priv *priv)
 
     // start recording
     result = (*priv->recorderRecord)->SetRecordState(priv->recorderRecord, SL_RECORDSTATE_RECORDING);
-    visual_log_return_if_fail(SL_RESULT_SUCCESS == result);
+    visual_return_if_fail(SL_RESULT_SUCCESS == result);
 
     priv->currentFrame = 0;
     priv->recordingState = RECORDING_STATE_RECORDING;

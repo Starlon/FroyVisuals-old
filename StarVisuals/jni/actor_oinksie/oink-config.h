@@ -4,7 +4,7 @@
  *
  * Authors: Dennis Smit <ds@nerds-incorporated.org>
  *
- * $Id: config.c,v 1.7 2006/01/31 16:42:47 synap Exp $
+ * $Id: config.h,v 1.5 2006/01/31 16:42:47 synap Exp $
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -21,32 +21,17 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include "common.h"
-#include "audio.h"
-#include "config-defines.h"
-#include "gfx-misc.h"
-#include "screen.h"
-#include "misc.h"
-#include "oink-config.h"
+#ifndef _OINK_CONFIG_H
+#define _OINK_CONFIG_H
 
-/* random configs */
-void _oink_config_random_blurmode (OinksiePrivate *priv)
-{
-	priv->config.blurmode = visual_random_context_int_range (priv->rcontext, 0, CONFIG_BLURMODES);
-}
+#include "oinksie.h"
 
-void _oink_config_random_scopemode (OinksiePrivate *priv)
-{
-	priv->config.scopemode = visual_random_context_int_range (priv->rcontext, 0, CONFIG_SCOPEMODES);
-}
+/* random config sets */
+void _oink_config_random_blurmode (OinksiePrivate *priv);
+void _oink_config_random_scopemode (OinksiePrivate *priv);
+void _oink_config_random_backgroundmode (OinksiePrivate *priv);
+void _oink_config_random_beatdots (OinksiePrivate *priv);
+void _oink_config_random_scopestereo (OinksiePrivate *priv);
+void _oink_config_random_palfunky (OinksiePrivate *priv);
 
-void _oink_config_random_backgroundmode (OinksiePrivate *priv)
-{
-	priv->config.backgroundmode = visual_random_context_int_range (priv->rcontext, 0, CONFIG_BACKGROUNDMODES);
-}
-
-void _oink_config_random_palfunky (OinksiePrivate *priv)
-{
-	priv->config.palfunky = visual_random_context_int_range (priv->rcontext, 0, 1);
-}
-
+#endif /* _OINK_CONFIG_H */

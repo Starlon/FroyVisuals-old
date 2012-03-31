@@ -182,6 +182,7 @@ VisPalette *starscope_palette (VisPluginData *plugin)
 	return &priv->pal;
 }
 
+/*
 #if 0
 function()
 {
@@ -295,6 +296,7 @@ function()
     ,25);
 }
 #endif
+*/
 
 void run_init(ScopePrivate *priv)
 {

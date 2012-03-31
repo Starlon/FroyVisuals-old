@@ -79,8 +79,8 @@ int inp_alsa_init (VisPluginData *plugin)
 {
     alsaPrivate *priv = visual_mem_new0 (alsaPrivate, 1);
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     visual_object_set_private (VISUAL_OBJECT (plugin), priv);
 
@@ -96,8 +96,8 @@ int inp_alsa_cleanup (VisPluginData *plugin)
 {
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     visual_mem_free(priv->data);
     visual_mem_free (priv);
@@ -115,10 +115,10 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
     int val1, val2;
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
-    visual_log_return_val_if_fail(audio != NULL, -1);
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(audio != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
 
     visual_random_context_set_seed(&priv->rContext, visual_timer_elapsed_msecs(&priv->timer));
 

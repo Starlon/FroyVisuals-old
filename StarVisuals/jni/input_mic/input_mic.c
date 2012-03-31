@@ -68,14 +68,14 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 int inp_mic_init (VisPluginData *plugin)
 {
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     return 0;
 }
 
 int inp_mic_cleanup (VisPluginData *plugin)
 {
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     return 0;
 }

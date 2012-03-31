@@ -1,5 +1,5 @@
 /* Libvisual - The audio visualisation framework.
- * 
+ *
  * Copyright (C) 2004, 2005, 2006 Dennis Smit <ds@nerds-incorporated.org>
  *
  * Authors: Dennis Smit <ds@nerds-incorporated.org>
@@ -24,14 +24,19 @@
 #ifndef _LV_ERROR_H
 #define _LV_ERROR_H
 
-#include "lv_defines.h"
+#include <libvisual/lv_defines.h>
+
+/**
+ * @defgroup VisError VisError
+ * @{
+ */
 
 VISUAL_BEGIN_DECLS
 
 /* WARNING when you add an new error to this list, make sure that you update lv_error.c it's
  * human readable string list as well!!! */
 /**
- * Enumerate of all possible numeric error values. 
+ * Enumerate of all possible numeric error values.
  */
 enum {
 	/* Ok! */
@@ -41,6 +46,7 @@ enum {
 	VISUAL_ERROR_GENERAL,				/**< General error. */
 	VISUAL_ERROR_NULL,				/**< Something is NULL that shouldn't be. */
 	VISUAL_ERROR_IMPOSSIBLE,			/**< The impossible happened, this should never happen. */
+    VISUAL_ERROR_FAILED_CHECK,          /**< Failed an assertion check */
 
 	/* Error entries for the VisActor system */
 	VISUAL_ERROR_ACTOR_NULL,			/**< The VisActor is NULL. */
@@ -151,6 +157,7 @@ enum {
 	VISUAL_ERROR_PLUGIN_HANDLE_NULL,		/**< The dlopen handle of the plugin is NULL. */
 	VISUAL_ERROR_PLUGIN_ALREADY_REALIZED,		/**< The plugin is already realized. */
 	VISUAL_ERROR_PLUGIN_NO_LIST,			/**< The plugin list can't be found. */
+	VISUAL_ERROR_PLUGIN_NOT_FOUND,          /**< The plugin can't be found */
 
 	/* Error entries for the VisRandom system */
 	VISUAL_ERROR_RANDOM_CONTEXT_NULL,		/**< The VisRandomContext is NULL. */
@@ -194,30 +201,6 @@ enum {
 	VISUAL_ERROR_TIME_NO_USLEEP,			/**< visual_time_usleep is not working on this system. */
 	VISUAL_ERROR_TIMER_NULL,			/**< The VisTimer is NULL. */
 
-	/* Error entries for the VisUI system */
-	VISUAL_ERROR_UI_WIDGET_NULL,			/**< The VisUIWidget is NULL. */
-	VISUAL_ERROR_UI_CONTAINER_NULL,			/**< The VisUIContainer is NULL. */
-	VISUAL_ERROR_UI_BOX_NULL,			/**< The VisUIBox is NULL. */
-	VISUAL_ERROR_UI_TABLE_NULL,			/**< The VisUITable is NULL. */
-	VISUAL_ERROR_UI_NOTEBOOK_NULL,			/**< The VisUINotebook is NULL. */
-	VISUAL_ERROR_UI_FRAME_NULL,			/**< The VisUIFrame is NULL. */
-	VISUAL_ERROR_UI_LABEL_NULL,			/**< The VisUILabel is NULL. */
-	VISUAL_ERROR_UI_IMAGE_NULL,			/**< The VisUIImage is NULL. */
-	VISUAL_ERROR_UI_SEPARATOR_NULL,			/**< The VisUISperator is NULL. */
-	VISUAL_ERROR_UI_MUTATOR_NULL,			/**< The VisUIMutator is NULL. */
-	VISUAL_ERROR_UI_RANGE_NULL,			/**< The VisUIRange is NULL. */
-	VISUAL_ERROR_UI_ENTRY_NULL,			/**< The VisUIEntry is NULL. */
-	VISUAL_ERROR_UI_SLIDER_NULL,			/**< The VisUISlider is NULL. */
-	VISUAL_ERROR_UI_NUMERIC_NULL,			/**< The VisUINumeric is NULL. */
-	VISUAL_ERROR_UI_COLOR_NULL,			/**< The VisUIColor is NULL. */
-	VISUAL_ERROR_UI_CHOICE_NULL,			/**< The VisUIChoice is NULL. */
-	VISUAL_ERROR_UI_POPUP_NULL,			/**< The VisUIPopup is NULL. */
-	VISUAL_ERROR_UI_LIST_NULL,			/**< The VisUIList is NULL. */
-	VISUAL_ERROR_UI_RADIO_NULL,			/**< The VisUIRadio is NULL. */
-	VISUAL_ERROR_UI_CHECKBOX_NULL,			/**< The VisUICheckbox is NULL. */
-	VISUAL_ERROR_UI_CHOICE_ENTRY_NULL,		/**< The VisUIChoiceEntry is NULL. */
-	VISUAL_ERROR_UI_CHOICE_NONE_ACTIVE,		/**< there is no VisUIChoiceEntry active. */
-
 	/* Error entries for the VisVideo system */
 	VISUAL_ERROR_VIDEO_ATTRIBUTE_OPTIONS_NULL,	/**< The VisVideoAttributeOptions is NULL. */
 	VISUAL_ERROR_VIDEO_NULL,			/**< The VisVideo is NULL. */
@@ -251,13 +234,45 @@ enum {
  *
  * @arg priv Private field to be used by the client. The library will never touch this.
  */
-typedef int (*VisErrorHandlerFunc) (void *priv);
+typedef int (*VisErrorHandlerFunc) (int error, void *priv);
 
-int visual_error_raise (void);
-int visual_error_set_handler (VisErrorHandlerFunc handler, void *priv);
+/**
+ * Raise a libvisual error. With the standard error handler this will
+ * do a raise(SIGTRAP). You can set your own error handler function using the
+ * visual_error_set_handler.
+ *
+ * @see visual_error_set_handler
+ *
+ * @return Returns the return value from the handler that is set.
+ */
+int visual_error_raise (int error);
 
+/**
+ * Sets the error handler callback. By using this function you
+ * can override libvisual it's default error handler.
+ *
+ * @param handler The error handler which you want to use
+ *      to handle libvisual errors.
+ * @param priv Optional private data which could be needed in the
+ *      error handler that has been set.
+ *
+ * @return VISUAL_OK on success, -VISUAL_ERROR_ERROR_HANDLER_NULL on failure.
+ */
+void visual_error_set_handler (VisErrorHandlerFunc handler, void *priv);
+
+/**
+ * Translates an error into a human readable string, the returned string should not be freed.
+ *
+ * @param err Numeric error value.
+ *
+ * @return Human readable string, or NULL on failure.
+ */
 const char *visual_error_to_string (int err);
 
 VISUAL_END_DECLS
+
+/**
+ * @}
+ */
 
 #endif /* _LV_ERROR_H */

@@ -99,9 +99,9 @@ int lv_morph_alpha_cleanup (VisPluginData *plugin)
 
 int lv_morph_alpha_apply (VisPluginData *plugin, float rate, VisAudio *audio, VisVideo *dest, VisVideo *src1, VisVideo *src2)
 {
-	visual_log_return_val_if_fail (dest != NULL, -1);
-	visual_log_return_val_if_fail (src1 != NULL, -1);
-	visual_log_return_val_if_fail (src2 != NULL, -1);
+	visual_return_val_if_fail (dest != NULL, -1);
+	visual_return_val_if_fail (src1 != NULL, -1);
+	visual_return_val_if_fail (src2 != NULL, -1);
 
 	alpha_blend_buffer (visual_video_get_pixels (dest),
 			visual_video_get_pixels (src1),

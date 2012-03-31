@@ -1,5 +1,5 @@
 /* Libvisual - The audio visualisation framework.
- * 
+ *
  * Copyright (C) 2004, 2005, 2006 Dennis Smit <ds@nerds-incorporated.org>
  *
  * Authors: Dennis Smit <ds@nerds-incorporated.org>
@@ -25,8 +25,12 @@
 #ifndef _LV_CPU_H
 #define _LV_CPU_H
 
-#include "lvconfig.h"
-#include "lv_common.h"
+#include <libvisual/lv_object.h>
+
+/**
+ * @defgroup VisCPU VisCPU
+ * @{
+ */
 
 VISUAL_BEGIN_DECLS;
 
@@ -36,10 +40,10 @@ VISUAL_BEGIN_DECLS;
 typedef enum {
 	VISUAL_CPU_TYPE_MIPS,		/**< Running on the mips architecture. */
 	VISUAL_CPU_TYPE_ALPHA,		/**< Running on the alpha architecture. */
-	VISUAL_CPU_TYPE_SPARC,		/**< Running on the sparc architecture. */ 
+	VISUAL_CPU_TYPE_SPARC,		/**< Running on the sparc architecture. */
 	VISUAL_CPU_TYPE_X86,		/**< Running on the X86 architecture. */
 	VISUAL_CPU_TYPE_POWERPC,	/**< Running on the PowerPC architecture. */
-    VISUAL_CPU_TYPE_ARM,        /**< Running on the ARM architecture. */
+	VISUAL_CPU_TYPE_ARM,		/**< Running on the ARM architecture, */
 	VISUAL_CPU_TYPE_OTHER		/**< Running on an architecture that is not specified. */
 } VisCPUType;
 
@@ -66,55 +70,134 @@ struct _VisCPU {
 	int		hasSSE2;		/**< The CPU has the sse2 feature. */
 	int		has3DNow;		/**< The CPU has the 3dnow feature. */
 	int		has3DNowExt;		/**< The CPU has the 3dnowext feature. */
-	int		hasAltiVec;		/**< The CPU has the altivec feature. */	
-    int     hasARMv7;       /**<The CPU has the ARM v7 feature. */
-    int     hasVFPv3;       /**<The CPU has the ARM VFPv3 feature. */
-    int     hasNeon;        /**<The CPU has the ARM Neon feature. */
-    int     hasLDREX_STREX; /**<The CPU has ARM LDREX_STREX feature. */
+	int		hasAltiVec;     /**< The CPU has the altivec feature. */
+	int		hasARMv7;       /**<The CPU has the ARM v7 feature. */
+	int		hasVFPv3;       /**<The CPU has the ARM VFPv3 feature. */
+	int		hasNeon;        /**<The CPU has the ARM Neon feature. */
+	int		hasLDREX_STREX; /**<The CPU has ARM LDREX_STREX feature. */
 
 	int		enabledTSC;		/**< The tsc feature is enabled. */
-	int		enabledMMX;		/**< The mmx feature is enabled. */ 
+	int		enabledMMX;		/**< The mmx feature is enabled. */
 	int		enabledMMX2;		/**< The tsc feature is enabled. */
 	int		enabledSSE;		/**< The sse feature is enabled. */
 	int		enabledSSE2;		/**< The sse2 feature is enabled. */
 	int		enabled3DNow;		/**< The 3dnow feature is enabled. */
-	int		enabled3DNowExt;	/**< The 3dnowext feature is enabled. */ 
-	int		enabledAltiVec;		/**< The altivec feature is enabled. */  
-    int     enabledVFPv3;         /**< The ARM hardware floats feature is enabled. */
-    int     enabledARMv7;       /**< The ARM v7 feature is enabled. */
-    int     enabledNeon;        /**< The ARM Neon feature is enabled. */
-    int     enabledLDREX_STREX; /**< The ARM LDREX_STREX feature is enabled. */
+	int		enabled3DNowExt;	/**< The 3dnowext feature is enabled. */
+	int		enabledAltiVec;		/**< The altivec feature is enabled. */
+	int		enabledVFPv3;       /**< The ARM hardware floats feature is enabled. */
+	int		enabledARMv7;	    /**< The ARM v7 feature is enabled. */
+	int		enabledNeon;        /**< The ARM Neon feature is enabled. */
+	int		enabledLDREX_STREX; /**< The ARM LDREX_STREX feature is enabled. */
 };
 
+
+/**
+ * Initializes the VisCPU caps structure by detecting the CPU features
+ * and flags.
+ *
+ * This is normally called by visual_init() and is needed by
+ * visual_mem_initialize() in order to detect the most optimal
+ * mem_copy and mem_set functions.
+ */
 void visual_cpu_initialize (void);
+
+/**
+ * Function to get the VisCPU caps initialized by
+ * visual_cpu_initialize(), this contains information regarding the
+ * CPU features and flags.
+ *
+ * @return The VisCPU caps structure.
+ */
 VisCPU *visual_cpu_get_caps (void);
 
+/**
+ * Function to retrieve if the tsc CPU feature is enabled.
+ *
+ * @return Whether tsc is enabled or not.
+ */
 int visual_cpu_get_tsc (void);
+
+/**
+ * Function to retrieve if the MMX CPU feature is enabled.
+ *
+ * @return Whether MMX is enabled or not.
+ */
 int visual_cpu_get_mmx (void);
+
+/**
+ * Function to retrieve if the MMX2 CPU feature is enabled.
+ *
+ * @return Whether MMX2 is enabled or not.
+ */
 int visual_cpu_get_mmx2 (void);
+
+/**
+ * Function to retrieve if the SSE CPU feature is enabled.
+ *
+ * @return Whether SSE is enabled or not.
+ */
 int visual_cpu_get_sse (void);
+
+/**
+ * Function to retrieve if the SSE2 CPU feature is enabled.
+ *
+ * @return Whether SSE2 is enabled or not.
+ */
 int visual_cpu_get_sse2 (void);
+
+/**
+ * Function to retrieve if the 3dnow CPU feature is enabled.
+ *
+ * @return Whether 3dnow is enabled or not.
+ */
 int visual_cpu_get_3dnow (void);
+
+/**
+ * Function to retrieve if the 3dnowext CPU feature is enabled.
+ *
+ * @return Whether 3dnowext is enabled or not.
+ */
 int visual_cpu_get_3dnow2 (void);
+
+/**
+ * Function to retrieve if the altivec CPU feature is enabled.
+ *
+ * @return Whether altivec is enabled or not.
+ */
 int visual_cpu_get_altivec (void);
+
+/**
+ * Function to retrieve if the ARM v7 feature is enabled.
+ *
+ * @return Whether altivec is enabled or not.
+ */
 int visual_cpu_get_armv7 (void);
+
+/**
+ * Function to retrieve if the ARM VFPv3 feature is enabled.
+ *
+ * @return Whether altivec is enabled or not.
+ */
 int visual_cpu_get_vfpv3 (void);
+
+/**
+ * Function to retrieve if the ARM Neon feature is enabled.
+ *
+ * @return Whether altivec is enabled or not.
+ */
 int visual_cpu_get_neon (void);
+
+/**
+ * Function to retrieve if the ARM LDREX_STREX feature is enabled.
+ *
+ * @return Whether altivec is enabled or not.
+ */
 int visual_cpu_get_ldrex_strex (void);
 
-int visual_cpu_set_tsc (int enabled);
-int visual_cpu_set_mmx (int enabled);
-int visual_cpu_set_mmx2 (int enabled);
-int visual_cpu_set_sse (int enabled);
-int visual_cpu_set_sse2 (int enabled);
-int visual_cpu_set_3dnow (int enabled);
-int visual_cpu_set_3dnow2 (int enabled);
-int visual_cpu_set_altivec (int enabled);
-int visual_cpu_set_armv7 (int enabled);
-int visual_cpu_set_vfpv3 (int enabled);
-int visual_cpu_set_neon (int enabled);
-int visual_cpu_set_ldrex_strex (int enabled);
-
 VISUAL_END_DECLS
+
+/**
+ * @}
+ */
 
 #endif /* _LV_CPU_H */

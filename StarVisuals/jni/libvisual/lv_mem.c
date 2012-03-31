@@ -1,5 +1,5 @@
 /* Libvisual - The audio visualisation framework.
- * 
+ *
  * Copyright (C) 2004, 2005, 2006 Dennis Smit <ds@nerds-incorporated.org>
  *
  * Authors: Dennis Smit <ds@nerds-incorporated.org>
@@ -21,82 +21,58 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include <config.h>
-
+#include "config.h"
+#include "lv_mem.h"
+#include "lv_common.h"
+#include "lv_cpu.h"
 #include <string.h>
 #include <stdlib.h>
 #include <gettext.h>
 
-#include "lv_mem.h"
-#include "lv_common.h"
-#include "lv_log.h"
-#include "lv_error.h"
-#include "lv_cpu.h"
 
-/* FIXME sse, altivec versions, optionally with prefetching and such
- * with checking for optimal scan lines */
-
-/* Optimize mem function prototypes */
+/* Standard C fallbacks */
 static void *mem_copy_c (void *dest, const void *src, visual_size_t n);
+static void *mem_set8_c (void *dest, int c, visual_size_t n);
+static void *mem_set16_c (void *dest, int c, visual_size_t n);
+static void *mem_set32_c (void *dest, int c, visual_size_t n);
+
+/* x86 SIMD optimized versions */
+
+#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
+
+static void *mem_copy_3dnow (void *dest, const void *src, visual_size_t n);
 static void *mem_copy_mmx (void *dest, const void *src, visual_size_t n);
 static void *mem_copy_mmx2 (void *dest, const void *src, visual_size_t n);
-static void *mem_copy_3dnow (void *dest, const void *src, visual_size_t n);
-static void *mem_copy_altivec (void *dest, const void *src, visual_size_t n);
 
-static void *mem_swap16_c (void *dest, const void *src, visual_size_t n, int sign);
-static void *mem_swap32_c (void *dest, const void *src, visual_size_t n, int sign);
-
-static void *mem_set8_c (void *dest, int c, visual_size_t n);
 static void *mem_set8_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set8_mmx2 (void *dest, int c, visual_size_t n);
-static void *mem_set8_altivec (void *dest, int c, visual_size_t n);
 
-static void *mem_set16_c (void *dest, int c, visual_size_t n);
 static void *mem_set16_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set16_mmx2 (void *dest, int c, visual_size_t n);
-static void *mem_set16_altivec (void *dest, int c, visual_size_t n);
 
-static void *mem_set32_c (void *dest, int c, visual_size_t n);
 static void *mem_set32_mmx (void *dest, int c, visual_size_t n);
 static void *mem_set32_mmx2 (void *dest, int c, visual_size_t n);
-static void *mem_set32_altivec (void *dest, int c, visual_size_t n);
+
+#endif /* VISUAL_ARCH_X86 || VISUAL_ARCH_X86_64 */
 
 /* Optimal performance functions set by visual_mem_initialize(). */
+
 VisMemCopyFunc visual_mem_copy = mem_copy_c;
-VisMemSwapFunc visual_mem_swap16 = mem_swap16_c;
-VisMemSwapFunc visual_mem_swap32 = mem_swap32_c;
 VisMemSet8Func visual_mem_set = mem_set8_c;
 VisMemSet16Func visual_mem_set16 = mem_set16_c;
 VisMemSet32Func visual_mem_set32 = mem_set32_c;
 
-
-/**
- * @defgroup VisMem VisMem
- * @{
- */
-
-/**
- * Initialize the memory functions. This is used to set the function pointers to the right optimized version.
- * It's legal to call visual_mem_initialize more than once in the same context if it's needed to reset the optimal
- * function pointers. This function bases it's choices upon the VisCPU system.
- *
- * Be aware that visual_mem_initialize() should be called to set the most optimize mem_copy() and
- * mem_set() functions is called. Be sure that visual_cpu_initialize() is called before this however if
- * possible the best solution is to just call visual_init() which will call all the libvisual initialize functions.
- *
- * return VISUAL_OK on succes.
- */
 int visual_mem_initialize ()
 {
 	/* Arranged from slow to fast, so the slower version gets overloaded
 	 * every time */
 
 	visual_mem_copy = mem_copy_c;
-    visual_mem_swap16 = mem_swap16_c;
-    visual_mem_swap32 = mem_swap32_c;
 	visual_mem_set = mem_set8_c;
 	visual_mem_set16 = mem_set16_c;
 	visual_mem_set32 = mem_set32_c;
+
+#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 
 	if (visual_cpu_get_mmx () > 0) {
 		visual_mem_copy = mem_copy_mmx;
@@ -118,29 +94,16 @@ int visual_mem_initialize ()
 		visual_mem_set32 = mem_set32_mmx2;
 	}
 
-    if (visual_cpu_get_altivec() > 0) {
-        visual_mem_copy = mem_copy_altivec;
-        visual_mem_set = mem_set8_altivec;
-        visual_mem_set16 = mem_set16_altivec;
-        visual_mem_set32 = mem_set32_altivec;
-    }
+#endif /* VISUAL_ARCH_X86 || VISUAL_ARCH_X86_64 */
 
 	return VISUAL_OK;
 }
 
-/**
- * Allocates @a nbytes of uninitialized memory.
- *
- * @param nbytes N bytes of mem requested to be allocated.
- * 
- * @return On success, a pointer to a new allocated memory block
- * of size @a nbytes, on failure, program is aborted. 
- */
 void *visual_mem_malloc (visual_size_t nbytes)
 {
 	void *buf;
 
-	visual_log_return_val_if_fail (nbytes > 0, NULL);
+	visual_return_val_if_fail (nbytes > 0, NULL);
 
 	buf = malloc (nbytes);
 
@@ -153,19 +116,11 @@ void *visual_mem_malloc (visual_size_t nbytes)
 	return buf;
 }
 
-/**
- * Allocates @a nbytes of memory initialized to 0.
- *
- * @param nbytes N bytes of mem requested to be allocated.
- * 
- * @return On success, a pointer to a new allocated memory initialized
- * to 0 of size @a nbytes, on failure, program is aborted. 
- */
 void *visual_mem_malloc0 (visual_size_t nbytes)
 {
 	void *buf;
 
-	visual_log_return_val_if_fail (nbytes > 0, NULL);
+	visual_return_val_if_fail (nbytes > 0, NULL);
 
 	buf = visual_mem_malloc (nbytes);
 
@@ -174,30 +129,15 @@ void *visual_mem_malloc0 (visual_size_t nbytes)
 	return buf;
 }
 
-/**
- * Reallocates memory, can be used to grow a buffer.
- *
- * @param ptr Pointer that is to be reallocated.
- * @param nbytes The size of the new buffer.
- *
- * @return On success, a pointer to the new reallocated memory, on failure NULL.
- */
 void *visual_mem_realloc (void *ptr, visual_size_t nbytes)
 {
 	return realloc (ptr, nbytes);
 }
 
-/**
- * Frees allocated memory.
- *
- * @param ptr Frees memory to which ptr points to.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_MEM_NULL on failure.
- */
 int visual_mem_free (void *ptr)
 {
 	/* FIXME remove eventually, we keep it for now for explicit debug */
-	visual_log_return_val_if_fail (ptr != NULL, -VISUAL_ERROR_MEM_NULL);
+	visual_return_val_if_fail (ptr != NULL, -VISUAL_ERROR_MEM_NULL);
 
 	free (ptr);
 
@@ -205,7 +145,6 @@ int visual_mem_free (void *ptr)
 }
 
 
-/* Optimize mem functions */
 static void *mem_copy_c (void *dest, const void *src, visual_size_t n)
 {
 	uint32_t *d = dest;
@@ -227,6 +166,69 @@ static void *mem_copy_c (void *dest, const void *src, visual_size_t n)
 	return dest;
 }
 
+/* Memset functions, 1 byte memset */
+static void *mem_set8_c (void *dest, int c, visual_size_t n)
+{
+	uint32_t *d = dest;
+	uint8_t *dc = dest;
+	uint32_t setflag32 =
+		(c & 0xff) |
+		((c << 8) & 0xff00) |
+		((c << 16) & 0xff0000) |
+		((c << 24) & 0xff000000);
+	uint8_t setflag8 = c & 0xff;
+
+	while (n >= 4) {
+		*d++ = setflag32;
+		n -= 4;
+	}
+
+	dc = (uint8_t *) d;
+
+	while (n--)
+		*dc++ = setflag8;
+
+	return dest;
+}
+
+/* Memset functions, 2 byte memset */
+static void *mem_set16_c (void *dest, int c, visual_size_t n)
+{
+	uint32_t *d = dest;
+	uint16_t *dc = dest;
+	uint32_t setflag32 =
+		(c & 0xffff) |
+		((c << 16) & 0xffff0000);
+	uint16_t setflag16 = c & 0xffff;
+
+	while (n >= 2) {
+		*d++ = setflag32;
+		n -= 2;
+	}
+
+	dc = (uint16_t *) d;
+
+	while (n--)
+		*dc++ = setflag16;
+
+	return dest;
+}
+
+/* Memset functions, 4 byte memset */
+static void *mem_set32_c (void *dest, int c, visual_size_t n)
+{
+	uint32_t *d = dest;
+	uint32_t setflag32 = c;
+
+	while (n--)
+		*d++ = setflag32;
+
+	return dest;
+}
+
+
+#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
+
 static void *mem_copy_mmx (void *dest, const void *src, visual_size_t n)
 {
 	uint32_t *d = dest;
@@ -234,7 +236,6 @@ static void *mem_copy_mmx (void *dest, const void *src, visual_size_t n)
 	uint8_t *dc = dest;
 	const uint8_t *sc = src;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	while (n >= 64) {
 		__asm __volatile
 			("\n\t movq (%0), %%mm0"
@@ -263,7 +264,6 @@ static void *mem_copy_mmx (void *dest, const void *src, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
 	while (n >= 4) {
 		*d++ = *s++;
@@ -286,7 +286,6 @@ static void *mem_copy_mmx2 (void *dest, const void *src, visual_size_t n)
 	uint8_t *dc = dest;
 	const uint8_t *sc = src;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	while (n >= 64) {
 		__asm __volatile
 			("\n\t prefetchnta 256(%0)"
@@ -317,7 +316,6 @@ static void *mem_copy_mmx2 (void *dest, const void *src, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
 	while (n >= 4) {
 		*d++ = *s++;
@@ -340,7 +338,6 @@ static void *mem_copy_3dnow (void *dest, const void *src, visual_size_t n)
 	uint8_t *dc = dest;
 	const uint8_t *sc = src;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	while (n >= 64) {
 		__asm __volatile
 			("\n\t prefetch 256(%0)"
@@ -371,7 +368,6 @@ static void *mem_copy_3dnow (void *dest, const void *src, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
 	while (n >= 4) {
 		*d++ = *s++;
@@ -387,118 +383,6 @@ static void *mem_copy_3dnow (void *dest, const void *src, visual_size_t n)
 	return dest;
 }
 
-static void *mem_copy_altivec (void *dest, const void *src, visual_size_t n)
-{
-
-    return NULL;
-}
-
-//! Byte swap unsigned short
-__inline uint16_t swap_uint16( uint16_t val ) 
-{
-    return (val << 8) | (val >> 8 );
-}
-
-//! Byte swap short
-__inline int16_t swap_int16( int16_t val ) 
-{
-    return (val << 8) | ((val >> 8) & 0xFF);
-}
-
-//! Byte swap unsigned int
-__inline uint32_t swap_uint32( uint32_t val )
-{
-    val = ((val << 8) & 0xFF00FF00 ) | ((val >> 8) & 0xFF00FF ); 
-    return (val << 16) | (val >> 16);
-}
-
-//! Byte swap int
-__inline int32_t swap_int32( int32_t val )
-{
-    val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF ); 
-    return (val << 16) | ((val >> 16) & 0xFFFF);
-}
-
-static void *mem_swap16_c (void *dest, const void *src, visual_size_t n, int sign)
-{
-    int i;
-    int count = n / sizeof(uint16_t);
-    
-
-    if(sign)
-    {
-        int16_t *d = dest;
-        int16_t *s = src;
-        for(i = 0; i < count; i++)
-        {
-            d[i] = swap_int16(s[i]);
-        }
-    }
-    else
-    {
-        uint16_t *d = dest;
-        uint16_t *s = src;
-        for(i = 0; i < count; i++)
-        {
-            d[i] = swap_uint16(s[i]);
-        }
-    }
-
-    return dest;
-}
-
-static void *mem_swap32_c (void *dest, const void *src, visual_size_t n, int sign)
-{
-    int i;
-    int count = n / sizeof(uint32_t);
-
-    if(sign)
-    {
-        int32_t *d = dest;
-        int32_t *s = src;
-        for(i = 0; i < count; i++)
-        {
-            d[i] = swap_int32(s[i]);
-        }
-    }
-    else
-    {
-        uint32_t *d = dest;
-        uint32_t *s = src;
-        for(i = 0; i < count; i++)
-        {
-            d[i] = swap_uint32(s[i]);
-        }
-    }
-
-    return dest;
-}
-
-/* Memset functions, 1 byte memset */
-static void *mem_set8_c (void *dest, int c, visual_size_t n)
-{
-	uint32_t *d = dest;
-	uint8_t *dc = dest;
-	uint32_t setflag32 =
-		(c & 0xff) |
-		((c << 8) & 0xff00) |
-		((c << 16) & 0xff0000) |
-		((c << 24) & 0xff000000);
-	uint8_t setflag8 = c & 0xff;
-
-	while (n >= 4) {
-		*d++ = setflag32;
-		n -= 4;
-	}
-
-	dc = (uint8_t *) d;
-
-	while (n--)
-		*dc++ = setflag8;
-
-	return dest;
-}
-
 static void *mem_set8_mmx (void *dest, int c, visual_size_t n)
 {
 	uint32_t *d = dest;
@@ -510,7 +394,6 @@ static void *mem_set8_mmx (void *dest, int c, visual_size_t n)
 		((c << 24) & 0xff000000);
 	uint8_t setflag8 = c & 0xff;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	__asm __volatile
 		("\n\t movd (%0), %%mm0"
 		 "\n\t movd (%0), %%mm1"
@@ -544,7 +427,6 @@ static void *mem_set8_mmx (void *dest, int c, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
 	while (n >= 4) {
 		*d++ = setflag32;
@@ -570,7 +452,6 @@ static void *mem_set8_mmx2 (void *dest, int c, visual_size_t n)
 		((c << 24) & 0xff000000);
 	uint8_t setflag8 = c & 0xff;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	__asm __volatile
 		("\n\t movd (%0), %%mm0"
 		 "\n\t movd (%0), %%mm1"
@@ -604,7 +485,6 @@ static void *mem_set8_mmx2 (void *dest, int c, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
 	while (n >= 4) {
 		*d++ = setflag32;
@@ -619,35 +499,6 @@ static void *mem_set8_mmx2 (void *dest, int c, visual_size_t n)
 	return dest;
 }
 
-static void *mem_set8_altivec (void *dest, int c, visual_size_t n)
-{
-
-    return NULL;
-}
-
-/* Memset functions, 2 byte memset */
-static void *mem_set16_c (void *dest, int c, visual_size_t n)
-{
-	uint32_t *d = dest;
-	uint16_t *dc = dest;
-	uint32_t setflag32 =
-		(c & 0xffff) |
-		((c << 16) & 0xffff0000);
-	uint16_t setflag16 = c & 0xffff;
-
-	while (n >= 2) {
-		*d++ = setflag32;
-		n -= 2;
-	}
-
-	dc = (uint16_t *) d;
-
-	while (n--)
-		*dc++ = setflag16;
-
-	return dest;
-}
-
 static void *mem_set16_mmx (void *dest, int c, visual_size_t n)
 {
 	uint32_t *d = dest;
@@ -657,7 +508,6 @@ static void *mem_set16_mmx (void *dest, int c, visual_size_t n)
 		((c << 16) & 0xffff0000);
 	uint16_t setflag16 = c & 0xffff;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	__asm __volatile
 		("\n\t movd (%0), %%mm0"
 		 "\n\t movd (%0), %%mm1"
@@ -691,7 +541,6 @@ static void *mem_set16_mmx (void *dest, int c, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
 	while (n >= 2) {
 		*d++ = setflag32;
@@ -715,7 +564,6 @@ static void *mem_set16_mmx2 (void *dest, int c, visual_size_t n)
 		((c << 16) & 0xffff0000);
 	uint16_t setflag16 = c & 0xffff;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	__asm __volatile
 		("\n\t movd (%0), %%mm0"
 		 "\n\t movd (%0), %%mm1"
@@ -749,7 +597,6 @@ static void *mem_set16_mmx2 (void *dest, int c, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
 	while (n >= 2) {
 		*d++ = setflag32;
@@ -764,30 +611,11 @@ static void *mem_set16_mmx2 (void *dest, int c, visual_size_t n)
 	return dest;
 }
 
-static void *mem_set16_altivec (void *dest, int c, visual_size_t n)
-{
-
-    return NULL;
-}
-
-/* Memset functions, 4 byte memset */
-static void *mem_set32_c (void *dest, int c, visual_size_t n)
-{
-	uint32_t *d = dest;
-	uint32_t setflag32 = c;
-
-	while (n--)
-		*d++ = setflag32;
-
-	return dest;
-}
-
 static void *mem_set32_mmx (void *dest, int c, visual_size_t n)
 {
 	uint32_t *d = dest;
 	uint32_t setflag32 = c;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	__asm __volatile
 		("\n\t movd (%0), %%mm0"
 		 "\n\t movd (%0), %%mm1"
@@ -821,9 +649,8 @@ static void *mem_set32_mmx (void *dest, int c, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
-	while (n--) 
+	while (n--)
 		*d++ = setflag32;
 
 	return dest;
@@ -834,7 +661,6 @@ static void *mem_set32_mmx2 (void *dest, int c, visual_size_t n)
 	uint32_t *d = dest;
 	uint32_t setflag32 = c;
 
-#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 	__asm __volatile
 		("\n\t movd (%0), %%mm0"
 		 "\n\t movd (%0), %%mm1"
@@ -868,7 +694,6 @@ static void *mem_set32_mmx2 (void *dest, int c, visual_size_t n)
 
 	__asm __volatile
 		("\n\t emms");
-#endif /* VISUAL_ARCH_X86 */
 
 	while (n--)
 		*d++ = setflag32;
@@ -876,13 +701,4 @@ static void *mem_set32_mmx2 (void *dest, int c, visual_size_t n)
 	return dest;
 }
 
-static void *mem_set32_altivec (void *dest, int c, visual_size_t n)
-{
-
-    return NULL;
-}
-
-/**
- * @}
- */
-
+#endif /* VISUAL_ARCH_X86 || VISUAL_ARCH_X86_64 */

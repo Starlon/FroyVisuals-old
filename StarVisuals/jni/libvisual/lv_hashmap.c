@@ -64,9 +64,7 @@ static int create_table (VisHashmap *hashmap);
 
 static int hashmap_destroy (VisCollection *collection)
 {
-	//VisCollectionDestroyerFunc destroyer;
 	VisHashmap *hashmap = VISUAL_HASHMAP (collection);
-	//VisHashmapEntry *mentry;
 	int i;
 
 	for (i = 0; i < hashmap->size; i++)
@@ -126,7 +124,6 @@ static VisCollectionIter *hashmap_iter (VisCollection *collection)
 {
 	VisCollectionIter *iter;
 	HashmapIterContext *context;
-	//VisHashmap *hashmap = VISUAL_HASHMAP (collection);
 
 	context = visual_mem_new0 (HashmapIterContext, 1);
 
@@ -201,7 +198,6 @@ static int hashmap_iter_has_more (VisCollectionIter *iter, VisCollection *collec
 
 static void hashmap_iter_next (VisCollectionIter *iter, VisCollection *collection, VisObject *itercontext)
 {
-	//VisHashmap *hashmap = VISUAL_HASHMAP (collection);
 	HashmapIterContext *context = HASHMAP_ITERCONTEXT (itercontext);
 
 	if (context->retrieved == FALSE) {
@@ -287,17 +283,6 @@ static int create_table (VisHashmap *hashmap)
 	return VISUAL_OK;
 }
 
-
-/**
- * @defgroup VisHashmap VisHashmap
- * @{
- */
-
-/**
- * Creates a new VisHashmap.
- * 
- * @return A newly allocated VisHashmap.
- */
 VisHashmap *visual_hashmap_new (VisCollectionDestroyerFunc destroyer)
 {
 	VisHashmap *hashmap;
@@ -315,7 +300,7 @@ VisHashmap *visual_hashmap_new (VisCollectionDestroyerFunc destroyer)
 
 int visual_hashmap_init (VisHashmap *hashmap, VisCollectionDestroyerFunc destroyer)
 {
-	visual_log_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
+	visual_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
 
 	/* Do the VisObject initialization */
 	visual_object_clear (VISUAL_OBJECT (hashmap));
@@ -343,7 +328,7 @@ int visual_hashmap_put (VisHashmap *hashmap, void *key, VisHashmapKeyType keytyp
 	VisList *chain;
 	int hash;
 
-	visual_log_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
+	visual_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
 
 	/* Create initial hashtable */
 	if (hashmap->table == NULL)
@@ -409,7 +394,7 @@ int visual_hashmap_remove (VisHashmap *hashmap, void *key, VisHashmapKeyType key
 	VisList *chain;
 	int hash;
 
-	visual_log_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
+	visual_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
 
 	if (hashmap->table == NULL)
 		return -VISUAL_ERROR_HASHMAP_NOT_IN_MAP;
@@ -464,7 +449,7 @@ void *visual_hashmap_get (VisHashmap *hashmap, void *key, VisHashmapKeyType keyt
 	VisList *chain;
 	int hash;
 
-	visual_log_return_val_if_fail (hashmap != NULL, NULL);
+	visual_return_val_if_fail (hashmap != NULL, NULL);
 
 	/* Create initial hashtable */
 	if (hashmap->table == NULL)
@@ -503,9 +488,7 @@ void *visual_hashmap_get_string (VisHashmap *hashmap, char *key)
 
 int visual_hashmap_set_table_size (VisHashmap *hashmap, int tablesize)
 {
-	//int oldsize;
-
-	visual_log_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
+	visual_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
 
 	/* Table was not empty, rehash */
 	if (hashmap->table != NULL) {
@@ -548,12 +531,9 @@ int visual_hashmap_set_table_size (VisHashmap *hashmap, int tablesize)
 
 int visual_hashmap_get_table_size (VisHashmap *hashmap)
 {
-	visual_log_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
+	visual_return_val_if_fail (hashmap != NULL, -VISUAL_ERROR_HASHMAP_NULL);
 
 	return hashmap->tablesize;
 }
 
-/**
- * @}
- */
 

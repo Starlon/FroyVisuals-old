@@ -33,13 +33,15 @@
 #include "renderer.h"
 #include "display.h"
 
-int act_infinite_init (VisPluginData *plugin);
-int act_infinite_cleanup (VisPluginData *plugin);
-int act_infinite_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
-int act_infinite_requisition (VisPluginData *plugin, int *width, int *height);
-int act_infinite_events (VisPluginData *plugin, VisEventQueue *events);
-VisPalette *act_infinite_palette (VisPluginData *plugin);
-int act_infinite_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
+const VisPluginInfo *get_plugin_info (int *count);
+
+static int act_infinite_init (VisPluginData *plugin);
+static int act_infinite_cleanup (VisPluginData *plugin);
+static int act_infinite_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
+static int act_infinite_requisition (VisPluginData *plugin, int *width, int *height);
+static int act_infinite_events (VisPluginData *plugin, VisEventQueue *events);
+static VisPalette *act_infinite_palette (VisPluginData *plugin);
+static int act_infinite_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
@@ -57,10 +59,10 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 		.plugname = "infinite",
 		.name = "infinite plugin",
-		.author = "Original by: Julien Carme <julien.carme@acm.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>",
+		.author = N_("Original by: Julien Carme <julien.carme@acm.org>, Port by: Dennis Smit <ds@nerds-incorporated.org>"),
 		.version = "0.1",
-		.about = "Infinite visual plugin",
-		.help = "This is the libvisual plugin for the infinite visual",
+		.about = N_("Infinite visual plugin"),
+		.help = N_("This is the libvisual plugin for the infinite visual"),
 		.license = VISUAL_PLUGIN_LICENSE_GPL,
 
 		.init = act_infinite_init,
@@ -75,7 +77,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 	return info;
 }
 
-int act_infinite_init (VisPluginData *plugin)
+static int act_infinite_init (VisPluginData *plugin)
 {
 	InfinitePrivate *priv;
 
@@ -83,7 +85,7 @@ int act_infinite_init (VisPluginData *plugin)
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 #endif
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
 
 	priv = visual_mem_new0 (InfinitePrivate, 1);
 	visual_object_set_private (VISUAL_OBJECT (plugin), priv);
@@ -112,7 +114,7 @@ int act_infinite_cleanup (VisPluginData *plugin)
 {
 	InfinitePrivate *priv;
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
@@ -124,11 +126,11 @@ int act_infinite_cleanup (VisPluginData *plugin)
 	return 0;
 }
 
-int act_infinite_requisition (VisPluginData *plugin, int *width, int *height)
+static int act_infinite_requisition (VisPluginData *plugin, int *width, int *height)
 {
 	int reqw, reqh;
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
 
 	reqw = *width;
 	reqh = *height;
@@ -148,16 +150,15 @@ int act_infinite_requisition (VisPluginData *plugin, int *width, int *height)
 	*width = reqw;
 	*height = reqh;
 
-visual_log(VISUAL_LOG_CRITICAL, "req w %d h %d", reqw, reqh);
 	return 0;
 }
 
-int act_infinite_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
+static int act_infinite_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
 {
 	InfinitePrivate *priv;
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
-	visual_log_return_val_if_fail (video != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (video != NULL, -1);
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	priv->plugwidth = width;
@@ -175,7 +176,7 @@ int act_infinite_dimension (VisPluginData *plugin, VisVideo *video, int width, i
 	return 0;
 }
 
-int act_infinite_events (VisPluginData *plugin, VisEventQueue *events)
+static int act_infinite_events (VisPluginData *plugin, VisEventQueue *events)
 {
 	VisEvent ev;
 
@@ -193,25 +194,25 @@ int act_infinite_events (VisPluginData *plugin, VisEventQueue *events)
 	return 0;
 }
 
-VisPalette *act_infinite_palette (VisPluginData *plugin)
+static VisPalette *act_infinite_palette (VisPluginData *plugin)
 {
 	InfinitePrivate *priv;
 
-	visual_log_return_val_if_fail (plugin != NULL, NULL);
+	visual_return_val_if_fail (plugin != NULL, NULL);
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
 	return &priv->pal;
 }
 
-int act_infinite_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
+static int act_infinite_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
 	VisBuffer buffer;
 	InfinitePrivate *priv;
 
-	visual_log_return_val_if_fail (plugin != NULL, -1);
-	visual_log_return_val_if_fail (video != NULL, -1);
-	visual_log_return_val_if_fail (audio != NULL, -1);
+	visual_return_val_if_fail (plugin != NULL, -1);
+	visual_return_val_if_fail (video != NULL, -1);
+	visual_return_val_if_fail (audio != NULL, -1);
 
 	priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 

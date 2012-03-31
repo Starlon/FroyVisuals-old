@@ -83,8 +83,8 @@ int inp_alsa_init (VisPluginData *plugin)
     unsigned int channels = 2;
     unsigned int rate = 44100;
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     visual_object_set_private (VISUAL_OBJECT (plugin), priv);
 
@@ -132,11 +132,11 @@ int inp_alsa_init (VisPluginData *plugin)
 
 int inp_alsa_cleanup (VisPluginData *plugin)
 {
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
 
     pcm_close(priv->pcmstream);
 
@@ -147,11 +147,11 @@ int inp_alsa_cleanup (VisPluginData *plugin)
 
 static int inp_alsa_events (VisPluginData *plugin, VisEventQueue *events)
 {
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
 
     VisEvent ev;
     VisParamEntry *param;
@@ -242,20 +242,20 @@ static int inp_alsa_events (VisPluginData *plugin, VisEventQueue *events)
 
 int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
 {
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
     alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
 
     VisParamContainer *paramcontainer = visual_plugin_get_params(plugin);
     VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
     int isBeat, i;
 
-    visual_log_return_val_if_fail(audio != NULL, -1);
-    visual_log_return_val_if_fail(plugin != NULL, -1);
+    visual_return_val_if_fail(audio != NULL, -1);
+    visual_return_val_if_fail(plugin != NULL, -1);
 
-    visual_log_return_val_if_fail(priv != NULL, -1);
+    visual_return_val_if_fail(priv != NULL, -1);
 
     if(pcm_is_ready(priv->pcmstream))
     {

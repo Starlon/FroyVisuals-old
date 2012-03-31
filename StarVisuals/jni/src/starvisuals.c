@@ -55,36 +55,26 @@ struct {
     int         pluginIsGL;
 } v;
 
-static void my_info_handler (const char *msg, const char *funcname, void *privdata)
+static void my_log_handler (VisLogSeverity severity, const char *msg, const VisLogSource *source, void *priv)
 {
-    LOGI("libvisual INFO: %s: %s\n", __lv_progname, msg);
-}
-        
-static void my_warning_handler (const char *msg, const char *funcname, void *privdata)
-{
-    if (funcname)
-        LOGW("libvisual WARNING: %s: %s(): %s\n",
-        __lv_progname, funcname, msg);
-    else
-    LOGW("libvisual WARNING: %s: %s\n", __lv_progname, msg);
-}
-
-static void my_critical_handler (const char *msg, const char *funcname, void *privdata)
-{
-    if (funcname)
-        LOGW("libvisual CRITICAL: %s: %s(): %s\n",
-        __lv_progname, funcname, msg);
-    else
-    LOGW("libvisual CRITICAL: %s: %s\n", __lv_progname, msg);
-}
-
-static void my_error_handler (const char *msg, const char *funcname, void *privdata)
-{
-    if (funcname)
-        LOGW("libvisual ERROR: %s: %s(): %s\n",
-        __lv_progname, funcname, msg);
-    else
-    LOGW("libvisual ERROR: %s: %s\n", __lv_progname, msg);
+    switch(severity)
+    {
+        case VISUAL_LOG_DEBUG:
+            LOGI("lvDEBUG: (%s) line # %d (%s) : %s\n", source->file, source->line, source->func, msg);
+            break;
+        case VISUAL_LOG_INFO:
+            LOGI("lvINFO: %s: %s\n", __lv_progname, msg);
+            break;
+        case VISUAL_LOG_WARNING:
+            LOGW("lvWARNING: %s: %s\n", __lv_progname, msg);
+            break;
+        case VISUAL_LOG_ERROR:
+            LOGE("lvERROR: (%s) line # %d (%s) : %s\n", source->file, source->line, source->func, msg);
+            break;
+        case VISUAL_LOG_CRITICAL:
+            LOGE("lvCRITICAL: (%s) line # %d (%s) : %s\n", source->file, source->line, source->func, msg);
+            break;
+    }
 }
 
 
@@ -117,9 +107,9 @@ static void v_cycleInput(int prev)
 
 static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 {
-    visual_log_return_val_if_fail(input != NULL, VISUAL_ERROR_GENERAL);
-    visual_log_return_val_if_fail(audio != NULL, VISUAL_ERROR_GENERAL);
-    visual_log_return_val_if_fail(pcm_ref.pcm_data != NULL, VISUAL_ERROR_GENERAL);
+    visual_return_val_if_fail(input != NULL, VISUAL_ERROR_GENERAL);
+    visual_return_val_if_fail(audio != NULL, VISUAL_ERROR_GENERAL);
+    visual_return_val_if_fail(pcm_ref.pcm_data != NULL, VISUAL_ERROR_GENERAL);
 
     VisParamContainer *paramcontainer = visual_plugin_get_params(input->plugin);
 
@@ -161,7 +151,7 @@ VisPluginRef *get_input(int index)
 
     int count = visual_list_count(list);
 
-    visual_log_return_val_if_fail(index < count, NULL);
+    visual_return_val_if_fail(index < count, NULL);
 
 
     return visual_list_get(list, index);
@@ -263,7 +253,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetName
 {
     VisPluginRef *ref = get_input(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->plugname));
 }
@@ -273,7 +263,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetLong
 {
     VisPluginRef *ref = get_input(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->name));
 }
@@ -283,7 +273,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetAuth
 {
     VisPluginRef *ref = get_input(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->author));
 }
@@ -293,7 +283,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetVers
 {
     VisPluginRef *ref = get_input(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->version));
 }
@@ -303,7 +293,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetAbou
 {
     VisPluginRef *ref = get_input(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->about));
 }
@@ -313,7 +303,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetHelp
 {
     VisPluginRef *ref = get_input(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->help));
 }
@@ -325,9 +315,9 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetLice
 
     char text[256];
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
-    char *license = ref->info->license;
+    const char *license = ref->info->license;
 
     visual_mem_set(text, 0, sizeof(text));
 
@@ -348,15 +338,15 @@ VisParamEntry *get_input_param_entry(int index)
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
-    visual_log_return_val_if_fail(cont != NULL, NULL);
+    visual_return_val_if_fail(cont != NULL, NULL);
 
     int count = visual_list_count(&cont->entries);
 
-    visual_log_return_val_if_fail(index < count, NULL);
+    visual_return_val_if_fail(index < count, NULL);
 
     VisParamEntry *entry = (VisParamEntry *)visual_list_get(&cont->entries, index);
 
-    visual_log_return_val_if_fail(entry != NULL, NULL);
+    visual_return_val_if_fail(entry != NULL, NULL);
 
     return entry;
 }
@@ -365,7 +355,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetCo
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
-    visual_log_return_val_if_fail(cont != NULL, 0);
+    visual_return_val_if_fail(cont != NULL, 0);
 
     int count = visual_list_count(&cont->entries);
 
@@ -383,7 +373,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGe
 
     VisParamEntry *entry = visual_param_container_get(cont, chars);
 
-    visual_log_return_val_if_fail(entry != NULL, NULL);
+    visual_return_val_if_fail(entry != NULL, NULL);
 
     switch(entry->type)
     {
@@ -420,7 +410,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGe
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(chars != NULL, NULL);
+    visual_return_val_if_fail(chars != NULL, NULL);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -437,8 +427,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     const char *new_string = ((*env)->GetStringUTFChars(env, newstring, &iscopy));
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
-    visual_log_return_val_if_fail(new_string != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(new_string != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -453,7 +443,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGetIn
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(string != NULL, 0);
+    visual_return_val_if_fail(string != NULL, 0);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -470,7 +460,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     int new_int = newint;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -485,7 +475,7 @@ JNIEXPORT jfloat JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGet
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(string != NULL, 0.0f);
+    visual_return_val_if_fail(string != NULL, 0.0f);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -502,7 +492,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     float new_float = newfloat;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -518,7 +508,7 @@ JNIEXPORT jdouble JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamGe
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
 
-    visual_log_return_val_if_fail(string != NULL, 0.0);
+    visual_return_val_if_fail(string != NULL, 0.0);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -535,7 +525,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     double new_double = newdouble;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_input_get_plugin(v.bin->input));
 
@@ -557,7 +547,7 @@ VisPluginRef *get_morph(int index)
 
     int count = visual_list_count(list);
 
-    visual_log_return_val_if_fail(index >= 0 && index < count, NULL);
+    visual_return_val_if_fail(index >= 0 && index < count, NULL);
 
     return visual_list_get(list, index);
 }
@@ -638,7 +628,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetName
 {
     VisPluginRef *ref = get_morph(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->plugname));
 }
@@ -648,7 +638,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetLong
 {
     VisPluginRef *ref = get_morph(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->name));
 }
@@ -658,7 +648,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetAuth
 {
     VisPluginRef *ref = get_morph(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->author));
 }
@@ -668,7 +658,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetVers
 {
     VisPluginRef *ref = get_morph(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->version));
 
@@ -679,7 +669,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetAbou
 {
     VisPluginRef *ref = get_morph(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->about));
 }
@@ -689,7 +679,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetHelp
 {
     VisPluginRef *ref = get_morph(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->help));
 }
@@ -701,9 +691,9 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetLice
 
     char text[256];
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
-    char *license = ref->info->license;
+    const char *license = ref->info->license;
 
     visual_mem_set(text, 0, sizeof(text));
 
@@ -724,15 +714,15 @@ VisParamEntry *get_morph_param_entry(int index)
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
-    visual_log_return_val_if_fail(cont != NULL, NULL);
+    visual_return_val_if_fail(cont != NULL, NULL);
 
     int count = visual_list_count(&cont->entries);
 
-    visual_log_return_val_if_fail(index < count, NULL);
+    visual_return_val_if_fail(index < count, NULL);
 
     VisParamEntry *entry = (VisParamEntry *)visual_list_get(&cont->entries, index);
 
-    visual_log_return_val_if_fail(entry != NULL, NULL);
+    visual_return_val_if_fail(entry != NULL, NULL);
 
     return entry;
 }
@@ -741,7 +731,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetCo
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
-    visual_log_return_val_if_fail(cont != NULL, 0);
+    visual_return_val_if_fail(cont != NULL, 0);
 
     int count = visual_list_count(&cont->entries);
 
@@ -768,7 +758,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGe
 
     VisParamEntry *entry = visual_param_container_get(cont, chars);
 
-    visual_log_return_val_if_fail(entry != NULL, NULL);
+    visual_return_val_if_fail(entry != NULL, NULL);
 
     switch(entry->type)
     {
@@ -797,7 +787,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGe
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(chars != NULL, NULL);
+    visual_return_val_if_fail(chars != NULL, NULL);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -814,8 +804,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     const char *new_string = ((*env)->GetStringUTFChars(env, newstring, &iscopy));
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
-    visual_log_return_val_if_fail(new_string != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(new_string != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -830,7 +820,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGetIn
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(string != NULL, 0);
+    visual_return_val_if_fail(string != NULL, 0);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -847,7 +837,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     int new_int = newint;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -862,7 +852,7 @@ JNIEXPORT jfloat JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGet
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(string != NULL, 0.0f);
+    visual_return_val_if_fail(string != NULL, 0.0f);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -879,7 +869,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     float new_float = newfloat;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -894,7 +884,7 @@ JNIEXPORT jdouble JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamGe
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(string != NULL, 0.0);
+    visual_return_val_if_fail(string != NULL, 0.0);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -911,7 +901,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     double new_double = newdouble;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_morph_get_plugin(v.bin->morph));
 
@@ -932,7 +922,7 @@ VisPluginRef *get_actor(int index)
 
     int count = visual_list_count(list);
 
-    visual_log_return_val_if_fail(index >= 0 && index < count, NULL);
+    visual_return_val_if_fail(index >= 0 && index < count, NULL);
 
     ref = visual_list_get(list, index);
 
@@ -1022,7 +1012,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetName
 {
     VisPluginRef *ref = get_actor(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->plugname));
 }
@@ -1033,7 +1023,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetLong
     VisPluginRef *ref = get_actor(index);
     const char *name;
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
     name = ref->info->name;
 
     return ((*env)->NewStringUTF(env, (char *)name));
@@ -1044,7 +1034,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetAuth
 {
     VisPluginRef *ref = get_actor(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->author));
 }
@@ -1054,7 +1044,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetVers
 {
     VisPluginRef *ref = get_actor(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->version));
 }
@@ -1064,7 +1054,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetAbou
 {
     VisPluginRef *ref = get_actor(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->about));
 }
@@ -1074,7 +1064,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetHelp
 {
     VisPluginRef *ref = get_actor(index);
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
     return ((*env)->NewStringUTF(env, ref->info->help));
 }
@@ -1085,9 +1075,9 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetLice
     VisPluginRef *ref = get_actor(index);
     char text[256];
 
-    visual_log_return_val_if_fail(ref != NULL, NULL);
+    visual_return_val_if_fail(ref != NULL, NULL);
 
-    char *license = ref->info->license;
+    const char *license = ref->info->license;
 
     visual_mem_set(text, 0, sizeof(text));
 
@@ -1116,15 +1106,15 @@ VisParamEntry *get_actor_param_entry(int index)
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
-    visual_log_return_val_if_fail(cont != NULL, NULL);
+    visual_return_val_if_fail(cont != NULL, NULL);
 
     int count = visual_list_count(&cont->entries);
 
-    visual_log_return_val_if_fail(index < count, NULL);
+    visual_return_val_if_fail(index < count, NULL);
 
     VisParamEntry *entry = (VisParamEntry *)visual_list_get(&cont->entries, index);
 
-    visual_log_return_val_if_fail(entry != NULL, NULL);
+    visual_return_val_if_fail(entry != NULL, NULL);
 
     return entry;
 }
@@ -1133,7 +1123,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetCo
 {
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
-    visual_log_return_val_if_fail(cont != NULL, 0);
+    visual_return_val_if_fail(cont != NULL, 0);
 
     int count = visual_list_count(&cont->entries);
 
@@ -1151,7 +1141,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGe
 
     VisParamEntry *entry = visual_param_container_get(cont, chars);
 
-    visual_log_return_val_if_fail(entry != NULL, NULL);
+    visual_return_val_if_fail(entry != NULL, NULL);
 
     switch(entry->type)
     {
@@ -1188,7 +1178,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGe
 {
     jboolean iscopy;
     const char *chars = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(chars != NULL, NULL);
+    visual_return_val_if_fail(chars != NULL, NULL);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1205,8 +1195,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     const char *new_string = ((*env)->GetStringUTFChars(env, newstring, &iscopy));
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
-    visual_log_return_val_if_fail(new_string != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(new_string != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1222,7 +1212,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGetIn
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(string != NULL, 0);
+    visual_return_val_if_fail(string != NULL, 0);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1239,7 +1229,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     int new_int = newint;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1254,7 +1244,7 @@ JNIEXPORT jfloat JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGet
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(string != NULL, 0.0f);
+    visual_return_val_if_fail(string != NULL, 0.0f);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1271,7 +1261,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     float new_float = newfloat;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1286,7 +1276,7 @@ JNIEXPORT jdouble JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamGe
 {
     jboolean iscopy;
     const char *string = ((*env)->GetStringUTFChars(env, name, &iscopy));
-    visual_log_return_val_if_fail(string != NULL, 0.0);
+    visual_return_val_if_fail(string != NULL, 0.0);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1303,7 +1293,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamS
     const char *param_name = ((*env)->GetStringUTFChars(env, name, &iscopy));
     double new_double = newdouble;
 
-    visual_log_return_val_if_fail(param_name != NULL, FALSE);
+    visual_return_val_if_fail(param_name != NULL, FALSE);
 
     VisParamContainer *cont = visual_plugin_get_params(visual_actor_get_plugin(v.bin->actor));
 
@@ -1436,16 +1426,16 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_updatePlugi
 
 
     // Make sure the input and actor names are valid.
-    visual_log_return_val_if_fail(visual_actor_valid_by_name((char *)v.actor_name), FALSE);
-    visual_log_return_val_if_fail(visual_input_valid_by_name((char *)v.input_name), FALSE);
+    visual_return_val_if_fail(visual_actor_valid_by_name((char *)v.actor_name), FALSE);
+    visual_return_val_if_fail(visual_input_valid_by_name((char *)v.input_name), FALSE);
 
     // If this we're set to morph between actors, then set the new morph.
     // Fail if the last morph is not done!
     // Make sure the morph name is valid.
     if(v.bin->morphstyle == VISUAL_SWITCH_STYLE_MORPH && bin_morph)
     {
-        visual_log_return_val_if_fail(visual_morph_is_done(bin_morph), FALSE);
-        visual_log_return_val_if_fail(visual_morph_valid_by_name((char *)v.morph_name), FALSE);
+        visual_return_val_if_fail(visual_morph_is_done(bin_morph), FALSE);
+        visual_return_val_if_fail(visual_morph_valid_by_name((char *)v.morph_name), FALSE);
 
         visual_bin_set_morph_by_name(v.bin, (char *)v.morph_name);
     }
@@ -1585,11 +1575,12 @@ void app_main(int w, int h)
     {
         //setenv("LVSHOWBEATS", "1", 1);
         visual_init_path_add("/data/data/com.starlon.starvisuals/lib");
-        visual_log_set_verboseness (VISUAL_LOG_VERBOSENESS_HIGH);
-        visual_log_set_info_handler (my_info_handler, NULL);
-        visual_log_set_warning_handler (my_warning_handler, NULL);
-        visual_log_set_critical_handler (my_critical_handler, NULL);
-        visual_log_set_error_handler (my_error_handler, NULL);
+        visual_log_set_verbosity (VISUAL_LOG_DEBUG);
+        visual_log_set_handler (VISUAL_LOG_DEBUG, my_log_handler, NULL);
+        visual_log_set_handler (VISUAL_LOG_INFO, my_log_handler, NULL);
+        visual_log_set_handler (VISUAL_LOG_WARNING, my_log_handler, NULL);
+        visual_log_set_handler (VISUAL_LOG_CRITICAL, my_log_handler, NULL);
+        visual_log_set_handler (VISUAL_LOG_ERROR, my_log_handler, NULL);
     
         visual_init (0, NULL);
         memset(&v, 0, sizeof(v));

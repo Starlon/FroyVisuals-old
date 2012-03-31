@@ -24,8 +24,10 @@ VisAlphaBlendFunc visual_alpha_blend_32 = alpha_blend_32_c;
 void visual_alpha_blend_initialize (void)
 {
 	if (visual_cpu_get_mmx () > 0) {
+#if defined(VISUAL_ARCH_X86) || defined(VISUAL_ARCH_X86_64)
 		visual_alpha_blend_8  = alpha_blend_8_mmx;
 		visual_alpha_blend_32 = alpha_blend_32_mmx;
+#endif
 	}
 }
 

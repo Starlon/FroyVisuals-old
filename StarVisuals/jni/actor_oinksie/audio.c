@@ -36,8 +36,6 @@ void _oink_audio_analyse (OinksiePrivate *priv)
 {
 	priv->audio.bass = (priv->audio.freqsmall[0] + priv->audio.freqsmall[1]) * 20;
 	priv->audio.tripple = (priv->audio.freqsmall[2] + priv->audio.freqsmall[3]) * 100;
-
-
 	priv->audio.highest = MAX (priv->audio.bass, priv->audio.tripple);
 
 	if (priv->audio.bass >= 0 && priv->audio.bass <= 2)

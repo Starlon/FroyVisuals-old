@@ -21,12 +21,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-
 #include "config.h"
+#include "lv_os.h"
+#include "lv_common.h"
+#include <sys/types.h>
+#include <unistd.h>
 
 #ifdef HAVE_SCHED_H
 # include <sched.h>
@@ -40,54 +39,47 @@
 
 #include "lv_os.h"
 
-/**
- * @defgroup VisOS VisOS
- * @{
- */
-
 /* FIXME: Lock all memory in realtime mode ? */
 
-/**
- * Puts the process in soft realtime mode. Be very careful with using this, it's very much possible to lock your
- * system up. Only works as super user.
- */
 int visual_os_scheduler_realtime_start ()
 {
 #ifdef HAVE_SCHED
-	struct sched_param attr;
 	int ret;
-	attr.sched_priority = 99;
 
 	/* FIXME: Do we want RR or FIFO here ? */
+#ifndef VISUAL_WITH_MINGW
+	struct sched_param attr;
+	attr.sched_priority = 99;
 	ret = sched_setscheduler (getpid (), SCHED_FIFO, &attr);
+#else
+	ret = sched_setscheduler (getpid (), SCHED_FIFO);
+#endif /* VISUAL_WITH_MINGW */
 
 	return ret >= 0 ? VISUAL_OK : -VISUAL_ERROR_OS_SCHED;
 #else
 	return -VISUAL_ERROR_OS_SCHED_NOT_SUPPORTED;
-#endif
+#endif /* HAVE_SCHED */
 }
 
-/**
- * Returns to normal execution mode. Only works as super user.
- */
 int visual_os_scheduler_realtime_stop ()
 {
 #ifdef HAVE_SCHED
-	struct sched_param attr;
 	int ret;
-	attr.sched_priority = 0;
 
+#ifndef VISUAL_WITH_MINGW
+	struct sched_param attr;
+	attr.sched_priority = 0;
 	ret = sched_setscheduler (getpid (), SCHED_OTHER, &attr);
+#else
+	ret = sched_setscheduler (getpid (), SCHED_OTHER);
+#endif /* VISUAL_WITH_MINGW */
 
 	return ret >= 0 ? VISUAL_OK : -VISUAL_ERROR_OS_SCHED;
 #else
 	return -VISUAL_ERROR_OS_SCHED_NOT_SUPPORTED;
-#endif
+#endif /* HAVE_SCHED */
 }
 
-/**
- * Yield the process. Don't rely on this.
- */
 int visual_os_scheduler_yield ()
 {
 #ifdef HAVE_SCHED
@@ -99,8 +91,4 @@ int visual_os_scheduler_yield ()
 #endif
 }
 
-
-/**
- * @}
- */
 

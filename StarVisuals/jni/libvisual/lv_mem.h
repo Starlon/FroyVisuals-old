@@ -24,9 +24,13 @@
 #ifndef _LV_MEM_H
 #define _LV_MEM_H
 
-#include "lvconfig.h"
+#include <libvisual/lvconfig.h>
+#include <libvisual/lv_defines.h>
 
-#include "lv_defines.h"
+/**
+ * @defgroup VisMem VisMem
+ * @{
+ */
 
 VISUAL_BEGIN_DECLS
 
@@ -40,16 +44,6 @@ VISUAL_BEGIN_DECLS
  * @return Pointer to the dest buffer.
  */
 typedef void *(*VisMemCopyFunc)(void *dest, const void *src, visual_size_t n);
-
-/**
- * The visual_mem_swap function needs this signature.
- *
- * @arg dest Pointer to the dest buffer;
- * @arg src Pointer to the source buffer.
- * @arg n The number of bytes to swap.
- * @arg sign True if this is a signed type.
-*/
-typedef void *(*VisMemSwapFunc)(void *dest, const void *src, visual_size_t n, int sign);
 
 /**
  * The visual_mem_set function needs this signature.
@@ -84,24 +78,69 @@ typedef void *(*VisMemSet16Func)(void *dest, int c, visual_size_t n);
  */
 typedef void *(*VisMemSet32Func)(void *dest, int c, visual_size_t n);
 
-/* prototypes */
+/**
+ * Initialize the memory functions. This is used to set the function
+ * pointers to the right optimized version.  It's legal to call
+ * visual_mem_initialize more than once in the same context if it's
+ * needed to reset the optimal function pointers. This function bases
+ * it's choices upon the VisCPU system.
+ *
+ * Be aware that visual_mem_initialize() should be called to set the
+ * most optimize mem_copy() and mem_set() functions is called. Be sure
+ * that visual_cpu_initialize() is called before this however if
+ * possible the best solution is to just call visual_init() which will
+ * call all the libvisual initialize functions.
+ *
+ * return VISUAL_OK on succes.
+ */
 int visual_mem_initialize (void);
+
+/**
+ * Allocates @a nbytes of uninitialized memory.
+ *
+ * @param nbytes N bytes of mem requested to be allocated.
+ *
+ * @return On success, a pointer to a new allocated memory block
+ * of size @a nbytes, on failure, program is aborted.
+ */
 void *visual_mem_malloc (visual_size_t nbytes) __malloc;
+
+/**
+ * Allocates @a nbytes of memory initialized to 0.
+ *
+ * @param nbytes N bytes of mem requested to be allocated.
+ *
+ * @return On success, a pointer to a new allocated memory initialized
+ * to 0 of size @a nbytes, on failure, program is aborted.
+ */
 void *visual_mem_malloc0 (visual_size_t nbytes) __malloc;
+
+/**
+ * Reallocates memory, can be used to grow a buffer.
+ *
+ * @param ptr Pointer that is to be reallocated.
+ * @param nbytes The size of the new buffer.
+ *
+ * @return On success, a pointer to the new reallocated memory, on failure NULL.
+ */
 void *visual_mem_realloc (void *ptr, visual_size_t nbytes) __malloc;
+
+/**
+ * Frees allocated memory.
+ *
+ * @param ptr Frees memory to which ptr points to.
+ *
+ * @return VISUAL_OK on success, -VISUAL_ERROR_MEM_NULL on failure.
+ */
 int visual_mem_free (void *ptr);
 
 /* Optimal performance functions set by visual_mem_initialize(). */
 extern VisMemCopyFunc visual_mem_copy;
-extern VisMemSwapFunc visual_mem_swap16;
-extern VisMemSwapFunc visual_mem_swap32;
 extern VisMemSet8Func visual_mem_set;
 extern VisMemSet16Func visual_mem_set16;
 extern VisMemSet32Func visual_mem_set32;
 
 /**
- * @ingroup VisMem
- * 
  * Convenient macro to request @a n_structs structures of type @a struct_type
  * initialized to 0.
  */
@@ -109,5 +148,9 @@ extern VisMemSet32Func visual_mem_set32;
     ((struct_type *) visual_mem_malloc0 (((visual_size_t) sizeof (struct_type)) * ((visual_size_t) (n_structs))))
 
 VISUAL_END_DECLS
+
+/**
+ * @}
+ */
 
 #endif /* _LV_MEM_H */

@@ -21,19 +21,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#include <config.h>
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <assert.h>
-#include <signal.h>
-#include <gettext.h>
-
-#include "lvconfig.h"
-#include "lv_log.h"
+#include "config.h"
 #include "lv_error.h"
+#include "lv_log.h"
+#include "lv_checks.h"
+#include "gettext.h"
+#include <stdlib.h>
+#include <signal.h>
+
 
 static const char *__lv_error_human_readable[] = {
 	[VISUAL_OK] =					N_("There was no error"),
@@ -41,6 +36,7 @@ static const char *__lv_error_human_readable[] = {
 	[VISUAL_ERROR_GENERAL] =			N_("General error occurred"),
 	[VISUAL_ERROR_NULL] =				N_("General NULL pointer error"),
 	[VISUAL_ERROR_IMPOSSIBLE] =			N_("An impossible event occurred"),
+	[VISUAL_ERROR_FAILED_CHECK] =       N_("Assertion check failed"),
 
 	[VISUAL_ERROR_ACTOR_NULL] =			N_ ("VisActor is NULL"),
 	[VISUAL_ERROR_ACTOR_VIDEO_NULL] =		N_("VisActor it's video is NULL"),
@@ -127,6 +123,7 @@ static const char *__lv_error_human_readable[] = {
 	[VISUAL_ERROR_PLUGIN_HANDLE_NULL] =		N_("Plugin handle is NULL"),
 	[VISUAL_ERROR_PLUGIN_ALREADY_REALIZED] =	N_("Plugin is already realized"),
 	[VISUAL_ERROR_PLUGIN_NO_LIST] =			N_("Plugin list can not be found in memory"),
+	[VISUAL_ERROR_PLUGIN_NOT_FOUND] =       N_("Plugin cannot be found"),
 
 	[VISUAL_ERROR_RANDOM_CONTEXT_NULL] =		N_("VisRandomContext is NULL"),
 
@@ -163,29 +160,6 @@ static const char *__lv_error_human_readable[] = {
 	[VISUAL_ERROR_TIME_NO_USLEEP] =			N_("visual_time_usleep() is not supported"),
 	[VISUAL_ERROR_TIMER_NULL] =			N_("VisTimer is NULL"),
 
-	[VISUAL_ERROR_UI_WIDGET_NULL] =			N_("VisUIWidget is NULL"),
-	[VISUAL_ERROR_UI_CONTAINER_NULL] =		N_("VisUIContainer is NULL"),
-	[VISUAL_ERROR_UI_BOX_NULL] =			N_("VisUIBox is NULL"),
-	[VISUAL_ERROR_UI_TABLE_NULL] =			N_("VisUITable is NULL"),
-	[VISUAL_ERROR_UI_NOTEBOOK_NULL] =		N_("VisUINotebook is NULL"),
-	[VISUAL_ERROR_UI_FRAME_NULL] =			N_("VisUIFrame is NULL"),
-	[VISUAL_ERROR_UI_LABEL_NULL] =			N_("VisUILabel is NULL"),
-	[VISUAL_ERROR_UI_IMAGE_NULL] =			N_("VisUIImage is NULL"),
-	[VISUAL_ERROR_UI_SEPARATOR_NULL] =		N_("VisUISeparator is NULL"),
-	[VISUAL_ERROR_UI_MUTATOR_NULL] =		N_("VisUIMutator is NULL"),
-	[VISUAL_ERROR_UI_RANGE_NULL] =			N_("VisUIRange is NULL"),
-	[VISUAL_ERROR_UI_ENTRY_NULL] =			N_("VisUIEntry is NULL"),
-	[VISUAL_ERROR_UI_SLIDER_NULL] =			N_("VisUISlider is NULL"),
-	[VISUAL_ERROR_UI_NUMERIC_NULL] =		N_("VisUINumeric is NULL"),
-	[VISUAL_ERROR_UI_COLOR_NULL] =			N_("VisUIColor is NULL"),
-	[VISUAL_ERROR_UI_CHOICE_NULL] =			N_("VisUIChoice is NULL"),
-	[VISUAL_ERROR_UI_POPUP_NULL] =			N_("VisUIPopup is NULL"),
-	[VISUAL_ERROR_UI_LIST_NULL] =			N_("VisUIList is NULL"),
-	[VISUAL_ERROR_UI_RADIO_NULL] =			N_("VisUIRadio is NULL"),
-	[VISUAL_ERROR_UI_CHECKBOX_NULL] =		N_("VisUICheckbox is NULL"),
-	[VISUAL_ERROR_UI_CHOICE_ENTRY_NULL] =		N_("VisUIChoiceEntry is NULL"),
-	[VISUAL_ERROR_UI_CHOICE_NONE_ACTIVE] =		N_("No choice in VisUIChoice is activated"),
-
 	[VISUAL_ERROR_VIDEO_ATTRIBUTE_OPTIONS_NULL] =	N_("The VisVideoAttributeOptions is NULL."),
 	[VISUAL_ERROR_VIDEO_NULL] =			N_("VisVideo is NULL"),
 	[VISUAL_ERROR_VIDEO_HAS_ALLOCATED] =		N_("VisVideo has allocated pixel buffer"),
@@ -202,72 +176,45 @@ static const char *__lv_error_human_readable[] = {
 	[VISUAL_ERROR_VIDEO_NOT_TRANSFORMED] =		N_("VisVideo is not depth transformed as requested")
 };
 
+static int log_and_exit (int error);
+
 static VisErrorHandlerFunc error_handler = NULL;
 static void *error_handler_priv = NULL;
 
-/**
- * @defgroup VisError VisError
- * @{
- */
-
-/**
- * Raise a libvisual error. With the standard error handler this will
- * do a raise(SIGTRAP). You can set your own error handler function using the
- * visual_error_set_handler.
- *
- * @see visual_error_set_handler
- *
- * @return Returns the return value from the handler that is set.
- */
-int visual_error_raise ()
+int visual_error_raise (int error)
 {
-	if (error_handler == NULL) {
-#if !defined(VISUAL_OS_WIN32)
-		raise (SIGTRAP);
-#endif
-		exit (1);
+	if (error_handler != NULL) {
+		return error_handler (error, error_handler_priv);
+	} else {
+		return log_and_exit (error);
 	}
-
-	return error_handler (error_handler_priv);
 }
 
-/**
- * Sets the error handler callback. By using this function you
- * can override libvisual it's default error handler.
- *
- * @param handler The error handler which you want to use
- *      to handle libvisual errors.
- * @param priv Optional private data which could be needed in the
- *      error handler that has been set.
- *
- * @return VISUAL_OK on succes, -VISUAL_ERROR_ERROR_HANDLER_NULL on failure.
- */
-int visual_error_set_handler (VisErrorHandlerFunc handler, void *priv)
+void visual_error_set_handler (VisErrorHandlerFunc handler, void *priv)
 {
-	visual_log_return_val_if_fail (handler != NULL, -VISUAL_ERROR_ERROR_HANDLER_NULL);
-
 	error_handler = handler;
 	error_handler_priv = priv;
-
-	return VISUAL_OK;
 }
 
-/**
- * Translates an error into a human readable string, the returned string should not be freed.
- *
- * @param err Numeric error value.
- * 
- * @return Human readable string, or NULL on failure.
- */
-const char *visual_error_to_string (int err)
+const char *visual_error_to_string (int error)
 {
-	if (abs (err) >= VISUAL_ERROR_LIST_END)
-		return _("The error value given to visual_error_to_string() is invalid");
+	error = abs (error);
 
-	return _(__lv_error_human_readable[abs (err)]);
+	if (error < VISUAL_ERROR_LIST_END) {
+		return _(__lv_error_human_readable[error]);
+	} else {
+		return _("Unknown error");
+	}
 }
 
-/**
- * @}
- */
+static int log_and_exit (int error)
+{
+	visual_log (VISUAL_LOG_CRITICAL, "Aborting due to error: %s",
+		visual_error_to_string (error));
 
+#if !defined(VISUAL_OS_WIN32)
+	raise (SIGTRAP);
+#endif
+
+	exit (EXIT_FAILURE);
+}

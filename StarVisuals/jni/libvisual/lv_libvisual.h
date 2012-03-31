@@ -25,7 +25,11 @@
 #define _LV_LIBVISUAL_H
 
 #include <libvisual/lv_param.h>
-#include <libvisual/lv_ui.h>
+
+/**
+ * @defgroup Libvisual Libvisual
+ * @{
+ */
 
 VISUAL_BEGIN_DECLS
 
@@ -34,18 +38,57 @@ VISUAL_BEGIN_DECLS
  */
 #define VISUAL_API_VERSION	4000
 
-/* prototypes */
+/**
+ * Gives the libvisual version.
+ *
+ * @return A const char containing the libvisual version.
+ */
 const char *visual_get_version (void);
+
+/**
+ * Gives the libvisual API verison. Can be used to compare against the
+ * compile time VISUAL_API_VERSION to validate if the API is at the right version.
+ *
+ * @return A const integer equal to VISUAL_API_VERSION.
+ */
 int visual_get_api_version (void);
 
+/**
+ * Returns a pointer to the libvisual global VisParamContainer.
+ *
+ * @return A pointer to the libvisual global VisParamContainer.
+ */
 VisParamContainer *visual_get_params (void);
-VisUIWidget *visual_get_userinterface (void);
 
-int visual_init_path_add (char *pathadd);
+/**
+ * Initialize libvisual. Sets up a plugin registry, register the program name and such.
+ *
+ * @param argc Pointer to an int containing the number of arguments within argv or NULL.
+ * @param argv Pointer to a list of strings that make up the argument vector or NULL.
+ *
+ * @return VISUAL_OK on succes, -VISUAL_ERROR_LIBVISUAL_ALREADY_INITIALIZED,
+ *	-VISUAL_ERROR_LIBVISUAL_NO_REGISTRY or error values returned by visual_init_path_add () on failure.
+ */
 int visual_init (int *argc, char ***argv);
+
+/*
+ * Tells whether Libvisual is (correctly) initialized.
+ *
+* @return TRUE if is it is initialized, FALSE otherwise.
+ */
 int visual_is_initialized (void);
+
+/**
+ * Quits libvisual, destroys all the plugin registries.
+ *
+ * @return VISUAL_OK on succes, -VISUAL_ERROR_LIBVISUAL_NOT_INITIALIZED on failure.
+ */
 int visual_quit (void);
 
 VISUAL_END_DECLS
+
+/**
+ * @}
+ */
 
 #endif /* _LV_LIBVISUAL_H */
