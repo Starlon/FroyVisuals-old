@@ -1,5 +1,5 @@
 # StarVisuals - Android Music-Visualization APP #
-StarVisuals is a music-visualization app for Android 2.2 Staro and beyond.
+StarVisuals is a music-visualization app for Android 2.2 Froyo and beyond.
 
 # IRC #
 We're usually parked in #libvisual on irc.freenode.net. 
