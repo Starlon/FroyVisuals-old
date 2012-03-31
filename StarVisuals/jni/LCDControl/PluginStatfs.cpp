@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include <cstring>
+#include <string>
 #include <errno.h>
 #include <sys/vfs.h>
 #include <iostream>
@@ -34,7 +35,7 @@
 
 using namespace LCD;
 
-double PluginStatfs::Statfs(string arg1, string arg2)
+double PluginStatfs::Statfs(std::string arg1, std::string arg2)
 {
     struct statfs buf;
     char *path, *key;

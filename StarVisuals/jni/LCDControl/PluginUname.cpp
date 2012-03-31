@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include <cstring>
+#include <string>
 #include <errno.h>
 #include <sys/utsname.h>
 
@@ -32,7 +33,7 @@
 
 using namespace LCD;
 
-string PluginUname::Uname(string arg1)
+std::string PluginUname::Uname(std::string arg1)
 {
     struct utsname utsbuf;
     std::string key;

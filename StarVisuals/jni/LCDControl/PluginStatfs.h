@@ -24,7 +24,7 @@
 #ifndef __PLUGIN_STATFS_H__
 #define __PLUGIN_STATFS_H__
 
-#include "PluginInterface.h"
+#include <string>
 
 namespace LCD {
 

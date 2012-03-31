@@ -24,21 +24,19 @@
 #ifndef __PLUGIN_UNAME_H__
 #define __PLUGIN_UNAME_H__
 
-#include "PluginInterface.h"
+#include <string>
 
 namespace LCD {
 
 class Evaluator;
 
 class PluginUname {
-    Q_OBJECT
-    Q_INTERFACES(LCD::PluginInterface)
 
     public:
     void Connect(Evaluator *visitor);
     void Disconnect() {}
 
-    string Uname(string arg1);
+    std::string Uname(std::string arg1);
 
 };
 

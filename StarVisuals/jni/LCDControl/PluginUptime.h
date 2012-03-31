@@ -25,10 +25,11 @@
 #define __PLUGIN_UPTIME__
 
 #include <sys/time.h>
-
-#include "PluginInterface.h"
+#include <string>
 
 namespace LCD {
+
+class LCDCore;
 
 class Evaluator;
 
@@ -47,7 +48,7 @@ class PluginUptime {
     void Disconnect() {}
 
     double Uptime();
-    char *Uptime(string format);
+    std::string Uptime(std::string format);
 };
 
 }; // End namespace

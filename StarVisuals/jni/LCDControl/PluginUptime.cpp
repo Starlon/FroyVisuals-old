@@ -30,6 +30,8 @@
 #include <sys/time.h>
 #include <fcntl.h>
 #include <iostream>
+#include <cstring>
+#include <string>
 
 #include "debug.h"
 #include "PluginUptime.h"
@@ -174,7 +176,7 @@ double PluginUptime::GetUptime()
 }
 
 
-string PluginUptime::Uptime(string fmt) {
+std::string PluginUptime::Uptime(std::string fmt) {
     int age;
     struct timeval now;
 
@@ -193,7 +195,7 @@ string PluginUptime::Uptime(string fmt) {
     }
 
     char *buffer = struptime(uptime, fmt.c_str());
-    string str = buffer;
+    std::string str = buffer;
     return str;
 }
 

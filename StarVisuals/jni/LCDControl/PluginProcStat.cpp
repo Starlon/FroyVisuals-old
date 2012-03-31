@@ -222,7 +222,7 @@ double PluginProcStat::ProcStat(std::string arg1, double arg2)
 
 double PluginProcStat::Cpu(std::string arg1, int arg2) {
     //const char *key;
-    std::string key = arg1();
+    std::string key = arg1;
     int delay = arg2;
     double value;
     double cpu_user, cpu_nice, cpu_system, cpu_idle, cpu_total;

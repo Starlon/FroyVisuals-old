@@ -25,6 +25,7 @@
 #include <sys/time.h>
 #include <stdlib.h>
 #include <cstring>
+#include <string>
 
 #include "debug.h"
 #include "PluginTime.h"
@@ -38,7 +39,7 @@ unsigned int PluginTime::Time()
 }
 
 
-string PluginTime::Strftime(string arg1, double arg2)
+std::string PluginTime::Strftime(std::string arg1, double arg2)
 {
     char value[256];
     time_t t = arg2;
@@ -49,7 +50,7 @@ string PluginTime::Strftime(string arg1, double arg2)
     return value;
 }
 
-string PluginTime::Strftime_tz(string arg1, double arg2, string arg3)
+std::string PluginTime::Strftime_tz(std::string arg1, double arg2, std::string arg3)
 {
     char value[256] = "";
     time_t t = arg2;
@@ -91,10 +92,11 @@ unsigned long PluginTime::GetTimeOfDay() {
 }
 
 void PluginTime::Connect(Evaluator *visitor) {
+/*
     QScriptEngine *engine = visitor->GetEngine();
     QScriptValue val = engine->newObject();
     QScriptValue objVal = engine->newQObject(val, this);
     engine->globalObject().setProperty("time", objVal);
+*/
 }
 
-Q_EXPORT_PLUGIN2(_PluginTime, PluginTime)

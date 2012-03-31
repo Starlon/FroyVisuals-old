@@ -24,6 +24,7 @@
 #ifndef __PLUGIN_PROC_STAT_H__
 #define __PLUGIN_PROC_STAT_H__
 
+#include <string>
 #include "Hash.h"
 
 namespace LCD {
@@ -48,7 +49,7 @@ class PluginProcStat {
         void Connect(Evaluator *visitor);
         void Disconnect() {}
 
-        char *ProcStat(std::string arg1);
+        std::string ProcStat(std::string arg1);
         double ProcStat(std::string arg1, double arg2);
         double Cpu(std::string arg1, int arg2);
         double Disk(std::string arg1, std::string arg2, double arg3);
