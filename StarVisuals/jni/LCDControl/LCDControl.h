@@ -25,6 +25,8 @@
 #include <map>
 #include <vector>
 #include <json/json.h>
+#include <string>
+#include <cstring>
 
 #include "CFG.h"
 
