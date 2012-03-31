@@ -57,7 +57,7 @@ public class StarVisualsView extends View {
         mStatsCanvas.statsInit();
 
         mPaint = new Paint();
-        mPaint.setTextSize(30);
+        mPaint.setTextSize(15);
         mPaint.setAntiAlias(true);
         mPaint.setTypeface(Typeface.create(Typeface.SERIF, Typeface.ITALIC));
         mPaint.setStyle(Paint.Style.STROKE);
@@ -227,9 +227,9 @@ public class StarVisualsView extends View {
             {
                 float canvasWidth = getWidth();
                 float textWidth = mPaint.measureText(text);
-                float startPositionX = (canvasWidth / 2 - textWidth / 2);
+                float startPositionX = (canvasWidth / 2 - textWidth / 2) - canvasWidth/4;
         
-                canvas.drawText(text, startPositionX, getHeight()-50, mPaint);
+                canvas.drawText(text, startPositionX, 50, mPaint);
             }
     
             if(mDoBeat)
@@ -242,21 +242,21 @@ public class StarVisualsView extends View {
                 int confidence = NativeHelper.getBPMConfidence();
                 boolean isBeat = NativeHelper.isBeat();
     
-                if(bpm > 0 && confidence > 10)
+                if(bpm > 0 && confidence > 0)
                     text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : " ");
                 else
                     text = "Learning... (" + confidence + "%)";
     
                 textWidth = mPaint.measureText(text);
-                startPositionX = (canvasWidth / 2 - textWidth / 2);
-                canvas.drawText(text, startPositionX, getHeight()-100, mPaint);
+                startPositionX = (canvasWidth / 2 - textWidth / 2) - canvasWidth/4;
+                canvas.drawText(text, startPositionX, 100, mPaint);
             }
     
             if(mActivity.mAlbumArt != null)
             {
                 int width = mActivity.mAlbumArt.getWidth();
                 int height = mActivity.mAlbumArt.getHeight();
-                canvas.drawBitmap(mActivity.mAlbumArt, 50.0f, 50.0f, mPaint);
+                canvas.drawBitmap(mActivity.mAlbumArt, getWidth()-width-50.0f, 50.0f, mPaint);
             }
             
             invalidate();
