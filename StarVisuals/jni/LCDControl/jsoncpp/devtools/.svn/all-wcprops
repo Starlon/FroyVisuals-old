@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/jsoncpp/!svn/ver/237/trunk/jsoncpp/devtools
+END
+__init__.py
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/jsoncpp/!svn/ver/237/trunk/jsoncpp/devtools/__init__.py
+END
+tarball.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/jsoncpp/!svn/ver/237/trunk/jsoncpp/devtools/tarball.py
+END
+antglob.py
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/jsoncpp/!svn/ver/237/trunk/jsoncpp/devtools/antglob.py
+END
+fixeol.py
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/jsoncpp/!svn/ver/237/trunk/jsoncpp/devtools/fixeol.py
+END
+licenseupdater.py
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svnroot/jsoncpp/!svn/ver/237/trunk/jsoncpp/devtools/licenseupdater.py
+END

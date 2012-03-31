@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svnroot/jsoncpp/!svn/ver/246/trunk/jsoncpp
+END
+amalgamate.py
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/jsoncpp/!svn/ver/242/trunk/jsoncpp/amalgamate.py
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/jsoncpp/!svn/ver/152/trunk/jsoncpp/LICENSE
+END
+version
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/jsoncpp/!svn/ver/192/trunk/jsoncpp/version
+END
+AUTHORS
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svnroot/jsoncpp/!svn/ver/56/trunk/jsoncpp/AUTHORS
+END
+.gitignore
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/jsoncpp/!svn/ver/203/trunk/jsoncpp/.gitignore
+END
+makerelease.py
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svnroot/jsoncpp/!svn/ver/187/trunk/jsoncpp/makerelease.py
+END
+SConstruct
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/jsoncpp/!svn/ver/143/trunk/jsoncpp/SConstruct
+END
+NEWS.txt
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/jsoncpp/!svn/ver/245/trunk/jsoncpp/NEWS.txt
+END
+doxybuild.py
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svnroot/jsoncpp/!svn/ver/150/trunk/jsoncpp/doxybuild.py
+END
+README.txt
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/jsoncpp/!svn/ver/236/trunk/jsoncpp/README.txt
+END
