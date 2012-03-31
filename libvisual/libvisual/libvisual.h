@@ -49,6 +49,7 @@
 #include <libvisual/lv_list.h>
 #include <libvisual/lv_palette.h>
 #include <libvisual/lv_plugin.h>
+#include <libvisual/lv_plugin_registry.h>
 #include <libvisual/lv_video.h>
 #include <libvisual/lv_libvisual.h>
 #include <libvisual/lv_songinfo.h>
