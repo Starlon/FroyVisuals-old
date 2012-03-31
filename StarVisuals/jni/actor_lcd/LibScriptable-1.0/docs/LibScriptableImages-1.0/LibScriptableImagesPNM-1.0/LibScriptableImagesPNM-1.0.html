@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../../../../../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../../../../../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableImages-1.0/LibScriptableImagesAVSSuperScope-1.0/LibScriptableImagesAVSSuperScope-1.0.html">../../LibScriptableImages-1.0/LibScriptableImagesAVSSuperScope-1.0/LibScriptableImagesAVSSuperScope-1.0.lua</a>
+	</li>
+
+	<li><strong>../../LibScriptableImages-1.0/LibScriptableImagesPNM-1.0/LibScriptableImagesPNM-1.0.lua</strong></li>
+	
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>../../LibScriptableImages-1.0/LibScriptableImagesPNM-1.0/LibScriptableImagesPNM-1.0.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#PNM:GetOptions">PNM:GetOptions</a>&nbsp;(db, callback, data)</td>
+	<td class="summary">Get an Ace3 option table.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#PNM:New">PNM:New</a>&nbsp;(name, config, errorLevel)</td>
+	<td class="summary">Parse a PNM image and return the data </td>
+	</tr>
+
+</table>
+
+
+
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="PNM:GetOptions"></a><strong>PNM:GetOptions</strong>&nbsp;(db, callback, data)</dt>
+<dd>
+Get an Ace3 option table. Plug this into a group type's args.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  db: The database table
+	</li>
+	
+	<li>
+	  callback: Provide this if you want to execute the callback once an option is changed
+	</li>
+	
+	<li>
+	  data: Some data to pass when executing the callback
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+An Ace3 options table -- `name.args = options`.
+
+
+
+</dd>
+
+
+
+
+<dt><a name="PNM:New"></a><strong>PNM:New</strong>&nbsp;(name, config, errorLevel)</dt>
+<dd>
+Parse a PNM image and return the data
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  name: A name for the image
+	</li>
+	
+	<li>
+	  config: This image's parameters
+	</li>
+	
+	<li>
+	  errorLevel: 
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:New(name, config, errorLevel)
+
+
+
+<h3>Return value:</h3>
+A new PNM object. This will have one of these three fields: bitmap, grayimage, colorimage. It will also have w, h, and n.
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>

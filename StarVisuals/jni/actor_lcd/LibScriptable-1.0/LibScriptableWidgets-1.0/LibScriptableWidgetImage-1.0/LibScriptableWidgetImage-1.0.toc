@@ -1,0 +1,10 @@
+## Interface: 40200
+## Title: Lib: LibScriptableWidgetImage-1.0
+## Notes: Various libraries based on LCD4Linux, offering users lower-level UI customizations.
+## Author: Starlon
+## OptionalDeps: LibStub, CallbackHandler-1.0
+## Deps: LibScriptable-1.0, LibScriptableUtilsProperty-1.0, LibScriptableUtilsTimer-1.0, LibScriptableUtilsError-1.0, LibScriptablePluginUtils-1.0, LibScriptableWidget-1.0
+## Version: 1.0
+## X-Category: Library
+
+LibScriptableWidgetImage-1.0.lua

@@ -1,0 +1,1017 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../../../../../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../../../../../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li><strong>../../LibScriptableUtils-1.0/LibScriptableUtilsBuffer-1.0/LibScriptableUtilsBuffer-1.0.lua</strong></li>
+	
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsCFG-1.0/LibScriptableUtilsCFG-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsCFG-1.0/LibScriptableUtilsCFG-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsError-1.0/LibScriptableUtilsError-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsError-1.0/LibScriptableUtilsError-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsEvaluator-1.0/LibScriptableUtilsEvaluator-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsEvaluator-1.0/LibScriptableUtilsEvaluator-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsHook-1.0/LibScriptableUtilsHook-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsHook-1.0/LibScriptableUtilsHook-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsProperty-1.0/LibScriptableUtilsProperty-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsProperty-1.0/LibScriptableUtilsProperty-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsTimer-1.0/LibScriptableUtilsTimer-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsTimer-1.0/LibScriptableUtilsTimer-1.0.lua</a>
+	</li>
+
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>../../LibScriptableUtils-1.0/LibScriptableUtilsBuffer-1.0/LibScriptableUtilsBuffer-1.0.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:AsList">LibBuffer:AsList</a>&nbsp;(list)</td>
+	<td class="summary">Return the buffer as a list </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:AsString">LibBuffer:AsString</a>&nbsp;()</td>
+	<td class="summary">Return the buffer as a concatenated string.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Clear">LibBuffer:Clear</a>&nbsp;()</td>
+	<td class="summary">Clear this buffer </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Clone">LibBuffer:Clone</a>&nbsp;(name)</td>
+	<td class="summary">Make a copy of this buffer </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Copy">LibBuffer:Copy</a>&nbsp;(other)</td>
+	<td class="summary">Copy this buffer into another </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Del">LibBuffer:Del</a>&nbsp;(buff)</td>
+	<td class="summary">Delete this buffer </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Fill">LibBuffer:Fill</a>&nbsp;(val)</td>
+	<td class="summary">Fill a buffer with a value </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:FromList">LibBuffer:FromList</a>&nbsp;(list)</td>
+	<td class="summary">Populate this buffer with the elements within the provided table </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:FromString">LibBuffer:FromString</a>&nbsp;(str)</td>
+	<td class="summary">Populate each cell in the buffer with characters from the provided string </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Insert">LibBuffer:Insert</a>&nbsp;(i, val)</td>
+	<td class="summary">Insert a new value in the buffer at the indicated index </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Line">LibBuffer:Line</a>&nbsp;(x0, y0, x1, y1, color, pitch)</td>
+	<td class="summary">The various line algorithms were found on the internet at various places.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Memcopy">LibBuffer:Memcopy</a>&nbsp;(pos1, buffer, pos2, length)</td>
+	<td class="summary">Copy another buffer into this one </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Memset">LibBuffer:Memset</a>&nbsp;(pos, val, length)</td>
+	<td class="summary">Set a subsection of this buffer to the specified value </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Merge">LibBuffer:Merge</a>&nbsp;(from, pos, len)</td>
+	<td class="summary">Merge one buffer into this one </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:MergeString">LibBuffer:MergeString</a>&nbsp;(pos1, str, pos2, length)</td>
+	<td class="summary">Merge a string into the buffer </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:MovingAverageExp">LibBuffer:MovingAverageExp</a>&nbsp;(alpha, epsilon, buf)</td>
+	<td class="summary">Retrieve the moving averages for this buffer of number values </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:New">LibBuffer:New</a>&nbsp;(name, size, defval, errorLevel)</td>
+	<td class="summary">Create a new LibScriptableBuffer object </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Randomize">LibBuffer:Randomize</a>&nbsp;()</td>
+	<td class="summary">Randomize the buffer </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Replace">LibBuffer:Replace</a>&nbsp;(pos, val)</td>
+	<td class="summary">Replace a buffer position with a new value.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Resize">LibBuffer:Resize</a>&nbsp;(size)</td>
+	<td class="summary">Resize a buffer </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Size">LibBuffer:Size</a>&nbsp;()</td>
+	<td class="summary">Return the size of this buffer </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Sub">LibBuffer:Sub</a>&nbsp;(num1, num2, buf, t)</td>
+	<td class="summary">Extract a subsection from this buffer </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibBuffer:Wipe">LibBuffer:Wipe</a>&nbsp;()</td>
+	<td class="summary">Wipe a buffer, </td>
+	</tr>
+
+</table>
+
+
+
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="LibBuffer:AsList"></a><strong>LibBuffer:AsList</strong>&nbsp;(list)</dt>
+<dd>
+Return the buffer as a list
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  list: 
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:AsString()
+
+
+
+<h3>Return value:</h3>
+All cells in the buffer populating a list
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:AsString"></a><strong>LibBuffer:AsString</strong>&nbsp;()</dt>
+<dd>
+Return the buffer as a concatenated string.
+
+
+
+
+
+<h3>Usage:</h3>
+:AsString()
+
+
+
+<h3>Return value:</h3>
+All cells in the buffer concatenated as a string
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Clear"></a><strong>LibBuffer:Clear</strong>&nbsp;()</dt>
+<dd>
+Clear this buffer
+
+
+
+
+
+<h3>Usage:</h3>
+:Clear()
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Clone"></a><strong>LibBuffer:Clone</strong>&nbsp;(name)</dt>
+<dd>
+Make a copy of this buffer
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  name: An optional name for the buffer, else this buffer's name is used
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+Clone([name])
+
+
+
+<h3>Return value:</h3>
+A new LibBuffer populated with this buffer's data
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Copy"></a><strong>LibBuffer:Copy</strong>&nbsp;(other)</dt>
+<dd>
+Copy this buffer into another
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  other: The other LibBuffer object to copy into
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Copy(other)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Del"></a><strong>LibBuffer:Del</strong>&nbsp;(buff)</dt>
+<dd>
+Delete this buffer
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  buff: 
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+buffer:Del()
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Fill"></a><strong>LibBuffer:Fill</strong>&nbsp;(val)</dt>
+<dd>
+Fill a buffer with a value
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  val: The value to fill the buffer with
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Fill(val)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:FromList"></a><strong>LibBuffer:FromList</strong>&nbsp;(list)</dt>
+<dd>
+Populate this buffer with the elements within the provided table
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  list: The table from which we'll copy into this buffer
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:FromList(list)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:FromString"></a><strong>LibBuffer:FromString</strong>&nbsp;(str)</dt>
+<dd>
+Populate each cell in the buffer with characters from the provided string
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  str: The string which to populate the buffer with
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:FromString(str)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Insert"></a><strong>LibBuffer:Insert</strong>&nbsp;(i, val)</dt>
+<dd>
+Insert a new value in the buffer at the indicated index
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  i: The position in the buffer
+	</li>
+	
+	<li>
+	  val: The value to insert
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Insert(i, val)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Line"></a><strong>LibBuffer:Line</strong>&nbsp;(x0, y0, x1, y1, color, pitch)</dt>
+<dd>
+The various line algorithms were found on the internet at various places. Line(), Line2(), Line3(), Line4(), Line5() Some of these were found at the website of associate professor Leonard McMillan: http://www.cs.unc.edu/~mcmillan/comp136/Lecture6/Lines.html Some of these don't work. Line5() is the most efficient algorithm. The others should be regarded as deprecated as they will likely be removed.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x0: First X position
+	</li>
+	
+	<li>
+	  y0: First Y position
+	</li>
+	
+	<li>
+	  x1: Second X position
+	</li>
+	
+	<li>
+	  y1: Second Y position
+	</li>
+	
+	<li>
+	  color: The line will be filled with this value
+	</li>
+	
+	<li>
+	  pitch: The buffer's width. [[
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Memcopy"></a><strong>LibBuffer:Memcopy</strong>&nbsp;(pos1, buffer, pos2, length)</dt>
+<dd>
+Copy another buffer into this one
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  pos1: The starting position in this buffer to copy
+	</li>
+	
+	<li>
+	  buffer: The other buffer to copy
+	</li>
+	
+	<li>
+	  pos2: The starting position in the other buffer where we'll begin copying
+	</li>
+	
+	<li>
+	  length: The length of the subsection being copied
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Memcopy(pos1, buffer, pos2, length)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Memset"></a><strong>LibBuffer:Memset</strong>&nbsp;(pos, val, length)</dt>
+<dd>
+Set a subsection of this buffer to the specified value
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  pos: The starting position within this buffer to start assigning the specified value
+	</li>
+	
+	<li>
+	  val: The value to assign to this buffer's subsection described by this method's other parameters
+	</li>
+	
+	<li>
+	  length: The length of the subsection which is being assigned the specified value
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Memset(pos, val, length)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Merge"></a><strong>LibBuffer:Merge</strong>&nbsp;(from, pos, len)</dt>
+<dd>
+Merge one buffer into this one
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  from: The buffer from which we'll copy
+	</li>
+	
+	<li>
+	  pos: The position in the other buffer that we'll start copying from
+	</li>
+	
+	<li>
+	  len: The length of the content to merge
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Merge(from, pos, len)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:MergeString"></a><strong>LibBuffer:MergeString</strong>&nbsp;(pos1, str, pos2, length)</dt>
+<dd>
+Merge a string into the buffer
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  pos1: The index in this buffer to start merging from
+	</li>
+	
+	<li>
+	  str: The string to merge
+	</li>
+	
+	<li>
+	  pos2: The position in the string from which to start
+	</li>
+	
+	<li>
+	  length: This is best expressed with a Lua expression :) str:sub(pos2, length)
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:MergeString(pos1, str, pos2, length)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:MovingAverageExp"></a><strong>LibBuffer:MovingAverageExp</strong>&nbsp;(alpha, epsilon, buf)</dt>
+<dd>
+Retrieve the moving averages for this buffer of number values
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  alpha: 
+	</li>
+	
+	<li>
+	  epsilon: 
+	</li>
+	
+	<li>
+	  buf: 
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:MovingAverageExp(alpha, epsilon, buf)
+
+
+
+<h3>Return value:</h3>
+A new buffer populated with this buffer's moving averages
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:New"></a><strong>LibBuffer:New</strong>&nbsp;(name, size, defval, errorLevel)</dt>
+<dd>
+Create a new LibScriptableBuffer object
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  name: A name for the buffer
+	</li>
+	
+	<li>
+	  size: The buffer's size
+	</li>
+	
+	<li>
+	  defval: The buffer's default value. The alpha channel.
+	</li>
+	
+	<li>
+	  errorLevel: The verbocity level
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+LibBuffer:New(name, size, defval, errorLevel)
+
+
+
+<h3>Return value:</h3>
+A new LibScriptableBuffer object
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Randomize"></a><strong>LibBuffer:Randomize</strong>&nbsp;()</dt>
+<dd>
+Randomize the buffer
+
+
+
+
+
+<h3>Usage:</h3>
+:Randomize()
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Replace"></a><strong>LibBuffer:Replace</strong>&nbsp;(pos, val)</dt>
+<dd>
+Replace a buffer position with a new value.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  pos: The position in the buffer to replace
+	</li>
+	
+	<li>
+	  val: The new value
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Replace(pos, val)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Resize"></a><strong>LibBuffer:Resize</strong>&nbsp;(size)</dt>
+<dd>
+Resize a buffer
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  size: The buffer's new size
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Resize(size)
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Size"></a><strong>LibBuffer:Size</strong>&nbsp;()</dt>
+<dd>
+Return the size of this buffer
+
+
+
+
+
+<h3>Usage:</h3>
+:Size()
+
+
+
+<h3>Return value:</h3>
+The size of this buffer
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Sub"></a><strong>LibBuffer:Sub</strong>&nbsp;(num1, num2, buf, t)</dt>
+<dd>
+Extract a subsection from this buffer
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  num1: The starting position in the buffer from which to copy
+	</li>
+	
+	<li>
+	  num2: THe ending position in the buffer from which to copy
+	</li>
+	
+	<li>
+	  buf: 
+	</li>
+	
+	<li>
+	  t: An optional LibBuffer object
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+:Sub(num1, num2)
+
+
+
+<h3>Return value:</h3>
+A new LibBuffer populated with this table subsection between num1 and num2
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibBuffer:Wipe"></a><strong>LibBuffer:Wipe</strong>&nbsp;()</dt>
+<dd>
+Wipe a buffer,
+
+
+
+
+
+<h3>Usage:</h3>
+:Wipe()
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>
