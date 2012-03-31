@@ -27,7 +27,7 @@
 #include "gfx-misc.h"
 #include "screen.h"
 #include "misc.h"
-#include "oink-config.h"
+#include "config.h"
 
 /* random configs */
 void _oink_config_random_blurmode (OinksiePrivate *priv)

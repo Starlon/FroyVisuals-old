@@ -53,15 +53,13 @@ static int composite_blend3_32_c (VisVideo *dest, VisVideo *src);
 static int composite_blend4_32_c (VisVideo *dest, VisVideo *src);
 static int composite_blend5_32_c (VisVideo *dest, VisVideo *src);
 
-const VisPluginInfo *get_plugin_info(int *count);
-
-static int act_oinksie_init (VisPluginData *plugin);
-static int act_oinksie_cleanup (VisPluginData *plugin);
-static int act_oinksie_requisition (VisPluginData *plugin, int *width, int *height);
-static int act_oinksie_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
-static int act_oinksie_events (VisPluginData *plugin, VisEventQueue *events);
-static VisPalette *act_oinksie_palette (VisPluginData *plugin);
-static int act_oinksie_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
+int act_oinksie_init (VisPluginData *plugin);
+int act_oinksie_cleanup (VisPluginData *plugin);
+int act_oinksie_requisition (VisPluginData *plugin, int *width, int *height);
+int act_oinksie_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
+int act_oinksie_events (VisPluginData *plugin, VisEventQueue *events);
+VisPalette *act_oinksie_palette (VisPluginData *plugin);
+int act_oinksie_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
@@ -83,8 +81,8 @@ const VisPluginInfo *get_plugin_info (int *count)
 		.name = "oinksie plugin",
 		.author = "Dennis Smit <ds@nerds-incorporated.org>",
 		.version = "0.1",
-		.about = N_("Libvisual Oinksie visual plugin"),
-		.help = N_("This is the libvisual plugin for the Oinksie visual"),
+		.about = "Libvisual Oinksie visual plugin",
+		.help = "This is the libvisual plugin for the Oinksie visual",
 		.license = VISUAL_PLUGIN_LICENSE_LGPL,
 
 		.init = act_oinksie_init,
@@ -99,7 +97,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 	return info;
 }
 
-static int act_oinksie_init (VisPluginData *plugin)
+int act_oinksie_init (VisPluginData *plugin)
 {
 	OinksiePrivContainer *priv;
 	VisRandomContext *rcontext;
@@ -111,7 +109,6 @@ static int act_oinksie_init (VisPluginData *plugin)
 		VISUAL_PARAM_LIST_END
 	};
 
-/*
 	static VisParamEntry cmodeparamchoices[] = {
 		VISUAL_PARAM_LIST_ENTRY_INTEGER ("Fair blended", 0),
 		VISUAL_PARAM_LIST_ENTRY_INTEGER ("Turbelent temperature", 1),
@@ -120,7 +117,6 @@ static int act_oinksie_init (VisPluginData *plugin)
 		VISUAL_PARAM_LIST_ENTRY_INTEGER ("Sanity edge", 4),
 		VISUAL_PARAM_LIST_END
 	};
-*/
 
 	/* FIXME: add UI to access the acid palette parameter */
 
@@ -132,6 +128,7 @@ static int act_oinksie_init (VisPluginData *plugin)
 	visual_object_set_private (VISUAL_OBJECT (plugin), priv);
 
     visual_param_container_add_many (paramcontainer, params);
+
 
 	visual_palette_allocate_colors (&priv->priv1.pal_cur, 256);
 	visual_palette_allocate_colors (&priv->priv1.pal_old, 256);
@@ -149,7 +146,7 @@ static int act_oinksie_init (VisPluginData *plugin)
 	return 0;
 }
 
-static int act_oinksie_cleanup (VisPluginData *plugin)
+int act_oinksie_cleanup (VisPluginData *plugin)
 {
 	OinksiePrivContainer *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
@@ -181,7 +178,7 @@ static int act_oinksie_cleanup (VisPluginData *plugin)
 	return 0;
 }
 
-static int act_oinksie_requisition (VisPluginData *plugin, int *width, int *height)
+int act_oinksie_requisition (VisPluginData *plugin, int *width, int *height)
 {
 	int reqw, reqh;
 
@@ -206,7 +203,7 @@ static int act_oinksie_requisition (VisPluginData *plugin, int *width, int *heig
 	return 0;
 }
 
-static int act_oinksie_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
+int act_oinksie_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
 {
 	OinksiePrivContainer *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
@@ -238,7 +235,7 @@ static int act_oinksie_dimension (VisPluginData *plugin, VisVideo *video, int wi
 	return 0;
 }
 
-static int act_oinksie_events (VisPluginData *plugin, VisEventQueue *events)
+int act_oinksie_events (VisPluginData *plugin, VisEventQueue *events)
 {
 	OinksiePrivContainer *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	VisEvent ev;
@@ -284,7 +281,7 @@ static int act_oinksie_events (VisPluginData *plugin, VisEventQueue *events)
 	return 0;
 }
 
-static VisPalette *act_oinksie_palette (VisPluginData *plugin)
+VisPalette *act_oinksie_palette (VisPluginData *plugin)
 {
 	OinksiePrivContainer *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	VisPalette *pal;
@@ -294,7 +291,7 @@ static VisPalette *act_oinksie_palette (VisPluginData *plugin)
 	return pal;
 }
 
-static int act_oinksie_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
+int act_oinksie_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
 	OinksiePrivContainer *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 	VisBuffer			 pcmbuf1;

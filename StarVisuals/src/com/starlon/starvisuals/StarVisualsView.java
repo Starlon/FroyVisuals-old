@@ -221,8 +221,10 @@ public class StarVisualsView extends View {
             }
                 
             // Do we have text to show?
+/*
             String text = mActivity.getDisplayText();
     
+
             if(text != null)
             {
                 float canvasWidth = getWidth();
@@ -258,7 +260,7 @@ public class StarVisualsView extends View {
                 int height = mActivity.mAlbumArt.getHeight();
                 canvas.drawBitmap(mActivity.mAlbumArt, getWidth()-width-50.0f, 50.0f, mPaint);
             }
-            
+  */          
             invalidate();
     }
 

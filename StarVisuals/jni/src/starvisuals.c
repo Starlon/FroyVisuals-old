@@ -119,6 +119,7 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
+/*
     if(paramcontainer != NULL)
     {
         VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
@@ -138,7 +139,7 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
         isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, pcm_ref.size);
         visual_param_entry_set_integer(entry, isBeat);
     }
-
+*/
     return 0;
 }
 
@@ -1730,8 +1731,9 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
     visual_video_clone(swap, vid);
     visual_video_set_buffer(swap, s);
 
-    visual_video_depth_transform(swap, v.video);
+    visual_video_depth_transform(vid, v.video);
 
+/*
     int i;
     int8_t *d = visual_video_get_pixels(vid);
     for(i = 0; i < vid->width * vid->height * 4; i+=4)
@@ -1741,7 +1743,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
         d[i+2] = s[i];
         d[i+3] = 0xff;
     }
-
+*/
     visual_object_unref(VISUAL_OBJECT(vid));
     visual_object_unref(VISUAL_OBJECT(swap));
 

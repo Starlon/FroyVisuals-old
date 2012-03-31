@@ -346,7 +346,7 @@ void visual_cpu_initialize ()
 #elif defined(VISUAL_ARCH_POWERPC)
 	__lv_cpu_caps.type = VISUAL_CPU_TYPE_POWERPC;
 #elif defined(VISUAL_ARCH_ARM)
-	__lv_cpu.caps.type = VISUAL_CPU_TYPE_ARM;
+	__lv_cpu_caps.type = VISUAL_CPU_TYPE_ARM;
 #else
 	__lv_cpu_caps.type = VISUAL_CPU_TYPE_OTHER;
 #endif
