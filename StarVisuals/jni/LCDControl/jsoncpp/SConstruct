@@ -24,7 +24,7 @@ options.Add( EnumVariable('platform',
 try:
     platform = ARGUMENTS['platform']
     if platform == 'linux-gcc':
-        CXX = 'g++' # not quite right, but env is not yet available.
+        CXX = 'arm-none-eabi-g++' # not quite right, but env is not yet available.
         import commands
         version = commands.getoutput('%s -dumpversion' %CXX)
         platform = 'linux-gcc-%s' %version
