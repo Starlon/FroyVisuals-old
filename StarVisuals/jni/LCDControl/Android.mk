@@ -6,5 +6,5 @@ LOCAL_MODULE	:= LCDControl
 LOCAL_SRC_FILES := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
 LOCAL_CFLAGS	:= -Wall -O0 -g libs/linux-gcc-4.6.1/libjson_linux-gcc-4.6.1_libmt.a
 LOCAL_SHARED_LIBRARIES := libvisual visscript-lua
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
