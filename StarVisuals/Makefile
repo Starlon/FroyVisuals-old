@@ -65,9 +65,34 @@ log:
 gdb:
 	@ndk-gdb --start --force --verbose
 
-mem:
+#Perform leak detection
+mem1:
+	@adb shell setprop dalvik.vm.checkjni true
+	@adb shell setprop libc.debug.malloc 1
+	@adb shell setprop dalvik.vm.jniopts forcecopy
+	@adb shell stop
+	@adb shell start
+
+#Fill allocated memory to detect overruns
+mem5:
+	@adb shell setprop dalvik.vm.checkjni true
+	@adb shell setprop libc.debug.malloc 5
+	@adb shell setprop dalvik.vm.jniopts forcecopy
+	@adb shell stop
+	@adb shell start
+
+#Fill memory and add sentinels to detect overruns
+mem10:
 	@adb shell setprop dalvik.vm.checkjni true
 	@adb shell setprop libc.debug.malloc 10
+	@adb shell setprop dalvik.vm.jniopts forcecopy
+	@adb shell stop
+	@adb shell start
+
+#Use special instrumented malloc/free routines for the emulator. (Emulator only!)
+mem20:
+	@adb shell setprop dalvik.vm.checkjni true
+	@adb shell setprop libc.debug.malloc 20
 	@adb shell setprop dalvik.vm.jniopts forcecopy
 	@adb shell stop
 	@adb shell start
