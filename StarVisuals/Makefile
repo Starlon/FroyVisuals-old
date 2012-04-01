@@ -7,7 +7,7 @@ ACTIVITY = StarVisuals
 TARGET = android-15
 
 all:
-	@ndk-build
+	@ndk-build BUILD_TYPE=release
 	@ant clean
 	@ant release
 
