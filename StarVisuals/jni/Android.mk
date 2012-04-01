@@ -8,11 +8,11 @@ ifeq ($(TARGET_ARCH_ABI),armeabi)
 endif
     
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-    LOCAL_CFLAGS += -DHAVE_NEON=1 -mfloat-abi=softfp -mfpu=neon $(WARNING_FLAGS)
+    ARCH_CFLAGS += -DHAVE_NEON=1 -mfloat-abi=softfp -mfpu=neon $(WARNING_FLAGS)
 endif
         
 ifeq ($(TARGET_ARCH_ABI),x86)
-    LOCAL_CFLAGS += -DVISUAL_ARCH_X86=1 $(WARNING_FLAGS)
+    ARCH_CFLAGS += -DVISUAL_ARCH_X86=1 $(WARNING_FLAGS)
 endif
 
 
