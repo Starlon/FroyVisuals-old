@@ -1675,6 +1675,21 @@ VisVideo *new_video(int w, int h, VisVideoDepth depth, void *pixels)
     return video;
 }
 
+void swap_video_BGR(VisVideo *vid1, VisVideo *vid2)
+{
+    int8_t *d = visual_video_get_pixels(vid1);
+    int8_t *s = visual_video_get_pixels(vid2);
+    int i;
+
+    for(i = 0; i < vid1->width * vid1->height * sizeof(int32_t); i+=4)
+    {
+        d[i] = s[i+2];
+        d[i+1] = s[i+1];
+        d[i+2] = s[i];
+        d[i+3] = 0xff;
+    }
+}
+
 // Render the view's bitmap image.
 JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIEnv * env, jobject  obj, jobject bitmap, jboolean do_swap)
 {
@@ -1730,7 +1745,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
 
     if(do_swap)
     {
-        visual_video_flip_bytes_color32(vid, vid);
+        swap_video_BGR(vid, vid);
     }
 
     visual_object_unref(VISUAL_OBJECT(vid));
