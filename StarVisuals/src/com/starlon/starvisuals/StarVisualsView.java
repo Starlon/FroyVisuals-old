@@ -190,7 +190,7 @@ public class StarVisualsView extends View {
                             mStatsNative.endFrame();
                         }
                         double delta = mStatsNative.nowMil();
-                        Thread.sleep(delta - val);
+                        Thread.sleep((int)(delta - val) * 100);
                     } 
                     catch(Exception e)
                     {
