@@ -61,9 +61,9 @@ public class StarVisuals extends Activity implements OnClickListener
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     public boolean mDoMorph = true;
-    public String mMorph = null;
-    public String mInput = null;
-    public String mActor = null;
+    public String mMorph = "alphablend";
+    public String mInput = "dummy";
+    public String mActor = "starscope";
     private float mSongChanged = 0;
     private String mSongAction = null;
     public String mSongCommand = null;
@@ -155,7 +155,7 @@ public class StarVisuals extends Activity implements OnClickListener
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                             Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             Log.w(TAG, "Right swipe...");
-                            mView.switchScene(0);
+                            mView.switchScene(-1);
                             // Right swipe
                         }
                     } catch (Exception e) {
@@ -250,9 +250,9 @@ public class StarVisuals extends Activity implements OnClickListener
     
             NativeHelper.setMorphStyle(mDoMorph);
     
-            mMorph = settings.getString("prefs_morph_selection", "alphablend");
-            mInput = settings.getString("prefs_input_selection", "mic");
-            mActor = settings.getString("prefs_actor_selection", "starscope");
+            mMorph = settings.getString("prefs_morph_selection", mMorph);
+            mInput = settings.getString("prefs_input_selection", mInput);
+            mActor = settings.getString("prefs_actor_selection", mActor);
     
             NativeHelper.morphSetCurrentByName(mMorph);
             NativeHelper.inputSetCurrentByName(mInput);
@@ -282,7 +282,7 @@ public class StarVisuals extends Activity implements OnClickListener
 
         mView.startThread();
 
-        enableMic("mic");
+        enableMic(mInput);
 
         registerReceiver(mReceiver, mIntentFilter);
     }
@@ -673,7 +673,7 @@ public class StarVisuals extends Activity implements OnClickListener
     
                             if (recorder.getState() == AudioRecord.STATE_INITIALIZED)
                             {
-                                PCM_SIZE = bufferSize / 4;
+                                PCM_SIZE = bufferSize;
                                 RECORDER_SAMPLERATE = rate;
                                 RECORDER_CHANNELS = channelConfig;
                                 RECORDER_AUDIO_ENCODING = audioFormat;

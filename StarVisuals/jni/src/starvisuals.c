@@ -1407,7 +1407,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
 
 
 
-    if(prev == 0) {
+    if(prev == -1) {
         v.morph_name = "slide_left";
     }
     else if(prev == 1)
@@ -1418,11 +1418,11 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     {
         v.morph_name = "slide_up";
     }
-    else if(prev == 3)
+    else if(prev == -2)
     {
         v.morph_name = "slide_down";
     } 
-    else if(prev == 4)
+    else if(prev == 0)
     {
         v_cycleMorph((int)prev);
     }
