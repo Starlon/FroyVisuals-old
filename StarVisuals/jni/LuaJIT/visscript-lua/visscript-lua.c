@@ -27,12 +27,11 @@ void visscript_open(void)
  LUAJIT_VERSION_SYM();  /* linker-enforced version check */
  lua_gc(L, LUA_GCSTOP, 0);  /* stop collector during initialization */
  luaL_openlibs(L);  /* open libraries */
- lua_gc(L, LUA_GCRESTART, -1);
  if(luaL_loadfile(L, "library/libstub.lua") || lua_pcall(L, 0, 0, 0));
  if(luaL_loadfile(L, "library/pluginmath.lua") || lua_pcall(L, 0, 0, 0));
  if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/libstub.lua") || lua_pcall(L, 0, 0, 0));
  if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/pluginmath.lua") || lua_pcall(L, 0, 0, 0));
- 
+ lua_gc(L, LUA_GCRESTART, -1);
 }
 
 void visscript_close(void)
