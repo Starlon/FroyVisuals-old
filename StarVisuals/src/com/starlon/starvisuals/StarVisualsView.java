@@ -32,8 +32,8 @@ public class StarVisualsView extends View {
     private StarVisuals mActivity = null;
     private Stats mStatsNative = null;
     private Stats mStatsCanvas = null;
-    private int WIDTH = 128;
-    private int HEIGHT = 128;
+    private int WIDTH = 192;
+    private int HEIGHT = 192;
     private Paint mPaint = null;
     private Matrix mMatrix = null;
     //private Display mDisplay = null;

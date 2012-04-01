@@ -1722,7 +1722,15 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
 
     if(do_swap)
     {
-        swap_video_BGR(vid, vid);
+        int32_t data[vid->pitch * vid->height];
+        VisVideo *swap = visual_video_new();
+        visual_video_clone(swap, vid);
+        visual_video_set_buffer(swap, data);
+        visual_video_blit_overlay(swap, vid, 0, 0, FALSE);
+
+        swap_video_BGR(vid, swap);
+
+        visual_object_unref(VISUAL_OBJECT(swap));
     }
 
     visual_object_unref(VISUAL_OBJECT(vid));
