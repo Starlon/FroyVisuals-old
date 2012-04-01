@@ -33,7 +33,7 @@
 #include "Evaluator.h"
 #include "LCDText.h"
 #include "LCDGraphic.h"
-#include "PluginLCD.h"
+//#include "PluginLCD.h"
 
 #include "Widget.h"
 #include "WidgetText.h"

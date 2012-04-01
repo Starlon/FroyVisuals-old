@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <math.h>
+#include <math>
 #include <libvisual/libvisual.h>
 
 #include "Property.h"

@@ -37,7 +37,6 @@
 */
 #include "Evaluator.h"
 #include "debug.h"
-#include <X11/Xlib.h>
 
 using namespace LCD;
 

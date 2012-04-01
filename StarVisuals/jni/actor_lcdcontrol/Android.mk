@@ -6,5 +6,5 @@ LOCAL_MODULE	:= LCDControl
 LOCAL_SRC_FILES := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
 LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 LOCAL_SHARED_LIBRARIES := libvisual lua
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
