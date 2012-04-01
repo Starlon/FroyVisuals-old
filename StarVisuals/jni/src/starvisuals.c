@@ -1726,29 +1726,14 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
         visual_bin_run (v.bin);
     }
 
-    int8_t s[vid->width * vid->height * sizeof(uint32_t)];
-    VisVideo *swap = visual_video_new();
-    visual_video_clone(swap, vid);
-    visual_video_set_buffer(swap, s);
-
     visual_video_depth_transform(vid, v.video);
 
-    int i;
-    int8_t *d = visual_video_get_pixels(vid);
-    for(i = 0; i < vid->width * vid->height * 4; i+=4)
+    if(do_swap)
     {
-        if(do_swap)
-        {
-            visual_video_flip_bytes_color32(vid, swap);
-        }
-        else
-        {
-            visual_video_blit_overlay(vid, swap, 0, 0, FALSE);
-        }
+        visual_video_flip_bytes_color32(vid, vid);
     }
 
     visual_object_unref(VISUAL_OBJECT(vid));
-    visual_object_unref(VISUAL_OBJECT(swap));
 
     AndroidBitmap_unlockPixels(env, bitmap);
 

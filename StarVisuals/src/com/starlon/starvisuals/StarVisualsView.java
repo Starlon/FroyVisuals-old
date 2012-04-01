@@ -245,6 +245,9 @@ public class StarVisualsView extends View {
                 int bpm = NativeHelper.getBPM();
                 int confidence = NativeHelper.getBPMConfidence();
                 boolean isBeat = NativeHelper.isBeat();
+
+                if(isBeat)
+                    mDoSwap = !mDoSwap;
     
                 if(bpm > 0 && confidence > 0)
                     text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : " ");
