@@ -1665,8 +1665,7 @@ void app_main(int w, int h)
 
     visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
     visual_bin_switch_set_automatic (v.bin, 1);
-    visual_bin_switch_set_steps (v.bin, 10);
-    //visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
+    visual_bin_switch_set_steps (v.bin, 3);
 
     visual_bin_connect(v.bin, actor, input);
     if((v.pluginIsGL = (visual_bin_get_depth (v.bin) == VISUAL_VIDEO_DEPTH_GL)))
