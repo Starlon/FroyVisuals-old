@@ -21,12 +21,12 @@ install_dev:
 	@adb -d install -r bin/$(APPNAME).apk
 
 debug:
-	@ndk-build V=1 BUILD_TYPE=debug USLEEP=-DUSLEEP
+	@ndk-build BUILD_TYPE=debug USLEEP=-DUSLEEP
 	@ant clean
 	@ant debug
 
 debug_emu:
-	@ndk-build V=1 BUILD_TYPE=debug USLEEP=--DUSLEEP
+	@ndk-build BUILD_TYPE=debug USLEEP=--DUSLEEP
 	@adb -e install -r bin/$(APPNAME)-debug.apk
 
 install_debug: 
