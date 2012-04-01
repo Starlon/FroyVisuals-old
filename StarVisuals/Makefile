@@ -21,12 +21,12 @@ install_dev:
 	@adb -d install -r bin/$(APPNAME).apk
 
 debug:
-	@ndk-build APP_OPTIM=debug NDK_DEBUG=1 V=1 BUILD_TYPE=debug
+	@ndk-build V=1 BUILD_TYPE=debug
 	@ant clean
 	@ant debug
 
 debug_emu:
-	@ndk-build APP_OPTIM=debug NDK_DEBUG=1 BUILD_TYPE=debug
+	@ndk-build V=1 BUILD_TYPE=debug
 	@adb -e install -r bin/$(APPNAME)-debug.apk
 
 install_debug: 
