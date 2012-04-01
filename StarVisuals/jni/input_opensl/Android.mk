@@ -5,8 +5,7 @@ LOCAL_STATIC_LIBRARIES := libvisual
 LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= input_opensl
 LOCAL_SRC_FILES := input_opensl.c
-LOCAL_CFLAGS += $(WARNING_FLAGS)
-LOCAL_LDLIBS    += -landroid
-LOCAL_LDLIBS    += -lOpenSLES
+LOCAL_CFLAGS    += $(ARCH_CFLAGS)
+LOCAL_LDLIBS    += -landroid -lOpenSLES
 #include $(BUILD_SHARED_LIBRARY)
 

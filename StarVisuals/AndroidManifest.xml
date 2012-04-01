@@ -5,7 +5,7 @@
       android:versionName="1.0">
     <application 
         android:label="@string/app_name" 
-        android:debuggable="true" 
+        android:debuggable="false" 
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent">
 
@@ -53,7 +53,7 @@
 
     <!-- Indicate minimum and target sdk versions. -->
     <uses-sdk android:minSdkVersion="8" 
-              android:targetSdkVersion="15" />
+              android:targetSdkVersion="9" />
 
     <!-- Indicate that landscape view requires GL version 2.0. -->
     <uses-feature android:name="android.hardware.screen.landscape"

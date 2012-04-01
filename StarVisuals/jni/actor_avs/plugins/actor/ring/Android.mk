@@ -8,7 +8,7 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/../../../evaluator
 LOCAL_MODULE	:= actor_avs_ring
 LOCAL_SRC_FILES := actor_avs_ring.c
-LOCAL_CFLAGS	:= -Wall -O0 -g
+LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 LOCAL_SHARED_LIBRARIES := libvisual common
 LOCAL_STATIC_LIBRARIES := evaluator
 include $(BUILD_SHARED_LIBRARY)

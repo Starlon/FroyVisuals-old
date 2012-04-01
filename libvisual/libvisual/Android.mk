@@ -11,8 +11,7 @@ LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= visual
 LOCAL_SHARED_LIBRARIES := lua 
 
-LOCAL_CFLAGS += $(WARNING_FLAGS)
-LOCAL_CLFAGS += -Iprivate/
+LOCAL_CFLAGS    += $(ARCH_CFLAGS) -Iprivate/
 
 LOCAL_LDLIBS    := -lm -ldl -llog 
 
@@ -23,19 +22,7 @@ LOCAL_LDLIBS    := -lm -ldl -llog
 PRIV := private/lv_video_convert.c  private/lv_video_fill.c  private/lv_video_scale.c
 
 LOCAL_SRC_FILES := $(PRIV) $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
-
-
-ifeq ($(TARGET_ARCH_ABI),armeabi)
-    LOCAL_CFLAGS += -march=armv6
-endif
-
-ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-    LOCAL_CFLAGS += -DHAVE_NEON=1 -mfloat-abi=softfp -mfpu=neon
-endif
-
-ifeq ($(TARGET_ARCH_ABI),x86)
-    LOCAL_CFLAGS += -DVISUAL_ARCH_X86=1
-endif
+LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 
 LOCAL_SHARED_LIBRARIES := cpufeatures
 

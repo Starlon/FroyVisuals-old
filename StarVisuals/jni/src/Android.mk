@@ -5,9 +5,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := main
 
 LOCAL_C_INCLUDES := ./include
-
-LOCAL_CFLAGS += $(WARNING_FLAGS)
-
+LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 LOCAL_SRC_FILES := starvisuals.c
 
 LOCAL_SHARED_LIBRARIES := visual

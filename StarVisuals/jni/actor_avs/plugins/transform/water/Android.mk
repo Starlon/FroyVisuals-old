@@ -8,7 +8,7 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/../../../evaluator
 LOCAL_MODULE	:= transform_avs_water
 LOCAL_SRC_FILES := transform_avs_water.c
-LOCAL_CFLAGS	:= -Wall -O0 -g -DNO_MMX
+LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 LOCAL_SHARED_LIBRARIES := libvisual common
 LOCAL_STATIC_LIBRARIES := evaluator
 include $(BUILD_SHARED_LIBRARY)

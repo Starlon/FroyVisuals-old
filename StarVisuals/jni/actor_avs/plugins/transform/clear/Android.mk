@@ -8,7 +8,7 @@ LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/../../../include \
     $(LOCAL_PATH)/../../../src\
     $(LOCAL_PATH)/../../../evaluator
-LOCAL_CFLAGS	:= -Wall -O0 -g
+LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 LOCAL_STATIC_LIBRARIES := evaluator
 LOCAL_SHARED_LIBRARIES := libvisual common 
 include $(BUILD_SHARED_LIBRARY)

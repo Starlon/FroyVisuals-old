@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= actor_avs
 LOCAL_SRC_FILES := actor_AVS.c
-LOCAL_CFLAGS += $(WARNING_FLAGS)
+LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 LOCAL_SHARED_LIBRARIES := libvisual common
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/../common/\
