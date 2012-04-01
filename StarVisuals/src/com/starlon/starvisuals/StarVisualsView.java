@@ -181,7 +181,7 @@ public class StarVisualsView extends View {
                 while(mActive)
                 {
                     try {
-                        double val = mStatsCanvas.nowMil();
+                        double then = mStatsCanvas.nowMil();
                         synchronized(mSynch)
                         {
                             mStatsNative.startFrame();
@@ -190,8 +190,13 @@ public class StarVisualsView extends View {
                             mLock.unlock();
                             mStatsNative.endFrame();
                         }
-                        double delta = mStatsNative.nowMil();
-                        Thread.sleep((int)(delta - val));
+                        double avg = (mStatsCanvas.mAvgFrame + mStatsNative.mAvgFrame) / 2.0;
+                        double now = mStatsNative.nowMil();
+                        double delta = now - then;
+                        double max = 30;
+                        double diff = (avg / max) * 100;
+
+                        Thread.sleep((int)(delta + diff));
                     } 
                     catch(Exception e)
                     {
