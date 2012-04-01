@@ -2,5 +2,5 @@
 #include <lua/lualib.h>
 #include <lua/lauxlib.h>
 #include <lua/luajit.h>
-#include "visscript-lua.h"
+#include <lua/visscript-lua.h>
 
