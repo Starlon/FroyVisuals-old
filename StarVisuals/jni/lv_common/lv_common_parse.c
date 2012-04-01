@@ -36,8 +36,8 @@
 /* Prototypes */
 static int avs_tree_dtor (VisObject *object);
 static int avs_element_dtor (VisObject *object);
-static int avs_main_dtor (VisObject *object);
-static int avs_render_superscope_dtor (VisObject *object);
+//static int avs_main_dtor (VisObject *object);
+//static int avs_render_superscope_dtor (VisObject *object);
 
 static void show_options (AVSElement *element);
 
@@ -608,7 +608,6 @@ int avs_element_deserialize_many_new_params (AVSElement *element, AVSTree *avstr
         VisParamContainer *pcont;
         va_list ap;
         char *pname;
-        AVSSerializeEntryType stype;
 
         pcont = visual_param_container_new ();
         scont = avs_serialize_container_new ();
@@ -674,13 +673,11 @@ AVSContainer *avs_parse_main (AVSTree *avstree)
 AVSElement *avs_parse_trans_movement (AVSTree *avstree)
 {
         AVSElement *movement;
-        AVSSerializeContainer *scont;
         int len = avstree->cur_section_length;
         int pos=0;
 
         int effect;
         int rectangular;
-        int effect_exp;
         int blend;
         int sourcemapped;
         int subpixel;
@@ -800,7 +797,6 @@ AVSElement *avs_parse_element_non_complex (AVSTree *avstree, AVSElementType type
         VisParamContainer *pcont;
         va_list ap;
         char *pname;
-        AVSSerializeEntryType stype;
 
         element = visual_mem_new0 (AVSElement, 1);
 
@@ -839,8 +835,6 @@ int avs_parse_data (AVSTree *avstree, char *filename)
 {
         int fd;
         int size;
-
-        char *buf;
 
         if (avstree == NULL || filename == NULL)
                 return -1;

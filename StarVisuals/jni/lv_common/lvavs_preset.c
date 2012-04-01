@@ -34,6 +34,7 @@
 
 #include "lvavs_preset.h"
 
+/*
 static const char *id_to_name_map[] = {
 	[AVS_ELEMENT_TYPE_RENDER_SIMPLESPECTRUM]	= "avs_superscope",
 	[AVS_ELEMENT_TYPE_RENDER_DOTPLANE]		= "avs_dotplane",
@@ -87,6 +88,7 @@ static const char *id_to_name_map[] = {
 	[AVS_ELEMENT_TYPE_TRANS_MULTIPLIER]		= "avs_multiplier",
 	NULL
 };
+*/
 
 static VisParamEntry container_params[] = {
 	VISUAL_PARAM_LIST_ENTRY_INTEGER("clearscreen", 1),
@@ -341,7 +343,6 @@ LVAVSPresetElement *lvavs_preset_element_new (LVAVSPresetElementType type, const
 LVAVSPresetContainer *lvavs_preset_container_new ()
 {
 	LVAVSPresetContainer *container;
-        LVAVSPresetElement *el;
 
 	container = visual_mem_new0 (LVAVSPresetContainer, 1);
 
