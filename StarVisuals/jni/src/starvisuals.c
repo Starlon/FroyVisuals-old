@@ -1441,51 +1441,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     return TRUE;
 }
 
-// Set the VisBin's plugins. This causes the actor to change immediately.
-/* // Call initApp() instead.
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_updatePlugins(JNIEnv * env, jobject  obj)
-{
-    VisMorph *bin_morph = visual_bin_get_morph(v.bin);
-    VisInput *input;
-
-
-    // Make sure the input and actor names are valid.
-    visual_return_val_if_fail(visual_actor_valid_by_name((char *)v.actor_name), FALSE);
-    visual_return_val_if_fail(visual_input_valid_by_name((char *)v.input_name), FALSE);
-
-    // If this we're set to morph between actors, then set the new morph.
-    // Fail if the last morph is not done!
-    // Make sure the morph name is valid.
-    if(v.bin->morphstyle == VISUAL_SWITCH_STYLE_MORPH && bin_morph)
-    {
-        visual_return_val_if_fail(visual_morph_is_done(bin_morph), FALSE);
-        visual_return_val_if_fail(visual_morph_valid_by_name((char *)v.morph_name), FALSE);
-
-        visual_bin_set_morph_by_name(v.bin, (char *)v.morph_name);
-    }
-
-    // Clean up old input plugin.
-    input = visual_bin_get_input(v.bin);
-    visual_object_unref(VISUAL_OBJECT(input));
-
-    // Set the new input plugin.
-    set_input();
-    //input = visual_input_new((char *)v.input_name);
-    //visual_bin_set_input(v.bin, input);
-
-    // Tell lv to switch to specified actor plugin.
-    visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
-
-    // Level the playing field.
-    visual_bin_realize(v.bin);
-
-    // Sync VisBin without events.
-    visual_bin_sync(v.bin, FALSE);
-
-    return TRUE;
-}
-*/
-
 // Set the VisBin's morph style -- to morph or not to morph.
 JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_setMorphStyle(JNIEnv * env, jobject  obj, jboolean morph)
 {
@@ -1663,7 +1618,7 @@ void app_main(int w, int h)
     visual_video_allocate_buffer(v.video);
     visual_bin_set_video(v.bin, v.video);
 
-    visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
+    visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_DIRECT);
     visual_bin_switch_set_automatic (v.bin, 1);
     visual_bin_switch_set_steps (v.bin, 3);
 
