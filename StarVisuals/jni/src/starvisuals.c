@@ -1723,7 +1723,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
 
     visual_video_depth_transform(vid, v.video);
 
-    if(do_swap && FALSE) // FIXME
+    if(do_swap)
     {
         int32_t data[vid->pitch * vid->height];
         VisVideo *swap = visual_video_new();

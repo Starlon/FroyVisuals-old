@@ -62,8 +62,8 @@ public class StarVisuals extends Activity implements OnClickListener
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
     public boolean mDoMorph = true;
     public String mMorph = "alphablend";
-    public String mInput = "dummy";
-    public String mActor = "starscope";
+    public String mInput = "mic";
+    public String mActor = "lv_analyzer";
     private float mSongChanged = 0;
     private String mSongAction = null;
     public String mSongCommand = null;
