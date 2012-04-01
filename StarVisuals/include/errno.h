@@ -1,1 +1,0 @@
-../jni/stlport/stlport/errno.h
