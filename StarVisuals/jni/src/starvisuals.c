@@ -36,12 +36,15 @@
 #define URL_LGPL "http://www.gnu.org/licenses/lgpl-3.0.txt"
 #define URL_BSD "http://www.opensource.org/licenses/bsd-license.php"
 
+#define MAX_PCM 1024
+
 struct {
-    int16_t pcm_data[1024]; // FIXME grow this with audio buffer size taken from java-side. later.
+    int16_t pcm_data[MAX_PCM]; // FIXME grow this with audio buffer size taken from java-side. later.
     int size;
     VisAudioSampleRateType rate;
     VisAudioSampleChannelType channels;
     VisAudioSampleFormatType encoding;
+    int min_beat_hold;
 } pcm_ref;
 
 /* LIBVISUAL */
@@ -106,8 +109,24 @@ static void v_cycleInput(int prev)
     }
 }
 
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_setMinBeat(JNIEnv *env, jobject obj, jint timemil)
+{
+    pcm_ref.min_beat_hold = (int)timemil;
+
+    return 0;
+}
+
 static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 {
+
+    static VisTimer *timer = NULL;
+
+    if(timer == NULL)
+    {
+        timer = visual_timer_new();
+        visual_timer_start(timer);
+    }
+
     visual_return_val_if_fail(input != NULL, VISUAL_ERROR_GENERAL);
     visual_return_val_if_fail(audio != NULL, VISUAL_ERROR_GENERAL);
     visual_return_val_if_fail(pcm_ref.pcm_data != NULL, VISUAL_ERROR_GENERAL);
@@ -119,7 +138,6 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
-/*
     if(paramcontainer != NULL)
     {
         VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
@@ -130,16 +148,20 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
         }
 
         unsigned char scaled[pcm_ref.size];
+        visual_mem_set(scaled, 0, sizeof(scaled));
+
         int i, isBeat;
 
-        for(i = 0; i < pcm_ref.size; i++)
+        for(i = 0; i < pcm_ref.size && i < MAX_PCM; i++)
         {
             scaled[i] = pcm_ref.pcm_data[i] / (float)FLT_MAX * UCHAR_MAX;
         }
-        isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, pcm_ref.size);
-        visual_param_entry_set_integer(entry, isBeat);
+        isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, MAX_PCM);
+        if(visual_timer_elapsed_msecs(timer) > pcm_ref.min_beat_hold && isBeat)
+        {
+            visual_param_entry_set_integer(entry, isBeat);
+        }
     }
-*/
     return 0;
 }
 
@@ -1331,7 +1353,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_resizePCM(jint 
 {
     //if(pcm_ref.pcm_data != NULL)
     //    visual_mem_free(pcm_ref.pcm_data);
-    pcm_ref.size = 1024;//size;
+    pcm_ref.size = MAX_PCM;//size;
     //pcm_ref.pcm_data = visual_mem_malloc(pcm_ref.size * sizeof(int16_t));
 
     //D/StarVisuals/StarVisualsActivity( 1102): Opened mic: 44100Hz, bits: 2, channel: 12, buffersize:8192
@@ -1591,6 +1613,7 @@ void app_main(int w, int h)
         v.morph_name = MORPH;
         v.actor_name = ACTOR;
         v.input_name = INPUT;
+        pcm_ref.min_beat_hold = 300;
     } else {
         visual_video_free_buffer(v.video);
         visual_object_unref(VISUAL_OBJECT(v.video));

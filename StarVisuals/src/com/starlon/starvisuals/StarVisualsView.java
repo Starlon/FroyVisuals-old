@@ -40,6 +40,7 @@ public class StarVisualsView extends View {
     private boolean mActive = false;
     private boolean mDoBeat = true;
     private boolean mDoSwap = true;
+    private int mMaxFPS = 30;
     public short mMicData[] = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
@@ -193,10 +194,9 @@ public class StarVisualsView extends View {
                         double avg = (mStatsCanvas.mAvgFrame + mStatsNative.mAvgFrame) / 2.0;
                         double now = mStatsNative.nowMil();
                         double delta = now - then;
-                        double max = 30;
-                        double diff = (avg / max) * 100;
+                        double diff = (avg / mMaxFPS);
 
-                        Thread.sleep((int)(delta + diff));
+                        Thread.sleep((int)(delta - diff));
                     } 
                     catch(Exception e)
                     {
