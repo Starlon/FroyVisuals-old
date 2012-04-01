@@ -34,7 +34,7 @@ public class Stats {
         return String.format("%.1f fps", mAvgFrame);
     }
 
-    private double nowMil()
+    public double nowMil()
     {
         return System.currentTimeMillis();
     }
