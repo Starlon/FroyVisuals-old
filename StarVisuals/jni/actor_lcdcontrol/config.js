@@ -2,158 +2,19 @@
     "variables": {
         "foo": 220
     },
-    "display_cfa635": {
-        //"driver": "crystalfontz",
-        "backlight": 80,
-        "contrast": 95, //0-254
-        "layout-timeout": 0,
-        "transition-speed": 500,
-        "layout0": "layout_1",
-        /*"layout1": "layout_icons",
-        "layout2": "layout_american_flag",
-        "layout3": "layout_bar",
-        "layout4": "layout_marquee1",
-        "layout5": "layout_bignums",
-        "layout6": "layout_bolt",*/
-        "model": "635+",
-        "port": "/dev/ttyUSB0",
-        "transitions_off": true,
-        "clear_on_layout_change": false,
-        "speed": 115200
-        //"widget0": "widget_key_up",
-        //"widget1": "widget_key_down"
-    },
-
-    "display_cfa635_2": {
-        //"driver": "crystalfontz",
-        "backlight": 100,
-        "contrast": 95, // 0 - 254
-        "layout-timeout": 6000,
-        "transition-speed": 100,
-        "layout0": "layout_1",
-        /*"layout1": "layout_bar",
-        "layout2": "layout_american_flag",
-        "layout3": "layout_bar",
-        "layout4": "layout_marquee1",
-        "layout5": "layout_bignums",*/
-        "model": "635",
-        "port": "/dev/ttyUSB1",
-        "transitions_off": false,
-        "clear_on_layout_change": false,
-        "speed": 115200,
-        "widget0": "widget_key_up",
-        "widget1": "widget_key_down"
-    },
-
-    "display_cfa533": {
-        //"driver": "crystalfontz",
-        "backlight": 100, 
-        "contrast": 15, // 0 - 50 
-        "layout0": "layout_2x16", 
-        "model": "533", 
-        "port": "/dev/ttyUSB2", 
-        "baud": 19200, 
-        "widget0": "widget_key_up", 
-        "widget1": "widget_key_down"
-    },
-
-    "display_cfa634": {
-        //"driver": "crystalfontz",
-        "backlight": 100, 
-        "contrast": 50, 
-        "layout-timeout": 5000,
-        "layout0": "layout_bar",
-        "layout1": "layout_blank",
-        "model": "634", 
-        "port": "/dev/ttyUSB0", 
-        "transitions-off": true,
-        "baud": 19200,
-        "rows": 4,
-        "cols": 20,
-        "widget0": "widget_netstat_script"
-    },
-
-    "display_qt": {
-        //"driver": "qt",
-        "backlight": 1, 
-        "layout-timeout": 5000,
-        "layout0": "layout_bar",
-        "layout1": "layout_1",
-        "layout2": "layout_marquee2",
-        "layout3": "layout_bolt",
-        "layout4": "layout_marquee1",
-        "layout5": "layout_blank",
-        "widget0": "widget_netstat_script",
-        "clear_on_layout_change": false
-    }, 
-    "display_xmms2_pcm": {
-        //"driver": "qt",
-        //"gif-file": "xmms2_pcm.gif",
-        "rows": 2,
-        "cols": 4,
-        "layout0": "layout_xmms2_pcm_24x16", 
-        "layout-timeout": 0
-    }, 
-    "display_xmms2_peak": {
-        //"driver": "qt",
-        //"gif-file": "xmms2_peak.gif",
-        "rows": 4,
-        "cols": 20,
-        "layout0": "layout_xmms2_peak",
-        "layout-timeout": 0
-    },
-    "display_xmms2_spectrum": {
-        //"driver": "qt",
-        //"gif-file": "xmms2_spectrum.gif",
-        "rows": 4,
-        "cols": 20,
-        "layout0": "layout_xmms2_spectrum",
-        "layout-timeout": 0
-    },
-    "display_qt_graphic_test": { 
-        //"driver": "qtgraphic", //broken?
-        "layout0": "layout_full_256x64", 
-        "layout1": "layout_xmms2_pcm_256x64",
-        "layout2": "layout_bignums",
-        //"gif-file": "qt_graphic_test.gif",
-        "background": "ffffff6f",
-        "layout-timeout": 5000,
-        "transition-speed": 50,
-        "rows": 64,
-        "cols": 256,
-        "pixels": "2x2",
-        "widget0": "widget_key_up",
-        "widget1": "widget_key_down"
-    },
-    "display_pico_graphic": {
-        //"driver": "picographic", 
-        "layout-timeout": 5000,
-        "layout1": "layout_full_256x64",
-        "layout0": "layout_blank",
-        "transition-speed": 0,
-        "transitions_off": true,
-        "clear_on_layout_change": false,
-        "rows": 64,
-        "cols": 256,
-        "layers": 3,
-        "widget0": "widget_key_up",
-        "widget1": "widget_key_down",
-        "widget2": "widget_netstat_script"
-    }, 
     "display_sdl": {
-        "driver": "sdl",
-        "gif-file": "avs_test.gif",
+        "driver": "native",
         "gif-speed": 80,
-        "pixels": "3x3",
+        "pixels": "1x1",
         "layers": 3,
         "background": "d9ccf16f",
         "fill": 1,
-        "rows": 256,
         "cols": 256,
+        "rows": 64,
         "layout-timeout": 0,
         "update": 25,
-        "widget0": "widget_key_up",
-        "widget1": "widget_key_down",
+        //"widget0": "widget_key_up",
+        //"widget1": "widget_key_down",
         //"widget2": "widget_netstat_script",
         "transition-speed": 50,
         "refresh-rate": 25,
