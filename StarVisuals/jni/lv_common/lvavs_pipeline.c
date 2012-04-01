@@ -644,7 +644,7 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
                 visual_mem_copy(o, tfb, w*h*sizeof(int));
             break;
             case 2:
-                mmx_avgblend_block(o,tfb,x);
+                lv_common_avgblend_block(o,tfb,x);
             break;
             case 3:
                 while(x--)
@@ -654,7 +654,7 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
                 }
             break;
             case 4:
-            //mmx_addblend_block(pipeline->blendtable, o, tfb, x);
+                lv_common_addblend_block(pipeline->blendtable, o, tfb, x);
             break;
             case 5:
                 while(x--)
@@ -711,10 +711,10 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
                 }
             break;
             case 10:
-                mmx_adjblend_block(pipeline->blendtable,o,tfb,o,x,pipeline->use_inblendval);
+                lv_common_adjblend_block(pipeline->blendtable,o,tfb,o,x,pipeline->use_inblendval);
             break;
             case 11:
-                mmx_mulblend_block(pipeline->blendtable, o,tfb,x);
+                lv_common_mulblend_block(pipeline->blendtable, o,tfb,x);
             break;
             case 13:
                 while(x--)
@@ -765,7 +765,7 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
                 visual_mem_copy(o,tfb,x*sizeof(int));
             break;
             case 2:
-                mmx_avgblend_block(o,tfb,x);
+                lv_common_avgblend_block(o,tfb,x);
             break;
             case 3:
                 while(x--)
@@ -775,7 +775,7 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
                 }
             break;
             case 4:
-                mmx_addblend_block(o, tfb, x);
+                lv_common_addblend_block(o, tfb, x);
             break;
             case 5:
                 while(x--)
@@ -831,10 +831,10 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
                 }
             break;
             case 10:
-                mmx_adjblend_block(pipeline->blendtable,o, tfb, o, x, use_outblendval);
+                lv_common_adjblend_block(pipeline->blendtable,o, tfb, o, x, use_outblendval);
             break;
             case 11:
-                mmx_mulblend_block(pipeline->blendtable, o, tfb, x);
+                lv_common_mulblend_block(pipeline->blendtable, o, tfb, x);
             break;
             case 13:
                 while(x--)
