@@ -31,7 +31,7 @@
 
 #include <libvisual/libvisual.h>
 
-#include "avs_parse.h"
+#include "lv_common_parse.h"
 
 /* Prototypes */
 static int avs_tree_dtor (VisObject *object);

@@ -26,7 +26,7 @@
 
 #include <libvisual/libvisual.h>
 
-#include "avs_serialize.h"
+#include "lv_common_serialize.h"
 
 #ifdef __cplusplus
 extern "C" {

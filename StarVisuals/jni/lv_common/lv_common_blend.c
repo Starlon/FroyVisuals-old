@@ -31,7 +31,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _R_DEFS_H_
 
 #include "config.h"
-#include "avs_blend.h"
+#include "lv_common_blend.h"
 
 static int max(int x, int y)
 {

@@ -32,7 +32,7 @@
 
 #include <libvisual/libvisual.h>
 
-#include "avs_gfx.h"
+#include "lv_common_gfx.h"
 
 #define SGN(a) (a == 0 ? 0 : a < 0 ? -1 : 1)
 

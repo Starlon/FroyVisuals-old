@@ -38,7 +38,7 @@
 
 #include "lvavs_preset.h"
 #include "lvavs_pipeline.h"
-#include "avs_blend.h"
+#include "lv_common_blend.h"
 
 /* Prototypes */
 static int lvavs_pipeline_dtor (VisObject *object);

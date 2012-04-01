@@ -32,7 +32,7 @@
 
 #include <libvisual/libvisual.h>
 
-#include "avs_sound.h"
+#include "lv_common_sound.h"
 
 
 int lvavs_sound_get_from_source (VisAudio *audio, float ***data)

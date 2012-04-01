@@ -26,7 +26,7 @@
 
 #include <libvisual/libvisual.h>
 
-#include "avs_parse.h"
+#include "lv_common_parse.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -32,7 +32,7 @@
 
 #include <libvisual/libvisual.h>
 
-#include "avs_config.h"
+#include "lv_common_config.h"
 
 VisTime *avs_config_standard_color_cycler_time ()
 {

@@ -30,8 +30,8 @@
 
 #include <libvisual/libvisual.h>
 
-#include "avs_serialize.h"
-#include "avs_parse.h"
+#include "lv_common_serialize.h"
+#include "lv_common_parse.h"
 
 static int avs_data_serialize_container_dtor (VisObject *object);
 
