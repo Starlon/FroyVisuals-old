@@ -654,7 +654,7 @@ int pipeline_container_run (LVAVSPipelineContainer *container, VisVideo *video, 
                 }
             break;
             case 4:
-                lv_common_addblend_block(pipeline->blendtable, o, tfb, x);
+                //lv_common_addblend_block(pipeline->blendtable, o, tfb, x);
             break;
             case 5:
                 while(x--)

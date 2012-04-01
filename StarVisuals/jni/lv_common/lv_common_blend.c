@@ -530,7 +530,7 @@ mmx_mulblend_loop:
 #endif
 }
 
-void __inline mmx_adjblend_block(unsigned char blendtable[256][256], int *o, int *in1, int *in2, int len, int v)
+void __inline lv_common_adjblend_block(unsigned char blendtable[256][256], int *o, int *in1, int *in2, int len, int v)
 {
 #if 1
   while (len--)
