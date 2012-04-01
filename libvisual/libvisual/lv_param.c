@@ -24,6 +24,7 @@
 #include "config.h"
 #include "lv_param.h"
 #include "lv_common.h"
+#include "lv_util.h"
 #include "gettext.h"
 #include <string.h>
 
@@ -156,7 +157,7 @@ int visual_param_container_add_with_defaults (VisParamContainer *paramcontainer,
     visual_mem_copy(&param->defaultnum, &param->numeric, sizeof(param->defaultnum));
 
     if(param->type == VISUAL_PARAM_ENTRY_TYPE_STRING)
-        param->defaultstring = strdup(param->string);
+        param->defaultstring = visual_strdup(param->string);
 
 /*
     if(param->type == VISUAL_PARAM_ENTRY_TYPE_COLOR)
@@ -519,7 +520,7 @@ int visual_param_entry_set_name (VisParamEntry *param, char *name)
     param->name = NULL;
 
     if (name != NULL)
-        param->name = strdup (name);
+        param->name = visual_strdup (name);
 
     return VISUAL_OK;
 }
@@ -540,14 +541,14 @@ int visual_param_entry_set_string (VisParamEntry *param, char *string)
         visual_param_entry_changed (param);
 
     } else if (param->string == NULL && string != NULL) {
-        param->string = strdup (string);
+        param->string = visual_strdup (string);
 
         visual_param_entry_changed (param);
 
     } else if (strcmp (string, param->string) != 0) {
         visual_mem_free (param->string);
 
-        param->string = strdup (string);
+        param->string = visual_strdup (string);
 
         visual_param_entry_changed (param);
     }
@@ -694,7 +695,7 @@ int visual_param_entry_set_annotation (VisParamEntry *param, char *anno)
     if (param->annotation != NULL)
         visual_mem_free(param->annotation);
 
-    param->annotation = strdup(anno);
+    param->annotation = visual_strdup(anno);
 
     return VISUAL_OK;
 }
@@ -919,7 +920,7 @@ int visual_param_entry_default_set_string(VisParamEntry *param, char *str)
     if(param->defaultstring)
         visual_mem_free(param->defaultstring);
 
-    param->defaultstring = strdup(str);
+    param->defaultstring = visual_strdup(str);
 
     return VISUAL_OK;
 }

@@ -302,7 +302,7 @@ static int load_new_file (PixbufPrivate *priv, const char *filename)
 	if (priv->filename != NULL)
 		free (priv->filename);
 
-	priv->filename = strdup (filename);
+	priv->filename = visual_strdup (filename);
 
 	priv->pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
 	visual_return_val_if_fail (priv->pixbuf != NULL, -1);
@@ -407,7 +407,7 @@ static int update_into_visvideo (PixbufPrivate *priv, GdkPixbuf *src)
 	visual_video_allocate_buffer (target);
 
 	/* Gdk uses a different color order than we do */
-	visual_video_color_bgr_to_rgb (target, &bgr);
+	visual_video_flip_pixel_bytes (target, &bgr);
 
 	return 0;
 }

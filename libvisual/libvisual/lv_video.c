@@ -36,9 +36,15 @@
 #include "gettext.h"
 
 #pragma pack(1)
+
 typedef struct {
+#ifdef VISUAL_LITTLE_ENDIAN
 	uint16_t b:5, g:6, r:5;
-} _color16;
+#else
+	uint16_t r:5, g:6, b:5;
+#endif
+} rgb16_t;
+
 #pragma pack()
 
 /* The VisVideo dtor function */
@@ -210,13 +216,13 @@ int visual_video_have_allocated_buffer (VisVideo *video)
 
 static void precompute_row_table (VisVideo *video)
 {
-	void **table, *row;
+	uint8_t **table, *row;
 	int y;
 
 	visual_return_if_fail (video->pixel_rows != NULL);
 
-	table = video->pixel_rows;
-	row = visual_video_get_pixels (video);
+	table = (uint8_t **) video->pixel_rows;
+	row = (uint8_t *) visual_video_get_pixels (video);
 
 	for (y = 0; y < video->height; y++, row += video->pitch)
 		*table++ = row;
@@ -1068,16 +1074,16 @@ static int blit_overlay_surfacealpha (VisVideo *dest, VisVideo *src)
 	} else if (dest->depth == VISUAL_VIDEO_DEPTH_16BIT) {
 
 		for (y = 0; y < src->height; y++) {
-			_color16 *destr = (_color16 *) destbuf;
-			_color16 *srcr = (_color16 *) srcbuf;
+			rgb16_t *destr = (rgb16_t *) destbuf;
+			rgb16_t *srcr  = (rgb16_t *) srcbuf;
 
 			for (x = 0; x < src->width; x++) {
 				destr->r = ((alpha * (srcr->r - destr->r) >> 8) + destr->r);
 				destr->g = ((alpha * (srcr->g - destr->g) >> 8) + destr->g);
 				destr->b = ((alpha * (srcr->b - destr->b) >> 8) + destr->b);
 
-				destr += 1;
-				srcr += 1;
+				destr++;
+				srcr++;
 			}
 
 			destbuf += dest->pitch;
@@ -1155,8 +1161,8 @@ static int blit_overlay_surfacealphacolorkey (VisVideo *dest, VisVideo *src)
 		uint16_t color = visual_color_to_uint16 (&src->colorkey);
 
 		for (y = 0; y < src->height; y++) {
-			_color16 *destr = (_color16 *) destbuf;
-			_color16 *srcr = (_color16 *) srcbuf;
+			rgb16_t *destr = (rgb16_t *) destbuf;
+			rgb16_t *srcr  = (rgb16_t *) srcbuf;
 
 			for (x = 0; x < src->width; x++) {
 				if (color != *((uint16_t *) srcr)) {
@@ -1255,7 +1261,7 @@ int visual_video_fill_alpha (VisVideo *video, uint8_t density)
 	visual_return_val_if_fail (video != NULL, -VISUAL_ERROR_VIDEO_NULL);
 	visual_return_val_if_fail (video->depth == VISUAL_VIDEO_DEPTH_32BIT, -VISUAL_ERROR_VIDEO_INVALID_DEPTH);
 
-	vidbuf = visual_video_get_pixels (video) + 3;
+	vidbuf = (uint8_t *) visual_video_get_pixels (video) + 3;
 
 	/* FIXME byte order sensitive */
 	for (y = 0; y < video->height; y++) {
@@ -1498,7 +1504,7 @@ static int rotate_180 (VisVideo *dest, VisVideo *src)
 
 	for (y = 0; y < dest->height; y++) {
 		dbuf = dest->pixel_rows[y];
-		sbuf = src->pixel_rows[h1 - y] + w1;
+		sbuf = (uint8_t *) src->pixel_rows[h1 - y] + w1;
 
 		for (x = 0; x < dest->width; x++) {
 			for (i = 0; i < src->bpp; i++) {
@@ -1516,7 +1522,7 @@ static int rotate_270 (VisVideo *dest, VisVideo *src)
 {
 	int x, y, i;
 
-	uint8_t *tsbuf = visual_video_get_pixels (src) + src->pitch - src->bpp;
+	uint8_t *tsbuf = (uint8_t *) visual_video_get_pixels (src) + src->pitch - src->bpp;
 	uint8_t *dbuf = visual_video_get_pixels (dest);
 	uint8_t *sbuf = tsbuf;
 
@@ -1590,7 +1596,7 @@ static int mirror_x (VisVideo *dest, VisVideo *src)
 	int x, y, i;
 
 	for (y = 0; y < dest->height; y++) {
-		sbuf = src->pixel_rows[y] + w1b;
+		sbuf = (uint8_t *) src->pixel_rows[y] + w1b;
 		dbuf = dest->pixel_rows[y];
 
 		for (x = 0; x < dest->width; x++) {
