@@ -6,5 +6,5 @@ LOCAL_MODULE	:= plazma
 LOCAL_SRC_FILES := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
 LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 LOCAL_SHARED_LIBRARIES := libvisual
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
