@@ -1547,7 +1547,9 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNI
 void app_main(int w, int h)
 {
 
-    //usleep(1000*1000*5); //FIXME Use this to delay starting StarVisuals in case ndk-gdb can't insert a breakpoint before a crash occurs.
+#if defined(USLEEP)
+    usleep(1000*1000*5); 
+#endif
     int depthflag;
     VisVideoDepth depth;
 
