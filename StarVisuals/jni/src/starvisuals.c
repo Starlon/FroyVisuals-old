@@ -1547,6 +1547,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNI
 void app_main(int w, int h)
 {
 
+    usleep(1000*1000*5);
     int depthflag;
     VisVideoDepth depth;
 

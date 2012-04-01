@@ -9,7 +9,7 @@ include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= visual
-LOCAL_SHARED_LIBRARIES := lua 
+#LOCAL_SHARED_LIBRARIES := lua 
 
 LOCAL_CFLAGS    += $(ARCH_CFLAGS) -Iprivate/
 

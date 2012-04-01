@@ -137,6 +137,8 @@ int act_oinksie_init (VisPluginData *plugin)
 	visual_palette_allocate_colors (&priv->priv2.pal_old, 256);
 
 	rcontext = visual_plugin_get_random_context (plugin);
+    fprintf(stderr, "-----------rcontext %d", rcontext != NULL);
+
 	priv->priv1.rcontext = rcontext;
 	priv->priv2.rcontext = rcontext;
 
