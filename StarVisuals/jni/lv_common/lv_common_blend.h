@@ -44,9 +44,9 @@ int  BLEND_MUL(unsigned char blendtable[256][256], int a, int b);
 void BLEND_LINE(int *fb, int color, unsigned char blendtable[256][256], int mode);
 int BLEND4(unsigned char blendtable[256][256], int *p1, int w, int xp, int yp);
 int BLEND4_16(unsigned char blendtable[256][256], int *p1, int w, int xp, int yp);
-void mmx_mulblend_block(unsigned char blendtable[256][256], int *output, int *input, int l);
-void mmx_adjblend_block(unsigned char blendtable[256][256], int *o, int *in1, int *in2, int len, int v);
-void mmx_addblend_block(int *output, int *input, int l);
-void mmx_avgblend_block(int *output, int *input, int l);
+void lv_common_mulblend_block(unsigned char blendtable[256][256], int *output, int *input, int l);
+void lv_common_adjblend_block(unsigned char blendtable[256][256], int *o, int *in1, int *in2, int len, int v);
+void lv_common_addblend_block(int *output, int *input, int l);
+void lv_common_avgblend_block(int *output, int *input, int l);
 
 #endif

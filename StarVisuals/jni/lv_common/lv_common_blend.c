@@ -397,7 +397,7 @@ __inline int BLEND4_16(unsigned char blendtable[256][256], int *p1, int w, int x
 #endif
 }
 
-__inline void mmx_avgblend_block(int *output, int *input, int l)
+__inline void lv_common_avgblend_block(int *output, int *input, int l)
 {
 #if 1
   while (l--)
@@ -448,7 +448,7 @@ mmx_avgblend_loop:
 }
 
 
-__inline void mmx_addblend_block(int *output, int *input, int l)
+__inline void lv_common_addblend_block(int *output, int *input, int l)
 {
 #if 1
   while (l--)
@@ -485,7 +485,7 @@ mmx_addblend_loop:
 #endif
 }
 
-__inline void mmx_mulblend_block(unsigned char blendtable[256][256], int *output, int *input, int l)
+__inline void lv_common_mulblend_block(unsigned char blendtable[256][256], int *output, int *input, int l)
 {
 #if 1
   while (l--)
