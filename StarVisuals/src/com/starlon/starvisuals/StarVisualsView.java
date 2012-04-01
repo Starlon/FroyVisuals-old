@@ -191,10 +191,10 @@ public class StarVisualsView extends View {
                             mLock.unlock();
                             mStatsNative.endFrame();
                         }
-                        double avg = mStatsNative.mAvgFrame;
+
                         double now = mStatsNative.nowMil();
                         double delta = (now - then);
-
+                        double avg = mStatsNative.mAvgFrame;
                         double diff = (avg / mMaxFPS);
 
                         Thread.sleep((int)(delta + diff * 60));
