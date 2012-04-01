@@ -180,6 +180,7 @@ public class StarVisualsView extends View {
                 while(mActive)
                 {
                     try {
+                        double val = mStatsCanvas.nowMil();
                         synchronized(mSynch)
                         {
                             mStatsNative.startFrame();
@@ -188,7 +189,8 @@ public class StarVisualsView extends View {
                             mLock.unlock();
                             mStatsNative.endFrame();
                         }
-                        Thread.sleep(5);
+                        double delta = mStatsNative.nowMil();
+                        Thread.sleep(delta - val);
                     } 
                     catch(Exception e)
                     {
