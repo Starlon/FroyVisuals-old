@@ -107,7 +107,7 @@ int  BLEND_MAX(int a, int b)
 	return t;
 }
 
-int  BLEND_MIN(int a, int b)
+__inline int  BLEND_MIN(int a, int b)
 {
 #if 1
 	register int t;
@@ -171,7 +171,7 @@ int  BLEND_MIN(int a, int b)
 #endif
 
 
-int  BLEND_AVG(int a, int b)
+__inline int  BLEND_AVG(int a, int b)
 {
 	return ((a>>1)&~((1<<7)|(1<<15)|(1<<23)))+((b>>1)&~((1<<7)|(1<<15)|(1<<23)));
 }
