@@ -1548,7 +1548,7 @@ void app_main(int w, int h)
 {
 
 #if defined(USLEEP)
-    usleep(1000*1000*5); 
+    usleep(USLEEP); 
 #endif
     int depthflag;
     VisVideoDepth depth;
