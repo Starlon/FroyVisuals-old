@@ -22,7 +22,7 @@ LOCAL_LDLIBS    := -lm -ldl -llog
 #LOCAL_CFLAGS += -pg -DVISUAL_HAVE_PROFILING -fno-omit-frame-pointer -fno-function-sections
 
 LOCAL_SRC_FILES := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
-LOCAL_SRC_FILES += $(addprefix /private/, $(notdir $(wildcard $(LOCAL_PATH)/private/*.c) $(wildcard $(LOCAL_PATH)/private/*.cpp)))
+LOCAL_SRC_FILES += private/lv_video_convert.c  private/lv_video_fill.c  private/lv_video_scale.c
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
     #LOCAL_CFLAGS += -DVISUAL_ARCH_ARM=1 -DHAVE_NEON=1 -mfloat-abi=softfp -mfpu=neon

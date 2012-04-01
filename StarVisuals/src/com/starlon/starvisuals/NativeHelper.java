@@ -108,7 +108,7 @@ public class NativeHelper
     public static native void initApp(int w, int h);
 
     /* Draw and render vis */
-    public static native boolean render(Bitmap  bitmap);
+    public static native boolean render(Bitmap  bitmap, boolean do_swap);
 
     /** constructor */
     public NativeHelper(Context c)

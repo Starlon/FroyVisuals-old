@@ -1676,7 +1676,7 @@ VisVideo *new_video(int w, int h, VisVideoDepth depth, void *pixels)
 }
 
 // Render the view's bitmap image.
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIEnv * env, jobject  obj, jobject bitmap, jint dur)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIEnv * env, jobject  obj, jobject bitmap, jboolean do_swap)
 {
     AndroidBitmapInfo  info;
     void*              pixels;
@@ -1733,17 +1733,20 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
 
     visual_video_depth_transform(vid, v.video);
 
-/*
     int i;
     int8_t *d = visual_video_get_pixels(vid);
     for(i = 0; i < vid->width * vid->height * 4; i+=4)
     {
-        d[i] = s[i+2];
-        d[i+1] = s[i+1];
-        d[i+2] = s[i];
-        d[i+3] = 0xff;
+        if(do_swap)
+        {
+            visual_video_flip_bytes_color32(vid, swap);
+        }
+        else
+        {
+            visual_video_blit_overlay(vid, swap, 0, 0, FALSE);
+        }
     }
-*/
+
     visual_object_unref(VISUAL_OBJECT(vid));
     visual_object_unref(VISUAL_OBJECT(swap));
 

@@ -39,6 +39,7 @@ public class StarVisualsView extends View {
     //private Display mDisplay = null;
     private boolean mActive = false;
     private boolean mDoBeat = true;
+    private boolean mDoSwap = true;
     public short mMicData[] = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
@@ -185,7 +186,7 @@ public class StarVisualsView extends View {
                         {
                             mStatsNative.startFrame();
                             mLock.lock();
-                            NativeHelper.render(mBitmap);
+                            NativeHelper.render(mBitmap, mDoSwap);
                             mLock.unlock();
                             mStatsNative.endFrame();
                         }
@@ -223,7 +224,6 @@ public class StarVisualsView extends View {
             }
                 
             // Do we have text to show?
-/*
             String text = mActivity.getDisplayText();
     
 
@@ -262,7 +262,6 @@ public class StarVisualsView extends View {
                 int height = mActivity.mAlbumArt.getHeight();
                 canvas.drawBitmap(mActivity.mAlbumArt, getWidth()-width-50.0f, 50.0f, mPaint);
             }
-  */          
             invalidate();
     }
 
