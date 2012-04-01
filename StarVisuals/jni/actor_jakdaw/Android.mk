@@ -6,8 +6,6 @@ LOCAL_MODULE	:= actor_jakdaw
 LOCAL_SRC_FILES := actor_jakdaw.c  feedback.c  plotter.c
 
 LOCAL_CFLAGS += $(WARNING_FLAGS)
-LOCAL_CFLAGS += $(DEBUG_FLAGS)
-LOCAL_CFLAGS += $(OPTIM_FLAGS)
 
 LOCAL_STATIC_LIBRARIES := libvisual
 

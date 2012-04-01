@@ -6,8 +6,6 @@ LOCAL_MODULE	:= actor_bumpscope
 LOCAL_SRC_FILES := actor_bumpscope.c bump_scope.c
 
 LOCAL_CFLAGS += $(WARNING_FLAGS)
-LOCAL_CFLAGS += $(DEBUG_FLAGS)
-LOCAL_CFLAGS += $(OPTIM_FLAGS)
 
 LOCAL_SHARED_LIBRARIES := libvisual
 #include $(BUILD_SHARED_LIBRARY)

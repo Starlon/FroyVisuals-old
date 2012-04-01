@@ -1,6 +1,0 @@
--
-  type: luadoc
-  input-files: 
-    - "LibScriptableWidgets-1.0/LibScriptableWidgetBar-1.0/LibScriptableWidgetBar-1.0.lua"
-    - "LibScriptableWidgets-1.0/LibScriptableWidgetHistogram-1.0/LibScriptableWidgetHistogram-1.0.lua"
-  output-directory: API

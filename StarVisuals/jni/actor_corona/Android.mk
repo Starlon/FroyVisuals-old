@@ -6,8 +6,6 @@ LOCAL_MODULE	:= actor_corona
 LOCAL_SRC_FILES := actor_corona.cpp  corona.cpp  palette.cpp
 
 LOCAL_CFLAGS += $(WARNING_FLAGS)
-LOCAL_CFLAGS += $(DEBUG_FLAGS)
-LOCAL_CFLAGS += $(OPTIM_FLAGS)
 LOCAL_CFLAGS += -fexceptions
 
 LOCAL_STATIC_LIBRARIES := libvisual

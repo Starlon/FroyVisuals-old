@@ -6,8 +6,6 @@ LOCAL_C_INCLUDES := ./include
 LOCAL_MODULE	:= input_opensl
 LOCAL_SRC_FILES := input_opensl.c
 LOCAL_CFLAGS += $(WARNING_FLAGS)
-LOCAL_CFLAGS += $(DEBUG_FLAGS)
-LOCAL_CFLAGS += $(OPTIM_FLAGS)
 LOCAL_LDLIBS    += -landroid
 LOCAL_LDLIBS    += -lOpenSLES
 #include $(BUILD_SHARED_LIBRARY)
