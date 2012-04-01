@@ -24,6 +24,7 @@
 #define _SVID_SOURCE
 
 #include "config.h"
+#include <string.h>
 #include "lv_plugin.h"
 #include "lv_common.h"
 #include "lv_libvisual.h"
