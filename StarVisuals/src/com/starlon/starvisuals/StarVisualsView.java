@@ -38,7 +38,7 @@ public class StarVisualsView extends View {
     private Matrix mMatrix = null;
     //private Display mDisplay = null;
     private boolean mActive = false;
-    private boolean mDoBeat = true;
+    private boolean mDoBeat = false;
     private boolean mDoSwap = true;
     private int mMaxFPS = 30;
     public short mMicData[] = null;

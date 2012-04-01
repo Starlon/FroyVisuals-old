@@ -138,7 +138,7 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
-    if(paramcontainer != NULL)
+    if(paramcontainer != NULL && FALSE)
     {
         VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
         if(entry == NULL)
@@ -1547,7 +1547,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNI
 void app_main(int w, int h)
 {
 
-    usleep(1000*1000*5);
+    //usleep(1000*1000*5); //FIXME Use this to delay starting StarVisuals in case ndk-gdb can't insert a breakpoint before a crash occurs.
     int depthflag;
     VisVideoDepth depth;
 
@@ -1721,7 +1721,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
 
     visual_video_depth_transform(vid, v.video);
 
-    if(do_swap)
+    if(do_swap && FALSE) // FIXME
     {
         int32_t data[vid->pitch * vid->height];
         VisVideo *swap = visual_video_new();
