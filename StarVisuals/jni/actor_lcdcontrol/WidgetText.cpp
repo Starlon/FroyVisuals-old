@@ -95,7 +95,7 @@ WidgetText::WidgetText(LCDCore *v, std::string name, Json::Value *config,
 
     val = v->CFG_Fetch_Raw(section_, "align", new Json::Value("L"));
     const char *c = val->asCString();
-    switch (toupper(*c)) {
+    switch ((*c)) {
     case 'L':
         align_ = ALIGN_LEFT;
         break;

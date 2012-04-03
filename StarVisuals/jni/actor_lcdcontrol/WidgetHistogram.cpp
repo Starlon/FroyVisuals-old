@@ -116,7 +116,7 @@ void WidgetHistogram::SetupChars() {
     for(int c = 0; c < (int)lcd->YRES; c++ ) {
         SpecialChar buffer(lcd->YRES);;
         for(int i = lcd->YRES - 1; i >= 0; i-- ) {
-            buffer[lcd->YRES - i - 1] = (i < c ? pow(2, lcd->XRES)-1-gap_ : 0);
+            buffer[lcd->YRES - i - 1] = (i < c ? pow(2.0, (double)lcd->XRES)-1-gap_ : 0);
         }
 
         bool reused = false;

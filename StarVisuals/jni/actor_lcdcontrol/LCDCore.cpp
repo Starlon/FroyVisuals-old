@@ -104,7 +104,7 @@ void LCDCore::CFGSetup() {
     std::stringstream strm;
     std::string str;
 
-    app_->ProcessVariables(CFG_Get_Root(), (Evaluator *)this);
+    //app_->ProcessVariables(CFG_Get_Root(), (Evaluator *)this);
 
     Json::Value *section = CFG_Fetch_Raw(CFG_Get_Root(), name_);
     if(!section) {

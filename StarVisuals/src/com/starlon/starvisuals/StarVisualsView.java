@@ -26,14 +26,15 @@ import java.text.DecimalFormat;
 public class StarVisualsView extends View {
     private final String TAG = "StarVisuals/StarVisualsView";
     private final int INT_BYTES = 4;
+    private final Bitmap.Config RGB = Bitmap.Config.ARGB_8888;
     public Bitmap mBitmap = null;
     public Bitmap mBitmapSecond = null;
     public IntBuffer mIntBuffer = null;
     private StarVisuals mActivity = null;
     private Stats mStatsNative = null;
     private Stats mStatsCanvas = null;
-    private int WIDTH = 192;
-    private int HEIGHT = 192;
+    private int WIDTH = 128;
+    private int HEIGHT = 128;
     private Paint mPaint = null;
     private Matrix mMatrix = null;
     //private Display mDisplay = null;
@@ -90,8 +91,8 @@ public class StarVisualsView extends View {
 
         timer.scheduleAtFixedRate(task, delay, period);
 
-        mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
-        mBitmapSecond = Bitmap.createBitmap(WIDTH, HEIGHT, Bitmap.Config.ARGB_8888);
+        mBitmap = Bitmap.createBitmap(WIDTH, HEIGHT, RGB );
+        mBitmapSecond = Bitmap.createBitmap(WIDTH, HEIGHT, RGB );
 
         ByteBuffer ibb = ByteBuffer.allocateDirect(WIDTH * HEIGHT * INT_BYTES);
         ibb.order(ByteOrder.nativeOrder());
