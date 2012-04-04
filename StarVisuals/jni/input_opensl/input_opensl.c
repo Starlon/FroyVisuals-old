@@ -33,7 +33,7 @@
 #define RECORDING_STATE_STOPPING 3
 
 #define SAMPLES 1024
-#define BUFFERS 2
+#define BUFFERS 1
 
 typedef struct {
     VisMutex *mutex;
@@ -53,6 +53,11 @@ typedef struct {
     int currentFrame;
 } inp_opensl_priv;
 
+void assert(int test)
+{
+    visual_return_if_fail(test == 1);
+}
+
 static int inp_opensl_init (VisPluginData *plugin);
 static int inp_opensl_cleanup (VisPluginData *plugin);
 static int inp_opensl_upload (VisPluginData *plugin, VisAudio *audio);
@@ -60,7 +65,6 @@ static int inp_opensl_upload (VisPluginData *plugin, VisAudio *audio);
 static void bqRecorderCallback(SLAndroidSimpleBufferQueueItf bq, void *context);
 static void stopRecording(inp_opensl_priv *priv);
 static void startRecording(inp_opensl_priv *priv);
-static void record(void *data);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
@@ -73,11 +77,11 @@ const VisPluginInfo *get_plugin_info (int *count)
     static VisPluginInfo info[] = {{
         .type = VISUAL_PLUGIN_TYPE_INPUT,
 
-        .plugname = "mic",
-        .name = "Microphone Input",
+        .plugname = "opensl",
+        .name = "OpenSL Microphone Input",
         .author = "Scott Sibley <sisibley@gmail.com>",
         .version = "0.1",
-        .about = ("Mic input plugin for libvisual"),
+        .about = ("OpenSL mic input plugin for libvisual"),
         .help = ("You sing into the mic, and LibVisual goes nuts. Sing loud. With feeling."),
         .license = VISUAL_PLUGIN_LICENSE_LGPL,
 
@@ -114,29 +118,50 @@ int inp_opensl_init (VisPluginData *plugin)
     result = (*priv->engineObject)->Realize(priv->engineObject, SL_BOOLEAN_FALSE);
     assert(SL_RESULT_SUCCESS == result);
 
+
     // get the engine interface, which is needed in order to create other objects
     result = (*priv->engineObject)->GetInterface(priv->engineObject, SL_IID_ENGINE, &priv->engineEngine);
     assert(SL_RESULT_SUCCESS == result);
 
-    // configure audio source
-    SLDataLocator_IODevice loc_dev = {SL_DATALOCATOR_IODEVICE, SL_IODEVICE_AUDIOINPUT,
-            SL_DEFAULTDEVICEID_AUDIOINPUT, NULL};
-    SLDataSource audioSrc = {&loc_dev, NULL};
+    //End init, setup recorder
 
-    // configure audio sink
-    SLDataLocator_AndroidSimpleBufferQueue loc_bq = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE, 2};
-    SLDataFormat_PCM format_pcm = {SL_DATAFORMAT_PCM, 1, SL_SAMPLINGRATE_16,
-        SL_PCMSAMPLEFORMAT_FIXED_16, SL_PCMSAMPLEFORMAT_FIXED_16,
-        SL_SPEAKER_FRONT_CENTER, SL_BYTEORDER_LITTLEENDIAN};
-    SLDataSink audioSnk = {&loc_bq, &format_pcm};
+    SLDataLocator_AndroidSimpleBufferQueue loc_bq;
+    loc_bq.locatorType = SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE;
+    loc_bq.numBuffers = BUFFERS;
+
+    SLDataFormat_PCM pcm_format;
+    pcm_format.formatType = SL_DATAFORMAT_PCM;
+    pcm_format.numChannels = 1; // Mono sound.
+    pcm_format.samplesPerSec = SL_SAMPLINGRATE_44_1;
+    pcm_format.bitsPerSample = SL_PCMSAMPLEFORMAT_FIXED_16;
+    pcm_format.containerSize = SL_PCMSAMPLEFORMAT_FIXED_16;
+    pcm_format.channelMask = SL_SPEAKER_FRONT_CENTER;
+    pcm_format.endianness = SL_BYTEORDER_LITTLEENDIAN;
+
+    SLDataLocator_IODevice loc_dev;
+    loc_dev.locatorType = SL_DATALOCATOR_IODEVICE;
+    loc_dev.deviceType = SL_IODEVICE_AUDIOINPUT;
+    loc_dev.deviceID = SL_DEFAULTDEVICEID_AUDIOINPUT;
+    loc_dev.device = NULL;
+
+    SLDataSource audioSrc;
+    audioSrc.pLocator = &loc_dev;
+    audioSrc.pFormat = NULL;
+
+    SLDataSink audioSnk;
+    audioSnk.pLocator = &loc_bq;
+    audioSnk.pFormat = &pcm_format;
 
     // create audio recorder
     // (requires the RECORD_AUDIO permission)
-    const SLInterfaceID id[1] = {SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
-    const SLboolean req[1] = {SL_BOOLEAN_TRUE};
+    const SLuint32 count = 2;
+    const SLInterfaceID id[] = {SL_IID_RECORD, SL_IID_ANDROIDSIMPLEBUFFERQUEUE};
+    const SLboolean req[] = {SL_BOOLEAN_TRUE, SL_BOOLEAN_TRUE};
+
     result = (*priv->engineEngine)->CreateAudioRecorder(priv->engineEngine, 
             &priv->recorderObject, &audioSrc,
-            &audioSnk, 1, id, req);
+            &audioSnk, count, id, req);
+
     if (SL_RESULT_SUCCESS != result) {
         return JNI_FALSE;
     }
@@ -148,17 +173,23 @@ int inp_opensl_init (VisPluginData *plugin)
     }
 
     // get the record interface
-    result = (*priv->recorderObject)->GetInterface(priv->recorderObject, SL_IID_RECORD, &priv->recorderRecord);
+    result = (*priv->recorderObject)->GetInterface(priv->recorderObject, 
+        SL_IID_RECORD, &priv->recorderRecord);
     assert(SL_RESULT_SUCCESS == result);
 
     // get the buffer queue interface
-    result = (*priv->recorderObject)->GetInterface(priv->recorderObject, SL_IID_ANDROIDSIMPLEBUFFERQUEUE,
+    result = (*priv->recorderObject)->GetInterface(priv->recorderObject, 
+            SL_IID_ANDROIDSIMPLEBUFFERQUEUE,
             &priv->recorderBufferQueue);
     assert(SL_RESULT_SUCCESS == result);
 
     // register callback on the buffer queue
-    result = (*priv->recorderBufferQueue)->RegisterCallback(priv->recorderBufferQueue, bqRecorderCallback,
-            priv);
+    result = (*priv->recorderBufferQueue)->RegisterCallback(
+        priv->recorderBufferQueue, bqRecorderCallback, priv);
+    assert(SL_RESULT_SUCCESS == result);
+
+    result = (*priv->recorderRecord)->SetCallbackEventsMask(
+        priv->recorderRecord, SL_RECORDEVENT_BUFFER_FULL);
     assert(SL_RESULT_SUCCESS == result);
 
     startRecording(priv);
@@ -214,9 +245,10 @@ static int inp_opensl_upload (VisPluginData *plugin, VisAudio *audio)
 
 static int frame(inp_opensl_priv *priv, int inc)
 {
+    int f =  (priv->currentFrame) % 2;
     if(inc) 
         priv->currentFrame++;
-    return (priv->currentFrame) % 2;
+    return f;
 }
 
 // this callback handler is called every time a buffer finishes recording
@@ -264,20 +296,24 @@ SLresult enqueueBuffer(inp_opensl_priv *priv, int i) {
 void startRecording(inp_opensl_priv *priv)
 {
     SLresult result;
+    SLuint32 recorderState;
 
     if(priv->recordingState != RECORDING_STATE_STOPPED)
     {
         return;
     }
 
+    result = (*priv->recorderObject)->GetState(priv->recorderObject, &recorderState);
+    visual_return_if_fail(recorderState == SL_OBJECT_STATE_REALIZED);
+
     // in case already recording, stop recording and clear buffer queue
     result = (*priv->recorderRecord)->SetRecordState(priv->recorderRecord, SL_RECORDSTATE_STOPPED);
     visual_return_if_fail(SL_RESULT_SUCCESS == result);
+
     result = (*priv->recorderBufferQueue)->Clear(priv->recorderBufferQueue);
     visual_return_if_fail(SL_RESULT_SUCCESS == result);
 
-    // enqueue an empty buffer to be filled by the recorder
-    // (for streaming recording, we would enqueue at least 2 empty buffers to start things off)
+    // enqueue buffers
     int i;
     for(i = 0; i < BUFFERS; i++)
     {
@@ -296,19 +332,15 @@ void startRecording(inp_opensl_priv *priv)
         }
     }
 
-    // start recording
-    result = (*priv->recorderRecord)->SetRecordState(priv->recorderRecord, SL_RECORDSTATE_RECORDING);
-    visual_return_if_fail(SL_RESULT_SUCCESS == result);
 
-    priv->currentFrame = 0;
-    priv->recordingState = RECORDING_STATE_RECORDING;
-
+    // Start recording
     result = (*priv->recorderRecord)->SetRecordState(priv->recorderRecord,
             SL_RECORDSTATE_RECORDING);
 
-    if (SL_RESULT_SUCCESS != result) {
-        visual_log(VISUAL_LOG_CRITICAL, "Failed to start recording");
-    }
+    visual_return_if_fail(result == SL_RESULT_SUCCESS);
+
+    priv->currentFrame = 0;
+    priv->recordingState = RECORDING_STATE_RECORDING;
 
     return;
 }

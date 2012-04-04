@@ -60,7 +60,6 @@ struct {
 
 static void my_log_handler (VisLogSeverity severity, const char *msg, const VisLogSource *source, void *priv)
 {
-    return;
     switch(severity)
     {
         case VISUAL_LOG_DEBUG:

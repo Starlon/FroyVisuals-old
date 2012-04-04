@@ -7,5 +7,5 @@ LOCAL_MODULE	:= input_opensl
 LOCAL_SRC_FILES := input_opensl.c
 LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 LOCAL_LDLIBS    += -landroid -lOpenSLES
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 

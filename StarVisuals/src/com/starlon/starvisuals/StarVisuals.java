@@ -416,7 +416,7 @@ public class StarVisuals extends Activity implements OnClickListener
     }
     /* load our native library */
     static {
-        System.loadLibrary("gnustl");
+        //System.loadLibrary("gnustl");
         System.loadLibrary("visual");
         System.loadLibrary("common");
         System.loadLibrary("main");
