@@ -34,6 +34,8 @@
 
 #define PCM_SIZE	2048
 
+namespace {
+
 typedef struct {
     VisPalette pal;
 	VisBuffer	pcm;
@@ -47,6 +49,9 @@ int starscope_dimension (VisPluginData *plugin, VisVideo *video, int width, int 
 int starscope_events (VisPluginData *plugin, VisEventQueue *events);
 VisPalette *starscope_palette (VisPluginData *plugin);
 int starscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
+}
+
+extern "C" const VisPluginInfo *get_plugin_info (int *count);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
@@ -80,6 +85,8 @@ const VisPluginInfo *get_plugin_info (int *count)
 
 	return info;
 }
+
+namespace {
 
 int starscope_init (VisPluginData *plugin)
 {
@@ -196,3 +203,4 @@ int starscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 	return 0;
 }
 
+} // end anonymous namespace
