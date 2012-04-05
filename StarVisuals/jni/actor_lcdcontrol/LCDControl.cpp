@@ -47,13 +47,11 @@ LCDControl::LCDControl() {
 LCDControl::~LCDControl() {
     active_ = false;
     Shutdown();
-/*
     for(std::vector<std::string>::iterator it = display_keys_.begin();
         it != display_keys_.end(); it++) {
         if(devices_.find(*it) != devices_.end() && devices_[*it])
             delete devices_[*it];
     }
-*/
 }
 
 int LCDControl::Start() {

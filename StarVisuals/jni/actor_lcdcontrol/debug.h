@@ -29,7 +29,15 @@ extern int running_foreground;
 extern int running_background;
 extern int verbose_level;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void message(const int level, const char *format, ...) __attribute__ ((format(__printf__, 2, 3)));
+
+#ifdef __cplusplus
+}
+#endif
 
 #define LCDDebug(args...) message (2, __FILE__ ": " args)
 #define LCDInfo(args...)  message (1, args)
