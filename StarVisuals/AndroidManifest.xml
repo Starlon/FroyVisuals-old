@@ -26,7 +26,12 @@
 
         <!-- preferences activity -->
         <activity 
-              android:name="PreferencesActivity" android:label="@string/preferences_name">
+              android:name="AboutPluginsActivity" android:label="@string/menu_about_plugins">
+        </activity>
+
+        <!-- preferences activity -->
+        <activity 
+              android:name="EditPluginsActivity" android:label="@string/menu_edit_plugins">
         </activity>
 
         <!-- about plugins activity -->

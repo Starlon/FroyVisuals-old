@@ -367,25 +367,30 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         switch(item.getItemId())
         {
-            case R.id.about:
+            case R.id.menu_about:
             {
                 startActivity(new Intent(this, AboutActivity.class));
                 return true;
             }
 
-            case R.id.settings:
+            case R.id.menu_about_plugins:
             {
-                startActivity(new Intent(this, PreferencesActivity.class));
+                startActivity(new Intent(this, AboutPluginsActivity.class));
                 return true;
             }
 
-            case R.id.close_app:
+            case R.id.menu_close_app:
             {
                 synchronized(mView.mSynch)
                 {
                     NativeHelper.visualsQuit();
                     this.finish();
                 }
+                return true;
+            }
+            case R.id.menu_edit_plugins:
+            {
+                startActivity(new Intent(this, EditPluginsActivity.class));
                 return true;
             }
 /*

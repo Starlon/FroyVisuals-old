@@ -1,4 +1,4 @@
-package com.starlon.froyvisuals;
+package com.starlon.starvisuals;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
@@ -17,9 +17,9 @@ import android.util.Log;
 
 
 
-public class ListPluginsActivity extends PreferenceActivity
+public class EditPluginsActivity extends PreferenceActivity
 {
-        private final static String TAG = "FroyVisuals/ListPluginsActivity";
+        private final static String TAG = "FroyVisuals/EditPluginsActivity";
         private final static String PREFS = "FroyVisualsPrefs";
         
         private NativeHelper mNativeHelper;
