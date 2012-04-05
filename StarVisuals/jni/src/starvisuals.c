@@ -83,12 +83,40 @@ static void my_log_handler (VisLogSeverity severity, const char *msg, const VisL
 
 static void v_cycleActor (int prev)
 {
-    v.actor_name = (prev ? visual_actor_get_prev_by_name (v.actor_name)
-                     : visual_actor_get_next_by_name (v.actor_name));
-    if (!v.actor_name) {
-        v.actor_name = (prev ? visual_actor_get_prev_by_name (0)
-                         : visual_actor_get_next_by_name (0));
+    const char *name = v.actor_name;
+    if(prev > 0)
+    {
+        v.actor_name = visual_actor_get_next_by_name(v.actor_name);
+        if(v.actor_name == NULL)
+            v.actor_name = visual_actor_get_next_by_name(NULL);
     }
+    else if(prev < 0)
+    {
+        v.actor_name = visual_actor_get_prev_by_name(v.actor_name);
+        if(v.actor_name == NULL)
+        {
+            VisList *list = visual_actor_get_list();
+            int count = visual_list_count(list);
+            VisPluginRef *ref = visual_list_get(list, count - 1);
+            v.actor_name = ref->info->plugname;
+        }
+    }
+    else
+    {
+        struct timeval tv;
+        gettimeofday(&tv, NULL);
+        VisRandomContext *ctx = visual_random_context_new(tv.tv_sec);
+        VisList *list = visual_actor_get_list();
+        int count = visual_list_count(list);
+        int index = visual_random_context_int_range(ctx, 0, count - 1);
+        VisPluginRef *ref = visual_list_get(list, index);
+        v.actor_name = ref->info->plugname;
+
+    }
+
+    if(!v.actor_name)
+        v.actor_name = name;
+    visual_log(VISUAL_LOG_CRITICAL, "actor ---------------------------- %s", v.actor_name);
 }
 
 static void v_cycleMorph (int prev)

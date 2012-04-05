@@ -155,12 +155,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Left swipe
                             Log.w(TAG, "Left swipe...");
-                            mView.switchScene(1);
+                            mView.switchScene(-1);
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Right swipe
                             Log.w(TAG, "Right swipe...");
-                            mView.switchScene(-1);
+                            mView.switchScene(1);
                         }
                     } catch (Exception e) {
                         Log.w(TAG, "Failure in onFling");
