@@ -259,8 +259,8 @@ int visual_bin_connect_by_names (VisBin *bin, char *actname, char *inname)
 {
 	VisActor *actor;
 	VisInput *input;
-	int depthflag;
-	int depth;
+	//int depthflag;
+	//int depth;
 
 	visual_return_val_if_fail (bin != NULL, -1);
 
@@ -268,6 +268,8 @@ int visual_bin_connect_by_names (VisBin *bin, char *actname, char *inname)
 	actor = visual_actor_new (actname);
 	visual_return_val_if_fail (actor != NULL, -1);
 
+#if 0 
+FIXME: this should be removed. The function above this should perform these steps.
 	/* Check and set required depth */
 	depthflag = visual_actor_get_supported_depth (actor);
 
@@ -289,6 +291,7 @@ int visual_bin_connect_by_names (VisBin *bin, char *actname, char *inname)
 
 	/* Initialize the managed depth */
 	bin->depthforcedmain = bin->depth;
+#endif 
 
 	/* Create the input */
 	input = visual_input_new (inname);

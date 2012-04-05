@@ -7,5 +7,5 @@ LOCAL_SRC_FILES := actor_corona.cpp  corona.cpp  palette.cpp
 LOCAL_CFLAGS    += $(ARCH_CFLAGS) -fexceptions
 
 LOCAL_STATIC_LIBRARIES := libvisual
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
 
