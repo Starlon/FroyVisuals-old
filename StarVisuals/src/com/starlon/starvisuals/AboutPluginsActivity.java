@@ -15,6 +15,9 @@ import android.content.Intent;
 public class AboutPluginsActivity extends ListActivity
 {
     private final static String TAG = "StarVisuals/AboutPluginsActivity";
+    private final static String ACTORS = "Actors";
+    private final static String INPUTS = "Inputs";
+    private final static String MORPHS = "Morphs";
 
     /** Called when the activity is first created. */
     @Override
@@ -27,7 +30,7 @@ public class AboutPluginsActivity extends ListActivity
         final LayoutInflater factory = getLayoutInflater();
 
         String[] names = new String[] {
-            "Actors", "Inputs", "Morphs"
+            ACTORS, INPUTS, MORPHS
         };
 
         final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
@@ -40,11 +43,11 @@ public class AboutPluginsActivity extends ListActivity
     protected void onListItemClick(ListView listView, View view, int position, long id)
     {
         String item = (String) listView.getAdapter().getItem(position);
-        if(item.equals("Actors"))
+        if(item.equals(ACTORS))
                 startActivity(new Intent(this, ActorPreferencesActivity.class));
-        else if(item.equals("Inputs"))
+        else if(item.equals(INPUTS))
                 startActivity(new Intent(this, InputPreferencesActivity.class));
-        else if(item.equals("Morphs"))
+        else if(item.equals(MORPHS))
                 startActivity(new Intent(this, MorphPreferencesActivity.class));
     }
 }
