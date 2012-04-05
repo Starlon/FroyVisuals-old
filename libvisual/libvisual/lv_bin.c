@@ -29,7 +29,7 @@
 
 /* WARNING: Utterly shit ahead, i've screwed up on this and i need to
  * rewrite it. And i can't say i feel like it at the moment so be
- * patient :) */
+ * patient :)  */
 
 static int bin_dtor (VisObject *object);
 
