@@ -45,9 +45,11 @@ public class EditPluginsActivity extends PreferenceActivity
         public void onPause()
         {
             super.onPause();
+/*
             Intent i = new Intent(this, BroadcastReceiver.class);
             i.setAction("com.starlon.froyvisuals.PREFS_UPDATE");
             sendBroadcast(i);
+*/
         }
 
         private PreferenceScreen createPreferenceHierarchy()

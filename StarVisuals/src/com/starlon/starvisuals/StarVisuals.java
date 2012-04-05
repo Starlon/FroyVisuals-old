@@ -3,7 +3,6 @@ package com.starlon.starvisuals;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.preference.PreferenceManager;
 import android.content.Context;
 import android.content.ContentUris;
 import android.content.res.Configuration;
@@ -33,6 +32,7 @@ import android.util.Log;
 import android.net.Uri;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.List;
@@ -47,7 +47,7 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.lang.Process;
 
-public class StarVisuals extends Activity implements OnClickListener
+public class StarVisuals extends Activity implements OnClickListener, OnSharedPreferenceChangeListener
 {
     private final static String TAG = "StarVisuals/StarVisualsActivity";
     private final static String PREFS = "StarVisualsPrefs";
@@ -60,10 +60,14 @@ public class StarVisuals extends Activity implements OnClickListener
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-    public boolean mDoMorph = true;
-    public String mMorph = "alphablend";
-    public String mInput = "mic";
-    public String mActor = "lv_analyzer";
+    private final boolean DOMORPH = false;
+    private final String MORPH = "alphablend";
+    private final String INPUT = "mic";
+    private final String ACTOR = "lv_analyzer";
+    public boolean mDoMorph = DOMORPH;
+    public String mMorph = MORPH;
+    public String mInput = INPUT;
+    public String mActor = ACTOR;
     private float mSongChanged = 0;
     private String mSongAction = null;
     public String mSongCommand = null;
@@ -148,15 +152,15 @@ public class StarVisuals extends Activity implements OnClickListener
                         if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
                             return false;
                         if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
-                            Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                                Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                            // Left swipe
                             Log.w(TAG, "Left swipe...");
                             mView.switchScene(1);
-                            // Left swipe
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
-                            Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                                Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+                            // Right swipe
                             Log.w(TAG, "Right swipe...");
                             mView.switchScene(-1);
-                            // Right swipe
                         }
                     } catch (Exception e) {
                         Log.w(TAG, "Failure in onFling");
@@ -180,16 +184,29 @@ public class StarVisuals extends Activity implements OnClickListener
 
         //mHasRoot = checkRoot();
 
+
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("com.android.music.metachanged");
         mIntentFilter.addAction("com.android.music.playstatechanged");
         mIntentFilter.addAction("com.android.music.playbackcomplete");
         mIntentFilter.addAction("com.android.music.queuechanged");
-        mIntentFilter.addAction("com.starlon.starvisuals.PREFS_UPDATE");
 
         registerReceiver(mReceiver, mIntentFilter);
 
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        settings.registerOnSharedPreferenceChangeListener(this);
+        onSharedPreferenceChanged(settings, null);
+
+    }
+
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+
         updatePrefs();
+    }
+
+    public void onClick(View v)
+    {
+
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -228,37 +245,35 @@ public class StarVisuals extends Activity implements OnClickListener
                 NativeHelper.newSong();
                 warn("Ended playback...", true);
             }
-            else if(action.equals("com.starlon.starvisuals.PREFS_UPDATE"))
-            {
-                updatePrefs();
-            }
         }
     };
 
-    public void onClick(View v) {
-/*
-        Filter f = (Filter) v.getTag();
-        FilterFullscreenActivity.show(this, input, f);
-*/
-    }
-
     public void updatePrefs() 
     {
-            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
+            SharedPreferences settings = getSharedPreferences(PREFS, 0);
     
-            mDoMorph = settings.getBoolean("doMorph", true);
+            mDoMorph = settings.getBoolean("prefs_do_morph", DOMORPH);
     
+            mMorph = settings.getString("prefs_morph_selection", MORPH);
+            mInput = settings.getString("prefs_input_selection", INPUT);
+            mActor = settings.getString("prefs_actor_selection", ACTOR);
+    
+            if(mMorph == null)
+                mMorph = MORPH;
+
+            if(mInput == null)
+                mInput = INPUT;
+
+            if(mActor == null)
+                mActor = ACTOR;
+
             NativeHelper.setMorphStyle(mDoMorph);
-    
-            mMorph = settings.getString("prefs_morph_selection", mMorph);
-            mInput = settings.getString("prefs_input_selection", mInput);
-            mActor = settings.getString("prefs_actor_selection", mActor);
-    
-            NativeHelper.morphSetCurrentByName(mMorph);
+            //NativeHelper.morphSetCurrentByName(mMorph); This is broken and has no effect.
             NativeHelper.inputSetCurrentByName(mInput);
             NativeHelper.actorSetCurrentByName(mActor);
-    
-            mView.initVisual(); // FIXME width x height. This method's overloaded: initVisual(w, h);
+            NativeHelper.setMorphStyle(mDoMorph);
+
+            mView.initVisual(); 
     }
 
     // This series of on<Action>() methods a flow chart are outlined here:
@@ -293,7 +308,7 @@ public class StarVisuals extends Activity implements OnClickListener
     {
         super.onPause();
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences((Context)this);
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
         SharedPreferences.Editor editor = settings.edit();
 
         int morph = NativeHelper.morphGetCurrent();
@@ -308,7 +323,7 @@ public class StarVisuals extends Activity implements OnClickListener
         editor.putString("prefs_input_selection", mInput);
         editor.putString("prefs_actor_selection", mActor);
 
-        editor.putBoolean("doMorph", mDoMorph);
+        editor.putBoolean("prefs_do_morph", mDoMorph);
 
         //Commit edits
         editor.commit();
