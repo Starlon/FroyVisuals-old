@@ -32,15 +32,8 @@
 namespace LCD {
 
 class Evaluator {
-    void LoadPlugins();
-
-    protected:
-/*
-    QObject *obj;
-    QScriptEngine *engine_;
-*/
-
     public:
+    lua_State *state_;
     Evaluator();
     virtual ~Evaluator();
     virtual std::string Eval(std::string str);

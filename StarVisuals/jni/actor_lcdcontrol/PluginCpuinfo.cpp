@@ -26,6 +26,7 @@
 #include <cstring>
 #include <ctype.h>
 #include <errno.h>
+#include <lua/lua.hpp>
 
 #include "debug.h"
 #include "Hash.h"
@@ -116,12 +117,7 @@ PluginCpuinfo::~PluginCpuinfo()
     hash_destroy(&CPUinfo);
 }
 
-void PluginCpuinfo::Connect(Evaluator *visitor) {
-/*
-    QScriptEngine *engine = visitor->GetEngine();
-    QScriptValue val = engine->newObject();
-    QScriptValue objVal = engine->newQObject(val, this);
-    engine->globalObject().setProperty("cpuinfo", objVal);
-*/
+void PluginCpuinfo::Connect(Evaluator *visitor) {   
+    lua_register(visitor->state_, "cpuinfo", Cpuinfo);
 }
 

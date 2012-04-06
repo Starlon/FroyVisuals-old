@@ -52,84 +52,31 @@ void fromSpecialChar(const QScriptValue &obj, SpecialChar &ch) {
 
 Evaluator::Evaluator() {
 /*
-    engine_ = new QScriptEngine();
-    qScriptRegisterMetaType(engine_, toSpecialChar, fromSpecialChar);
-    LoadPlugins();
-    QScriptValue val = Eval("diskstats.Diskstats('sd.', 'read_sectors', 500);");
-
-    LCDError("script %d", val.toInt32());
-*/
-}
-
-/*
-Evaluator::Evaluator(QScriptEngine *engine) {
-    engine_ = engine;
-    qScriptRegisterMetaType(engine_, toSpecialChar, fromSpecialChar);
-    LoadPlugins();
-}
-*/
-
-void Evaluator::LoadPlugins() {
-
-/*
-    QDir pluginsDir(qApp->applicationDirPath());
-    pluginsDir.cd("plugins");
-    foreach(string fileName, pluginsDir.entryList(QDir::Files)) {
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if(plugin) {
-            PluginInterface *obj = qobject_cast<PluginInterface *>(plugin);
-            if(obj) {
-                obj->Connect(this);
-                plugins_.push_back(obj);
-            }
-        } else {
-            LCDError("Plugin Error: %s", 
-                pluginLoader.errorString().toStdString().c_str());
-        }
-    }
+    state_ = lua_open();
+    luaJIT_setmode(state_, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_ON);
+    LUAJIT_VERSION_SYM();  // linker-enforced version check 
+    lua_gc(L, LUA_GCSTOP, 0);  // stop collector during initialization 
+    luaL_openlibs(L);  // open libraries
+    if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/libstub.lua") || lua_pcall(L, 0, 0, 0));
+    if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/pluginmath.lua") || lua_pcall(L, 0, 0, 0));
+    lua_gc(L, LUA_GCRESTART, -1);
 */
 }
 
 Evaluator::~Evaluator() {
-/*
-    for(std::list<PluginInterface *>::iterator it = plugins_.begin();
-        it != plugins_.end(); it++) {
-        (*it)->Disconnect();
-    }
-
-    delete engine_;
-*/
+    lua_close(state_);
+    state_ = NULL;
 }
 
 std::string Evaluator::Eval(std::string str) {
-/*
-    QScriptValue tmp = engine_->evaluate(string(str.c_str()));
-    if(tmp.isError()) LCDError("Error in evaluation: %s", tmp.toString().toStdString().c_str());
-*/
+     
     return "";
 }
 
 
 /*
-void Evaluator::AddAccessor(std::string name, 
-    QScriptValue (*func)(QScriptContext *ctx, QScriptEngine *eng), 
-    QFlags<QScriptValue::PropertyFlag> flags) {
-    std::cout << name << std::endl;
-    engine_->globalObject().setProperty(string(name.c_str()), 
-        engine_->newFunction(func), flags);
-}
-*/
-
-/*
 void Evaluator::AddValue(std::string name, int value) {
-    LCDInfo("AddValue: %s, %f", name.c_str(), (double)val.toNumber());
-    engine_->globalObject().setProperty(string(name.c_str()), val);
+    lua_pushnumber(state_, value);
+    lua_setglobal(state_, name.c_str());
 }
 */
-
-/*
-QScriptEngine Evaluator::Engine() {
-    return engine_;
-}*/
-
