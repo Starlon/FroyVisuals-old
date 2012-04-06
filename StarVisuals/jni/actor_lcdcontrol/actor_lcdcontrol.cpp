@@ -4,7 +4,7 @@
  *
  * Authors: Dennis Smit <ds@nerds-incorporated.org>
  *
- * $Id: actor_starscope.c,v 1.21 2006/01/27 20:19:17 synap Exp $
+ * $Id: actor_lcdcontrol.c,v 1.21 2006/01/27 20:19:17 synap Exp $
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
@@ -32,10 +32,16 @@
 
 #include <libvisual/libvisual.h>
 
+#include "LCDControl.h"
+#include "LCDEvent.h"
+
 #define PCM_SIZE	2048
 
-namespace {
+extern "C" const VisPluginInfo *get_plugin_info (int *count);
 
+using namespace LCD;
+
+namespace {
 
 typedef struct {
     VisPalette pal;
@@ -43,46 +49,43 @@ typedef struct {
     VisTimer timer;
     VisThread *thread;
     LCDControl *control;
-} ScopePrivate;
+    VisEventQueue *events;
+} LCDPrivate;
 
-int starscope_init (VisPluginData *plugin);
-int starscope_cleanup (VisPluginData *plugin);
-int starscope_requisition (VisPluginData *plugin, int *width, int *height);
-int starscope_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
-int starscope_events (VisPluginData *plugin, VisEventQueue *events);
-VisPalette *starscope_palette (VisPluginData *plugin);
-int starscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
-}
 
-extern "C" const VisPluginInfo *get_plugin_info (int *count);
+int lcdcontrol_init (VisPluginData *plugin);
+int lcdcontrol_cleanup (VisPluginData *plugin);
+int lcdcontrol_requisition (VisPluginData *plugin, int *width, int *height);
+int lcdcontrol_dimension (VisPluginData *plugin, VisVideo *video, int width, int height);
+int lcdcontrol_events (VisPluginData *plugin, VisEventQueue *events);
+VisPalette *lcdcontrol_palette (VisPluginData *plugin);
+int lcdcontrol_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio);
+
+} // End namespace
+
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
 extern "C" const VisPluginInfo *get_plugin_info (int *count)
 {
-	static VisActorPlugin actor[] = {{
-		.requisition = starscope_requisition,
-		.palette = starscope_palette,
-		.render = starscope_render,
-		.vidoptions.depth = VISUAL_VIDEO_DEPTH_8BIT
-	}};
+    static VisActorPlugin actor;
+    actor.requisition = lcdcontrol_requisition;
+    actor.palette = lcdcontrol_palette;
+    actor.render = lcdcontrol_render;
+    actor.vidoptions.depth = VISUAL_VIDEO_DEPTH_32BIT;
 
-	static VisPluginInfo info[] = {{
-		.type = VISUAL_PLUGIN_TYPE_ACTOR,
-
-		.plugname = "starscope",
-		.name = "StarScope",
-		.author = "Dennis Smit <ds@nerds-incorporated.org> with additions by Scott Sibley <sisibley@gmail.com>",
-		.version = "0.1",
-		.about = "Libvisual star scope plugin",
-		.help = "This is a simple scope with a starfield behind it.",
-
-		.init = starscope_init,
-		.cleanup = starscope_cleanup,
-		.events = starscope_events,
-
-		.plugin = VISUAL_OBJECT (&actor[0])
-	}};
+    static VisPluginInfo info[1];
+    info[0].type = VISUAL_PLUGIN_TYPE_ACTOR;
+    info[0].plugname = "lcdcontrol";
+    info[0].name = "LCDControl";
+    info[0].author = "Scott Sibley <sisibley@gmail.com>";
+    info[0].version = "0.1";
+    info[0].about = "LibVisual LCD Simulation";
+    info[0].help = "This plugin simulates an LCD and is based on LCD4Linux.";
+    info[0].init = lcdcontrol_init;
+    info[0].cleanup = lcdcontrol_cleanup;
+    info[0].events = lcdcontrol_events;
+    info[0].plugin = VISUAL_OBJECT(&actor);
 
 	*count = sizeof (info) / sizeof (*info);
 
@@ -91,15 +94,22 @@ extern "C" const VisPluginInfo *get_plugin_info (int *count)
 
 namespace {
 
-int starscope_init (VisPluginData *plugin)
+void *my_thread_func(void *data)
 {
-	ScopePrivate *priv;
+    LCDControl *control = (LCDControl *)data;
+    control->Start();
+    return NULL;
+}
+
+int lcdcontrol_init (VisPluginData *plugin)
+{
+	LCDPrivate *priv;
 
 #if ENABLE_NLS
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 #endif
 
-	priv = visual_mem_new0 (ScopePrivate, 1);
+	priv = visual_mem_new0 (LCDPrivate, 1);
 	visual_object_set_private (VISUAL_OBJECT (plugin), priv);
 
 	visual_palette_allocate_colors (&priv->pal, 256);
@@ -108,26 +118,24 @@ int starscope_init (VisPluginData *plugin)
 
     visual_timer_init(&priv->timer);
 
-    priv->control = new LCDControl();
 
     priv->thread = visual_thread_create(my_thread_func, priv->control, TRUE);
 
+    priv->events = visual_event_queue_new();
+
+    priv->control = new LCDControl(priv->events);
 	return 0;
 }
 
-void my_thread_func(void *data)
-{
-    LCDControl *control = (LCDControl *)data;
-    control->Start();
-}
 
-int starscope_cleanup (VisPluginData *plugin)
+int lcdcontrol_cleanup (VisPluginData *plugin)
 {
-	ScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+	LCDPrivate *priv = (LCDPrivate *)visual_object_get_private (VISUAL_OBJECT (plugin));
 
 	visual_palette_free_colors (&priv->pal);
 
 	visual_object_unref (VISUAL_OBJECT (&priv->pcm));
+	visual_object_unref (VISUAL_OBJECT (&priv->events));
 
 	visual_mem_free (priv);
 
@@ -142,7 +150,7 @@ int starscope_cleanup (VisPluginData *plugin)
 	return 0;
 }
 
-int starscope_requisition (VisPluginData *plugin, int *width, int *height)
+int lcdcontrol_requisition (VisPluginData *plugin, int *width, int *height)
 {
 	int reqw, reqh;
 
@@ -167,32 +175,38 @@ int starscope_requisition (VisPluginData *plugin, int *width, int *height)
 	return 0;
 }
 
-int starscope_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
+int lcdcontrol_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
 {
 	visual_video_set_dimension (video, width, height);
 
 	return 0;
 }
 
-int starscope_events (VisPluginData *plugin, VisEventQueue *events)
+int lcdcontrol_events (VisPluginData *plugin, VisEventQueue *events)
 {
 	VisEvent ev;
 
 	while (visual_event_queue_poll (events, &ev)) {
 		switch (ev.type) {
 			case VISUAL_EVENT_RESIZE:
+            {
 /*
-				starscope_dimension (plugin, ev.event.resize.video,
+				lcdcontrol_dimension (plugin, ev.event.resize.video,
 						ev.event.resize.width, ev.event.resize.height);
 */
 				break;
+            }
             case VISUAL_EVENT_GENERIC:
-                LCDEvent *lcd_event = (LCDEvent *)ev.ev.generic.data_ptr;
-                lcd_event->func(lcd_event->data);
+            {
+                LCDEvent *lcd_event = (LCDEvent *)ev.event.generic.data_ptr;
+                lcd_event->mFunc(lcd_event->mData);
                 
                 break;
+            }
 			default: /* to avoid warnings */
+            {
 				break;
+            }
 		}
 	}
 
@@ -200,9 +214,9 @@ int starscope_events (VisPluginData *plugin, VisEventQueue *events)
 }
 
 
-VisPalette *starscope_palette (VisPluginData *plugin)
+VisPalette *lcdcontrol_palette (VisPluginData *plugin)
 {
-	ScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+	LCDPrivate *priv = (LCDPrivate *)visual_object_get_private (VISUAL_OBJECT (plugin));
 	int i;
 
 	for (i = 0; i < 256; i++) {
@@ -214,9 +228,9 @@ VisPalette *starscope_palette (VisPluginData *plugin)
 	return &priv->pal;
 }
 
-int starscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
+int lcdcontrol_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 {
-	ScopePrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+	LCDPrivate *priv = (LCDPrivate *)visual_object_get_private (VISUAL_OBJECT (plugin));
 
 	visual_audio_get_sample_mixed (audio, &priv->pcm, TRUE, 2,
 			VISUAL_AUDIO_CHANNEL_LEFT,
@@ -224,7 +238,7 @@ int starscope_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 			1.0,
 			1.0);
 
-	int16_t *pcmbuf = visual_buffer_get_data (&priv->pcm);
+	int16_t *pcmbuf = (int16_t *)visual_buffer_get_data (&priv->pcm);
 
 	uint8_t *buf = (uint8_t *) visual_video_get_pixels (video);
 

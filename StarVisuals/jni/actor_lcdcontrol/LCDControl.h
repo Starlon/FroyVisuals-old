@@ -29,8 +29,8 @@
 #include <cstring>
 #include <libvisual/libvisual.h>
 
-#include "LCDTimer.h"
 #include "CFG.h"
+#include "LCDTimer.h"
 
 namespace LCD {
 
@@ -42,12 +42,13 @@ class LCDControl : public CFG {
     bool active_;
     std::map<std::string, LCDCore *> devices_;
     std::vector<std::string> display_keys_;
-    LCDTimerBin *timer_bin_;
+    LCDTimerBin *timers_;
     VisMutex mutex_;
+    VisEventQueue *events_;
     void ConfigSetup();
 
     public:
-    LCDControl();
+    LCDControl(VisEventQueue *events);
     ~LCDControl();
     int Start();
     void Stop();
@@ -55,7 +56,7 @@ class LCDControl : public CFG {
     LCDCore *FindDisplay(std::string name);
     void ProcessVariables(Json::Value *config, Evaluator *ev);
     bool IsActive() { return active_; }
-    LCDTimerBin *GetTimers(){ return timer_bin_; }
+    LCDTimerBin *GetTimers(){ return timers_; }
 };
 
 }; // End namespace

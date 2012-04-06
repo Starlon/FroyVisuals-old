@@ -21,7 +21,7 @@
 
 #include <string>
 #include <iostream>
-#include "lua.h"
+#include <lua/lua.hpp>
 
 #include "Evaluator.h"
 #include "SpecialChar.h"

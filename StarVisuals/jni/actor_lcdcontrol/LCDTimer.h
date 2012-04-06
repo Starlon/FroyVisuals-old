@@ -6,6 +6,10 @@
 #include <vector>
 
 #include <libvisual/libvisual.h>
+#include "LCDEvent.h"
+
+namespace LCD 
+{
 
 class LCDTimer
 {
@@ -19,26 +23,35 @@ class LCDTimer
     bool mActive;
     std::string mName;
     VisTimer mTimer;
+    VisEventQueue *mEvents;
     
     
     public:
 
-    LCDTimer(int id, LCDEventFunc *func, void *data, int duration, bool repeating)
+    LCDTimer(VisEventQueue *queue, int id, LCDEventFunc func, void *data, int duration, bool repeating)
     {
 
         mID = id;
-        mEvent = new LCDEvent(func, data);
+        mEvent = new LCDEvent(queue, func, data);
         mDuration = duration;
         mRepeating = repeating;
         mStartTime = 0;
+        mEvents = queue;
 
         visual_timer_init(&mTimer);
+        visual_object_ref(VISUAL_OBJECT(queue));
         
     }
 
     ~LCDTimer()
     {
         delete mEvent;
+        visual_object_unref(VISUAL_OBJECT(mEvents));
+    }
+
+    int GetID()
+    {
+        return mID;
     }
 
     void Start(int duration, void *data, LCDEventFunc func)
@@ -67,36 +80,39 @@ class LCDTimer
             }
         }
     }
-}
+};
 
 class LCDTimerBin {
     private:
     std::vector<LCDTimer> mTimers;
     VisTime mTime;
+    VisEventQueue *mEvents;
     
     public:
-    LCDTimerBin()
+    LCDTimerBin(VisEventQueue *events)
     {
+        mEvents = events;
         visual_time_init(&mTime);
+        visual_object_ref(VISUAL_OBJECT(events));
     }
     ~LCDTimerBin()
     {
-
+        visual_object_unref(VISUAL_OBJECT(mEvents));
     }
 
     int AddTimer(LCDEventFunc func, void *data, int duration, bool repeating)
     {
         visual_time_get(&mTime);
-        visual_random_set_seed(visual_time_get_msecs(mTime));
+        visual_random_set_seed(visual_time_get_msecs(&mTime));
         int rand = visual_random_int();
-        mTimers[mTimers.count()] = LCDTimer(rand, func, data, duration, repeating);
+        mTimers[mTimers.size()] = LCDTimer(mEvents, rand, func, data, duration, repeating);
         return rand;
     }
 
     void Tick()
     {
-        int i;
-        for(i = 0; i < mTimers.count(); i++)
+        unsigned int i;
+        for(i = 0; i < mTimers.size(); i++)
         {
             mTimers[i].Tick();
         }
@@ -104,8 +120,8 @@ class LCDTimerBin {
 
     void Stop()
     {
-        int i;
-        for(i = 0; i < mTimers.count(); i++)
+        unsigned int i;
+        for(i = 0; i < mTimers.size(); i++)
         {
             mTimers[i].Stop();
         }
@@ -113,12 +129,14 @@ class LCDTimerBin {
 
     void Stop(int id)
     {
-        int i;
-        for(i = 0; i < mTimers.count(); i++)
+        unsigned int i;
+        for(i = 0; i < mTimers.size(); i++)
         {
             if(id == mTimers[i].GetID())
                 mTimers[i].Stop();
         }
     }
-}
+};
+
+}; // End namespace
 #endif

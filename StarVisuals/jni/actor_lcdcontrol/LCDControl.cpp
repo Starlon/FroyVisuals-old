@@ -31,8 +31,10 @@
 
 using namespace LCD;
 
-LCDControl::LCDControl() {
-    mTimerBin = new LCDTimerBin();
+LCDControl::LCDControl(VisEventQueue *events) {
+    visual_object_ref(VISUAL_OBJECT(events));
+    events_ = events;
+    timers_ = new LCDTimerBin(events);
     visual_mutex_init(&mutex_);
     active_ = false;
 }
@@ -45,6 +47,7 @@ LCDControl::~LCDControl() {
         if(devices_.find(*it) != devices_.end() && devices_[*it])
             delete devices_[*it];
     }
+    visual_object_unref(VISUAL_OBJECT(events_));
 }
 
 int LCDControl::Start() {
@@ -53,8 +56,10 @@ int LCDControl::Start() {
     active_ = true;
     while(active_)
     {
-        mTimerBin.Tick();
-        visual_time_usleep(0.2 * VISUAL_USECS_PER_SEC);
+        visual_mutex_lock(&mutex_);
+        timers_->Tick();
+        visual_mutex_unlock(&mutex_);
+        visual_time_usleep(0.2 * VISUAL_USEC_PER_SEC);
     }
     return 1;
 }

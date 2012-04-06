@@ -22,10 +22,10 @@
 #ifndef __EVALUATOR__
 #define __EVALUATOR__
 
-#include <string>
-#include <list>
+#include <lua/lua.hpp>
 
-#include "lua.h"
+#include <string>
+
 #include "SpecialChar.h"
 
 
@@ -33,7 +33,6 @@ namespace LCD {
 
 class Evaluator {
     void LoadPlugins();
-    //std::list<PluginInterface *> plugins_;
 
     protected:
 /*

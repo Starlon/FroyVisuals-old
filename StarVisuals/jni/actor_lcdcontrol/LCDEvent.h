@@ -5,16 +5,15 @@
 
 typedef void (*LCDEventFunc) (void *data);
 
-typedef _LCDEvent LCDEventEach;
-
+namespace LCD 
+{
 class LCDEvent {
     private:
-
-    LCDEventFunc mFunc;
-    void *mData;
     VisEventQueue *mQueue;
 
     public:
+    LCDEventFunc mFunc;
+    void *mData;
 
     LCDEvent(VisEventQueue *queue, LCDEventFunc func, void *data)
     {
@@ -31,6 +30,7 @@ class LCDEvent {
     {
         visual_event_queue_add_generic(mQueue, 0, 0, this);
     }
+};
 };
 
 #endif

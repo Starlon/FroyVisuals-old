@@ -2,14 +2,7 @@
 #ifndef __DRV_NIFTY_H__
 #define __DRV_NIFTY_H__
 
-#include <QObject>
-#include <QThread>
 #include <string>
-#include <libnifty/libnifty.h>
-#include <libnifty/mutex.h>
-#include <libnifty/client/remote.h>
-#include <libnifty/client/input.h>
-
 
 #include "LCDGraphic.h"
 #include "LCDCore.h"
@@ -22,7 +15,7 @@
 
 namespace LCD {
 
-class DrvNifty : public LCDCore, public LCDGraphic {
+class DrvFB : public LCDCore, public LCDGraphic {
 
     RGBA *drvFB;
 
@@ -38,9 +31,9 @@ class DrvNifty : public LCDCore, public LCDGraphic {
     void DrvUpdate();
 
     public:
-    DrvNifty(std::string name, LCDControl *v,
+    DrvFB(std::string name, LCDControl *v,
         Json::Value *config, int layers);
-    ~DrvNifty();    
+    ~DrvFB();    
     void SetupDevice();
     void TakeDown();
     void CFGSetup();

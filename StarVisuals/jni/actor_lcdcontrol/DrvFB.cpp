@@ -19,9 +19,8 @@
  * along with LCDControl.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libusb-1.0/libusb.h>
-
 #include "DrvFB.h"
+
 using namespace LCD;
 
 // LCDGraphic RealBlit
@@ -68,7 +67,6 @@ DrvFB::DrvFB(std::string name, LCDControl *v,
 
 // Destructor
 DrvFB::~DrvFB() {
-    update_thread_->wait();
     delete []drvFB;
 }
 
