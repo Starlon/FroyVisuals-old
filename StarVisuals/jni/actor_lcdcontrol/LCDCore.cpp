@@ -88,7 +88,7 @@ LCDCore::LCDCore(LCDControl *app, std::string name, Json::Value *config, int t, 
 }
 
 LCDCore::~LCDCore() {
-    delete pluginLCD;
+    //delete pluginLCD;
     for(std::map<std::string, Widget *>::iterator w = widgets_.begin(); 
         w != widgets_.end(); w++) {
         delete w->second;

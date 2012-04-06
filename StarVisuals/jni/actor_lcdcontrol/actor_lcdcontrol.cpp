@@ -43,16 +43,6 @@ using namespace LCD;
 
 namespace {
 
-typedef struct {
-    VisPalette pal;
-	VisBuffer	pcm;
-    VisTimer timer;
-    VisThread *thread;
-    LCDControl *control;
-    VisEventQueue *events;
-} LCDPrivate;
-
-
 int lcdcontrol_init (VisPluginData *plugin);
 int lcdcontrol_cleanup (VisPluginData *plugin);
 int lcdcontrol_requisition (VisPluginData *plugin, int *width, int *height);
@@ -119,11 +109,13 @@ int lcdcontrol_init (VisPluginData *plugin)
     visual_timer_init(&priv->timer);
 
 
-    priv->thread = visual_thread_create(my_thread_func, priv->control, TRUE);
+    priv->thread = visual_thread_create(my_thread_func, priv, TRUE);
 
-    priv->events = visual_event_queue_new();
+    priv->events = &plugin->eventqueue;
 
-    priv->control = new LCDControl(&plugin->eventqueue);
+    visual_object_ref(VISUAL_OBJECT(priv->events));
+
+    priv->control = new LCDControl(priv);
 
 	return 0;
 }
@@ -146,7 +138,13 @@ int lcdcontrol_cleanup (VisPluginData *plugin)
 
     visual_thread_free(priv->thread);
 
-    delete priv->control;
+    if(priv->control != NULL)
+        delete priv->control;
+
+    if(priv->pixels != NULL)
+        delete priv->pixels;
+
+    visual_object_unref(VISUAL_OBJECT(priv->events));
 
 	return 0;
 }
@@ -178,7 +176,13 @@ int lcdcontrol_requisition (VisPluginData *plugin, int *width, int *height)
 
 int lcdcontrol_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
 {
+	LCDPrivate *priv = (LCDPrivate *)visual_object_get_private (VISUAL_OBJECT (plugin));
 	visual_video_set_dimension (video, width, height);
+
+    if(priv->pixels != NULL)
+        delete priv->pixels;
+
+    priv->pixels = new uint32_t[width * height]; 
 
 	return 0;
 }
@@ -243,6 +247,9 @@ int lcdcontrol_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 
 	uint8_t *buf = (uint8_t *) visual_video_get_pixels (video);
 
+    visual_mutex_lock(&priv->control->mutex_);
+    visual_mem_copy(buf, priv->pixels, video->height * video->pitch);
+    visual_mutex_unlock(&priv->control->mutex_);
 
 	return 0;
 }

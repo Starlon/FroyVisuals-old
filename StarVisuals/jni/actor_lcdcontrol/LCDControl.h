@@ -31,6 +31,7 @@
 
 #include "CFG.h"
 #include "LCDTimer.h"
+#include "actor_lcdcontrol.h"
 
 namespace LCD {
 
@@ -43,12 +44,12 @@ class LCDControl : public CFG {
     std::map<std::string, LCDCore *> devices_;
     std::vector<std::string> display_keys_;
     LCDTimerBin *timers_;
-    VisMutex mutex_;
-    VisEventQueue *events_;
     void ConfigSetup();
 
     public:
-    LCDControl(VisEventQueue *events);
+    VisMutex mutex_;
+    LCDPrivate *priv_;
+    LCDControl(LCDPrivate *priv);
     ~LCDControl();
     int Start();
     void Stop();

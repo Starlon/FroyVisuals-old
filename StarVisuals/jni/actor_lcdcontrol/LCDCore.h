@@ -53,7 +53,7 @@
 
 namespace LCD {
 
-class PluginLCD;
+//class PluginLCD;
 class LCDControl;
 
 struct widget_template {
@@ -82,12 +82,12 @@ class LCDCore: public virtual Evaluator, public CFG {
     QTimer *timer_;
     QTimer *transition_timer_;
 */
-    PluginLCD *pluginLCD;
-    LCDControl *app_;
+    //PluginLCD *pluginLCD;
 
     protected:
     LCDBase *lcd_;
     std::string name_;
+    LCDControl *app_;
 
     public:
     LCDCore(LCDControl *app, std::string name, Json::Value *config, 

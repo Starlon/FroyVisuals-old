@@ -17,6 +17,8 @@ class LCDEvent {
 
     LCDEvent(VisEventQueue *queue, LCDEventFunc func, void *data)
     {
+        
+        visual_object_ref(VISUAL_OBJECT(queue)); 
         mQueue = queue;
         mFunc = func;
         mData = data;
@@ -24,6 +26,7 @@ class LCDEvent {
 
     ~LCDEvent()
     {
+        visual_object_unref(VISUAL_OBJECT(mQueue)); 
     }
 
     void Fire()

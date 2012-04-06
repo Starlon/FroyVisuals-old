@@ -101,15 +101,17 @@ void DrvFB::Disconnect() {
 }
 
 void DrvFB::DrvUpdateImg() {
-        unsigned int size = cols_*rows_*3;
+        unsigned int size = cols_*rows_*4;
         uint8_t data[size];
     
-        for(int i = 0; i < cols_*rows_; i++) {
-            data[i*3] = drvFB[i].R;
-                data[i*3+1] = drvFB[i].G;
-                data[i*3+2] = drvFB[i].B;
+        for(unsigned int i = 0; i < size; i+=4) {
+                data[i*4] = drvFB[i].R;
+                data[i*4+1] = drvFB[i].G;
+                data[i*4+2] = drvFB[i].B;
+                data[i*4+2] = 0xff;
         }
-    
+        
+        visual_mem_copy(app_->priv_->pixels, data, size);    
 }
 
 // Driver-side blit method
@@ -124,5 +126,6 @@ void DrvFB::DrvBlit(const int row, const int col,
 
 // Clear the LCD
 void DrvFB::DrvClear() {
+    memset(drvFB, 0, cols_*rows_*3);
 }
 

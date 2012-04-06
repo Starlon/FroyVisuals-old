@@ -25,7 +25,6 @@ class LCDTimer
     VisTimer mTimer;
     VisEventQueue *mEvents;
     
-    
     public:
 
     LCDTimer(VisEventQueue *queue, int id, LCDEventFunc func, void *data, int duration, bool repeating)

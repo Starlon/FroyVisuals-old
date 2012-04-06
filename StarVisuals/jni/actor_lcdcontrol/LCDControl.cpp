@@ -28,13 +28,13 @@
 #include "LCDControl.h"
 #include "Evaluator.h"
 #include "debug.h"
+#include "DrvFB.h"
 
 using namespace LCD;
 
-LCDControl::LCDControl(VisEventQueue *events) {
-    visual_object_ref(VISUAL_OBJECT(events));
-    events_ = events;
-    timers_ = new LCDTimerBin(events);
+LCDControl::LCDControl(LCDPrivate *priv) {
+    priv_ = priv;
+    timers_ = new LCDTimerBin(priv->events);
     visual_mutex_init(&mutex_);
     active_ = false;
 }
@@ -49,7 +49,6 @@ LCDControl::~LCDControl() {
             delete devices_[*it];
     }
 */
-    visual_object_unref(VISUAL_OBJECT(events_));
 }
 
 int LCDControl::Start() {
@@ -188,6 +187,10 @@ void LCDControl::ConfigSetup() {
                     delete cols;
                     continue;
                 }
+*/
+            } else if(driver->asString() == "fb") {
+                devices_[*it] = new DrvFB(*it, this, CFG_Get_Root(), layers->asInt());
+/*
             } else if(driver->asString() == "qt") {
                 devices_[*it] = new DrvQt(*it, this, CFG_Get_Root(), 
                     rows->asInt(), cols->asInt(), layers->asInt());
@@ -205,7 +208,7 @@ void LCDControl::ConfigSetup() {
                     layers->asInt());
             } else if(driver->asString() == "lcdproc") {
                 devices_[*it] = new DrvLCDProc(*it, this, CFG_Get_Root(), layers->asInt());
-*/
+            */
             } else {
                 continue;
             }
