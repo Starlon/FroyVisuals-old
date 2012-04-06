@@ -123,7 +123,8 @@ int lcdcontrol_init (VisPluginData *plugin)
 
     priv->events = visual_event_queue_new();
 
-    priv->control = new LCDControl(priv->events);
+    priv->control = new LCDControl(&plugin->eventqueue);
+
 	return 0;
 }
 

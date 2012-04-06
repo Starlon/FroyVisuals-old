@@ -41,12 +41,14 @@ LCDControl::LCDControl(VisEventQueue *events) {
 
 LCDControl::~LCDControl() {
     active_ = false;
+/*
     Shutdown();
     for(std::vector<std::string>::iterator it = display_keys_.begin();
         it != display_keys_.end(); it++) {
         if(devices_.find(*it) != devices_.end() && devices_[*it])
             delete devices_[*it];
     }
+*/
     visual_object_unref(VISUAL_OBJECT(events_));
 }
 
@@ -57,8 +59,11 @@ int LCDControl::Start() {
     while(active_)
     {
         visual_mutex_lock(&mutex_);
+
         timers_->Tick();
+
         visual_mutex_unlock(&mutex_);
+
         visual_time_usleep(0.2 * VISUAL_USEC_PER_SEC);
     }
     return 1;
