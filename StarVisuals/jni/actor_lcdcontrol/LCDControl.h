@@ -27,7 +27,9 @@
 #include <json/json.h>
 #include <string>
 #include <cstring>
+#include <libvisual/libvisual.h>
 
+#include "LCDTimer.h"
 #include "CFG.h"
 
 namespace LCD {
@@ -40,6 +42,8 @@ class LCDControl : public CFG {
     bool active_;
     std::map<std::string, LCDCore *> devices_;
     std::vector<std::string> display_keys_;
+    LCDTimerBin *timer_bin_;
+    VisMutex mutex_;
     void ConfigSetup();
 
     public:
@@ -51,6 +55,7 @@ class LCDControl : public CFG {
     LCDCore *FindDisplay(std::string name);
     void ProcessVariables(Json::Value *config, Evaluator *ev);
     bool IsActive() { return active_; }
+    LCDTimerBin *GetTimers(){ return timer_bin_; }
 };
 
 }; // End namespace

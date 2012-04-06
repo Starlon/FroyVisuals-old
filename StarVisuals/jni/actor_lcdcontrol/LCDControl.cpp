@@ -26,22 +26,15 @@
 
 #include "Property.h"
 #include "LCDControl.h"
-/*
-#include "DrvCrystalfontz.h"
-#include "DrvQt.h"
-#include "DrvQtGraphic.h"
-#include "DrvPertelian.h"
-#include "DrvPicoGraphic.h"
-#include "DrvLCDProc.h"
-#include "DrvSDL.h"
-*/
 #include "Evaluator.h"
 #include "debug.h"
 
 using namespace LCD;
 
 LCDControl::LCDControl() {
-    active_ = true;
+    mTimerBin = new LCDTimerBin();
+    visual_mutex_init(&mutex_);
+    active_ = false;
 }
 
 LCDControl::~LCDControl() {
@@ -56,12 +49,18 @@ LCDControl::~LCDControl() {
 
 int LCDControl::Start() {
     CFG_Init("config.js");
-    //XInitThreads();
     ConfigSetup();
+    active_ = true;
+    while(active_)
+    {
+        mTimerBin.Tick();
+        visual_time_usleep(0.2 * VISUAL_USECS_PER_SEC);
+    }
     return 1;
 }
 
 void LCDControl::Stop() {
+    active_ = false;
 }
 
 /*

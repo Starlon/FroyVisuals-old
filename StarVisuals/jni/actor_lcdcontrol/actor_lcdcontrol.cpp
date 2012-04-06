@@ -36,10 +36,13 @@
 
 namespace {
 
+
 typedef struct {
     VisPalette pal;
 	VisBuffer	pcm;
     VisTimer timer;
+    VisThread *thread;
+    LCDControl *control;
 } ScopePrivate;
 
 int starscope_init (VisPluginData *plugin);
@@ -55,7 +58,7 @@ extern "C" const VisPluginInfo *get_plugin_info (int *count);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
-const VisPluginInfo *get_plugin_info (int *count)
+extern "C" const VisPluginInfo *get_plugin_info (int *count)
 {
 	static VisActorPlugin actor[] = {{
 		.requisition = starscope_requisition,
@@ -105,7 +108,17 @@ int starscope_init (VisPluginData *plugin)
 
     visual_timer_init(&priv->timer);
 
+    priv->control = new LCDControl();
+
+    priv->thread = visual_thread_create(my_thread_func, priv->control, TRUE);
+
 	return 0;
+}
+
+void my_thread_func(void *data)
+{
+    LCDControl *control = (LCDControl *)data;
+    control->Start();
 }
 
 int starscope_cleanup (VisPluginData *plugin)
@@ -117,6 +130,14 @@ int starscope_cleanup (VisPluginData *plugin)
 	visual_object_unref (VISUAL_OBJECT (&priv->pcm));
 
 	visual_mem_free (priv);
+
+    priv->control->Stop();
+
+    visual_thread_join(priv->thread);
+
+    visual_thread_free(priv->thread);
+
+    delete priv->control;
 
 	return 0;
 }
@@ -160,9 +181,16 @@ int starscope_events (VisPluginData *plugin, VisEventQueue *events)
 	while (visual_event_queue_poll (events, &ev)) {
 		switch (ev.type) {
 			case VISUAL_EVENT_RESIZE:
+/*
 				starscope_dimension (plugin, ev.event.resize.video,
 						ev.event.resize.width, ev.event.resize.height);
+*/
 				break;
+            case VISUAL_EVENT_GENERIC:
+                LCDEvent *lcd_event = (LCDEvent *)ev.ev.generic.data_ptr;
+                lcd_event->func(lcd_event->data);
+                
+                break;
 			default: /* to avoid warnings */
 				break;
 		}
@@ -170,6 +198,7 @@ int starscope_events (VisPluginData *plugin, VisEventQueue *events)
 
 	return 0;
 }
+
 
 VisPalette *starscope_palette (VisPluginData *plugin)
 {
