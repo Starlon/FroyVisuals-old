@@ -48,6 +48,18 @@ std::string to_string(T t, std::ios_base & (*f)(std::ios_base&), int precision)
   return oss.str();
 }
 
+void update(void *data)
+{
+    WidgetText *text = (WidgetText *)data;
+    text->Update();
+}
+
+void text_scroll(void *data)
+{
+    WidgetText *text = (WidgetText *)data;
+    text->TextScroll();
+}
+
 WidgetText::WidgetText(LCDCore *v, std::string name, Json::Value *config,
         int row, int col, int layer) : Widget(v, name, config, row, col, layer,
         WIDGET_TYPE_TEXT | WIDGET_TYPE_RC) {
@@ -132,35 +144,21 @@ WidgetText::WidgetText(LCDCore *v, std::string name, Json::Value *config,
     speed_ = val->asInt();
     delete val;
 
-    // colors
-    //
-
     val = v->CFG_Fetch(section_, "bold", new Json::Value(0));
     bold_ = val->asInt();
     delete val;
 
-/*
-    timer_ = new QTimer();
-    timer_->setSingleShot(false);
-    timer_->setInterval(update_);
-    //QObject::connect(timer_, SIGNAL(timeout()), this, SLOT(Update()));
-
-    scroll_timer = new QTimer();
-    scroll_timer->setInterval(speed_);
-    //QObject::connect(scroll_timer, SIGNAL(timeout()), this, SLOT(TextScroll()));
-
-    //QObject::connect(visitor_->GetWrapper(), SIGNAL(_ResizeLCD(int, int, int, int)),
-    //    this, SLOT(Resize(int, int, int, int)));
-*/
+    v->timers_->AddTimer(update, this, update_, true);
+    v->timers_->AddTimer(text_scroll, this, speed_, true);
 }
+
+
 WidgetText::~WidgetText() {
     Stop();
     delete prefix_;
     delete postfix_;
     delete style_;
     delete value_;
-    //delete timer_;
-    //delete scroll_timer;
 }
 
 void WidgetText::Resize(int rows, int cols, int old_rows, int old_cols) {

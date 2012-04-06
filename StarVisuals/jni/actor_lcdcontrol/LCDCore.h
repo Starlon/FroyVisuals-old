@@ -39,6 +39,7 @@
 #include "LCDBase.h"
 #include "LCDText.h"
 #include "LCDGraphic.h"
+#include "LCDTimer.h"
 
 #include "Widget.h"
 #include "Generator.h"
@@ -78,10 +79,7 @@ class LCDCore: public virtual Evaluator, public CFG {
     bool is_transitioning_;
     bool clear_on_layout_change_;
     bool transitions_off_;
-/*
-    QTimer *timer_;
-    QTimer *transition_timer_;
-*/
+
     //PluginLCD *pluginLCD;
 
     protected:
@@ -128,6 +126,8 @@ class LCDCore: public virtual Evaluator, public CFG {
     std::string AddWidget(std::string layout, int row, int col, 
         int layer, std::string object);
     int MoveWidget(std::string widget, int rows, int cols);
+
+    LCDTimerBin *timers_;
 
     int gen_index_;
 

@@ -2,9 +2,8 @@
     "variables": {
         "foo": 220
     },
-    "display_sdl": {
-        "driver": "native",
-        "gif-speed": 80,
+    "display_fb": {
+        "driver": "fb",
         "pixels": "1x1",
         "layers": 3,
         "background": "d9ccf16f",
@@ -20,7 +19,7 @@
         "refresh-rate": 25,
         //"layout0": "layout_full_256x64"
         //"layout1": "layout_histogram_large",
-        "layout0": "layout_xmms2_pcm_256x64"
+        "layout0": "layout_2x16"
     },
     "layout_2x16": {
         "row1": {
