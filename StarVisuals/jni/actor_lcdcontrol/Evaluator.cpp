@@ -51,16 +51,18 @@ void fromSpecialChar(const QScriptValue &obj, SpecialChar &ch) {
 */
 
 Evaluator::Evaluator() {
-/*
     state_ = lua_open();
     luaJIT_setmode(state_, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_ON);
     LUAJIT_VERSION_SYM();  // linker-enforced version check 
-    lua_gc(L, LUA_GCSTOP, 0);  // stop collector during initialization 
-    luaL_openlibs(L);  // open libraries
-    if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/libstub.lua") || lua_pcall(L, 0, 0, 0));
-    if(luaL_loadfile(L, "/data/data/com.starlon.starvisuals/pluginmath.lua") || lua_pcall(L, 0, 0, 0));
-    lua_gc(L, LUA_GCRESTART, -1);
-*/
+    lua_gc(state_, LUA_GCSTOP, 0);  // stop collector during initialization 
+    luaopen_io(state_);
+    luaopen_base(state_);
+    luaopen_table(state_);
+    luaopen_string(state_);
+    luaopen_math(state_);
+    if(luaL_loadfile(state_, "/data/data/com.starlon.starvisuals/libstub.lua") || lua_pcall(state_, 0, 0, 0));
+    if(luaL_loadfile(state_, "/data/data/com.starlon.starvisuals/pluginmath.lua") || lua_pcall(state_, 0, 0, 0));
+    lua_gc(state_, LUA_GCRESTART, -1);
 }
 
 Evaluator::~Evaluator() {
@@ -68,15 +70,17 @@ Evaluator::~Evaluator() {
     state_ = NULL;
 }
 
-std::string Evaluator::Eval(std::string str) {
-     
-    return "";
+std::string Evaluator::Eval(std::string str) 
+{
+    const char *ret = (const char *)"<null>";
+    int s = luaL_dostring(state_, str.c_str());
+    if (s == 0)
+    {
+        s = lua_pcall(state_, 0, LUA_MULTRET, 0);
+        ret = lua_tostring(state_, -1);
+        lua_settop(state_, 0);
+    }
+    return ret;
 }
 
 
-/*
-void Evaluator::AddValue(std::string name, int value) {
-    lua_pushnumber(state_, value);
-    lua_setglobal(state_, name.c_str());
-}
-*/

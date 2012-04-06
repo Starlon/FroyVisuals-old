@@ -40,7 +40,6 @@ int PluginCpuinfo::ParseCpuinfo(void)
     int age;
 
     /* reread every second only */
-#if 0
     age = hash_age(&CPUinfo, NULL);
     if (age > 0 && age <= 1000)
         return 0;
@@ -81,31 +80,35 @@ int PluginCpuinfo::ParseCpuinfo(void)
         hash_put(&CPUinfo, key, val);
 
     }
-#endif
     return 0;
 }
 
 
-std::string PluginCpuinfo::Cpuinfo(std::string key)
+void PluginCpuinfo::Cpuinfo(lua_State *L)
 {
-    const char *val;
+    const char *val = "";
+    int argc = lua_gettop(L);
+    if(argc > 0)
+    {
+        if (ParseCpuinfo() < 0) {
+            return;
+        }
+    
+        std::string key = lua_tostring(L, -2);
 
-    if (ParseCpuinfo() < 0) {
-        return "";
+        val = hash_get(&CPUinfo, key.c_str(), NULL);
+        if (val == NULL)
+            val = "";
     }
-
-    val = hash_get(&CPUinfo, key.c_str(), NULL);
-    if (val == NULL)
-        val = "";
-    return val;
+    
+    lua_pushstring(L, val);
 }
 
 
-PluginCpuinfo::PluginCpuinfo()
+PluginCpuinfo::PluginCpuinfo(lua_State *state)
 {
     stream = NULL;
     hash_create(&CPUinfo);
-    //AddFunction("cpuinfo", 1, my_cpuinfo);
 }
 
 PluginCpuinfo::~PluginCpuinfo()
@@ -118,6 +121,12 @@ PluginCpuinfo::~PluginCpuinfo()
 }
 
 void PluginCpuinfo::Connect(Evaluator *visitor) {   
-    lua_register(visitor->state_, "cpuinfo", Cpuinfo);
+    Luna<PluginCpuinfo>::Register(visitor->state_);
 }
+
+const char PluginCpuinfo::className[] = "Foo";
+const Luna<PluginCpuinfo>::RegType PluginCpuinfo::Register[] = {
+  { "Cpuinfo", &PluginCpuinfo::Cpuinfo },
+  { 0 }
+};
 
