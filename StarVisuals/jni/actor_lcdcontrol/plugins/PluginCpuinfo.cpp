@@ -28,8 +28,8 @@
 #include <errno.h>
 #include <lua/lua.hpp>
 
-#include "debug.h"
-#include "Hash.h"
+#include "../debug.h"
+#include "../Hash.h"
 #include "PluginCpuinfo.h"
 
 using namespace LCD;
@@ -121,12 +121,6 @@ PluginCpuinfo::~PluginCpuinfo()
 }
 
 void PluginCpuinfo::Connect(Evaluator *visitor) {   
-    Luna<PluginCpuinfo>::Register(visitor->state_);
 }
 
-const char PluginCpuinfo::className[] = "Foo";
-const Luna<PluginCpuinfo>::RegType PluginCpuinfo::Register[] = {
-  { "Cpuinfo", &PluginCpuinfo::Cpuinfo },
-  { 0 }
-};
 

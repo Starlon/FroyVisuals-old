@@ -25,9 +25,8 @@
 #define __PLUGIN_CPUINFO_H__
 
 #include <string>
-#include <lua/lua.hpp>
-#include "Hash.h"
-#include "Luna.hpp"
+#include <luaxx.h>
+#include "../Hash.h"
 
 namespace LCD {
 
@@ -46,8 +45,7 @@ class PluginCpuinfo {
     void Disconnect() {}
 
     void Cpuinfo(lua_State *state);
-    static const char className[];
-    static const Luna<PluginCpuinfo>::RegType Register[];
+
 };
 
 }; // End namespace
