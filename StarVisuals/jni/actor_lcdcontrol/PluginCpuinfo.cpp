@@ -32,7 +32,13 @@
 
 using namespace LCD;
 
-int PluginCpuinfo::ParseCpuinfo(void)
+static HASH CPUinfo;
+static FILE *stream;
+
+static int ParseCpuinfo(void);
+static std::string Cpuinfo(std::string key);
+
+static int ParseCpuinfo(void)
 {
     int age;
 
@@ -81,7 +87,7 @@ int PluginCpuinfo::ParseCpuinfo(void)
 }
 
 
-std::string PluginCpuinfo::Cpuinfo(std::string key)
+static std::string Cpuinfo(std::string key)
 {
     const char *val = "";
     if (ParseCpuinfo() < 0) {
@@ -95,14 +101,35 @@ std::string PluginCpuinfo::Cpuinfo(std::string key)
     return val;
 }
 
+class cpuinfo_t {
+    public:
+    static const lua::args_t *in_args()
+    {
+        const lua::args_t *args = new lua::args_t();
+        //args->add(new lua::string_arg_t());
+        return args;
+    }
 
+    static const lua::args_t *out_args()
+    {
+        lua::args_t *args = new lua::args_t();
+        args->add(new lua::string_arg_t());
+    }
 
-PluginCpuinfo::PluginCpuinfo(lua_State *lua)
+    static const std::string ns() { return "LCD"; }
+    static const std::string name() { return "cpuinfo"; }
+
+    static void calc(const lua::args_t& in, lua::args_t &out)
+    {
+        std::string key = dynamic_cast<lua::string_arg_t&>(*in[0]).value();
+        std::string str = Cpuinfo(key);
+        dynamic_cast<lua::string_arg_t&>(*out[0]).value() = str;
+    }
+};
+
+PluginCpuinfo::PluginCpuinfo(lua script)
 {
-
-    std::shared_ptr<PluinCpuinfo> ptr(this);
-    
-
+    //script.register_function<cpuinfo_t>();
     hash_create(&CPUinfo);
     stream = NULL;
 }

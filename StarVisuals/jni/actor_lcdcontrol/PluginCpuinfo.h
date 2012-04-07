@@ -26,7 +26,7 @@
 
 #include <string>
 #include "Hash.h"
-#include <lua/lua.hpp>
+#include <luascript/luascript.h>
 
 namespace LCD {
 
@@ -34,16 +34,13 @@ class Evaluator;
 
 class PluginCpuinfo {
     private:
-    HASH CPUinfo;
-    FILE *stream;
-    int ParseCpuinfo(void);
 
     public:
-    PluginCpuinfo(lua_State);
+    PluginCpuinfo(lua script);
     ~PluginCpuinfo();
     std::string Cpuinfo(std::string str);
-
 };
+
 
 }; // End namespace
 

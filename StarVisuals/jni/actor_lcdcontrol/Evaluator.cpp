@@ -53,7 +53,8 @@ void fromSpecialChar(const QScriptValue &obj, SpecialChar &ch) {
 */
 
 Evaluator::Evaluator() {
-    mCpuinfo = new PluginCpuinfo(mLua);
+    
+    //mCpuinfo = new PluginCpuinfo(mScript);
 }
 
 Evaluator::~Evaluator() {
@@ -62,8 +63,16 @@ Evaluator::~Evaluator() {
 
 std::string Evaluator::Eval(std::string str) 
 {
-    mLua.executeCode("function ____wrap____() " + str + " end");
-    return mLua.callLuaFunction<std::string>("____wrap____");
+    std::string val = "";
+    try {
+        mScript.exec("function __wrap__() " + str + " end; __out__ = __wrap__()");
+        val = mScript.get_variable<lua::string_arg_t>("__out__").value();
+    } catch (lua::exception &e)
+    {
+        visual_log(VISUAL_LOG_ERROR, "Lua error: %s, line: %d", e.error().c_str(), e.line());
+    }
+
+    return val;
 }
 
 

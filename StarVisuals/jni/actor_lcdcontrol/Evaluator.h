@@ -26,15 +26,14 @@
 
 #include "SpecialChar.h"
 #include "PluginCpuinfo.h"
-#include "../luawrapper/LuaContext.h"
-
+#include <luascript/luascript.h>
 
 namespace LCD {
 
 class Evaluator {
     private:
     PluginCpuinfo *mCpuinfo;
-    Lua::LuaContext mLua;
+    lua mScript;
 
     public:
     Evaluator();
