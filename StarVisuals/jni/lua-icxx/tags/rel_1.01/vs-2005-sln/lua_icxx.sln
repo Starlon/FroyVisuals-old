@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lua_icxx DLL", "..\src\lua_icxx.vcproj", "{F3ABE7F6-41F8-474E-9009-E39CB3C5CED8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lua_icxx Test", "..\test\lua_iccxx_test.vcproj", "{ECD224DC-1177-401B-95F7-3339EB1B2882}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F3ABE7F6-41F8-474E-9009-E39CB3C5CED8} = {F3ABE7F6-41F8-474E-9009-E39CB3C5CED8}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F3ABE7F6-41F8-474E-9009-E39CB3C5CED8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F3ABE7F6-41F8-474E-9009-E39CB3C5CED8}.Debug|Win32.Build.0 = Debug|Win32
+		{F3ABE7F6-41F8-474E-9009-E39CB3C5CED8}.Release|Win32.ActiveCfg = Release|Win32
+		{F3ABE7F6-41F8-474E-9009-E39CB3C5CED8}.Release|Win32.Build.0 = Release|Win32
+		{ECD224DC-1177-401B-95F7-3339EB1B2882}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ECD224DC-1177-401B-95F7-3339EB1B2882}.Debug|Win32.Build.0 = Debug|Win32
+		{ECD224DC-1177-401B-95F7-3339EB1B2882}.Release|Win32.ActiveCfg = Debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

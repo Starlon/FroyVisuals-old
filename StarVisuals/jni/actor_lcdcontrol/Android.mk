@@ -10,4 +10,3 @@ LOCAL_SHARED_LIBRARIES := libvisual gnustl
 LOCAL_LDLIBS += -L$(call host-path, $(LOCAL_PATH))/$(TARGET_ARCH_ABI) -lluajit
 include $(BUILD_SHARED_LIBRARY)
 
-include $(LOCAL_PATH)/plugins/Android.mk

@@ -1,0 +1,2 @@
+/home/scott/workspace/StarVisuals/StarVisuals/jni/lua-icxx/trunk/cmake/build-lib/CMakeFiles/lua-icxx.dir
+/home/scott/workspace/StarVisuals/StarVisuals/jni/lua-icxx/trunk/cmake/build-test/CMakeFiles/test-lua-icxx.dir

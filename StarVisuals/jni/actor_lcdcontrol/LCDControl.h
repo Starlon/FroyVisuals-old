@@ -47,6 +47,7 @@ class LCDControl : public CFG {
     void ConfigSetup();
 
     public:
+    float pcm[PCM_SIZE];
     VisMutex mutex_;
     LCDPrivate *priv_;
     LCDControl(LCDPrivate *priv);

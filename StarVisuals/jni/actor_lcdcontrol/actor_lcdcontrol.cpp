@@ -35,7 +35,6 @@
 #include "LCDControl.h"
 #include "LCDEvent.h"
 
-#define PCM_SIZE	2048
 
 extern "C" const VisPluginInfo *get_plugin_info (int *count);
 
@@ -243,11 +242,12 @@ int lcdcontrol_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 			1.0,
 			1.0);
 
-	int16_t *pcmbuf = (int16_t *)visual_buffer_get_data (&priv->pcm);
+	float *pcmbuf = (float *)visual_buffer_get_data (&priv->pcm);
 
 	uint8_t *buf = (uint8_t *) visual_video_get_pixels (video);
 
     visual_mutex_lock(&priv->control->mutex_);
+    visual_mem_copy(priv->control->pcm, pcmbuf, PCM_SIZE * sizeof(float));
     visual_mem_copy(buf, priv->pixels, video->height * video->pitch);
     visual_mutex_unlock(&priv->control->mutex_);
 

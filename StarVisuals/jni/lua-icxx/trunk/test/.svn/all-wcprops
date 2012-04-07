@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svnroot/lua-icxx/!svn/ver/48/trunk/test
+END
+lua_iccxx_test.vcproj
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/lua-icxx/!svn/ver/37/trunk/test/lua_iccxx_test.vcproj
+END
+lua_icxx sample 1.vcproj
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/lua-icxx/!svn/ver/47/trunk/test/lua_icxx%20sample%201.vcproj
+END
+SimpleLuaApiExample.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/lua-icxx/!svn/ver/48/trunk/test/SimpleLuaApiExample.cpp
+END
+sample1.lua
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/lua-icxx/!svn/ver/47/trunk/test/sample1.lua
+END
+testLuaxx.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svnroot/lua-icxx/!svn/ver/33/trunk/test/testLuaxx.cpp
+END
+test_bad_logic.lua
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/lua-icxx/!svn/ver/33/trunk/test/test_bad_logic.lua
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svnroot/lua-icxx/!svn/ver/48/trunk/test/main.cpp
+END
+testLuacpp.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/lua-icxx/!svn/ver/16/trunk/test/testLuacpp.cpp
+END
+test_chunk.lua
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/lua-icxx/!svn/ver/37/trunk/test/test_chunk.lua
+END
+test_ok.lua
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svnroot/lua-icxx/!svn/ver/20/trunk/test/test_ok.lua
+END
+test_bad_syntax.lua
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/lua-icxx/!svn/ver/33/trunk/test/test_bad_syntax.lua
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svnroot/lua-icxx/!svn/ver/45/trunk/test/CMakeLists.txt
+END
+test_sandbox.lua
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/lua-icxx/!svn/ver/37/trunk/test/test_sandbox.lua
+END

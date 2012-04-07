@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src
+END
+LuaFuncRef.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaFuncRef.h
+END
+LuaInterpreter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaInterpreter.cpp
+END
+LuaTempResult.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaTempResult.cpp
+END
+LuaStackCleaner.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaStackCleaner.h
+END
+LuaObjRef.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaObjRef.cpp
+END
+LuaInterpreter.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaInterpreter.h
+END
+LuaAdapters.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaAdapters.h
+END
+LuaTempResult.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaTempResult.h
+END
+LuaRegistryRef.h
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaRegistryRef.h
+END
+LuaObjRef.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaObjRef.h
+END
+LICENSE.txt
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LICENSE.txt
+END
+luaFuncCalls.h
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/luaFuncCalls.h
+END
+lua_icxx_export.h
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/lua_icxx_export.h
+END
+LuaExpr.h
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaExpr.h
+END
+LuaCallStatus.h
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaCallStatus.h
+END
+LuaFuncRef.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaFuncRef.cpp
+END
+LuaTableRef.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaTableRef.h
+END
+LuaStackSizeChecker.h
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/LuaStackSizeChecker.h
+END
+lua_icxx.vcproj
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svnroot/lua-icxx/!svn/ver/41/tags/rel_1.01/src/lua_icxx.vcproj
+END

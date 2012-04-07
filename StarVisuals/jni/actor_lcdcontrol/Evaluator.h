@@ -22,18 +22,21 @@
 #ifndef __EVALUATOR__
 #define __EVALUATOR__
 
-#include <lua/lua.hpp>
-
 #include <string>
 
 #include "SpecialChar.h"
+#include "PluginCpuinfo.h"
+#include "../luawrapper/LuaContext.h"
 
 
 namespace LCD {
 
 class Evaluator {
+    private:
+    PluginCpuinfo *mCpuinfo;
+    Lua::LuaContext mLua;
+
     public:
-    lua_State *state_;
     Evaluator();
     virtual ~Evaluator();
     virtual std::string Eval(std::string str);

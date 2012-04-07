@@ -22,10 +22,12 @@
 #include <string>
 #include <iostream>
 #include <lua/lua.hpp>
+#include <libvisual/libvisual.h>
 
 #include "Evaluator.h"
 #include "SpecialChar.h"
 #include "debug.h"
+#include "PluginCpuinfo.h"
 
 using namespace LCD;
 
@@ -51,36 +53,17 @@ void fromSpecialChar(const QScriptValue &obj, SpecialChar &ch) {
 */
 
 Evaluator::Evaluator() {
-    state_ = lua_open();
-    luaJIT_setmode(state_, 0, LUAJIT_MODE_ENGINE|LUAJIT_MODE_ON);
-    LUAJIT_VERSION_SYM();  // linker-enforced version check 
-    lua_gc(state_, LUA_GCSTOP, 0);  // stop collector during initialization 
-    luaopen_io(state_);
-    luaopen_base(state_);
-    luaopen_table(state_);
-    luaopen_string(state_);
-    luaopen_math(state_);
-    if(luaL_loadfile(state_, "/data/data/com.starlon.starvisuals/libstub.lua") || lua_pcall(state_, 0, 0, 0));
-    if(luaL_loadfile(state_, "/data/data/com.starlon.starvisuals/pluginmath.lua") || lua_pcall(state_, 0, 0, 0));
-    lua_gc(state_, LUA_GCRESTART, -1);
+    mCpuinfo = new PluginCpuinfo(mLua);
 }
 
 Evaluator::~Evaluator() {
-    lua_close(state_);
-    state_ = NULL;
+    delete mCpuinfo;
 }
 
 std::string Evaluator::Eval(std::string str) 
 {
-    const char *ret = (const char *)"<null>";
-    int s = luaL_dostring(state_, str.c_str());
-    if (s == 0)
-    {
-        s = lua_pcall(state_, 0, LUA_MULTRET, 0);
-        ret = lua_tostring(state_, -1);
-        lua_settop(state_, 0);
-    }
-    return ret;
+    mLua.executeCode("function ____wrap____() " + str + " end");
+    return mLua.callLuaFunction<std::string>("____wrap____");
 }
 
 

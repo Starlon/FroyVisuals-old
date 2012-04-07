@@ -6,6 +6,8 @@ namespace LCD {
 
 class LCDControl;
 
+#define PCM_SIZE	1024
+
 typedef struct {
     VisPalette pal;
 	VisBuffer	pcm;
