@@ -1709,13 +1709,12 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_initApp(JNIEnv 
     app_main(w, h);
 }
 
-VisVideo *new_video(int w, int h, VisVideoDepth depth, void *pixels)
+VisVideo *new_video(int w, int h, VisVideoDepth depth)
 {
     VisVideo *video = visual_video_new();
     visual_video_set_depth(video, depth);
     visual_video_set_dimension(video, w, h);
     visual_video_set_pitch(video, visual_video_bpp_from_depth(depth) * w);
-    visual_video_set_buffer(video, pixels);
     return video;
 }
 
@@ -1742,6 +1741,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
     int                ret;
     int depthflag;
     VisVideoDepth depth;
+    static VisVideo *vid = NULL;
+    static VisVideo *swap = NULL;
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -1753,7 +1754,13 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
         return FALSE;
     }
 
-    VisVideo *vid = new_video(info.width, info.height, DEVICE_DEPTH, pixels);
+    if(swap == NULL)
+        swap = visual_video_new();
+
+    if(vid == NULL || vid->width != info.width || vid->height != info.height)
+        vid = new_video(info.width, info.height, DEVICE_DEPTH);
+
+    visual_video_set_buffer(vid, pixels);
 
     if(visual_bin_depth_changed(v.bin) || 
         (info.width != v.video->width || 
@@ -1790,17 +1797,12 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
     if(do_swap)
     {
         int32_t data[vid->pitch * vid->height];
-        VisVideo *swap = visual_video_new();
         visual_video_clone(swap, vid);
         visual_video_set_buffer(swap, data);
         visual_video_blit_overlay(swap, vid, 0, 0, FALSE);
 
         swap_video_BGR(vid, swap);
-
-        visual_object_unref(VISUAL_OBJECT(swap));
     }
-
-    visual_object_unref(VISUAL_OBJECT(vid));
 
     AndroidBitmap_unlockPixels(env, bitmap);
 
