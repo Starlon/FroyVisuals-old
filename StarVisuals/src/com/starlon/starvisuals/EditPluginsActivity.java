@@ -19,8 +19,8 @@ import android.util.Log;
 
 public class EditPluginsActivity extends PreferenceActivity
 {
-        private final static String TAG = "FroyVisuals/EditPluginsActivity";
-        private final static String PREFS = "FroyVisualsPrefs";
+        private final static String TAG = "StarVisuals/EditPluginsActivity";
+        private final static String PREFS = "StarVisualsPrefs";
         
         private NativeHelper mNativeHelper;
         

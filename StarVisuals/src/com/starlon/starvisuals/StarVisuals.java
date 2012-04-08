@@ -168,6 +168,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                         }
                         mActor = NativeHelper.actorGetName(NativeHelper.actorGetCurrent());
                         mEditor.putString("prefs_actor_selection", mActor);
+                        mEditor.commit();
                     } catch (Exception e) {
                         Log.w(TAG, "Failure in onFling");
                         // nothing
@@ -318,6 +319,13 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         releaseAlbumArt();
 
         mView.stopThread();
+
+        mEditor.putString("prefs_actor_selection", mActor);
+        mEditor.putString("prefs_input_selection", mInput);
+        mEditor.putString("prefs_morph_selection", mMorph);
+
+        mEditor.commit();
+
     }
 
     // user navigates back to the activity. onRestart() -> onStart() -> onResume()
