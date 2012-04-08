@@ -8,8 +8,8 @@
         "layers": 3,
         "background": "d9ccf16f",
         "fill": 1,
-        "cols": 256,
-        "rows": 64,
+        "cols": 8*20,
+        "rows": 8,
         "layout-timeout": 0,
         "update": 25,
         //"widget0": "widget_key_up",
@@ -17,9 +17,13 @@
         //"widget2": "widget_netstat_script",
         "transition-speed": 50,
         "refresh-rate": 25,
-        //"layout0": "layout_full_256x64"
-        //"layout1": "layout_histogram_large",
-        "layout0": "layout_2x16"
+        "layout0": "layout_20x1"
+    },
+    "layout_20x1": {
+        "row1": {
+            "col1": "widget_cpuinfo_label",
+            "col11": "widget_cpuinfo"
+        }
     },
     "layout_2x16": {
         "row1": {
@@ -1701,6 +1705,16 @@
         "min": "0",
         "update": 500
     }, 
+    "widget_cpuinfo_label": {
+        "expression": "CPUInfo:",
+        "type": "text",
+        "length": 10
+    },
+    "widget_cpuinfo": {
+        "expression": "LCD.Cpuinfo('model name')",
+        "type": "text",
+        "length": 10
+    },
     "widget_bottom_marquee": {
         "align": "M", 
         "expression": "uname.Uname('sysname') + ' ' + uname.Uname('nodename') + ' ' + uname.Uname('release') + ' ' + cpuinfo.Cpuinfo('model name')", 

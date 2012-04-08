@@ -11,8 +11,8 @@ public class NativeHelper
     // VisInput native calls
     public static native int inputCount();
     public static native int inputGetCurrent();
-    public static native boolean inputSetCurrent(int index);
-    public static native boolean inputSetCurrentByName(String name);
+    public static native boolean inputSetCurrent(int index, boolean now);
+    public static native boolean inputSetCurrentByName(String name, boolean now);
     public static native String inputGetName(int index);
     public static native String inputGetLongName(int index);
     public static native String inputGetAuthor(int index);
@@ -35,8 +35,8 @@ public class NativeHelper
     // VisMorph native calls
     public static native int morphCount();
     public static native int morphGetCurrent();
-    public static native boolean morphSetCurrent(int index);
-    public static native boolean morphSetCurrentByName(String name);
+    public static native boolean morphSetCurrent(int index, boolean now);
+    public static native boolean morphSetCurrentByName(String name, boolean now);
     public static native String morphGetName(int index);
     public static native String morphGetLongName(int index);
     public static native String morphGetAuthor(int index);
@@ -59,8 +59,8 @@ public class NativeHelper
     // VisActor native calls
     public static native int actorCount();
     public static native int actorGetCurrent();
-    public static native boolean actorSetCurrent(int index);
-    public static native boolean actorSetCurrentByName(String name);
+    public static native boolean actorSetCurrent(int index, boolean now);
+    public static native boolean actorSetCurrentByName(String name, boolean now);
     public static native String actorGetName(int index);
     public static native String actorGetLongName(int index);
     public static native String actorGetAuthor(int index);
@@ -84,7 +84,7 @@ public class NativeHelper
     public static native int cycleInput(int prev);
     public static native int cycleMorph(int prev);
     public static native int cycleActor(int prev);
-    public static native void finalizeSwitch(int prev);
+    public static native String finalizeSwitch(int prev);
     public static native void setMorphStyle(boolean style);
     public static native void updatePlugins();
 

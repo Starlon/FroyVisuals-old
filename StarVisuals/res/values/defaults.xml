@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="morph_enabled">true</string>
+    <string name="prefs_morph_enabled">false</string>
+    <string name="prefs_input_selection">mic</string>
+    <string name="prefs_morph_selection">alphablend</string>
+    <string name="prefs_actor_selection">lv_analyzer</string>
 </resources>

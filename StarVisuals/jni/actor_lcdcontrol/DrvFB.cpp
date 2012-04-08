@@ -51,15 +51,7 @@ DrvFB::DrvFB(std::string name, LCDControl *v,
     update_ = val->asInt();
     delete val;
 
-    val = CFG_Fetch(config, name + ".depth", new Json::Value(8));
-    depth_ = val->asInt();
-    delete val;
-
-    val = CFG_Fetch(config, name + ".bpp", new Json::Value(8*3));
-    bpp_ = val->asInt();
-    delete val;
-
-    GraphicInit(rows_, cols_, 8, 6, layers);
+    GraphicInit(rows_, cols_, 8, 8, layers);
 
     drvFB = new RGBA[rows_*cols_];
 
@@ -126,6 +118,6 @@ void DrvFB::DrvBlit(const int row, const int col,
 
 // Clear the LCD
 void DrvFB::DrvClear() {
-    memset(drvFB, 0, cols_*rows_*3);
+    memset(drvFB, 0, cols_*rows_*sizeof(RGBA));
 }
 

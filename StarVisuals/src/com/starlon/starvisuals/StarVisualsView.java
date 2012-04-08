@@ -133,6 +133,7 @@ public class StarVisualsView extends View {
             }
     
     
+            mActivity.setPlugins(false);
             NativeHelper.initApp(WIDTH, HEIGHT);
             // Make this the last thing we do here since it's synchronized.
             // Hopefully it doesn't blow up.
@@ -280,12 +281,14 @@ public class StarVisualsView extends View {
             invalidate();
     }
 
-    public void switchScene(int prev)
+    public String switchScene(int prev)
     {
+        String next;
         mLock.lock();
         Log.i(TAG, "Switch scene....");
-        NativeHelper.finalizeSwitch(prev);
+        next = NativeHelper.finalizeSwitch(prev);
         mLock.unlock();
+        return next;
     }
 
 }

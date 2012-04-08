@@ -4,24 +4,24 @@
 
     <!-- Preferences -->
     <string name="preferences_name">StarVisuals Preferences</string>
-    <string name="prefs_title_general">General</string>
-    <string name="prefs_title_actor">Actor Plugins</string>
-    <string name="prefs_title_input">Input Plugins</string>
-    <string name="prefs_title_morph">Morph Plugins</string>
-    <string name="prefs_summary_general">General Settings</string>
-    <string name="prefs_summary_actor">Actor Settings</string>
-    <string name="prefs_summary_input">Input Settings</string>
-    <string name="prefs_summary_morph">Morph Settings</string>
-    <string name="prefs_morph_enabled">Enable Morph</string>
-    <string name="prefs_morph_steps">Morph Steps</string>
-    <string name="prefs_summary_morph_enabled">Check to enable morphs.</string>
-    <string name="prefs_summary_morph_steps">Steps to perform when morphing.</string>
-    <string name="prefs_actor_selection">Choose an Actor</string>
-    <string name="prefs_actor_selection_summary">Actors are the visualizations themselves.</string>
-    <string name="prefs_input_selection">Choose an Input</string>
-    <string name="prefs_input_selection_summary">Inputs provide audio wave data to visualizations.</string>
-    <string name="prefs_morph_selection">Choose a Morph</string>
-    <string name="prefs_morph_selection_summary">Morphs indicate the style in which actors are changed.</string>
+    <string name="prefs_text_title_general">General</string>
+    <string name="prefs_text_title_actor">Actor Plugins</string>
+    <string name="prefs_text_title_input">Input Plugins</string>
+    <string name="prefs_text_title_morph">Morph Plugins</string>
+    <string name="prefs_text_summary_general">General Settings</string>
+    <string name="prefs_text_summary_actor">Actor Settings</string>
+    <string name="prefs_text_summary_input">Input Settings</string>
+    <string name="prefs_text_summary_morph">Morph Settings</string>
+    <string name="prefs_text_morph_enabled">Enable Morph</string>
+    <string name="prefs_text_morph_steps">Morph Steps</string>
+    <string name="prefs_text_summary_morph_enabled">Check to enable morphs.</string>
+    <string name="prefs_text_summary_morph_steps">Steps to perform when morphing.</string>
+    <string name="prefs_text_actor_selection">Choose an Actor</string>
+    <string name="prefs_text_actor_selection_summary">Actors are the visualizations themselves.</string>
+    <string name="prefs_text_input_selection">Choose an Input</string>
+    <string name="prefs_text_input_selection_summary">Inputs provide audio wave data to visualizations.</string>
+    <string name="prefs_text_morph_selection">Choose a Morph</string>
+    <string name="prefs_text_morph_selection_summary">Morphs indicate the style in which actors are changed.</string>
 
     <!-- Info -->
     <string name="title_plugin_singular">Plugin Information</string>

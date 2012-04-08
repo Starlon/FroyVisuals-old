@@ -61,13 +61,13 @@ public class EditPluginsActivity extends PreferenceActivity
             PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
             
             PreferenceCategory inlinePrefCat = new PreferenceCategory(this);
-            inlinePrefCat.setTitle(R.string.prefs_title_general);
+            inlinePrefCat.setTitle(R.string.prefs_text_title_general);
             root.addPreference(inlinePrefCat);
 
             CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
             checkboxPref.setKey("prefs_morph_enabled");
-            checkboxPref.setTitle(R.string.prefs_morph_enabled);
-            checkboxPref.setSummary(R.string.prefs_summary_morph_enabled);
+            checkboxPref.setTitle(R.string.prefs_text_morph_enabled);
+            checkboxPref.setSummary(R.string.prefs_text_summary_morph_enabled);
             inlinePrefCat.addPreference(checkboxPref);
 
             current = mNativeHelper.actorGetCurrent();
@@ -82,10 +82,10 @@ public class EditPluginsActivity extends PreferenceActivity
             ListPreference actorPref = new ListPreference(this);
             actorPref.setEntries(entries);
             actorPref.setEntryValues(entryValues);
-            actorPref.setDialogTitle(R.string.prefs_actor_selection);
+            actorPref.setDialogTitle(R.string.prefs_text_actor_selection);
             actorPref.setKey("prefs_actor_selection");
-            actorPref.setTitle(R.string.prefs_actor_selection);
-            actorPref.setSummary(R.string.prefs_actor_selection_summary);
+            actorPref.setTitle(R.string.prefs_text_actor_selection);
+            actorPref.setSummary(R.string.prefs_text_actor_selection_summary);
             if(current >= 0)
                 actorPref.setValueIndex(current);
             inlinePrefCat.addPreference(actorPref);
@@ -102,10 +102,10 @@ public class EditPluginsActivity extends PreferenceActivity
             ListPreference inputPref = new ListPreference(this);
             inputPref.setEntries(entries);
             inputPref.setEntryValues(entryValues);
-            inputPref.setDialogTitle(R.string.prefs_input_selection);
+            inputPref.setDialogTitle(R.string.prefs_text_input_selection);
             inputPref.setKey("prefs_input_selection");
-            inputPref.setTitle(R.string.prefs_input_selection);
-            inputPref.setSummary(R.string.prefs_input_selection_summary);
+            inputPref.setTitle(R.string.prefs_text_input_selection);
+            inputPref.setSummary(R.string.prefs_text_input_selection_summary);
             if(current >= 0)
                 inputPref.setValueIndex(current);
             inlinePrefCat.addPreference(inputPref);
@@ -122,10 +122,10 @@ public class EditPluginsActivity extends PreferenceActivity
             ListPreference morphPref = new ListPreference(this);
             morphPref.setEntries(entries);
             morphPref.setEntryValues(entryValues);
-            morphPref.setDialogTitle(R.string.prefs_morph_selection);
+            morphPref.setDialogTitle(R.string.prefs_text_morph_selection);
             morphPref.setKey("prefs_morph_selection");
-            morphPref.setTitle(R.string.prefs_morph_selection);
-            morphPref.setSummary(R.string.prefs_morph_selection_summary);
+            morphPref.setTitle(R.string.prefs_text_morph_selection);
+            morphPref.setSummary(R.string.prefs_text_morph_selection_summary);
             if(current >= 0)
                 morphPref.setValueIndex(current);
             inlinePrefCat.addPreference(morphPref);

@@ -222,31 +222,31 @@ int get_input_index()
 
 }
 
-void set_input()
+void finalizeInput(const char *input)
 {
 
-    if(v.bin->input)
-        visual_object_unref(VISUAL_OBJECT(v.bin->input));
+    VisInput *old = visual_bin_get_input(v.bin);
+    if(old != NULL)
+        visual_object_unref(VISUAL_OBJECT(old));
 
-    VisInput *input = visual_input_new(v.input_name);
+    VisInput *new = visual_input_new(input);
 
-    if(strstr(v.input_name, "mic"))
+    if(strstr(input, "mic"))
     {
-    	if (visual_input_set_callback (input, v_upload_callback, NULL) < 0) {
+    	if (visual_input_set_callback (new, v_upload_callback, NULL) < 0) {
     	    visual_log(VISUAL_LOG_CRITICAL, "Unable to set mic input callback.");	
     	}
     }
 
-    visual_input_realize(input);
-    visual_bin_set_input(v.bin, input);
-    visual_bin_sync(v.bin, TRUE);
-
+    visual_input_realize(new);
+    visual_bin_set_input(v.bin, new);
 }
+
 
 JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleInput(JNIEnv *env, jobject obj, jint prev)
 {
     v_cycleInput(prev);
-    set_input();
+    finalizeInput(v.input_name);
     visual_log(VISUAL_LOG_DEBUG, "Just changed input to %s", v.input_name);
     return get_input_index();
 }
@@ -265,11 +265,12 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetCurrent
     return get_input_index();
 }
 
+
 // Set the current input plugin to that at the provided index.
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCurrent(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCurrent(JNIEnv *env, jobject obj, jint index, jboolean now)
 {
     VisList *list = visual_input_get_list();
     int count = visual_list_count(list);
@@ -281,18 +282,22 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCur
 
     v.input_name = ref->info->plugname;
 
-    set_input();
+    if(now)
+        finalizeInput(v.input_name);
+
     return TRUE;
 }
 
 // Set the current input plugin by its name. Do nothing and return false if the plugin doesn't exist.
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCurrentByName(JNIEnv *env, jobject obj, jstring name, jboolean now)
 {
     jboolean iscopy;
     const char *input = (*env)->GetStringUTFChars(env, name, &iscopy);
     if(visual_input_valid_by_name(input))
     {
         v.input_name = input;
+        if(now)
+            finalizeInput(input);
         return TRUE;
     }
     return FALSE;
@@ -617,10 +622,22 @@ int get_morph_index()
 
 }
 
+static void finalizeMorph(const char *morph)
+{
+    VisMorph *old = visual_bin_get_morph(v.bin);
+    if(visual_morph_is_done(old))
+    {
+        if(old != NULL)
+            visual_object_unref(VISUAL_OBJECT(old));
+        visual_bin_set_morph_by_name(v.bin, (char *)morph);
+    }
+
+}
+
 JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleMorph(JNIEnv *env, jobject obj, jint prev)
 {
     v_cycleMorph(prev);
-    visual_bin_set_morph_by_name(v.bin, (char *)v.morph_name);
+    finalizeMorph(v.morph_name);
     return get_morph_index();
 }
 
@@ -641,11 +658,12 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_morphGetCurrent
     return -1;
 }
 
+
 // Set the current morph plugin to that at the provided index.
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphSetCurrent(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphSetCurrent(JNIEnv *env, jobject obj, jint index, jboolean now)
 {
     VisList *list = visual_morph_get_list();
 
@@ -658,17 +676,24 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphSetCur
 
     v.morph_name = ref->info->plugname;
 
+    if(now)
+        finalizeMorph(v.morph_name);
+
     return TRUE;
 }
 
 // Set the current morph by name. use finalizeSwitch() to apply this change.
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphSetCurrentByName(JNIEnv *env, jobject obj, jstring name, jboolean now)
 {
     jboolean iscopy;
     const char *morph = (*env)->GetStringUTFChars(env, name, &iscopy);
     if(visual_morph_valid_by_name(morph))
     {
         v.morph_name = morph;
+        if(now)
+        {
+            finalizeMorph(morph);
+        }
         return TRUE;
     }
     return FALSE;
@@ -994,10 +1019,15 @@ int get_actor_index()
 
 }
 
+void finalizeActor(const char *actor)
+{
+    visual_bin_switch_actor_by_name(v.bin, (char *)actor);
+}
+
 JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleActor(JNIEnv *env, jobject obj, jint prev)
 {
     v_cycleActor(prev);
-    visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
+    finalizeActor(v.actor_name);
     return get_actor_index();
 }
 
@@ -1025,11 +1055,12 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_actorGetCurrent
     */
 }
 
+
 // Set the current actor plugin to that at the provided index.
 // Note that this does not immediately cause the plugin to change.
 // It only sets the name for when the plugin does change.
 // This name could change between calling this function and an actual plugin change!
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorSetCurrent(JNIEnv *env, jobject obj, jint index)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorSetCurrent(JNIEnv *env, jobject obj, jint index, jboolean now)
 {
     VisList *list = visual_actor_get_list();
     int count = visual_list_count(list);
@@ -1041,17 +1072,22 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorSetCur
 
     v.actor_name = ref->info->plugname;
 
+    if(now)
+        finalizeActor(v.actor_name);
+
     return TRUE;
 }
 
 // Set the current actor by its name.
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorSetCurrentByName(JNIEnv *env, jobject obj, jstring name)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorSetCurrentByName(JNIEnv *env, jobject obj, jstring name, jboolean now)
 {
     jboolean iscopy;
     const char *actor = (*env)->GetStringUTFChars(env, name, &iscopy);
     if(visual_actor_valid_by_name(actor))
     {
         v.actor_name = actor;
+        if(now)
+            finalizeActor(actor);
         return TRUE;
     }
     return FALSE;
@@ -1422,7 +1458,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_resizePCM(jint 
 // Increment or decrement actor and morph
 // Variable 'prev' is used to shift morph plugin around. 
 // 0=left, 1=right, 2=up, 3=down, 4=cycle.. Any other and the current value is used.
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jint prev)
+JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jint prev)
 {
 
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
@@ -1465,7 +1501,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     v_cycleActor((int)prev);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
 
-    return TRUE;
+    return (char *)v.actor_name;
 }
 
 // Set the VisBin's morph style -- to morph or not to morph.

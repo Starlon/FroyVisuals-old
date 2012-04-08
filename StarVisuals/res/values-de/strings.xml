@@ -3,18 +3,18 @@
 
     <!-- Preferences -->
     <string name="preferences_name">StarVisuals Einstellungen</string>
-    <string name="prefs_title_general">General</string>
-    <string name="prefs_title_actor">Actor Plugins</string>
-    <string name="prefs_title_input">Input Plugins</string>
-    <string name="prefs_title_morph">Morph Plugins</string>
-    <string name="prefs_morph_enabled">Ermöglichen Morphs</string>
-    <string name="prefs_summary_morph_enabled">Überprüfen Sie, Morphs zu ermöglichen.</string>
-    <string name="prefs_actor_selection">Wählen Sie einen Darsteller.</string>
-    <string name="prefs_actor_selection_summary">Schauspieler sind die Visualisierungen sich.</string>
-    <string name="prefs_input_selection">Wählen Sie einen Eingang.</string>
-    <string name="prefs_input_selection_summary">Eingänge bieten Audio-Wave-Daten zu Visualisierungen.</string>
-    <string name="prefs_morph_selection">Wählen Sie eine Morph.</string>
-    <string name="prefs_morph_selection_summary">Morphs zeigen den Stil, in dem Akteure verändert.</string>
+    <string name="prefs_text_title_general">General</string>
+    <string name="prefs_text_title_actor">Actor Plugins</string>
+    <string name="prefs_text_title_input">Input Plugins</string>
+    <string name="prefs_text_title_morph">Morph Plugins</string>
+    <string name="prefs_text_morph_enabled">Ermöglichen Morphs</string>
+    <string name="prefs_text_summary_morph_enabled">Überprüfen Sie, Morphs zu ermöglichen.</string>
+    <string name="prefs_text_actor_selection">Wählen Sie einen Darsteller.</string>
+    <string name="prefs_text_actor_selection_summary">Schauspieler sind die Visualisierungen sich.</string>
+    <string name="prefs_text_input_selection">Wählen Sie einen Eingang.</string>
+    <string name="prefs_text_input_selection_summary">Eingänge bieten Audio-Wave-Daten zu Visualisierungen.</string>
+    <string name="prefs_text_morph_selection">Wählen Sie eine Morph.</string>
+    <string name="prefs_text_morph_selection_summary">Morphs zeigen den Stil, in dem Akteure verändert.</string>
 
     <!-- Info -->
     <string name="title_plugin_singular">Plugin Informationen</string>

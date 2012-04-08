@@ -53,7 +53,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private final static String PREFS = "StarVisualsPrefs";
     private final static int ARTWIDTH = 100;
     private final static int ARTHEIGHT = 100;
-    private static Settings mSettings;
     private AudioRecord mAudio = null;
     private boolean mMicActive = false;
     private int PCM_SIZE = 1024;
@@ -79,6 +78,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public boolean mHasRoot = false;
     private Thread mAudioThread = null;
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
+    private SharedPreferences mPrefs;
+    private SharedPreferences.Editor mPrefsEditor;
 
     static private String mDisplayText = "Please wait...";
 
@@ -125,8 +126,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         makeFile("/data/data/com.starlon.starvisuals/libstub.lua", R.raw.libstub);
         makeFile("/data/data/com.starlon.starvisuals/pluginmath.lua", R.raw.pluginmath);
 
-        mSettings = new Settings(this);
-
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -155,12 +154,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Left swipe
                             Log.w(TAG, "Left swipe...");
-                            mView.switchScene(-1);
+                            mActor = mView.switchScene(-1);
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Right swipe
                             Log.w(TAG, "Right swipe...");
-                            mView.switchScene(1);
+                            mActor = mView.switchScene(1);
                         }
                     } catch (Exception e) {
                         Log.w(TAG, "Failure in onFling");
@@ -193,20 +192,54 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         registerReceiver(mReceiver, mIntentFilter);
 
-        SharedPreferences settings = getSharedPreferences(PREFS, 0);
-        settings.registerOnSharedPreferenceChangeListener(this);
-        onSharedPreferenceChanged(settings, null);
+        mPrefs = getSharedPreferences(PREFS, 0);
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
+        onSharedPreferenceChanged(mPrefs, null);
 
+        mPrefsEditor = mPrefs.edit();
     }
 
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
+    {
 
-        updatePrefs();
+        if(key.equals("prefs_actor_selection"))
+        {
+            mActor = mPrefs.getString(key, ACTOR);
+            NativeHelper.actorSetCurrentByName(mActor, true);
+
+        }
+        else if(key.equals("prefs_input_selection"))
+        {
+            mInput = mPrefs.getString(key, INPUT);
+            NativeHelper.inputSetCurrentByName(mInput, true);
+        } 
+        else if(key.equals("prefs_morph_selection"))
+        {
+            mMorph = mPrefs.getString(key, MORPH);
+            NativeHelper.morphSetCurrentByName(mInput, true);
+        } 
+        else if(key.equals("prefs_morph_enabled"))
+        {
+            mDoMorph = mPrefs.getBoolean(key, DOMORPH);
+            NativeHelper.setMorphStyle(mDoMorph);
+        }        
     }
 
     public void onClick(View v)
     {
 
+    }
+
+    public void setPlugins(boolean now)
+    {
+        mActor = mPrefs.getString("prefs_actor_selection", ACTOR);
+        NativeHelper.actorSetCurrentByName(mActor, now);
+        mInput = mPrefs.getString("prefs_input_selection", INPUT);
+        NativeHelper.inputSetCurrentByName(mInput, now);
+        mMorph = mPrefs.getString("prefs_morph_selection", MORPH);
+        NativeHelper.morphSetCurrentByName(mInput, now);
+        mDoMorph = mPrefs.getBoolean("prefs_morph_enabled", DOMORPH);
+        NativeHelper.setMorphStyle(mDoMorph);
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -248,34 +281,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         }
     };
 
-    public void updatePrefs() 
-    {
-            SharedPreferences settings = getSharedPreferences(PREFS, 0);
-    
-            mDoMorph = settings.getBoolean("prefs_do_morph", DOMORPH);
-    
-            mMorph = settings.getString("prefs_morph_selection", MORPH);
-            mInput = settings.getString("prefs_input_selection", INPUT);
-            mActor = settings.getString("prefs_actor_selection", ACTOR);
-    
-            if(mMorph == null)
-                mMorph = MORPH;
-
-            if(mInput == null)
-                mInput = INPUT;
-
-            if(mActor == null)
-                mActor = ACTOR;
-
-            NativeHelper.setMorphStyle(mDoMorph);
-            //NativeHelper.morphSetCurrentByName(mMorph); This is broken and has no effect.
-            NativeHelper.inputSetCurrentByName(mInput);
-            NativeHelper.actorSetCurrentByName(mActor);
-            NativeHelper.setMorphStyle(mDoMorph);
-
-            mView.initVisual(); 
-    }
-
     // This series of on<Action>() methods a flow chart are outlined here:
     // http://developer.android.com/reference/android/app/Activity.html
 
@@ -308,28 +313,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
         super.onPause();
 
-        SharedPreferences settings = getSharedPreferences(PREFS, 0);
-        SharedPreferences.Editor editor = settings.edit();
-
-        int morph = NativeHelper.morphGetCurrent();
-        int input = NativeHelper.inputGetCurrent();
-        int actor = NativeHelper.actorGetCurrent();
-
-        this.setMorph(NativeHelper.morphGetName(morph));
-        this.setInput(NativeHelper.inputGetName(input));
-        this.setActor(NativeHelper.actorGetName(morph));
-
-        editor.putString("prefs_morph_selection", mMorph);
-        editor.putString("prefs_input_selection", mInput);
-        editor.putString("prefs_actor_selection", mActor);
-
-        editor.putBoolean("prefs_do_morph", mDoMorph);
-
-        //Commit edits
-        editor.commit();
-
         releaseAlbumArt();
-
 
         mView.stopThread();
     }
@@ -408,24 +392,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 startActivity(new Intent(this, EditPluginsActivity.class));
                 return true;
             }
-/*
-            case R.id.input_stub:
-            {
-                synchronized(mView.mSynch)
-                {
-                    int index = NativeHelper.cycleInput(1);
-    
-                    String input = NativeHelper.inputGetName(index);
-    
-                    if(!enableMic(input)) 
-                    {
-                        index = NativeHelper.cycleInput(1);
-                    }
-    
-                    warn(NativeHelper.inputGetLongName(index), true);
-                }
-            }
-*/
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");

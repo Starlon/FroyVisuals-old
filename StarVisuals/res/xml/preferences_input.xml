@@ -2,7 +2,7 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
         <PreferenceCategory
-                android:title="@string/prefs_title_input">
+                android:title="@string/prefs_text_title_input">
                 
                 <PreferenceScreen
                     android:fragment="com.starlon.starvisuals.PreferenceActivity$InputFragment"
@@ -11,8 +11,8 @@
                     <ListPreference
                             android:id="@+id/prefs_input_selection"
                             android:key="prefs_input_selection"
-                            android:title="@string/prefs_input_selection"
-                            android:summary="@string/prefs_input_selection_summary"/>
+                            android:title="@string/prefs_text_input_selection"
+                            android:summary="@string/prefs_text_input_selection_summary"/>
 
                 </PreferenceScreen>
 

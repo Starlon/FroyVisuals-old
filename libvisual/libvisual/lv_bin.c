@@ -268,31 +268,6 @@ int visual_bin_connect_by_names (VisBin *bin, char *actname, char *inname)
 	actor = visual_actor_new (actname);
 	visual_return_val_if_fail (actor != NULL, -1);
 
-#if 0 
-FIXME: this should be removed. The function above this should perform these steps.
-	/* Check and set required depth */
-	depthflag = visual_actor_get_supported_depth (actor);
-
-	/* GL plugin, and ONLY a GL plugin */
-	if (depthflag == VISUAL_VIDEO_DEPTH_GL)
-		visual_bin_set_depth (bin, VISUAL_VIDEO_DEPTH_GL);
-	else {
-		depth = bin_get_depth_using_preferred (bin, depthflag);
-
-		/* Is supported within bin natively */
-		if ((bin->depthflag & depth) > 0) {
-			visual_bin_set_depth (bin, depth);
-		} else {
-			/* Not supported by the bin, taking the highest depth from the bin */
-			visual_bin_set_depth (bin,
-				visual_video_depth_get_highest_nogl (bin->depthflag));
-		}
-	}
-
-	/* Initialize the managed depth */
-	bin->depthforcedmain = bin->depth;
-#endif 
-
 	/* Create the input */
 	input = visual_input_new (inname);
 	visual_return_val_if_fail (input != NULL, -1);
