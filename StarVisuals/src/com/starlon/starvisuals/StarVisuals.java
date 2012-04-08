@@ -131,6 +131,11 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        mPrefs = getSharedPreferences(PREFS, 0);
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
+
+        mPrefsEditor = mPrefs.edit();
+
         mView = new StarVisualsView(this);
 
         // Don't dim screen
@@ -192,11 +197,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         registerReceiver(mReceiver, mIntentFilter);
 
-        mPrefs = getSharedPreferences(PREFS, 0);
-        mPrefs.registerOnSharedPreferenceChangeListener(this);
-        onSharedPreferenceChanged(mPrefs, null);
-
-        mPrefsEditor = mPrefs.edit();
     }
 
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) 
