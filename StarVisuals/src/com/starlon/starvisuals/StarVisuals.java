@@ -79,7 +79,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private Thread mAudioThread = null;
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
     private SharedPreferences mPrefs;
-    private SharedPreferences.Editor mPrefsEditor;
+    private SharedPreferences.Editor mEditor;
 
     static private String mDisplayText = "Please wait...";
 
@@ -134,7 +134,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         mPrefs = getSharedPreferences(PREFS, 0);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
-        mPrefsEditor = mPrefs.edit();
+        mEditor = mPrefs.edit();
 
         mView = new StarVisualsView(this);
 
@@ -159,13 +159,15 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Left swipe
                             Log.w(TAG, "Left swipe...");
-                            mActor = mView.switchScene(-1);
+                            mView.switchScene(-1);
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Right swipe
                             Log.w(TAG, "Right swipe...");
-                            mActor = mView.switchScene(1);
+                            mView.switchScene(1);
                         }
+                        mActor = NativeHelper.actorGetName(NativeHelper.actorGetCurrent());
+                        mEditor.putString("prefs_actor_selection", mActor);
                     } catch (Exception e) {
                         Log.w(TAG, "Failure in onFling");
                         // nothing

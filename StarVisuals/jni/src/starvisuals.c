@@ -1458,7 +1458,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_resizePCM(jint 
 // Increment or decrement actor and morph
 // Variable 'prev' is used to shift morph plugin around. 
 // 0=left, 1=right, 2=up, 3=down, 4=cycle.. Any other and the current value is used.
-JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jint prev)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jint prev)
 {
 
     VisMorph *bin_morph = visual_bin_get_morph(v.bin);
@@ -1501,7 +1501,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwit
     v_cycleActor((int)prev);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
 
-    return (char *)v.actor_name;
+    return TRUE;
 }
 
 // Set the VisBin's morph style -- to morph or not to morph.

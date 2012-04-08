@@ -84,7 +84,7 @@ public class NativeHelper
     public static native int cycleInput(int prev);
     public static native int cycleMorph(int prev);
     public static native int cycleActor(int prev);
-    public static native String finalizeSwitch(int prev);
+    public static native void finalizeSwitch(int prev);
     public static native void setMorphStyle(boolean style);
     public static native void updatePlugins();
 
