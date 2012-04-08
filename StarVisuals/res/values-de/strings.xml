@@ -2,22 +2,22 @@
 <resources>
 
     <!-- Preferences -->
-    <string name="preferences_name">StarVisuals Einstellungen</string>
-    <string name="prefs_text_title_general">General</string>
-    <string name="prefs_text_title_actor">Actor Plugins</string>
-    <string name="prefs_text_title_input">Input Plugins</string>
-    <string name="prefs_text_title_morph">Morph Plugins</string>
-    <string name="prefs_text_morph_enabled">Ermöglichen Morphs</string>
-    <string name="prefs_text_summary_morph_enabled">Überprüfen Sie, Morphs zu ermöglichen.</string>
-    <string name="prefs_text_actor_selection">Wählen Sie einen Darsteller.</string>
-    <string name="prefs_text_actor_selection_summary">Schauspieler sind die Visualisierungen sich.</string>
-    <string name="prefs_text_input_selection">Wählen Sie einen Eingang.</string>
-    <string name="prefs_text_input_selection_summary">Eingänge bieten Audio-Wave-Daten zu Visualisierungen.</string>
-    <string name="prefs_text_morph_selection">Wählen Sie eine Morph.</string>
-    <string name="prefs_text_morph_selection_summary">Morphs zeigen den Stil, in dem Akteure verändert.</string>
+    <string name="preferences_name">Einstellungen</string>
+    <string name="prefs_text_title_general">Allgemein</string>
+    <string name="prefs_text_title_actor">Actor Plugin</string>
+    <string name="prefs_text_title_input">Input Plugin</string>
+    <string name="prefs_text_title_morph">Morph Plugin</string>
+    <string name="prefs_text_morph_enabled">Morphs verwenden</string>
+    <string name="prefs_text_summary_morph_enabled">Morphs für Übergänge verwenden</string>
+    <string name="prefs_text_actor_selection">Actor Plugin</string>
+    <string name="prefs_text_actor_selection_summary">Actor Plugin für Visualisierung</string>
+    <string name="prefs_text_input_selection">Input Plugin</string>
+    <string name="prefs_text_input_selection_summary">Input Plugin für Audio Aufnahme</string>
+    <string name="prefs_text_morph_selection">Morph Plugin</string>
+    <string name="prefs_text_morph_selection_summary">Morph Plugin für Übergänge bei Actor Wechsel</string>
 
     <!-- Info -->
-    <string name="title_plugin_singular">Plugin Informationen</string>
+    <string name="title_plugin_singular">Plugin Info</string>
 
     <!-- Input -->
     <string name="title_actor_singular">Actor Plugin</string>
@@ -30,7 +30,7 @@
 
     <!-- Plugin header titles -->
     <string name="title_plugin_name">Name</string>
-    <string name="title_plugin_long_name">Long Name</string>
+    <string name="title_plugin_long_name">Name (lang)</string>
     <string name="title_plugin_author">Autor</string>
     <string name="title_plugin_version">Version</string>
     <string name="title_plugin_about">Über</string>
@@ -39,11 +39,11 @@
 
     <!-- Menu -->
     <string name="menu_settings">Einstellungen</string>
-    <string name="menu_about">Über&amp;#8230;</string>
+    <string name="menu_about">Über</string>
     <string name="menu_plugins">Plugins</string>
-    <string name="menu_close_app">Schließen App</string>
+    <string name="menu_close_app">Beenden</string>
     <string name="menu_about_plugins">Über Plugins</string>
-    <string name="menu_edit_plugins">Bearbeiten Plugins</string>
+    <string name="menu_edit_plugins">Plugins bearbeiten</string>
 
     <!-- Plugin Information -->
     <string name="info_button_actor">Actor</string>
@@ -53,10 +53,10 @@
     <!-- About Menu -->
     <string name="about_name">Über StarVisuals</string>
     <string name="about_description">
-        Verschiedene konfigurierbare Musik-Visualisierungen.
+        Verschiedene konfigurierbare Audio-Visualisierungen.
     </string>
     <string name="about_title">StarVisuals v0.1</string>
-    <string name="about_copyright">2012 %#169; Scott Sibley</string>
+    <string name="about_copyright">2012 (c) Scott Sibley</string>
     <string name="about_url">sisibley@gmail.com</string>
     <string name="about_changes">
         * v0.1 beta - initial beta release
@@ -64,8 +64,8 @@
     
     <!-- Plugin info -->
     <string name="plugin_name">Plugin Name</string>
-    <string name="plugin_long_name">Plugin Long Name</string>
-    <string name="plugin_author">Author</string>
+    <string name="plugin_long_name">Plugin Name (lang)</string>
+    <string name="plugin_author">Autor</string>
     <string name="plugin_version">Version</string>
     <string name="plugin_about">Über</string>
     <string name="plugin_help">Hilfe</string>
