@@ -131,6 +131,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
         mPrefs = getSharedPreferences(PREFS, 0);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 
@@ -215,6 +216,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         {
             mInput = mPrefs.getString(key, INPUT);
             NativeHelper.inputSetCurrentByName(mInput, true);
+            enableMic(mInput);
         } 
         else if(key.equals("prefs_morph_selection"))
         {
@@ -243,6 +245,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         NativeHelper.morphSetCurrentByName(mInput, now);
         mDoMorph = mPrefs.getBoolean("prefs_morph_enabled", DOMORPH);
         NativeHelper.setMorphStyle(mDoMorph);
+        enableMic(mInput);
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -301,11 +304,11 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {   
         super.onStart();
 
+        enableMic(mInput);
+
         getAlbumArt();
 
         mView.startThread();
-
-        enableMic(mInput);
 
         registerReceiver(mReceiver, mIntentFilter);
     }
@@ -624,7 +627,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         if(mAudio == null)
             mAudio = findAudioRecord();
 
-        if(mAudio != null)
+        if(mAudio != null && mView != null)
         {
             if(mAudio.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING)
                 mAudio.stop();

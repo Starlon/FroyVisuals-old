@@ -96,8 +96,8 @@ public class EditPluginsActivity extends PreferenceActivity
             entryValues = new CharSequence[count];
             for(int i = 0; i < count; i++)
             {
-                entries[i] = mNativeHelper.inputGetName(i);
-                entryValues[i] = mNativeHelper.inputGetLongName(i);
+                entryValues[i] = mNativeHelper.inputGetName(i);
+                entries[i] = mNativeHelper.inputGetLongName(i);
             }
             ListPreference inputPref = new ListPreference(this);
             inputPref.setEntries(entries);
@@ -116,8 +116,8 @@ public class EditPluginsActivity extends PreferenceActivity
             entryValues = new CharSequence[count];
             for(int i = 0; i < count; i++)
             {
-                entries[i] = mNativeHelper.morphGetName(i);
-                entryValues[i] = mNativeHelper.morphGetLongName(i);
+                entryValues[i] = mNativeHelper.morphGetName(i);
+                entries[i] = mNativeHelper.morphGetLongName(i);
             }
             ListPreference morphPref = new ListPreference(this);
             morphPref.setEntries(entries);

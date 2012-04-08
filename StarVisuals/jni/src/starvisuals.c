@@ -29,7 +29,7 @@
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
 #define ACTOR "lv_analyzer"
-#define INPUT "dummy"
+#define INPUT "mic"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
 #define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
@@ -226,6 +226,7 @@ void finalizeInput(const char *input)
 {
 
     VisInput *old = visual_bin_get_input(v.bin);
+
     if(old != NULL)
         visual_object_unref(VISUAL_OBJECT(old));
 
