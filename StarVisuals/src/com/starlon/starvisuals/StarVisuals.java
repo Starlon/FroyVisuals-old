@@ -526,21 +526,21 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     /* Get the current morph plugin name */
     public String getMorph()
     {
-        mMorph = mPrefs.getString("prefs_morph_selection", _S(R.string.prefs_defaults_morph_selection));
+        mMorph = mPrefs.getString("prefs_morph_selection", MORPH);
         return mMorph;
     }
 
     /* Get the current input plugin name */
     public String getInput()
     {
-        mInput = mPrefs.getString("prefs_input_selection", _S(R.string.prefs_defaults_input_selection));
+        mInput = mPrefs.getString("prefs_input_selection", INPUT);
         return mInput;
     }
 
     /* Get the current actor plugin name */
     public String getActor()
     {
-        mActor = mPrefs.getString("prefs_actor_selection", _S(R.string.prefs_defaults_actor_selection));
+        mActor = mPrefs.getString("prefs_actor_selection", ACTOR);
         return mActor;
     }
 
@@ -673,19 +673,9 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         return mIsActive;
     }
 
-    double display_text_then = 0.0;
     /* Get the text that should show. */
     public String getDisplayText()
     {
-        
-        double display_text_now;
-
-        display_text_now = mStats.nowMil();
-        if(display_text_now - display_text_then > 1000)
-        {
-            mDisplayText = mPrefs.getString("prefs_display_text", _S(R.string.prefs_defaults_display_text));
-            display_text_then = display_text_now;
-        }
         return mDisplayText;
     }
 

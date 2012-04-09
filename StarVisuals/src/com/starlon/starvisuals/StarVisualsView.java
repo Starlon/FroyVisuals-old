@@ -204,6 +204,7 @@ public class StarVisualsView extends View {
                     } 
                     catch(Exception e)
                     {
+                        mActivity.warn(e.toString(), true);
                         NativeHelper.setIsActive(false);
                     }
                 }
