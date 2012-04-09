@@ -11,7 +11,6 @@
     <string name="prefs_defaults_show_fps">true</string>
     <string name="prefs_defaults_show_art">true</string>
     <string name="prefs_defaults_show_text">true</string>
-    <string name="prefs_defaults_is_active">false</string>
     <string name="prefs_defaults_display_text">Please wait...</string>
     <string name="prefs_defaults_stuck_beat">true</string>
     <integer name="prefs_defaults_min_beat">120</integer>

@@ -177,7 +177,7 @@ public class StarVisualsView extends View {
         mThread = new Thread(new Runnable() {
             public void run() {
                 mActivity.setIsActive(false);
-                while(mActivity.getIsActive())
+                while(mActivity.getIsActive() == true)
                 {
                     try {
                         double then;
@@ -268,7 +268,7 @@ public class StarVisualsView extends View {
                 canvas.drawText(text, startPositionX, 100, mPaint);
             }
     
-            if(mActivity.getShowArt())
+            if(mActivity.getShowArt() && mActivity.mAlbumArt != null)
             {
                 int width = mActivity.mAlbumArt.getWidth();
                 int height = mActivity.mAlbumArt.getHeight();

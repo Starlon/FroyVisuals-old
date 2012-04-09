@@ -118,6 +118,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     private StarVisualsView mView;
 
+    private Stats mStats = new Stats();
+
     private void makeFile(String file, int id)
     {
         InputStream inputStream = getResources().openRawResource(id);
@@ -543,96 +545,192 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     }
 
 
+    double do_beat_then = 0.0;
     /* Get whether we process beats or not. */
     public boolean getDoBeat()
     {
-        mDoBeat = mPrefs.getBoolean("prefs_do_beat", _B(R.string.prefs_defaults_do_beat));
+        double do_beat_now;
+
+        do_beat_now = mStats.nowMil();
+        if(do_beat_now - do_beat_then > 1000)
+        {
+            mDoBeat = mPrefs.getBoolean("prefs_do_beat", _B(R.string.prefs_defaults_do_beat));
+            do_beat_then = do_beat_now;
+        }
         return mDoBeat;
     }
 
     /* Get whether we do endian swaps. */
+    double swap_then = 0.0;
     public boolean getDoSwap()
     {
-        mDoSwap = mPrefs.getBoolean("prefs_do_swap", _B(R.string.prefs_defaults_do_swap));
+        double swap_now;
+
+        swap_now = mStats.nowMil();
+        if(swap_now - swap_then > 1000)
+        {
+            mDoSwap = mPrefs.getBoolean("prefs_do_swap", _B(R.string.prefs_defaults_do_swap));
+            swap_then = swap_now;
+        }
         return mDoSwap;
     }
 
+    double morph_then = 0.0;
     /* Get whether we do morphs. */
     public boolean getDoMorph()
     {
-        mDoMorph = mPrefs.getBoolean("prefs_do_morph", _B(R.string.prefs_defaults_do_morph));
+        double morph_now;
+
+        morph_now = mStats.nowMil();
+        if(morph_now - morph_then > 1000)
+        {
+            mDoMorph = mPrefs.getBoolean("prefs_do_morph", _B(R.string.prefs_defaults_do_morph));
+            morph_then = morph_now;
+        }
         return mDoMorph;
 
     }
 
+    double morph_steps_then = 0.0;
     /* How many steps we take to morph. */
     public int getMorphSteps()
     {
-        mMorphSteps = mPrefs.getInt("prefs_morph_steps", _I(R.integer.prefs_defaults_morph_steps));;
+        double morph_steps_now;
+
+        morph_steps_now = mStats.nowMil();
+        if(morph_steps_now - morph_steps_then > 1000)
+        {
+            mMorphSteps = mPrefs.getInt("prefs_morph_steps", _I(R.integer.prefs_defaults_morph_steps));;
+            morph_steps_then = morph_steps_now;
+        }
         return mMorphSteps;
     }
-
+        
+    double max_fps_then = 0.0;
     /* Get Max FPS setting. */
     public int getMaxFPS()
     {
-        mMaxFPS = mPrefs.getInt("prefs_max_fps", _I(R.integer.prefs_defaults_max_fps));
+        double max_fps_now;
+
+        max_fps_now = mStats.nowMil();
+        if(max_fps_now - max_fps_then > 1000)
+        {
+            mMaxFPS = mPrefs.getInt("prefs_max_fps", _I(R.integer.prefs_defaults_max_fps));
+            max_fps_then = max_fps_now;
+        }
         return mMaxFPS;
     }
 
+    double show_fps_then = 0.0;
     /* Get whether to show fps or not. */
     public boolean getShowFPS()
     {
-        mShowFPS = mPrefs.getBoolean("prefs_show_fps", _B(R.string.prefs_defaults_show_fps));
+        double show_fps_now;
+
+        show_fps_now = mStats.nowMil();
+        if(show_fps_now - show_fps_then > 1000)
+        {
+            mShowFPS = mPrefs.getBoolean("prefs_show_fps", _B(R.string.prefs_defaults_show_fps));
+            show_fps_then = show_fps_now;
+        }
         return mShowFPS;
     }
 
+    double show_art_then = 0.0;
     /* Get whether to show art or not. */
     public boolean getShowArt()
     {
-        mShowArt = mPrefs.getBoolean("prefs_show_art", _B(R.string.prefs_defaults_show_art));
+        double show_art_now;
+
+        show_art_now = mStats.nowMil();
+        if(show_art_now - show_art_then > 1000)
+        {
+            mShowArt = mPrefs.getBoolean("prefs_show_art", _B(R.string.prefs_defaults_show_art));
+            show_art_then = show_art_now;
+        }
         return mShowArt;
     }
+
+    double show_text_then = 0.0;
     /* Whether to show text or not. */
     public boolean getShowText()
     {
-        mShowText = mPrefs.getBoolean("prefs_show_text", _B(R.string.prefs_defaults_show_text));
+        double show_text_now;
+
+        show_text_now = mStats.nowMil();
+        if(show_text_now - show_text_then > 1000)
+        {
+            mShowText = mPrefs.getBoolean("prefs_show_text", _B(R.string.prefs_defaults_show_text));
+            show_text_then = show_text_now;
+        }
         return mShowText;
     }
 
+    double is_active_then = 0.0;
     /* Whether the app is active or not. */
     public boolean getIsActive()
     {
-
-        mIsActive = mPrefs.getBoolean("prefs_is_active", _B(R.string.prefs_defaults_is_active));
         return mIsActive;
     }
 
+    double display_text_then = 0.0;
     /* Get the text that should show. */
     public String getDisplayText()
     {
         
-        mDisplayText = mPrefs.getString("prefs_display_text", _S(R.string.prefs_defaults_display_text));
+        double display_text_now;
+
+        display_text_now = mStats.nowMil();
+        if(display_text_now - display_text_then > 1000)
+        {
+            mDisplayText = mPrefs.getString("prefs_display_text", _S(R.string.prefs_defaults_display_text));
+            display_text_then = display_text_now;
+        }
         return mDisplayText;
     }
 
+    double stuck_beat_then = 0.0;
     public boolean getStuckBeat()
     {
-        mStuckBeat = mPrefs.getBoolean("prefs_stuck_beat", _B(R.string.prefs_defaults_stuck_beat));
+        double stuck_beat_now;
+
+        stuck_beat_now = mStats.nowMil();
+        if(stuck_beat_now - stuck_beat_then > 1000)
+        {
+            mStuckBeat = mPrefs.getBoolean("prefs_stuck_beat", _B(R.string.prefs_defaults_stuck_beat));
+            stuck_beat_then = stuck_beat_now;
+        }
         return mStuckBeat;
  
     }
 
+    double min_beat_then = 0.0;
     public int getMinBeat()
     {
-        mMinBeat = mPrefs.getInt("prefs_min_beat", _I(R.integer.prefs_defaults_min_beat));
+        double min_beat_now;
+
+        min_beat_now = mStats.nowMil();
+        if(min_beat_now - min_beat_then > 1000)
+        {
+            mMinBeat = mPrefs.getInt("prefs_min_beat", _I(R.integer.prefs_defaults_min_beat));
+            min_beat_then = min_beat_now;
+        }
         return mMinBeat;
  
     }
 
+    double beat_hold_then = 0.0;
     /* Get the value in milliseconds that we'll hold a beat strike.*/
     public int getBeatHold()
     {
-        mBeatHold = mPrefs.getInt("prefs_min_beat", _I(R.integer.prefs_defaults_min_beat));
+        double beat_hold_now;
+
+        beat_hold_now = mStats.nowMil();
+        if(beat_hold_now - beat_hold_then > 1000)
+        {
+            mBeatHold = mPrefs.getInt("prefs_min_beat", _I(R.integer.prefs_defaults_min_beat));
+            beat_hold_then = beat_hold_now;
+        }
         return mBeatHold;
  
     }
@@ -735,11 +833,11 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     }
 
     /* Display a warning text: provide text, time in milliseconds, and priority */
-    private long mLastRefresh = 0l;
-    private int mLastDelay = 0;
+    private double mLastRefresh = 0.0;
+    private double mLastDelay = 0;
     public boolean warn(String text, int millis, boolean priority)
     {
-        long now = System.currentTimeMillis();
+        double now = mStats.nowMil();
 
         if((now - mLastRefresh) < mLastDelay && !priority) 
             return false;
