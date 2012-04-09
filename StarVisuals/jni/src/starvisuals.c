@@ -1796,7 +1796,7 @@ void swap_video_BGR(VisVideo *vid1, VisVideo *vid2)
 }
 
 // Render the view's bitmap image.
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIEnv * env, jobject  obj, jobject bitmap, jboolean do_swap)
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitmap(JNIEnv * env, jobject  obj, jobject bitmap, jboolean do_swap)
 {
     AndroidBitmapInfo  info;
     void*              pixels;
@@ -1820,7 +1820,10 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
         swap = visual_video_new();
 
     if(vid == NULL || vid->width != info.width || vid->height != info.height)
+    {
         vid = new_video(info.width, info.height, DEVICE_DEPTH);
+        visual_video_clone(swap, vid);
+    }
 
     visual_video_set_buffer(vid, pixels);
 
@@ -1856,7 +1859,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_render(JNIE
 
     visual_video_depth_transform(vid, v.video);
 
-    if(do_swap)
+    if(do_swap || FALSE)
     {
         int32_t data[vid->pitch * vid->height];
         visual_video_clone(swap, vid);

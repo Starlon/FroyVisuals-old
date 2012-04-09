@@ -14,6 +14,7 @@ import android.graphics.Typeface;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLUtils;
@@ -26,6 +27,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +38,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 
-class StarVisualsView extends GLSurfaceView {
+class StarVisualsViewGL extends GLSurfaceView {
     private static final String TAG = "StarVisuals/StarVisualsView";
     private NativeHelper mNativeHelper;
     private StarVisuals mActivity;
@@ -44,24 +47,16 @@ class StarVisualsView extends GLSurfaceView {
     private float mLastY = -1.0f;
     private int mSize = 0;
     private int direction = -1;
+    private final ReentrantLock mLock = new ReentrantLock();
+    public final Object mSynch = new Object();
 
     //AudioRecord recorder = findAudioRecord();
-    public StarVisualsView(Context context) {
+    public StarVisualsViewGL(Context context) {
         super(context);
 
         mActivity = (StarVisuals)context;
 
         init(false, 0, 0);
-    }
-
-
-    public StarVisualsView(Context context, boolean translucent, int depth, int stencil) {
-        super(context);
-
-        mActivity = (StarVisuals)context;
-
-        translucent = true;
-        init(translucent, depth, stencil);
     }
 
 
@@ -100,9 +95,9 @@ class StarVisualsView extends GLSurfaceView {
                 Log.w(TAG, "MotionEvent.ACTION_UP direction=" + direction);
                 if(direction >= 0) {
                     Log.w(TAG, "Switching actor: " + direction);
-                    mActivity.lock();
+                    mLock.lock();
                     mNativeHelper.finalizeSwitch(direction);
-                    mActivity.release();
+                    mLock.unlock();
                 }
             break;
             case MotionEvent.ACTION_MOVE:
@@ -123,9 +118,9 @@ class StarVisualsView extends GLSurfaceView {
                 mLastX = x;
                 Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + mSize + " direction=" + direction);
 
-                mActivity.lock();
+                mLock.lock();
                 mNativeHelper.mouseMotion(x, y);
-                mActivity.release();
+                mLock.unlock();
             break;
         }
         return true;    

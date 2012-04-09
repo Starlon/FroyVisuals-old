@@ -111,7 +111,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
-    private FroyVisualsRenderer mRenderer;
+    private StarVisualsRenderer mRendererGL;
 
     private static int SWIPE_MIN_DISTANCE = 120;
     private static int SWIPE_MAX_OFF_PATH = 250;
@@ -119,7 +119,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private GestureDetector gestureDetector = null;
     OnTouchListener gestureListener;
 
-    private StarVisualsView mView;
+    private StarVisualsView mView = null;
+    private StarVisualsViewGL mViewGL = null;
 
     private Stats mStats = new Stats();
 
@@ -164,30 +165,30 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-        if(mUseGL == true)
-        {
             mPrefs = getSharedPreferences(PREFS, 0);
             mPrefs.registerOnSharedPreferenceChangeListener(this);
     
             mEditor = mPrefs.edit();
     
-            mRenderer = new StarVisualsRenderer(this);
+            mRendererGL = new StarVisualsRenderer(this);
     
+            mViewGL = new StarVisualsViewGL(this);
+    
+            mViewGL.setRenderer(mRendererGL);
+    
+            setContentView(mViewGL);
+
             mView = new StarVisualsView(this);
-    
-            mView.setRenderer(mRenderer);
-    
-            setContentView(mView);
+
+        // Don't dim screen
+        if(mView != null)
+        {
+            mView.setKeepScreenOn(true);
         }
         else
         {
-
-            mView = new StarVisualsView(this);
-
+            mViewGL.setKeepScreenOn(true);
         }
-
-        // Don't dim screen
-        mView.setKeepScreenOn(true);
 
         final ViewConfiguration vc = ViewConfiguration.get((Context)this);
 
@@ -198,6 +199,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         class MyGestureDetector extends SimpleOnGestureListener {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                synchronized (mViewGL.mSynch)
+                {
                 synchronized(mView.mSynch)
                 {
                     try {
@@ -221,7 +224,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                         Log.w(TAG, "Failure in onFling");
                         // nothing
                     }
-                }
+                } //mView
+                } //mViewGL
                 return false;
             }
         }

@@ -118,7 +118,7 @@ public class NativeHelper
     public static native int setIsActive(boolean isactive);
 
     /* Draw and render vis */
-    public static native boolean render(Bitmap  bitmap, boolean do_swap);
+    public static native boolean renderBitmap(Bitmap  bitmap, boolean do_swap);
 
     /** constructor */
     public NativeHelper(Context c)

@@ -236,7 +236,7 @@ final class Visual {
         mBitmap.eraseColor(Color.BLACK);
 
         // Pass bitmap to be rendered by native function.
-        mNativeHelper.render(mBitmap, mActivity.getDoSwap());
+        mNativeHelper.renderBitmap(mBitmap, mActivity.getDoSwap());
 
 
         // If StarVisuals has text to display, then use a canvas and paint brush to display it.

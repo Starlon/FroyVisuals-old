@@ -190,7 +190,7 @@ public class StarVisualsView extends View {
                             then = mStatsCanvas.nowMil();
                             mStatsNative.startFrame();
                             mLock.lock();
-                            NativeHelper.render(mBitmap, mActivity.getDoSwap());
+                            NativeHelper.renderBitmap(mBitmap, mActivity.getDoSwap());
                             mLock.unlock();
                             mStatsNative.endFrame();
 
