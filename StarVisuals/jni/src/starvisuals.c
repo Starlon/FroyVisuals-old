@@ -29,7 +29,7 @@
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
 #define ACTOR "lv_analyzer"
-#define INPUT "mic"
+#define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
 #define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
@@ -209,9 +209,10 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 
     VisBuffer buf;
 
-    visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
+    visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
+/*
     if(paramcontainer != NULL && pcm_ref.do_beat)
     {
         VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
@@ -245,6 +246,7 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
             pcm_ref.is_beat = FALSE;
         }
     }
+    */
     return 0;
 }
 
