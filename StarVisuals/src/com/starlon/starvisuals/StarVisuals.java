@@ -72,6 +72,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private final boolean SHOWART = true;
     private final boolean SHOWTEXT = true;
     private final boolean ISACTIVE = false;
+    private final boolean USEGL = true;
     private final int MINBEAT = 0;
     private final boolean STUCKBEAT = false;
     private final int BEATHOLD = 10;
@@ -89,6 +90,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public boolean mShowArt = SHOWART;
     public boolean mShowText = SHOWTEXT;
     public boolean mIsActive = ISACTIVE;
+    public boolean mUseGL = USEGL;
     public String mDisplayText = DISPLAYTEXT;
     public short mMicData[] = null;
 
@@ -109,6 +111,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
+    private FroyVisualsRenderer mRenderer;
 
     private static int SWIPE_MIN_DISTANCE = 120;
     private static int SWIPE_MAX_OFF_PATH = 250;
@@ -161,12 +164,27 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-        mPrefs = getSharedPreferences(PREFS, 0);
-        mPrefs.registerOnSharedPreferenceChangeListener(this);
+        if(mUseGL == true)
+        {
+            mPrefs = getSharedPreferences(PREFS, 0);
+            mPrefs.registerOnSharedPreferenceChangeListener(this);
+    
+            mEditor = mPrefs.edit();
+    
+            mRenderer = new StarVisualsRenderer(this);
+    
+            mView = new StarVisualsView(this);
+    
+            mView.setRenderer(mRenderer);
+    
+            setContentView(mView);
+        }
+        else
+        {
 
-        mEditor = mPrefs.edit();
+            mView = new StarVisualsView(this);
 
-        mView = new StarVisualsView(this);
+        }
 
         // Don't dim screen
         mView.setKeepScreenOn(true);
