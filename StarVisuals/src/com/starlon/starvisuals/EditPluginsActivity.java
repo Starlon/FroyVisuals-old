@@ -65,9 +65,25 @@ public class EditPluginsActivity extends PreferenceActivity
             root.addPreference(inlinePrefCat);
 
             CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
-            checkboxPref.setKey("prefs_morph_enabled");
-            checkboxPref.setTitle(R.string.prefs_text_morph_enabled);
-            checkboxPref.setSummary(R.string.prefs_text_summary_morph_enabled);
+            checkboxPref.setKey("prefs_do_morph");
+            checkboxPref.setTitle(R.string.prefs_text_do_morph);
+            checkboxPref.setSummary(R.string.prefs_text_summary_do_morph);
+            inlinePrefCat.addPreference(checkboxPref);
+
+            CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
+            checkboxPref.setKey("prefs_do_morph");
+            checkboxPref.setTitle(R.string.prefs_text_do_morph);
+            checkboxPref.setSummary(R.string.prefs_text_summary_do_morph);
+            inlinePrefCat.addPreference(checkboxPref);
+            CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
+            checkboxPref.setKey("prefs_do_morph");
+            checkboxPref.setTitle(R.string.prefs_text_do_morph);
+            checkboxPref.setSummary(R.string.prefs_text_summary_do_morph);
+            inlinePrefCat.addPreference(checkboxPref);
+            CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
+            checkboxPref.setKey("prefs_do_morph");
+            checkboxPref.setTitle(R.string.prefs_text_do_morph);
+            checkboxPref.setSummary(R.string.prefs_text_summary_do_morph);
             inlinePrefCat.addPreference(checkboxPref);
 
             current = mNativeHelper.actorGetCurrent();

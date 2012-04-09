@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">StarVisuals</string>
@@ -12,9 +13,21 @@
     <string name="prefs_text_summary_actor">Actor Settings</string>
     <string name="prefs_text_summary_input">Input Settings</string>
     <string name="prefs_text_summary_morph">Morph Settings</string>
-    <string name="prefs_text_morph_enabled">Enable Morph</string>
-    <string name="prefs_text_morph_steps">Morph Steps</string>
-    <string name="prefs_text_summary_morph_enabled">Check to enable morphs.</string>
+
+
+    <string name="prefs_text_summary_do_beat">Whether to detect beats.</string>
+    <string name="prefs_text_summary_do_swap">Whether to perform endian swap.</string>
+    <string name="prefs_text_summary_do_morph">Whether to morph at all</string>
+    <string name="prefs_text_summary_morph_steps">Morphing will take this many steps.</string>
+    <string name="prefs_text_summary_max_fps">40</string>
+    <string name="prefs_text_summary_show_fps">false</string>
+    <string name="prefs_text_summary_show_art">true</string>
+    <string name="prefs_text_summary_show_text">true</string>
+    <string name="prefs_text_summary_is_active">false</string>
+    <string name="prefs_text_summary_display_text"></string>
+
+
+    <string name="prefs_text_summary_do_morph">Check to enable morphs.</string>
     <string name="prefs_text_summary_morph_steps">Steps to perform when morphing.</string>
     <string name="prefs_text_actor_selection">Choose an Actor</string>
     <string name="prefs_text_actor_selection_summary">Actors are the visualizations themselves.</string>

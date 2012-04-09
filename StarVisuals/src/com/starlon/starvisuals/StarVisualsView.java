@@ -38,11 +38,6 @@ public class StarVisualsView extends View {
     private Paint mPaint = null;
     private Matrix mMatrix = null;
     //private Display mDisplay = null;
-    private boolean mActive = false;
-    private boolean mDoBeat = false;
-    private boolean mDoSwap = true;
-    private int mMaxFPS = 30;
-    public short mMicData[] = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
     public final Object mSynch = new Object();

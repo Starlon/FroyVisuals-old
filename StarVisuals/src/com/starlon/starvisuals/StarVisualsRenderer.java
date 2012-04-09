@@ -1,4 +1,4 @@
-package com.starlon.froyvisuals;
+package com.starlon.starvisuals;
 
 import android.content.Context;
 import android.util.Log;
@@ -73,7 +73,7 @@ public class StarVisualsRenderer implements Renderer {
 
         TimerTask task = new TimerTask() {
             public void run() {
-                mActivity.mTextDisplay = mStats.getText();
+                mActivity.warn(mStats.getText());
             }
         };
 
@@ -236,11 +236,11 @@ final class Visual {
         mBitmap.eraseColor(Color.BLACK);
 
         // Pass bitmap to be rendered by native function.
-        mNativeHelper.render(mBitmap);
+        mNativeHelper.render(mBitmap, mActivity.getDoSwap());
 
 
         // If StarVisuals has text to display, then use a canvas and paint brush to display it.
-        String text = mActivity.mTextDisplay;
+        String text = mActivity.getTextDisplay();
         if(text != null)
         {
             // Give the bitmap a canvas so we can draw on it.

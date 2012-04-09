@@ -59,15 +59,36 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private static int RECORDER_SAMPLERATE = 44100;
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
-    private final boolean DOMORPH = false;
+
     private final String MORPH = "alphablend";
     private final String INPUT = "mic";
     private final String ACTOR = "lv_analyzer";
-    public boolean mDoMorph = DOMORPH;
+    private final boolean DOBEAT = false;
+    private final boolean DOSWAP = true;
+    private final boolean DOMORPH = false;
+    private final int MORPHSTEPS = 3;
+    private final int MAXFPS = 40;
+    private final boolean SHOWFPS = true;
+    private final boolean SHOART = true;
+    private final boolean SHOWTEXT = true;
+    private final boolean ISACTIVE = false;
+    private final boolean DISPLAYTEXT = "Please wait...";
+
     public String mMorph = MORPH;
     public String mInput = INPUT;
     public String mActor = ACTOR;
-    private float mSongChanged = 0;
+    public boolean mDoBeat = DOBEAT;
+    public boolean mDoSwap = DOSWAP;
+    public boolean mDoMorph = DOMORPH;
+    public int mMorphSteps = MORPHSTEPS;
+    public int mMaxFPS = MAXFPS;
+    public boolean mShowFPS = SHOWFPS;
+    public boolean mShowArt = SHOWART;
+    public boolean mShowText = SHOWTEXT;
+    public boolean mIsActive = ISACTIVE;
+    public String mDisplayText = DISPLAYTEXT;
+    public short mMicData[] = null;
+
     private String mSongAction = null;
     public String mSongCommand = null;
     public String mSongArtist = null;
@@ -80,8 +101,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
-
-    static private String mDisplayText = "Please wait...";
 
     private static int SWIPE_MIN_DISTANCE = 120;
     private static int SWIPE_MAX_OFF_PATH = 250;
@@ -223,10 +242,46 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             mMorph = mPrefs.getString(key, MORPH);
             NativeHelper.morphSetCurrentByName(mInput, true);
         } 
-        else if(key.equals("prefs_morph_enabled"))
+        else if(key.equals("prefs_do_beat"))
+        {
+            mDoBeat = mPrefs.getBoolean(key, DOBEAT);
+            NativeHelper.setMorphStyle(mDoMorph);
+        }        
+        else if(key.equals("prefs_do_morph"))
         {
             mDoMorph = mPrefs.getBoolean(key, DOMORPH);
             NativeHelper.setMorphStyle(mDoMorph);
+        }        
+        else if(key.equals("prefs_morph_steps"))
+        {
+            mDoMorph = mPrefs.getBoolean(key, MORPHSTEPS);
+            NativeHelper.setMorphSteps(mDoMorph);
+        }        
+        else if(key.equals("prefs_max_fps"))
+        {
+            mMaxFPS = mPrefs.getInteger(key, MAXFPS);
+            NativeHelper.setMorphStyle(mMaxFPS);
+        }        
+        else if(key.equals("prefs_show_fps"))
+        {
+            mShowFPS = mPrefs.getBoolean(key, SHOWFPS);
+            NativeHelper.setMorphStyle(mShowFPS);
+        }        
+        else if(key.equals("prefs_show_art"))
+        {
+            mShowArt = mPrefs.getBoolean(key, SHOWART);
+        }        
+        else if(key.equals("prefs_show_text"))
+        {
+            mShowText = mPrefs.getBoolean(key, SHOWTEXT);
+        }        
+        else if(key.equals("prefs_is_active"))
+        {
+            mIsActive = mPrefs.getBoolean(key, ISACTIVE);
+        }        
+        else if(key.equals("prefs_display_text"))
+        {
+            mDisplayText = mPrefs.getString(key, DISPLAYTEXT);
         }        
     }
 
@@ -441,54 +496,200 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         Log.i(TAG, "Root not detected...");
         return false;
     }
+    private boolean mActive = false;
+    private boolean mDoBeat = false;
+    private boolean mDoSwap = true;
+    private int mMaxFPS = 30;
+    public short mMicData[] = null;
+
+/// GETTERS
 
     /* Get the current morph plugin name */
     public String getMorph()
     {
+        mMorph = mPrefs.getString("prefs_morph_selection", R.string.prefs_morph_selection);
         return mMorph;
     }
 
     /* Get the current input plugin name */
     public String getInput()
     {
+        mInput = mPrefs.getString("prefs_input_selection", R.string.prefs_input_selection);
         return mInput;
     }
 
     /* Get the current actor plugin name */
     public String getActor()
     {
+        mActor = mPrefs.getString("prefs_actor_selection", R.string.prefs_actor_selection);
         return mActor;
+    }
+
+
+    /* Get whether we process beats or not. */
+    public boolean getDoBeat()
+    {
+        mDoBeat = mPrefs.getBoolean("prefs_do_beat", R.defaults.prefs_do_beat);
+        return mDoBeat;
+    }
+
+    /* Get whether we do endian swaps. */
+    public boolean getDoSwap()
+    {
+        mDoSwap = mPrefs.getBoolean("prefs_do_swap", R.defaults.prefs_do_swap);
+        return mDoSwap;
+    }
+
+    /* Get whether we do morphs. */
+    public boolean getDoMorph()
+    {
+        mDoMorph = mPrefs.getBoolean("prefs_do_morph", R.defaults.prefs_do_morph);
+        return mDoMorph;
+
+    }
+
+    /* How many steps we take to morph. */
+    public int getMorphSteps()
+    {
+        mMorphSteps = mPrefs.getinteger("prefs_morph_steps", R.defaults.prefs_morph_steps);
+    }
+
+    /* Get Max FPS setting. */
+    public int getMaxFPS()
+    {
+        mMaxFPS = mPrefs.getInteger("prefs_max_fps", R.defaults.prefs_max_fps);
+        return mMaxFPS;
+    }
+
+    /* Get whether to show fps or not. */
+    public boolean getShowFPS()
+    {
+        mShowFPS = mPrefs.getInteger("prefs_show_fps", R.defaults.prefs_show_fps);
+        return mShowFPS;
+    }
+
+    /* Get whether to show art or not. */
+    public boolean getShowArt()
+    {
+        mShowArt = mPrefs.getInteger("prefs_show_art", R.defaults.prefs_show_art);
+        return mShowArt;
+    }
+    /* Whether to show text or not. */
+    public boolean getShowText()
+    {
+        mShowText = mPrefs.getInteger("prefs_show_text", R.defaults.prefs_show_text);
+        return mShowText;
+    }
+
+    /* Whether the app is active or not. */
+    public boolean getIsActive()
+    {
+
+        mIsActive = mPrefs.getBoolean("prefs_is_active", R.string.prefs_is_active);
+        return mIsActive;
+    }
+
+    /* Get the text that should show. */
+    public String getDisplayText()
+    {
+        
+        mDisplayText = mPrefs.getString("prefs_display_text", R.string.prefs_display_text);
+        return mDisplayText;
+    }
+
+    /* Get the stored mic data. This is read-only. */
+    public short[] getMicData()
+    {
+        return mMicData;
+    }
+
+
+/// SETTERS
+
+    /* Set whether to morph or not */
+    public void setMorphSteps(boolean morphSteps)
+    {
+        mMorphSteps = morphSteps
+        mEditor.putString("prefs_morph_steps", mMorphSteps);
+    }
+
+    public boolean setShowText(boolean showText);
+    {
+        mShowText = showText;
+        mEditor.putString("prefs_show_text", mShowText);
+    }
+
+    /* Get the currently displayed text */
+    public String setDisplayText(String text);
+    {
+        mDisplayText = text;
+        mEditor.putString("prefs_display_text", mDisplayText);
+
     }
 
     /* Set the current morph plugin name */
     public void setMorph(String morph)
     {
         mMorph = morph;
+        mEditor.putString("prefs_morph_selection", mMorph);
     }
 
     /* Set the current input plugin name */
     public void setInput(String input)
     {
         mInput = input;
+        mEditor.putString("prefs_input_selection", mInput);
     }
 
     /* Set the current actor plugin name */
     public void setActor(String actor)
     {
         mActor = actor;
+        mEditor.putString("prefs_actor_selection", mActor);
     }
-
 
     /* Set whether to morph or not */
     public void setDoMorph(boolean doMorph)
     {
         mDoMorph = doMorph;
+        mEditor.putString("prefs_do_morph", mDoMorph);
     }
 
-    /* Get whether to morph or not */
-    public boolean getDoMorph()
+    /* Set the VisBin's morphing steps. */
+    public void SetMorphSteps(int steps)
     {
-        return mDoMorph;
+        mMorphSteps = steps;
+        mEditor.putString("prefs_morph_steps", mMorphSteps);
+    }
+    public void SetMaxFPS(int maxfps)
+    {
+        mMaxFPS = maxfps;
+        mEditor.putString("prefs_max_fps", mMaxFPS);
+    }
+    public void SetShowFPS(int showfps)
+    {
+        mShowFPS = showfps;
+        mEditor.putString("prefs_show_fps", mShowFPS);
+    }
+    public void SetShowArt(int showart)
+    {
+        mShowArt = showart;
+        mEditor.putString("prefs_show_art", mShowArt);
+    }
+    public void SetShowText(int showtext)
+    {
+        mShowText = showtext;
+        mEditor.putString("prefs_show_text", mShowText);
+    }
+    public void SetIsActive(int isactive)
+    {
+        mIsActive = isactive;
+        mEditor.putString("prefs_is_active", mIsActive);
+    }
+    public void SetDisplayText(int displaytext)
+    {
+        mDisplayText = displaytext;
+        mEditor.putString("prefs_display_text", mDisplayText);
     }
 
     /* Display a warning text: provide text, time in milliseconds, and priority */
@@ -522,10 +723,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         return warn(text, 2000, priority);
     }
 
-    public String getDisplayText()
-    {
-        return mDisplayText;
-    }
 
     public final Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
 

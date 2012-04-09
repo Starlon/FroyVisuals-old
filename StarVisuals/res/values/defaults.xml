@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="prefs_morph_enabled">false</string>
     <string name="prefs_input_selection">mic</string>
     <string name="prefs_morph_selection">alphablend</string>
     <string name="prefs_actor_selection">lv_analyzer</string>
+    <string name="prefs_text_do_beat">false</string>
+    <string name="prefs_text_do_swap">true</string>
+    <string name="prefs_text_do_morph">false</string>
+    <string name="prefs_text_morph_steps">3</string>
+    <string name="prefs_text_max_fps">40</string>
+    <string name="prefs_text_show_fps">false</string>
+    <string name="prefs_text_show_art">true</string>
+    <string name="prefs_text_show_text">true</string>
+    <string name="prefs_text_is_active">false</string>
+    <string name="prefs_text_display_text">Please wait...</string>
 </resources>
