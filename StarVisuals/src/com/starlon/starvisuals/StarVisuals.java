@@ -514,7 +514,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public boolean _B(int id)
     {
         String bool = getResources().getString(id).toString();
-        if(bool == "true")
+        if(bool.equals("true"))
             return true;
         return false;
     }
