@@ -45,21 +45,27 @@
             unless="sdk.dir"
     />
 
+    <target name="compile">
+        <javac srcdir="src" destdir="build" debug="true" debuglevel="lines,source" includeantruntime="false">
+            <compilerarg value="-Xlint:unchecked"/>
+            <compilerarg value="-Xlint:unsafe"/>
+        </javac>
+    </target>
+
 
 <!-- extension targets. Uncomment the ones where you want to do custom work
      in between standard targets -->
-<!--
     <target name="-pre-build">
     </target>
     <target name="-pre-compile">
     </target>
 
-    /* This is typically used for code obfuscation.
+<!--    /* This is typically used for code obfuscation.
        Compiled code location: ${out.classes.absolute.dir}
        If this is not done in place, override ${out.dex.input.absolute.dir} */
+-->
     <target name="-post-compile">
     </target>
--->
 
     <!-- Import the actual build file.
 

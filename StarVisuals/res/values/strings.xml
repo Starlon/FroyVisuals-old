@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">StarVisuals</string>
@@ -14,27 +13,43 @@
     <string name="prefs_text_summary_input">Input Settings</string>
     <string name="prefs_text_summary_morph">Morph Settings</string>
 
+    <string name="prefs_text_actor_selection">Choose an Actor</string>
+    <string name="prefs_text_input_selection">Choose an Input</string>
+    <string name="prefs_text_morph_selection">Choose a Morph</string>
 
-    <string name="prefs_text_summary_do_beat">Whether to detect beats.</string>
+    <string name="prefs_text_forced_beat">Enforced Beat</string>
+    <string name="prefs_text_do_beat">Do Beat</string>
+    <string name="prefs_text_do_swap">Do Swap</string>
+    <string name="prefs_text_do_morph">Do Morph</string>
+    <string name="prefs_text_morph_steps">Morph steps</string>
+    <string name="prefs_text_max_fps">Max FPS</string>
+    <string name="prefs_text_show_fps">Show FPS</string>
+    <string name="prefs_text_show_art">Show Art</string>
+    <string name="prefs_text_show_text">Show Text</string>
+    <string name="prefs_text_is_active">Is Active</string>
+    <string name="prefs_text_display_text">Display Text</string>
+    <string name="prefs_text_stuck_beat">Sticky BPM</string>
+    <string name="prefs_text_min_beat">Minimum BPM</string>
+
+
+    <string name="prefs_text_actor_selection_summary">Actors are the visualizations themselves.</string>
+    <string name="prefs_text_input_selection_summary">Inputs provide audio wave data to visualizations.</string>
+    <string name="prefs_text_morph_selection_summary">Morphs indicate the style in which actors are changed.</string>
+
+
+    <string name="prefs_text_summary_forced_beat">Enter an arbitrary beat interval.</string>
+    <string name="prefs_text_summary_do_beat">Whether to detect beats or not.</string>
     <string name="prefs_text_summary_do_swap">Whether to perform endian swap.</string>
     <string name="prefs_text_summary_do_morph">Whether to morph at all</string>
     <string name="prefs_text_summary_morph_steps">Morphing will take this many steps.</string>
-    <string name="prefs_text_summary_max_fps">40</string>
-    <string name="prefs_text_summary_show_fps">false</string>
-    <string name="prefs_text_summary_show_art">true</string>
-    <string name="prefs_text_summary_show_text">true</string>
-    <string name="prefs_text_summary_is_active">false</string>
-    <string name="prefs_text_summary_display_text"></string>
-
-
-    <string name="prefs_text_summary_do_morph">Check to enable morphs.</string>
-    <string name="prefs_text_summary_morph_steps">Steps to perform when morphing.</string>
-    <string name="prefs_text_actor_selection">Choose an Actor</string>
-    <string name="prefs_text_actor_selection_summary">Actors are the visualizations themselves.</string>
-    <string name="prefs_text_input_selection">Choose an Input</string>
-    <string name="prefs_text_input_selection_summary">Inputs provide audio wave data to visualizations.</string>
-    <string name="prefs_text_morph_selection">Choose a Morph</string>
-    <string name="prefs_text_morph_selection_summary">Morphs indicate the style in which actors are changed.</string>
+    <string name="prefs_text_summary_max_fps">Max frames per second.</string>
+    <string name="prefs_text_summary_show_fps">Whether to show FPS or not.</string>
+    <string name="prefs_text_summary_show_art">Whether to show art or not.</string>
+    <string name="prefs_text_summary_show_text">Whether to show text or not.</string>
+    <string name="prefs_text_summary_is_active">Whether the app is active or not.</string>
+    <string name="prefs_text_summary_display_text">Provide text you would like shown.</string>
+    <string name="prefs_text_summary_stuck_beat">Provide text you would like shown.</string>
+    <string name="prefs_text_summary_min_beat">Specify the minimum beat per minute.</string>
 
     <!-- Info -->
     <string name="title_plugin_singular">Plugin Information</string>

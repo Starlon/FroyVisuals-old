@@ -1,65 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-                android:title="@string/prefs_text_title_general">
-                
-                    <ListPreference
-                        android:id="@+id/prefs_actor_selection"
-                        android:key="prefs_actor_selection"
-                        android:title="@string/prefs_text_actor_selection"
-                        android:summary="@string/prefs_text_actor_selection_summary"/>
-
-                    <PreferenceScreen
-                        android:fragment="com.starlon.starvisuals.PreferenceActivity$ActorFragment"
-                        android:title="@string/title_actor_singular"
-                        android:widgetLayout="@layout/about_actors"
-                        android:enabled="true">
-
-                    </PreferenceScreen>
-
-                    <ListPreference
-                        android:id="@+id/prefs_input_selection"
-                        android:key="prefs_input_selection"
-                        android:title="@string/prefs_text_input_selection"
-                        android:summary="@string/prefs_text_input_selection_summary"/>
-
-                    <PreferenceScreen
-                        android:fragment="com.starlon.starvisuals.PreferenceActivity$InputFragment"
-                        android:title="@string/title_input_singular"
-                        android:layout="@layout/about_inputs"
-                        android:enabled="false">
-                    
-                    </PreferenceScreen>
-
+        <PreferenceCategory
+                android:title="@string/preferences_name">
+                <PreferenceScreen
+                    android:fragment="com.starlon.starvisuals.PreferenceActivity$MorphFragment"
+                    android:title="@string/title_morph_singular" >
 
                     <CheckBoxPreference
-                        android:key="prefs_morph_enabled"
-                        android:title="@string/prefs_text_morph_enabled"
-                        android:summary="@string/prefs_text_summary_morph_enabled"
-                        android:defaultValue="@string/prefs_morph_enabled"
+                        android:key="prefs_do_beat"
+                        android:title="@string/prefs_text_do_beat"
+                        android:summary="@string/prefs_text_summary_do_beat"
+                        android:defaultValue="@string/prefs_defaults_do_beat"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_do_swap"
+                        android:title="@string/prefs_text_do_swap"
+                        android:summary="@string/prefs_text_summary_do_swap"
+                        android:defaultValue="@string/prefs_defaults_do_swap"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_do_morph"
+                        android:title="@string/prefs_text_do_morph"
+                        android:summary="@string/prefs_text_summary_do_morph"
+                        android:defaultValue="@string/prefs_defaults_do_morph"
                         android:enabled="true"/>
 
                     <EditTextPreference
                         android:key="prefs_morph_steps"
                         android:title="@string/prefs_text_morph_steps"
                         android:summary="@string/prefs_text_morph_steps"
-                        android:defaultValue="14"
+                        android:defaultValue="@string/prefs_defaults_morph_steps"
                         android:inputType="number"
                         android:enabled="true"/>
 
-                    <ListPreference
-                            android:id="@+id/prefs_morph_selection"
-                            android:key="prefs_morph_selection"
-                            android:title="@string/prefs_text_morph_selection"
-                            android:summary="@string/prefs_text_morph_selection_summary"/>
+                    <EditTextPreference
+                        android:key="prefs_max_fps"
+                        android:title="@string/prefs_text_max_fps"
+                        android:summary="@string/prefs_text_max_fps"
+                        android:defaultValue="@string/prefs_defaults_max_fps"
+                        android:inputType="number"
+                        android:enabled="true"/>
 
-                    <PreferenceScreen
-                        android:fragment="com.starlon.starvisuals.PreferenceActivity$MorphFragment"
-                        android:title="@string/title_morph_singular"
-                        android:layout="@layout/about_morphs"
-                        android:enabled="false">
-                    </PreferenceScreen>
+                    <CheckBoxPreference
+                        android:key="prefs_show_fps"
+                        android:title="@string/prefs_text_show_fps"
+                        android:summary="@string/prefs_text_summary_show_fps"
+                        android:defaultValue="@string/prefs_defaults_show_fps"
+                        android:enabled="true"/>
 
-    </PreferenceCategory>
+
+                    <CheckBoxPreference
+                        android:key="prefs_show_art"
+                        android:title="@string/prefs_text_show_art"
+                        android:summary="@string/prefs_text_summary_show_art"
+                        android:defaultValue="@string/prefs_defaults_show_art"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_show_text"
+                        android:title="@string/prefs_text_show_text"
+                        android:summary="@string/prefs_text_summary_show_text"
+                        android:defaultValue="@string/prefs_defaults_show_text"
+                        android:enabled="true"/>
+
+                    <EditTextPreference
+                        android:key="prefs_display_text"
+                        android:title="@string/prefs_text_display_text"
+                        android:summary="@string/prefs_text_display_text"
+                        android:defaultValue="@string/prefs_defaults_display_text"
+                        android:inputType="text"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_stuck_beat"
+                        android:title="@string/prefs_text_stuck_beat"
+                        android:summary="@string/prefs_text_summary_stuck_beat"
+                        android:defaultValue="@string/prefs_defaults_stuck_beat"
+                        android:enabled="true"/>
+
+                    <EditTextPreference
+                        android:key="prefs_min_beat"
+                        android:title="@string/prefs_text_min_beat"
+                        android:summary="@string/prefs_text_min_beat"
+                        android:defaultValue="@string/prefs_defaults_min_beat"
+                        android:inputType="text"
+                        android:enabled="true"/>
+
+                </PreferenceScreen>
+
+        </PreferenceCategory>
 </PreferenceScreen>

@@ -69,10 +69,13 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private final int MORPHSTEPS = 3;
     private final int MAXFPS = 40;
     private final boolean SHOWFPS = true;
-    private final boolean SHOART = true;
+    private final boolean SHOWART = true;
     private final boolean SHOWTEXT = true;
     private final boolean ISACTIVE = false;
-    private final boolean DISPLAYTEXT = "Please wait...";
+    private final int MINBEAT = 0;
+    private final boolean STUCKBEAT = false;
+    private final int BEATHOLD = 10;
+    private final String DISPLAYTEXT = "Please wait...";
 
     public String mMorph = MORPH;
     public String mInput = INPUT;
@@ -89,11 +92,16 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public String mDisplayText = DISPLAYTEXT;
     public short mMicData[] = null;
 
+    public boolean mStuckBeat = STUCKBEAT;
+    public int mMinBeat = MINBEAT;
+    public int mBeatHold = BEATHOLD;
+
     private String mSongAction = null;
     public String mSongCommand = null;
     public String mSongArtist = null;
     public String mSongAlbum = null;
     public String mSongTrack = null;
+    public long mSongChanged = 0l;
     public Bitmap mAlbumArt = null;
     public IntentFilter mIntentFilter = null;
     public boolean mHasRoot = false;
@@ -254,18 +262,16 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         }        
         else if(key.equals("prefs_morph_steps"))
         {
-            mDoMorph = mPrefs.getBoolean(key, MORPHSTEPS);
-            NativeHelper.setMorphSteps(mDoMorph);
+            mMorphSteps = mPrefs.getInt(key, MORPHSTEPS);
+            NativeHelper.setMorphSteps(mMorphSteps);
         }        
         else if(key.equals("prefs_max_fps"))
         {
-            mMaxFPS = mPrefs.getInteger(key, MAXFPS);
-            NativeHelper.setMorphStyle(mMaxFPS);
+            mMaxFPS = mPrefs.getInt(key, MAXFPS);
         }        
         else if(key.equals("prefs_show_fps"))
         {
             mShowFPS = mPrefs.getBoolean(key, SHOWFPS);
-            NativeHelper.setMorphStyle(mShowFPS);
         }        
         else if(key.equals("prefs_show_art"))
         {
@@ -334,7 +340,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 mSongArtist = null;
                 mSongAlbum = null;
                 mSongTrack = null;
-                mSongChanged = 0;
+                mSongChanged = 0l;
                 mAlbumArt = null;
                 NativeHelper.newSong();
                 warn("Ended playback...", true);
@@ -496,32 +502,40 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         Log.i(TAG, "Root not detected...");
         return false;
     }
-    private boolean mActive = false;
-    private boolean mDoBeat = false;
-    private boolean mDoSwap = true;
-    private int mMaxFPS = 30;
-    public short mMicData[] = null;
+
+    public String _S(int id)
+    {
+        return getResources().getText(id).toString();
+    }
+    public int _I(int id)
+    {
+        return getResources().getInteger(id);
+    }
+    public boolean _B(int id)
+    {
+        return getResources().getBoolean(id);
+    }
 
 /// GETTERS
 
     /* Get the current morph plugin name */
     public String getMorph()
     {
-        mMorph = mPrefs.getString("prefs_morph_selection", R.string.prefs_morph_selection);
+        mMorph = mPrefs.getString("prefs_morph_selection", _S(R.string.prefs_defaults_morph_selection));
         return mMorph;
     }
 
     /* Get the current input plugin name */
     public String getInput()
     {
-        mInput = mPrefs.getString("prefs_input_selection", R.string.prefs_input_selection);
+        mInput = mPrefs.getString("prefs_input_selection", _S(R.string.prefs_defaults_input_selection));
         return mInput;
     }
 
     /* Get the current actor plugin name */
     public String getActor()
     {
-        mActor = mPrefs.getString("prefs_actor_selection", R.string.prefs_actor_selection);
+        mActor = mPrefs.getString("prefs_actor_selection", _S(R.string.prefs_defaults_actor_selection));
         return mActor;
     }
 
@@ -529,21 +543,21 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     /* Get whether we process beats or not. */
     public boolean getDoBeat()
     {
-        mDoBeat = mPrefs.getBoolean("prefs_do_beat", R.defaults.prefs_do_beat);
+        mDoBeat = mPrefs.getBoolean("prefs_do_beat", _B(R.string.prefs_defaults_do_beat));
         return mDoBeat;
     }
 
     /* Get whether we do endian swaps. */
     public boolean getDoSwap()
     {
-        mDoSwap = mPrefs.getBoolean("prefs_do_swap", R.defaults.prefs_do_swap);
+        mDoSwap = mPrefs.getBoolean("prefs_do_swap", _B(R.string.prefs_defaults_do_swap));
         return mDoSwap;
     }
 
     /* Get whether we do morphs. */
     public boolean getDoMorph()
     {
-        mDoMorph = mPrefs.getBoolean("prefs_do_morph", R.defaults.prefs_do_morph);
+        mDoMorph = mPrefs.getBoolean("prefs_do_morph", _B(R.string.prefs_defaults_do_morph));
         return mDoMorph;
 
     }
@@ -551,33 +565,34 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     /* How many steps we take to morph. */
     public int getMorphSteps()
     {
-        mMorphSteps = mPrefs.getinteger("prefs_morph_steps", R.defaults.prefs_morph_steps);
+        mMorphSteps = mPrefs.getInt("prefs_morph_steps", _I(R.string.prefs_defaults_morph_steps));;
+        return mMorphSteps;
     }
 
     /* Get Max FPS setting. */
     public int getMaxFPS()
     {
-        mMaxFPS = mPrefs.getInteger("prefs_max_fps", R.defaults.prefs_max_fps);
+        mMaxFPS = mPrefs.getInt("prefs_max_fps", _I(R.string.prefs_defaults_max_fps));
         return mMaxFPS;
     }
 
     /* Get whether to show fps or not. */
     public boolean getShowFPS()
     {
-        mShowFPS = mPrefs.getInteger("prefs_show_fps", R.defaults.prefs_show_fps);
+        mShowFPS = mPrefs.getBoolean("prefs_show_fps", _B(R.string.prefs_defaults_show_fps));
         return mShowFPS;
     }
 
     /* Get whether to show art or not. */
     public boolean getShowArt()
     {
-        mShowArt = mPrefs.getInteger("prefs_show_art", R.defaults.prefs_show_art);
+        mShowArt = mPrefs.getBoolean("prefs_show_art", _B(R.string.prefs_defaults_show_art));
         return mShowArt;
     }
     /* Whether to show text or not. */
     public boolean getShowText()
     {
-        mShowText = mPrefs.getInteger("prefs_show_text", R.defaults.prefs_show_text);
+        mShowText = mPrefs.getBoolean("prefs_show_text", _B(R.string.prefs_defaults_show_text));
         return mShowText;
     }
 
@@ -585,7 +600,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public boolean getIsActive()
     {
 
-        mIsActive = mPrefs.getBoolean("prefs_is_active", R.string.prefs_is_active);
+        mIsActive = mPrefs.getBoolean("prefs_is_active", _B(R.string.prefs_defaults_is_active));
         return mIsActive;
     }
 
@@ -593,8 +608,29 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public String getDisplayText()
     {
         
-        mDisplayText = mPrefs.getString("prefs_display_text", R.string.prefs_display_text);
+        mDisplayText = mPrefs.getString("prefs_display_text", _S(R.string.prefs_defaults_display_text));
         return mDisplayText;
+    }
+
+    public boolean getStuckBeat()
+    {
+        mStuckBeat = mPrefs.getBoolean("prefs_stuck_beat", _B(R.string.prefs_defaults_stuck_beat));
+        return mStuckBeat;
+ 
+    }
+
+    public int getMinBeat()
+    {
+        mMinBeat = mPrefs.getInt("prefs_min_beat", _I(R.string.prefs_defaults_min_beat));
+        return mMinBeat;
+ 
+    }
+
+    public int getBeatHold()
+    {
+        mBeatHold = mPrefs.getInt("prefs_min_beat", _I(R.string.prefs_defaults_min_beat));
+        return mBeatHold;
+ 
     }
 
     /* Get the stored mic data. This is read-only. */
@@ -605,27 +641,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
 
 /// SETTERS
-
-    /* Set whether to morph or not */
-    public void setMorphSteps(boolean morphSteps)
-    {
-        mMorphSteps = morphSteps
-        mEditor.putString("prefs_morph_steps", mMorphSteps);
-    }
-
-    public boolean setShowText(boolean showText);
-    {
-        mShowText = showText;
-        mEditor.putString("prefs_show_text", mShowText);
-    }
-
-    /* Get the currently displayed text */
-    public String setDisplayText(String text);
-    {
-        mDisplayText = text;
-        mEditor.putString("prefs_display_text", mDisplayText);
-
-    }
 
     /* Set the current morph plugin name */
     public void setMorph(String morph)
@@ -649,47 +664,70 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     }
 
     /* Set whether to morph or not */
+    public void setDoSwap(boolean doSwap)
+    {
+        mDoSwap = doSwap;
+        mEditor.putBoolean("prefs_do_swap", mDoSwap);
+    }
+
+    /* Set whether to morph or not */
     public void setDoMorph(boolean doMorph)
     {
         mDoMorph = doMorph;
-        mEditor.putString("prefs_do_morph", mDoMorph);
+        mEditor.putBoolean("prefs_do_morph", mDoMorph);
     }
 
     /* Set the VisBin's morphing steps. */
-    public void SetMorphSteps(int steps)
+    public void setMorphSteps(int steps)
     {
         mMorphSteps = steps;
-        mEditor.putString("prefs_morph_steps", mMorphSteps);
+        mEditor.putInt("prefs_morph_steps", mMorphSteps);
     }
-    public void SetMaxFPS(int maxfps)
+    public void setMaxFPS(int maxfps)
     {
         mMaxFPS = maxfps;
-        mEditor.putString("prefs_max_fps", mMaxFPS);
+        mEditor.putInt("prefs_max_fps", mMaxFPS);
     }
-    public void SetShowFPS(int showfps)
+    public void setShowFPS(boolean showfps)
     {
         mShowFPS = showfps;
-        mEditor.putString("prefs_show_fps", mShowFPS);
+        mEditor.putBoolean("prefs_show_fps", mShowFPS);
     }
-    public void SetShowArt(int showart)
+    public void setShowArt(boolean showart)
     {
         mShowArt = showart;
-        mEditor.putString("prefs_show_art", mShowArt);
+        mEditor.putBoolean("prefs_show_art", mShowArt);
     }
-    public void SetShowText(int showtext)
+    public void setShowText(boolean showtext)
     {
         mShowText = showtext;
-        mEditor.putString("prefs_show_text", mShowText);
+        mEditor.putBoolean("prefs_show_text", mShowText);
     }
-    public void SetIsActive(int isactive)
+    public void setIsActive(boolean isactive)
     {
         mIsActive = isactive;
-        mEditor.putString("prefs_is_active", mIsActive);
+        mEditor.putBoolean("prefs_is_active", mIsActive);
     }
-    public void SetDisplayText(int displaytext)
+    public void setDisplayText(String displaytext)
     {
         mDisplayText = displaytext;
         mEditor.putString("prefs_display_text", mDisplayText);
+    }
+    public void setStuckBeat(boolean stuckbeat)
+    {
+        mStuckBeat = stuckbeat;
+        mEditor.putBoolean("prefs_stuck_beat", mStuckBeat);
+    }
+    public void setMinBeat(int minbeat)
+    {
+        mMinBeat = minbeat;
+        mEditor.putInt("prefs_min_beat", mMinBeat);
+    }
+
+    public void setBeatHold(int beathold)
+    {
+        mBeatHold = beathold;
+        mEditor.putInt("prefs_beat_hold", mBeatHold);
     }
 
     /* Display a warning text: provide text, time in milliseconds, and priority */
@@ -829,7 +867,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             if(mAudio.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING)
                 mAudio.stop();
 
-            mView.mMicData = new short[PCM_SIZE * 4];
+            mMicData = new short[PCM_SIZE * 2];
 
             synchronized(mView.mSynch)
             {
@@ -841,7 +879,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                         mAudio.startRecording();
                         while(mMicActive)
                         {
-                            mAudio.read(mView.mMicData, 0, PCM_SIZE);
+                            mAudio.read(mMicData, 0, PCM_SIZE);
                         }
                         mAudio.stop();
                     }

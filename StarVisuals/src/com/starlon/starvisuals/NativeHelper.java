@@ -37,6 +37,14 @@ public class NativeHelper
     public static native int morphGetCurrent();
     public static native boolean morphSetCurrent(int index, boolean now);
     public static native boolean morphSetCurrentByName(String name, boolean now);
+    public static native void setMorphSteps(int steps);
+
+    // Beats
+    public static native int setMinBeat(int min_beat);
+    public static native int setStuckBeat(boolean stuck_beat);
+    public static native int setDoBeat(boolean do_beat);
+    public static native int getIsBeat();
+
     public static native String morphGetName(int index);
     public static native String morphGetLongName(int index);
     public static native String morphGetAuthor(int index);
@@ -106,6 +114,8 @@ public class NativeHelper
     /* Init and quit libvisual */
     public static native void visualsQuit();
     public static native void initApp(int w, int h);
+    public static native boolean getIsActive();
+    public static native int setIsActive(boolean isactive);
 
     /* Draw and render vis */
     public static native boolean render(Bitmap  bitmap, boolean do_swap);

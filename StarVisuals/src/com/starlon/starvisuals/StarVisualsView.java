@@ -148,8 +148,9 @@ public class StarVisualsView extends View {
     {
         mStatsCanvas.startFrame();
 
-        if(mMicData != null)
-            NativeHelper.uploadAudio(mMicData);
+        short[] data = mActivity.getMicData();
+        if(data != null)
+            NativeHelper.uploadAudio(data);
 
         drawScene(canvas);
 
@@ -160,7 +161,7 @@ public class StarVisualsView extends View {
     {
         if(mThread != null)
         {
-            mActive = false;
+            mActivity.setIsActive(false);
             mThread.interrupt();
             try {
                 mThread.join();
@@ -175,8 +176,8 @@ public class StarVisualsView extends View {
         stopThread();
         mThread = new Thread(new Runnable() {
             public void run() {
-                mActive = true;
-                while(mActive)
+                mActivity.setIsActive(false);
+                while(mActivity.getIsActive())
                 {
                     try {
                         double then;
@@ -189,21 +190,21 @@ public class StarVisualsView extends View {
                             then = mStatsCanvas.nowMil();
                             mStatsNative.startFrame();
                             mLock.lock();
-                            NativeHelper.render(mBitmap, mDoSwap);
+                            NativeHelper.render(mBitmap, mActivity.getDoSwap());
                             mLock.unlock();
                             mStatsNative.endFrame();
 
                             now = mStatsNative.nowMil();
                             delta = (now - then);
                             avg = mStatsNative.mAvgFrame;
-                            diff = (avg / mMaxFPS);
+                            diff = (avg / mActivity.getMaxFPS());
 
                         }
                         Thread.sleep((int)(delta + diff * 60));
                     } 
                     catch(Exception e)
                     {
-                        mActive = false;
+                        NativeHelper.setIsActive(false);
                     }
                 }
             }
@@ -244,7 +245,7 @@ public class StarVisualsView extends View {
                 canvas.drawText(text, startPositionX, 50, mPaint);
             }
     
-            if(mDoBeat)
+            if(mActivity.getDoBeat())
             {
                 float canvasWidth = getWidth();
                 float textWidth = mPaint.measureText(text);
@@ -255,7 +256,7 @@ public class StarVisualsView extends View {
                 boolean isBeat = NativeHelper.isBeat();
 
                 if(isBeat)
-                    mDoSwap = !mDoSwap;
+                    mActivity.setDoSwap(!mActivity.getDoSwap());
     
                 if(bpm > 0 && confidence > 0)
                     text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : " ");

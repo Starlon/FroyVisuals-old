@@ -145,7 +145,7 @@ final class Visual {
         mTextureWidth = 256;
         mTextureHeight = 256;
 
-        mNativeHelper.initApp(mTextureWidth, mTextureHeight, 0, 0);
+        mNativeHelper.initApp(mTextureWidth, mTextureHeight);
 
         textureCrop[0] = 0;
         textureCrop[1] = 0;
@@ -240,7 +240,7 @@ final class Visual {
 
 
         // If StarVisuals has text to display, then use a canvas and paint brush to display it.
-        String text = mActivity.getTextDisplay();
+        String text = mActivity.getDisplayText();
         if(text != null)
         {
             // Give the bitmap a canvas so we can draw on it.

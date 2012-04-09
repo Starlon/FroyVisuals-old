@@ -44,7 +44,11 @@ struct {
     VisAudioSampleRateType rate;
     VisAudioSampleChannelType channels;
     VisAudioSampleFormatType encoding;
-    int min_beat_hold;
+    int do_beat;
+    int is_beat;
+    int beat_hold;
+    int min_beat;
+    int stuck_beat;
 } pcm_ref;
 
 /* LIBVISUAL */
@@ -56,6 +60,7 @@ struct {
     const char *morph_name;
     const char *input_name;
     int         pluginIsGL;
+    int is_active;
 } v;
 
 static void my_log_handler (VisLogSeverity severity, const char *msg, const VisLogSource *source, void *priv)
@@ -136,23 +141,65 @@ static void v_cycleInput(int prev)
     }
 }
 
-JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_setMinBeat(JNIEnv *env, jobject obj, jint timemil)
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_getIsBeat(JNIEnv *env, jobject obj)
 {
-    pcm_ref.min_beat_hold = (int)timemil;
+    return pcm_ref.is_beat;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_setDoBeat(JNIEnv *env, jobject obj, jboolean do_beat)
+{
+    pcm_ref.do_beat = (int)do_beat;
+    return 0;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_setStuckBeat(JNIEnv *env, jobject obj, jboolean stuck_beat)
+{
+    pcm_ref.stuck_beat = (int)stuck_beat;
+    return 0;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_setMinBeat(JNIEnv *env, jobject obj, jlong timemil)
+{
+    pcm_ref.min_beat = (int)timemil;
+    return 0;
+}
+
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_setBeatHold(JNIEnv *env, jobject obj, jint timemil)
+{
+    pcm_ref.beat_hold = (int)timemil;
+    return 0;
+}
+
+
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_setIsActive(JNIEnv *env, jobject obj, jboolean is_active)
+{
+    v.is_active = (int)is_active;
 
     return 0;
+}
+
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_getIsActive(JNIEnv *env, jobject obj)
+{
+    return v.is_active;
 }
 
 static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 {
 
     static VisTimer *timer = NULL;
+    static VisTime *then;
+    static VisTime *now;
 
     if(timer == NULL)
     {
+        now = visual_time_new();
+        then = visual_time_new();
         timer = visual_timer_new();
         visual_timer_start(timer);
+        visual_time_get(then);
     }
+
+    visual_time_get(now);
 
     visual_return_val_if_fail(input != NULL, VISUAL_ERROR_GENERAL);
     visual_return_val_if_fail(audio != NULL, VISUAL_ERROR_GENERAL);
@@ -165,7 +212,7 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size/2, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
-    if(paramcontainer != NULL && FALSE)
+    if(paramcontainer != NULL && pcm_ref.do_beat)
     {
         VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
         if(entry == NULL)
@@ -184,9 +231,18 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
             scaled[i] = pcm_ref.pcm_data[i] / (float)FLT_MAX * UCHAR_MAX;
         }
         isBeat = visual_audio_is_beat_with_data(audio, VISUAL_BEAT_ALGORITHM_PEAK, scaled, MAX_PCM);
-        if(visual_timer_elapsed_msecs(timer) > pcm_ref.min_beat_hold && isBeat)
+        if(visual_timer_elapsed_msecs(timer) > pcm_ref.min_beat && isBeat)
         {
             visual_param_entry_set_integer(entry, isBeat);
+            pcm_ref.is_beat = TRUE;
+            visual_time_get(then);
+        }
+        int nowint = visual_time_get_msecs(now);
+        int thenint = visual_time_get_msecs(then);
+        if(pcm_ref.is_beat && nowint - thenint < pcm_ref.beat_hold)
+        {
+            visual_param_entry_set_integer(entry, TRUE);
+            pcm_ref.is_beat = FALSE;
         }
     }
     return 0;
@@ -647,6 +703,12 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleMorph(JNIE
 JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_morphCount(JNIEnv *env, jobject obj)
 {
     return visual_list_count(visual_morph_get_list());
+}
+
+// Get the count of available morph plugins.
+JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_setMorphSteps(JNIEnv *env, jobject obj, jint steps)
+{
+    return visual_bin_switch_set_steps(v.bin, (int)steps);
 }
 
 // Get the index of the current plugin. 
@@ -1635,7 +1697,7 @@ void app_main(int w, int h)
         v.morph_name = MORPH;
         v.actor_name = ACTOR;
         v.input_name = INPUT;
-        pcm_ref.min_beat_hold = 300;
+        pcm_ref.min_beat = 100;
     } else {
         visual_video_free_buffer(v.video);
         visual_object_unref(VISUAL_OBJECT(v.video));

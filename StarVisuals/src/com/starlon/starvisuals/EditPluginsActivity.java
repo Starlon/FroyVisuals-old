@@ -58,33 +58,14 @@ public class EditPluginsActivity extends PreferenceActivity
             CharSequence[] entryValues;
             int count;
             int current;
+
+            //LayoutInflator inflator = getLayoutInfator();
+
             PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
             
             PreferenceCategory inlinePrefCat = new PreferenceCategory(this);
             inlinePrefCat.setTitle(R.string.prefs_text_title_general);
             root.addPreference(inlinePrefCat);
-
-            CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
-            checkboxPref.setKey("prefs_do_morph");
-            checkboxPref.setTitle(R.string.prefs_text_do_morph);
-            checkboxPref.setSummary(R.string.prefs_text_summary_do_morph);
-            inlinePrefCat.addPreference(checkboxPref);
-
-            CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
-            checkboxPref.setKey("prefs_do_morph");
-            checkboxPref.setTitle(R.string.prefs_text_do_morph);
-            checkboxPref.setSummary(R.string.prefs_text_summary_do_morph);
-            inlinePrefCat.addPreference(checkboxPref);
-            CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
-            checkboxPref.setKey("prefs_do_morph");
-            checkboxPref.setTitle(R.string.prefs_text_do_morph);
-            checkboxPref.setSummary(R.string.prefs_text_summary_do_morph);
-            inlinePrefCat.addPreference(checkboxPref);
-            CheckBoxPreference checkboxPref = new CheckBoxPreference(this);
-            checkboxPref.setKey("prefs_do_morph");
-            checkboxPref.setTitle(R.string.prefs_text_do_morph);
-            checkboxPref.setSummary(R.string.prefs_text_summary_do_morph);
-            inlinePrefCat.addPreference(checkboxPref);
 
             current = mNativeHelper.actorGetCurrent();
             count = mNativeHelper.actorCount();
