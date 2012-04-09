@@ -513,7 +513,10 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     }
     public boolean _B(int id)
     {
-        return getResources().getBoolean(id);
+        String bool = getResources().getString(id).toString();
+        if(bool == "true")
+            return true;
+        return false;
     }
 
 /// GETTERS
@@ -565,14 +568,14 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     /* How many steps we take to morph. */
     public int getMorphSteps()
     {
-        mMorphSteps = mPrefs.getInt("prefs_morph_steps", _I(R.string.prefs_defaults_morph_steps));;
+        mMorphSteps = mPrefs.getInt("prefs_morph_steps", _I(R.integer.prefs_defaults_morph_steps));;
         return mMorphSteps;
     }
 
     /* Get Max FPS setting. */
     public int getMaxFPS()
     {
-        mMaxFPS = mPrefs.getInt("prefs_max_fps", _I(R.string.prefs_defaults_max_fps));
+        mMaxFPS = mPrefs.getInt("prefs_max_fps", _I(R.integer.prefs_defaults_max_fps));
         return mMaxFPS;
     }
 
@@ -621,14 +624,15 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     public int getMinBeat()
     {
-        mMinBeat = mPrefs.getInt("prefs_min_beat", _I(R.string.prefs_defaults_min_beat));
+        mMinBeat = mPrefs.getInt("prefs_min_beat", _I(R.integer.prefs_defaults_min_beat));
         return mMinBeat;
  
     }
 
+    /* Get the value in milliseconds that we'll hold a beat strike.*/
     public int getBeatHold()
     {
-        mBeatHold = mPrefs.getInt("prefs_min_beat", _I(R.string.prefs_defaults_min_beat));
+        mBeatHold = mPrefs.getInt("prefs_min_beat", _I(R.integer.prefs_defaults_min_beat));
         return mBeatHold;
  
     }

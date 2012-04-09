@@ -6,14 +6,14 @@
     <string name="prefs_defaults_do_beat">false</string>
     <string name="prefs_defaults_do_swap">true</string>
     <string name="prefs_defaults_do_morph">false</string>
-    <string name="prefs_defaults_morph_steps">3</string>
-    <string name="prefs_defaults_max_fps">40</string>
-    <string name="prefs_defaults_show_fps">false</string>
+    <integer name="prefs_defaults_morph_steps">3</integer>
+    <integer name="prefs_defaults_max_fps">40</integer>
+    <string name="prefs_defaults_show_fps">true</string>
     <string name="prefs_defaults_show_art">true</string>
     <string name="prefs_defaults_show_text">true</string>
     <string name="prefs_defaults_is_active">false</string>
     <string name="prefs_defaults_display_text">Please wait...</string>
     <string name="prefs_defaults_stuck_beat">true</string>
-    <string name="prefs_defaults_min_beat">120</string>
-    <string name="prefs_defaults_beat_hold">10</string>
+    <integer name="prefs_defaults_min_beat">120</integer>
+    <integer name="prefs_defaults_beat_hold">10</integer>
 </resources>

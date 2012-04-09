@@ -32,7 +32,7 @@
                         android:key="prefs_morph_steps"
                         android:title="@string/prefs_text_morph_steps"
                         android:summary="@string/prefs_text_morph_steps"
-                        android:defaultValue="@string/prefs_defaults_morph_steps"
+                        android:defaultValue="@integer/prefs_defaults_morph_steps"
                         android:inputType="number"
                         android:enabled="true"/>
 
@@ -40,7 +40,7 @@
                         android:key="prefs_max_fps"
                         android:title="@string/prefs_text_max_fps"
                         android:summary="@string/prefs_text_max_fps"
-                        android:defaultValue="@string/prefs_defaults_max_fps"
+                        android:defaultValue="@integer/prefs_defaults_max_fps"
                         android:inputType="number"
                         android:enabled="true"/>
 
@@ -85,7 +85,7 @@
                         android:key="prefs_min_beat"
                         android:title="@string/prefs_text_min_beat"
                         android:summary="@string/prefs_text_min_beat"
-                        android:defaultValue="@string/prefs_defaults_min_beat"
+                        android:defaultValue="@integer/prefs_defaults_min_beat"
                         android:inputType="text"
                         android:enabled="true"/>
 
