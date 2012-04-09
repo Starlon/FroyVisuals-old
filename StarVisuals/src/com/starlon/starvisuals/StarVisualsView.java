@@ -233,11 +233,11 @@ public class StarVisualsView extends View {
             }
                 
             // Do we have text to show?
-            String text = mActivity.getDisplayText();
     
 
-            if(text != null)
+            if(mActivity.getShowText())
             {
+                String text = mActivity.getDisplayText();
                 float canvasWidth = getWidth();
                 float textWidth = mPaint.measureText(text);
                 float startPositionX = (canvasWidth / 2 - textWidth / 2) - canvasWidth/4;
@@ -247,10 +247,7 @@ public class StarVisualsView extends View {
     
             if(mActivity.getDoBeat())
             {
-                float canvasWidth = getWidth();
-                float textWidth = mPaint.measureText(text);
-                float startPositionX = (canvasWidth / 2 - textWidth / 2);
-
+                String text;
                 int bpm = NativeHelper.getBPM();
                 int confidence = NativeHelper.getBPMConfidence();
                 boolean isBeat = NativeHelper.isBeat();
@@ -262,13 +259,16 @@ public class StarVisualsView extends View {
                     text = bpm + "bpm (" + confidence + "%) " + (isBeat ? "*" : " ");
                 else
                     text = "Learning... (" + confidence + "%)";
-    
-                textWidth = mPaint.measureText(text);
+
+                float canvasWidth = getWidth();
+                float textWidth = mPaint.measureText(text);
+                float startPositionX = (canvasWidth / 2 - textWidth / 2);
+   
                 startPositionX = (canvasWidth / 2 - textWidth / 2) - canvasWidth/4;
                 canvas.drawText(text, startPositionX, 100, mPaint);
             }
     
-            if(mActivity.mAlbumArt != null)
+            if(mActivity.getShowArt())
             {
                 int width = mActivity.mAlbumArt.getWidth();
                 int height = mActivity.mAlbumArt.getHeight();
