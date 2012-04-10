@@ -165,30 +165,28 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
-            mPrefs = getSharedPreferences(PREFS, 0);
-            mPrefs.registerOnSharedPreferenceChangeListener(this);
-    
-            mEditor = mPrefs.edit();
-    
-            mRendererGL = new StarVisualsRenderer(this);
-    
-            mViewGL = new StarVisualsViewGL(this);
-    
-            mViewGL.setRenderer(mRendererGL);
-    
-            setContentView(mViewGL);
+        mPrefs = getSharedPreferences(PREFS, 0);
+        mPrefs.registerOnSharedPreferenceChangeListener(this);
 
-            mView = new StarVisualsView(this);
+        mEditor = mPrefs.edit();
 
-        // Don't dim screen
-        if(mView != null)
-        {
-            mView.setKeepScreenOn(true);
-        }
-        else
-        {
-            mViewGL.setKeepScreenOn(true);
-        }
+        mRendererGL = new StarVisualsRenderer(this);
+
+        mViewGL = new StarVisualsViewGL(this);
+
+        mViewGL.setRenderer(mRendererGL);
+
+/*
+        setContentView(mViewGL);
+*/
+
+        mView = new StarVisualsView(this);
+
+        mView.setKeepScreenOn(true);
+
+        setContentView(mView);
+
+        //mViewGL.setKeepScreenOn(true);
 
         final ViewConfiguration vc = ViewConfiguration.get((Context)this);
 
@@ -238,11 +236,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         };
         mView.setOnClickListener(StarVisuals.this);
         mView.setOnTouchListener(gestureListener);
-
-        setContentView(mView);
-
-        //mHasRoot = checkRoot();
-
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("com.android.music.metachanged");

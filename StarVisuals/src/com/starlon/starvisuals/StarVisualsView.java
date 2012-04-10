@@ -134,8 +134,6 @@ public class StarVisualsView extends View {
             // Hopefully it doesn't blow up.
         }
         mLock.unlock();
-        startThread();
-
     }
 
     @Override protected void onSizeChanged(int w, int h, int oldw, int oldh)
@@ -176,7 +174,7 @@ public class StarVisualsView extends View {
         stopThread();
         mThread = new Thread(new Runnable() {
             public void run() {
-                mActivity.setIsActive(false);
+                mActivity.setIsActive(true);
                 while(mActivity.getIsActive() == true)
                 {
                     try {

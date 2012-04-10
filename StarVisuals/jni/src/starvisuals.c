@@ -1808,6 +1808,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
     static VisVideo *vid = NULL;
     static VisVideo *swap = NULL;
 
+    visual_log(VISUAL_LOG_DEBUG, "TEST test TEST -------=======*****");
+
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
         return FALSE;
@@ -1872,6 +1874,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
     }
 
     AndroidBitmap_unlockPixels(env, bitmap);
+
 
     return TRUE;
 }
