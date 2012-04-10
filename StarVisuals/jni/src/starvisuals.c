@@ -1863,7 +1863,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
 
     visual_video_depth_transform(vid, v.video);
 
-    if(do_swap || FALSE)
+    if(do_swap && FALSE)
     {
         int32_t data[vid->pitch * vid->height];
         visual_video_clone(swap, vid);

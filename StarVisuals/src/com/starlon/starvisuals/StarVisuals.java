@@ -176,17 +176,17 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mViewGL.setRenderer(mRendererGL);
 
-/*
-        setContentView(mViewGL);
-*/
 
         mView = new StarVisualsView(this);
 
         mView.setKeepScreenOn(true);
+        mViewGL.setKeepScreenOn(true);
 
-        setContentView(mView);
+        if(mUseGL)
+            setContentView(mViewGL);
+        else
+            setContentView(mView);
 
-        //mViewGL.setKeepScreenOn(true);
 
         final ViewConfiguration vc = ViewConfiguration.get((Context)this);
 
@@ -386,7 +386,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         getAlbumArt();
 
-        mView.startThread();
+        if(!mUseGL)
+            mView.startThread();
 
         registerReceiver(mReceiver, mIntentFilter);
     }
@@ -399,7 +400,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         releaseAlbumArt();
 
-        mView.stopThread();
+        if(!mUseGL)
+            mView.stopThread();
 
         mEditor.putString("prefs_actor_selection", mActor);
         mEditor.putString("prefs_input_selection", mInput);
