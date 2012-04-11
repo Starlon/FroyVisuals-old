@@ -29,7 +29,7 @@
 // Initial plugins. Preferences should override these.
 #define MORPH "alphablend"
 #define ACTOR "lv_analyzer"
-#define INPUT "dummy"
+#define INPUT "mic"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
 #define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
@@ -103,7 +103,8 @@ static void v_cycleActor (int prev)
             VisList *list = visual_actor_get_list();
             int count = visual_list_count(list);
             VisPluginRef *ref = visual_list_get(list, count - 1);
-            v.actor_name = ref->info->plugname;
+            if(ref != NULL)
+                v.actor_name = ref->info->plugname;
         }
     }
     else
@@ -115,7 +116,8 @@ static void v_cycleActor (int prev)
         int count = visual_list_count(list);
         int index = visual_random_context_int_range(ctx, 0, count - 1);
         VisPluginRef *ref = visual_list_get(list, index);
-        v.actor_name = ref->info->plugname;
+        if(ref != NULL)
+            v.actor_name = ref->info->plugname;
 
     }
 
@@ -1533,12 +1535,10 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     if(bin_morph && !visual_morph_is_done(bin_morph))
         return FALSE;
 
-
-
-    if(prev == -1) {
+    if(prev == 1) {
         v.morph_name = "slide_left";
     }
-    else if(prev == 1)
+    else if(prev == -1)
     {
         v.morph_name = "slide_right";
     }
@@ -1552,11 +1552,11 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     } 
     else if(prev == 0)
     {
-        v_cycleMorph((int)prev);
+        v.morph_name = v.morph_name;
     }
-    else 
+    else
     {
-        v.morph_name = "alphablend";
+        v.morph_name = MORPH;
     }
 
     visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
@@ -1807,8 +1807,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
     VisVideoDepth depth;
     static VisVideo *vid = NULL;
     static VisVideo *swap = NULL;
-
-    visual_log(VISUAL_LOG_DEBUG, "TEST test TEST -------=======*****");
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);

@@ -73,7 +73,7 @@ public class StarVisualsRenderer implements Renderer {
 
         TimerTask task = new TimerTask() {
             public void run() {
-                mActivity.warn(mStats.getText());
+                mActivity.warn(mStats.getText(), true);
             }
         };
 
@@ -142,8 +142,8 @@ final class Visual {
 
     public void initialize(int surfaceWidth, int surfaceHeight, GL10 gl) {
 
-        mTextureWidth = 256;
-        mTextureHeight = 256;
+        mTextureWidth = 128;
+        mTextureHeight = 128;
 
         mNativeHelper.initApp(mTextureWidth, mTextureHeight);
 

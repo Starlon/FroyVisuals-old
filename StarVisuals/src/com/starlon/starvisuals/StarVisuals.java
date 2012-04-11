@@ -151,6 +151,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         }
     }
 
+    public void keepScreenOn(boolean truth)
+    {
+        mView.setKeepScreenOn(truth);
+        mViewGL.setKeepScreenOn(truth);
+    }
+
     /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle state)
@@ -176,16 +182,9 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mViewGL.setRenderer(mRendererGL);
 
-
         mView = new StarVisualsView(this);
 
-        mView.setKeepScreenOn(true);
-        mViewGL.setKeepScreenOn(true);
-
-        if(mUseGL)
-            setContentView(mViewGL);
-        else
-            setContentView(mView);
+        keepScreenOn(true);
 
 
         final ViewConfiguration vc = ViewConfiguration.get((Context)this);
@@ -219,7 +218,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                         mEditor.putString("prefs_actor_selection", mActor);
                         mEditor.commit();
                     } catch (Exception e) {
-                        Log.w(TAG, "Failure in onFling");
+                        Log.w(TAG, "Failure in onFling: " + e.toString());
                         // nothing
                     }
                 } //mView
@@ -313,6 +312,20 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     }
 
+    public void setUseGL(boolean truth)
+    {
+            if(truth)
+            {
+                mView.stopThread();
+                setContentView(mViewGL);
+            }
+            else
+            {
+                setContentView(mView);
+                mView.startThread();
+            }
+    }
+
     public void setPlugins(boolean now)
     {
         mActor = mPrefs.getString("prefs_actor_selection", ACTOR);
@@ -324,6 +337,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         mDoMorph = mPrefs.getBoolean("prefs_morph_enabled", DOMORPH);
         NativeHelper.setMorphStyle(mDoMorph);
         enableMic(mInput);
+        NativeHelper.finalizeSwitch(0);
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -386,8 +400,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         getAlbumArt();
 
-        if(!mUseGL)
-            mView.startThread();
+        setUseGL(mUseGL);
 
         registerReceiver(mReceiver, mIntentFilter);
     }
@@ -400,8 +413,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         releaseAlbumArt();
 
-        if(!mUseGL)
-            mView.stopThread();
+        setUseGL(mUseGL);
 
         mEditor.putString("prefs_actor_selection", mActor);
         mEditor.putString("prefs_input_selection", mInput);
@@ -483,6 +495,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             case R.id.menu_edit_plugins:
             {
                 startActivity(new Intent(this, EditPluginsActivity.class));
+                return true;
+            }
+            case R.id.menu_use_gl:
+            {
+                mUseGL = !mUseGL;
+                setUseGL(mUseGL);
                 return true;
             }
             default:
@@ -943,7 +961,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     private void disableMic()
     {
-        if(mAudio != null)
+        if(mAudio != null && mAudioThread != null)
         {
             mMicActive = false;
             mAudioThread.interrupt();
