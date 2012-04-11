@@ -308,7 +308,6 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleInput(JNIE
 {
     v_cycleInput(prev);
     finalizeInput(v.input_name);
-    visual_log(VISUAL_LOG_DEBUG, "Just changed input to %s", v.input_name);
     return get_input_index();
 }
 
@@ -1861,7 +1860,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
 
     visual_video_depth_transform(vid, v.video);
 
-    if(do_swap && FALSE)
+    if(do_swap)
     {
         int32_t data[vid->pitch * vid->height];
         visual_video_clone(swap, vid);

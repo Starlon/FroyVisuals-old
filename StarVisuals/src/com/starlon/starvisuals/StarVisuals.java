@@ -386,6 +386,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     @Override
     public void onResume() 
     {
+        setPlugins(false);
+
         super.onResume();
 
     }
@@ -396,7 +398,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {   
         super.onStart();
 
-        enableMic(mInput);
+        enableMic("mic");
 
         getAlbumArt();
 
