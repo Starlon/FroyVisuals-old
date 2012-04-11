@@ -128,10 +128,7 @@ public class StarVisualsView extends View {
             }
     
     
-            mActivity.setPlugins(false);
             NativeHelper.initApp(WIDTH, HEIGHT);
-            // Make this the last thing we do here since it's synchronized.
-            // Hopefully it doesn't blow up.
         }
         mLock.unlock();
     }

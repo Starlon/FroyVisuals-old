@@ -61,7 +61,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
     private final String MORPH = "alphablend";
-    private final String INPUT = "mic";
+    private final String INPUT = "dummy";
     private final String ACTOR = "lv_analyzer";
     private final boolean DOBEAT = false;
     private final boolean DOSWAP = true;
@@ -72,11 +72,11 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private final boolean SHOWART = true;
     private final boolean SHOWTEXT = true;
     private final boolean ISACTIVE = false;
-    private final boolean USEGL = true;
     private final int MINBEAT = 0;
     private final boolean STUCKBEAT = false;
     private final int BEATHOLD = 10;
     private final String DISPLAYTEXT = "Please wait...";
+    private final boolean USEGL = true;
 
     public String mMorph = MORPH;
     public String mInput = INPUT;
@@ -318,9 +318,11 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             {
                 mView.stopThread();
                 setContentView(mViewGL);
+                //mViewGL.startThread();
             }
             else
             {
+                //mViewGL.stopThread();
                 setContentView(mView);
                 mView.startThread();
             }
@@ -386,7 +388,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     @Override
     public void onResume() 
     {
-        setPlugins(false);
 
         super.onResume();
 
@@ -398,7 +399,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {   
         super.onStart();
 
-        enableMic("mic");
+        enableMic(mInput);
 
         getAlbumArt();
 
@@ -415,7 +416,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         releaseAlbumArt();
 
-        setUseGL(mUseGL);
 
         mEditor.putString("prefs_actor_selection", mActor);
         mEditor.putString("prefs_input_selection", mInput);

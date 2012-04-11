@@ -1,1 +1,0 @@
-/usr/bin/c++       CMakeFiles/test-lua-icxx.dir/main.cpp.o  -o test-lua-icxx -rdynamic ../build-lib/liblua-icxx.so.1.0.2 -llua5.1 -Wl,-rpath,/home/scott/workspace/StarVisuals/StarVisuals/jni/lua-icxx/trunk/cmake/build-lib 

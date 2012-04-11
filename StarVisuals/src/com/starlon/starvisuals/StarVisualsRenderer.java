@@ -138,6 +138,9 @@ final class Visual {
         mTextureBuffer.put(texture);
         mTextureBuffer.position(0);
 
+        mNativeHelper.initApp(mTextureWidth, mTextureHeight);
+
+        mActivity.setPlugins(true);
     }
 
     public void initialize(int surfaceWidth, int surfaceHeight, GL10 gl) {
@@ -145,7 +148,6 @@ final class Visual {
         mTextureWidth = 128;
         mTextureHeight = 128;
 
-        mNativeHelper.initApp(mTextureWidth, mTextureHeight);
 
         textureCrop[0] = 0;
         textureCrop[1] = 0;

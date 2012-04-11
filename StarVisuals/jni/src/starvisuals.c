@@ -1860,6 +1860,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
 
     visual_video_depth_transform(vid, v.video);
 
+/*
     if(do_swap)
     {
         int32_t data[vid->pitch * vid->height];
@@ -1869,7 +1870,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
 
         swap_video_BGR(vid, swap);
     }
-
+*/
     AndroidBitmap_unlockPixels(env, bitmap);
 
 

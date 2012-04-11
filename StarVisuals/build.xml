@@ -45,13 +45,14 @@
             unless="sdk.dir"
     />
 
+<!-- unchecked and unsafe 
     <target name="compile">
         <javac srcdir="src" destdir="build" debug="true" debuglevel="lines,source" includeantruntime="false">
             <compilerarg value="-Xlint:unchecked"/>
             <compilerarg value="-Xlint:unsafe"/>
         </javac>
     </target>
-
+-->
 
 <!-- extension targets. Uncomment the ones where you want to do custom work
      in between standard targets -->

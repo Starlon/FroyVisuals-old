@@ -8,5 +8,5 @@ LOCAL_CFLAGS    += $(ARCH_CFLAGS) -fexceptions -frtti
 LOCAL_SHARED_LIBRARIES := gnustl libvisual luascript
 
 #LOCAL_LDLIBS += -L$(call host-path, $(LOCAL_PATH))/../LuaJIT/$(TARGET_ARCH_ABI) -lluajit
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 

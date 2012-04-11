@@ -6,9 +6,6 @@ APPNAME = StarVisuals
 ACTIVITY = StarVisuals
 TARGET = android-15
 
-compile:
-	@ant compile
-
 all:
 	@ndk-build BUILD_TYPE=release
 	@ant clean
