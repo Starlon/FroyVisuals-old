@@ -3,10 +3,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
         <PreferenceCategory
                 android:title="@string/preferences_name">
-                <PreferenceScreen
-                    android:fragment="com.starlon.starvisuals.PreferenceActivity$MorphFragment"
-                    android:title="@string/title_morph_singular" >
-
                     <CheckBoxPreference
                         android:key="prefs_do_beat"
                         android:title="@string/prefs_text_do_beat"
@@ -88,8 +84,6 @@
                         android:defaultValue="@integer/prefs_defaults_min_beat"
                         android:inputType="text"
                         android:enabled="true"/>
-
-                </PreferenceScreen>
 
         </PreferenceCategory>
 </PreferenceScreen>

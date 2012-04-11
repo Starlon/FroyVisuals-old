@@ -11,15 +11,16 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
 import android.os.Bundle;
 import android.util.Log;
 
 
 
 
-public class EditPluginsActivity extends PreferenceActivity
+public class EditSettingsActivity extends PreferenceActivity
 {
-        private final static String TAG = "StarVisuals/EditPluginsActivity";
+        private final static String TAG = "StarVisuals/EditSettingsActivity";
         private final static String PREFS = "StarVisualsPrefs";
         
         private NativeHelper mNativeHelper;
@@ -31,13 +32,11 @@ public class EditPluginsActivity extends PreferenceActivity
         {
             super.onCreate(savedInstanceState);
 
-            /** create prefs from xml */
-            //addPreferencesFromResource(R.xml.preferences);
-
             PreferenceManager prefManager = getPreferenceManager();
             prefManager.setSharedPreferencesName(PREFS); 
 
             setPreferenceScreen(createPreferenceHierarchy());
+            addPreferencesFromResource(R.xml.preferences);
         }
 
         /** another activity comes over this activity */
@@ -58,8 +57,6 @@ public class EditPluginsActivity extends PreferenceActivity
             CharSequence[] entryValues;
             int count;
             int current;
-
-            //LayoutInflator inflator = getLayoutInfator();
 
             PreferenceScreen root = getPreferenceManager().createPreferenceScreen(this);
             

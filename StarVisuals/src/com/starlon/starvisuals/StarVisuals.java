@@ -186,7 +186,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         keepScreenOn(true);
 
-
         final ViewConfiguration vc = ViewConfiguration.get((Context)this);
 
         SWIPE_MIN_DISTANCE = vc.getScaledTouchSlop();
@@ -196,8 +195,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         class MyGestureDetector extends SimpleOnGestureListener {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                synchronized (mViewGL.mSynch)
-                {
                 synchronized(mView.mSynch)
                 {
                     try {
@@ -222,7 +219,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                         // nothing
                     }
                 } //mView
-                } //mViewGL
                 return false;
             }
         }
@@ -326,6 +322,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 setContentView(mView);
                 mView.startThread();
             }
+            mUseGL = truth;
     }
 
     public void setPlugins(boolean now)
@@ -416,7 +413,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         releaseAlbumArt();
 
-
         mEditor.putString("prefs_actor_selection", mActor);
         mEditor.putString("prefs_input_selection", mInput);
         mEditor.putString("prefs_morph_selection", mMorph);
@@ -494,17 +490,18 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 }
                 return true;
             }
-            case R.id.menu_edit_plugins:
+            case R.id.menu_edit_settings:
             {
-                startActivity(new Intent(this, EditPluginsActivity.class));
+                startActivity(new Intent(this, EditSettingsActivity.class));
                 return true;
             }
+/*
             case R.id.menu_use_gl:
             {
-                mUseGL = !mUseGL;
-                setUseGL(mUseGL);
+                setUseGL(!mUseGL);
                 return true;
             }
+*/
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");

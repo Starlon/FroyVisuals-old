@@ -31,7 +31,7 @@
 
         <!-- preferences activity -->
         <activity 
-              android:name="EditPluginsActivity" android:label="@string/menu_edit_plugins">
+              android:name="EditSettingsActivity" android:label="@string/menu_edit_settings">
         </activity>
 
         <!-- about plugins activity -->
