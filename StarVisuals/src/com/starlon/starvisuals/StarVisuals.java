@@ -167,7 +167,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         ActivityManager am =
             (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo info = am.getDeviceConfigurationInfo();
-        return (info.reqGlEsVersion >= 0x20000);
+        return (info.reqGlEsVersion >= 0x20000 && mUseGL);
     }
 
     /** Called when the activity is first created. */
@@ -201,6 +201,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
                 synchronized(mView.mSynch)
                 {
+                    int actor = -1;
                     try {
                         if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
                             return false;
@@ -208,16 +209,19 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Left swipe
                             Log.w(TAG, "Left swipe...");
-                            mView.switchScene(-1);
+                            actor = NativeHelper.cycleActor(-1);
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Right swipe
                             Log.w(TAG, "Right swipe...");
-                            mView.switchScene(1);
+                            actor = NativeHelper.cycleActor(1);
                         }
-                        mActor = NativeHelper.actorGetName(NativeHelper.actorGetCurrent());
-                        mEditor.putString("prefs_actor_selection", mActor);
-                        mEditor.commit();
+                        if(actor >= 0)
+                        {
+                            mActor = NativeHelper.actorGetName(actor);
+                            mEditor.putString("prefs_actor_selection", mActor);
+                            mEditor.commit();
+                        }
                     } catch (Exception e) {
                         Log.w(TAG, "Failure in onFling: " + e.toString());
                         // nothing
@@ -226,6 +230,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 return false;
             }
         }
+
         // Gesture detection
         mGestureDetector = new GestureDetector(new MyGestureDetector());
         mGestureListener = new View.OnTouchListener() {
@@ -390,10 +395,9 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         super.onResume();
 
-/*
         if(detectGL20())
             mViewGL.onResume();
-*/
+
     }
 
     // follows onCreate() and onResume()
@@ -413,8 +417,16 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         keepScreenOn(true);
 
-        mView.setOnClickListener(StarVisuals.this);
-        mView.setOnTouchListener(mGestureListener);
+        if(detectGL20())
+        {
+            mViewGL.setOnClickListener(StarVisuals.this);
+            mViewGL.setOnTouchListener(mGestureListener);
+        }
+        else
+        {
+            mView.setOnClickListener(StarVisuals.this);
+            mView.setOnTouchListener(mGestureListener);
+        }
 
         enableMic(mInput);
 
@@ -431,10 +443,9 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
         super.onPause();
 
-/*
         if(detectGL20())
             mViewGL.onPause();
-*/
+
         releaseAlbumArt();
 
         mEditor.putString("prefs_actor_selection", mActor);

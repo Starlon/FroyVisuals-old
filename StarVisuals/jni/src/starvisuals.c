@@ -56,6 +56,7 @@ struct {
     VisVideo   *video;
     VisPalette  *pal;
     VisBin     *bin;
+    VisMutex *mutex;
     const char *actor_name;
     const char *morph_name;
     const char *input_name;
@@ -696,8 +697,13 @@ static void finalizeMorph(const char *morph)
 
 JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleMorph(JNIEnv *env, jobject obj, jint prev)
 {
+    visual_mutex_lock(v.mutex);
+
     v_cycleMorph(prev);
     finalizeMorph(v.morph_name);
+
+    visual_mutex_unlock(v.mutex);
+
     return get_morph_index();
 }
 
@@ -1087,7 +1093,9 @@ int get_actor_index()
 
 void finalizeActor(const char *actor)
 {
+    visual_mutex_lock(v.mutex);
     visual_bin_switch_actor_by_name(v.bin, (char *)actor);
+    visual_mutex_unlock(v.mutex);
 }
 
 JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_cycleActor(JNIEnv *env, jobject obj, jint prev)
@@ -1652,6 +1660,8 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_newSong(JNIEnv 
 JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNIEnv * env, jobject  obj, jboolean toExit)
 {
 
+    visual_mutex_free(v.mutex);
+
     if(v.video != NULL)
     {
         visual_video_free_buffer(v.video);
@@ -1763,6 +1773,8 @@ void app_main(int w, int h)
     visual_bin_sync (v.bin, FALSE);
     visual_bin_depth_changed(v.bin);
 
+    v.mutex = visual_mutex_new();
+
     printf ("Libvisual version %s; bpp: %d %s\n", visual_get_version(), v.video->bpp, (v.pluginIsGL ? "(GL)\n" : ""));
 }
 
@@ -1806,6 +1818,8 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
     VisVideoDepth depth;
     static VisVideo *vid = NULL;
     static VisVideo *swap = NULL;
+
+    visual_mutex_lock(v.mutex);
 
     if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
         LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
@@ -1873,6 +1887,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
 */
     AndroidBitmap_unlockPixels(env, bitmap);
 
+    visual_mutex_unlock(v.mutex);
 
     return TRUE;
 }
