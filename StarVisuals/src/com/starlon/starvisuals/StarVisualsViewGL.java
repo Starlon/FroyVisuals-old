@@ -85,6 +85,7 @@ class StarVisualsViewGL extends GLSurfaceView {
         int action = event.getAction();
         switch(action)
         {
+            // This mouse motion stuff doesn't work. There's an OnFling in main activity.
             case MotionEvent.ACTION_DOWN:
                 Log.w(TAG, "MotionEvent.ACTION_DOWN");
                 direction = -1;
@@ -101,21 +102,8 @@ class StarVisualsViewGL extends GLSurfaceView {
                 }
             break;
             case MotionEvent.ACTION_MOVE:
-                mSize = mSize + 1;
                 float x = event.getX();
                 float y = event.getY();
-                if(mSize > 2 && mLastX != -1.0f)
-                {
-                    if(mLastX < x)
-                    {
-                        direction = 0;
-                    }
-                    else
-                    {
-                        direction = 1;
-                    }
-                }
-                mLastX = x;
                 Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y + " size=" + mSize + " direction=" + direction);
 
                 mLock.lock();

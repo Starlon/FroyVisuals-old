@@ -116,8 +116,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private static int SWIPE_MIN_DISTANCE = 120;
     private static int SWIPE_MAX_OFF_PATH = 250;
     private static int SWIPE_THRESHOLD_VELOCITY = 200;
-    private GestureDetector gestureDetector = null;
-    OnTouchListener gestureListener;
+    private GestureDetector mGestureDetector = null;
+    OnTouchListener mGestureListener;
 
     private StarVisualsView mView = null;
     private StarVisualsViewGL mViewGL = null;
@@ -176,15 +176,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mEditor = mPrefs.edit();
 
-        mRendererGL = new StarVisualsRenderer(this);
-
-        mViewGL = new StarVisualsViewGL(this);
-
-        mViewGL.setRenderer(mRendererGL);
-
-        mView = new StarVisualsView(this);
-
-        keepScreenOn(true);
 
         final ViewConfiguration vc = ViewConfiguration.get((Context)this);
 
@@ -223,14 +214,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             }
         }
         // Gesture detection
-        gestureDetector = new GestureDetector(new MyGestureDetector());
-        gestureListener = new View.OnTouchListener() {
+        mGestureDetector = new GestureDetector(new MyGestureDetector());
+        mGestureListener = new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
+                return mGestureDetector.onTouchEvent(event);
             }
         };
-        mView.setOnClickListener(StarVisuals.this);
-        mView.setOnTouchListener(gestureListener);
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("com.android.music.metachanged");
@@ -396,6 +385,19 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {   
         super.onStart();
 
+        mRendererGL = new StarVisualsRenderer(this);
+
+        mViewGL = new StarVisualsViewGL(this);
+
+        mViewGL.setRenderer(mRendererGL);
+
+        mView = new StarVisualsView(this);
+
+        keepScreenOn(true);
+
+        mView.setOnClickListener(StarVisuals.this);
+        mView.setOnTouchListener(mGestureListener);
+
         enableMic(mInput);
 
         getAlbumArt();
@@ -426,7 +428,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     protected void onRestart() 
     {
         super.onRestart();
-
     }
 
     // This activity is no longer visible

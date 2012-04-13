@@ -53,13 +53,13 @@ public class StarVisualsRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 gl10) {
         mStats.startFrame();
-        vis.performFrame((GL10) gl10, mSurfaceWidth, mSurfaceHeight);
+        vis.performFrame(gl10, mSurfaceWidth, mSurfaceHeight);
         mStats.endFrame();
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
-        vis.initialize(width, height, (GL10) gl10);
+        vis.initialize(gl10, width, height);
         mSurfaceWidth = width;
         mSurfaceHeight = height;
     }
@@ -98,6 +98,7 @@ final class Visual {
     private Bitmap mBitmap;
     private Paint mPaint;
     private Canvas mCanvas;
+    private GL10 mGL10 = null;
 
     private FloatBuffer mVertexBuffer;   // buffer holding the vertices
     private float vertices[] = {
@@ -143,7 +144,9 @@ final class Visual {
         mActivity.setPlugins(true);
     }
 
-    public void initialize(int surfaceWidth, int surfaceHeight, GL10 gl) {
+    public void initialize(GL10 gl, int surfaceWidth, int surfaceHeight) {
+
+        mGL10 = gl;
 
         mTextureWidth = 128;
         mTextureHeight = 128;
@@ -174,34 +177,34 @@ final class Visual {
 
         // init the GL settings
         if (glInited) {
-            resetGl(gl);
+            resetGl();
         }
 
-        initGl(gl, surfaceWidth, surfaceHeight);
+        initGl(surfaceWidth, surfaceHeight);
 
         // init the GL texture
-        initGlTexture(gl);
+        initGlTexture();
 
     }   
 
-    private void resetGl(GL10 gl) {
-        if(!glInited) return;
+    public void resetGl() {
+        if(!glInited || mGL10 == null) return;
 
         glInited = false;
 
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glPopMatrix();
-        gl.glMatrixMode(GL10.GL_TEXTURE);
-        gl.glPopMatrix();
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glPopMatrix();
+        mGL10.glMatrixMode(GL10.GL_PROJECTION);
+        mGL10.glPopMatrix();
+        mGL10.glMatrixMode(GL10.GL_TEXTURE);
+        mGL10.glPopMatrix();
+        mGL10.glMatrixMode(GL10.GL_MODELVIEW);
+        mGL10.glPopMatrix();
     }
 
     public void destroy()
     {
         if(!glInited) return;
 
-        glInited = false;
+        resetGl();
 
         mBitmap.recycle();
         mBitmap = null;
@@ -210,24 +213,27 @@ final class Visual {
         mCanvas = null;
         mVertexBuffer = null;
         mTextureBuffer = null;
+        releaseTexture();
+        glInited = false;
+        mGL10 = null; // This needs to be last.
     }
     
 
-    private void initGl(GL10 gl, int surfaceWidth, int surfaceHeight) {
-        if(glInited) return;
+    public void initGl(int surfaceWidth, int surfaceHeight) {
+        if(glInited || mGL10 == null) return;
 
-        gl.glShadeModel(GL10.GL_FLAT);
-        gl.glFrontFace(GL10.GL_CCW);
-        gl.glEnable(GL10.GL_TEXTURE_2D);
+        mGL10.glShadeModel(GL10.GL_FLAT);
+        mGL10.glFrontFace(GL10.GL_CCW);
+        mGL10.glEnable(GL10.GL_TEXTURE_2D);
 
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glLoadIdentity();
-        gl.glPushMatrix();
+        mGL10.glMatrixMode(GL10.GL_PROJECTION);
+        mGL10.glLoadIdentity();
+        mGL10.glPushMatrix();
 
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glLoadIdentity();
-        gl.glOrthof(-1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f);
-        gl.glPushMatrix();
+        mGL10.glMatrixMode(GL10.GL_MODELVIEW);
+        mGL10.glLoadIdentity();
+        mGL10.glOrthof(-1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f);
+        mGL10.glPushMatrix();
 
         glInited = true;
     }
@@ -261,44 +267,47 @@ final class Visual {
         mBitmap.copyPixelsToBuffer(mPixelBuffer);
     }
 
-    private void releaseTexture(GL10 gl) {
+    private void releaseTexture() {
+        if(mGL10 == null)
+            return;
+
         if (mTextureId != -1) {
-            gl.glDeleteTextures(1, new int[] { mTextureId }, 0);
+            mGL10.glDeleteTextures(1, new int[] { mTextureId }, 0);
         }       
     }
 
-    private void initGlTexture(GL10 gl) {
+    private void initGlTexture() {
 
-        releaseTexture(gl);
+        releaseTexture();
 
         int[] textures = new int[1];
-        gl.glGenTextures(1, textures, 0);
+        mGL10.glGenTextures(1, textures, 0);
         mTextureId = textures[0];
 
         // we want to modify this texture so bind it
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId);
+        mGL10.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId);
 
         // GL_LINEAR gives us smoothing since the texture is larger than the screen
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, 
+        mGL10.glTexParameterf(GL10.GL_TEXTURE_2D, 
                            GL10.GL_TEXTURE_MAG_FILTER,
                            GL10.GL_LINEAR);        
 
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, 
+        mGL10.glTexParameterf(GL10.GL_TEXTURE_2D, 
                            GL10.GL_TEXTURE_MIN_FILTER,
                            GL10.GL_LINEAR);
 
         // repeat the edge pixels if a surface is larger than the texture
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+        mGL10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
                            GL10.GL_CLAMP_TO_EDGE);
 
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+        mGL10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
                            GL10.GL_CLAMP_TO_EDGE); 
 
         // now, let's init the texture with pixel values
         //updatePixels();
 
         // and init the GL texture with the pixels
-        gl.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, mTextureWidth, mTextureHeight,
+        mGL10.glTexImage2D(GL10.GL_TEXTURE_2D, 0, GL10.GL_RGBA, mTextureWidth, mTextureHeight,
                 0, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, mPixelBuffer);        
 
 
@@ -308,45 +317,47 @@ final class Visual {
 
     
 
-    public void dispose(GL10 gl) {
-        resetGl(gl);
-        releaseTexture(gl);
-    }
 
     public void performFrame(GL10 gl, int surfaceWidth, int surfaceHeight) {
+
+        if(mGL10 != gl)
+            mGL10 = gl;
+
+        if(mGL10 == null)
+            return;
 
         // Draw
         updatePixels();
 
         // Clear the surface
-        gl.glClearColorx(0, 0, 0, 0);
-        gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        mGL10.glClearColorx(0, 0, 0, 0);
+        mGL10.glClear(GL10.GL_COLOR_BUFFER_BIT);
 
         // Point to our buffers
-        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
-        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        mGL10.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+        mGL10.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         
         // Set the face rotation
-        gl.glFrontFace(GL10.GL_CW);
+        mGL10.glFrontFace(GL10.GL_CW);
         
         // Point to our vertex buffer
-        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
-        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTextureBuffer);
+        mGL10.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer);
+        mGL10.glTexCoordPointer(2, GL10.GL_FLOAT, 0, mTextureBuffer);
  
 
         // Choose the texture
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId);
+        mGL10.glBindTexture(GL10.GL_TEXTURE_2D, mTextureId);
 
         // Update the texture
-        gl.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, mTextureWidth, mTextureHeight, 
+        mGL10.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, mTextureWidth, mTextureHeight, 
                            GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, mPixelBuffer);
         
         // Draw the vertices as triangle strip
-        gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, vertices.length / 3);
+        mGL10.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, vertices.length / 3);
 
         //Disable the client state before leaving
-        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
-        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+        mGL10.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+        mGL10.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
     }
 }
