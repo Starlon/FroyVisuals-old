@@ -47,6 +47,14 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.lang.Process;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.pm.ConfigurationInfo;
+import android.opengl.GLSurfaceView;
+import android.os.Bundle;
+import android.util.Log;
+
 public class StarVisuals extends Activity implements OnClickListener, OnSharedPreferenceChangeListener
 {
     private final static String TAG = "StarVisuals/StarVisualsActivity";
@@ -155,6 +163,14 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
         mView.setKeepScreenOn(truth);
         mViewGL.setKeepScreenOn(truth);
+    }
+
+    private boolean detectGL()
+    {
+        ActivityManager am =
+            (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        ConfigurationInfo info = am.getDeviceConfigurationInfo();
+        return (info.reqGlEsVersion >= 0x20000);
     }
 
     /** Called when the activity is first created. */
@@ -297,21 +313,23 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     }
 
-    public void setUseGL(boolean truth)
+    public void setUseGL()
     {
-            if(truth)
+            
+            if(detectGL())
             {
                 mView.stopThread();
                 setContentView(mViewGL);
                 //mViewGL.startThread();
+                mUseGL = true;
             }
             else
             {
                 //mViewGL.stopThread();
                 setContentView(mView);
                 mView.startThread();
+                mUseGL = false;
             }
-            mUseGL = truth;
     }
 
     public void setPlugins(boolean now)
@@ -374,9 +392,10 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     @Override
     public void onResume() 
     {
-
         super.onResume();
 
+        if(detectGL())
+            mViewGL.onResume();
     }
 
     // follows onCreate() and onResume()
@@ -387,7 +406,10 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mRendererGL = new StarVisualsRenderer(this);
 
+        
         mViewGL = new StarVisualsViewGL(this);
+
+        mViewGL.setEGLContextClientVersion(2);
 
         mViewGL.setRenderer(mRendererGL);
 
@@ -402,7 +424,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         getAlbumArt();
 
-        setUseGL(mUseGL);
+        setUseGL();
 
         registerReceiver(mReceiver, mIntentFilter);
     }
@@ -412,6 +434,9 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     protected void onPause() 
     {
         super.onPause();
+
+        if(detectGL())
+            mViewGL.onResume();
 
         releaseAlbumArt();
 
@@ -496,13 +521,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 startActivity(new Intent(this, EditSettingsActivity.class));
                 return true;
             }
-/*
-            case R.id.menu_use_gl:
-            {
-                setUseGL(!mUseGL);
-                return true;
-            }
-*/
             default:
             {
                 Log.w(TAG, "Unhandled menu-item. This is a bug!");
