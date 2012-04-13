@@ -1,0 +1,227 @@
+K 25
+svn:wc:ra_dav:version-url
+V 22
+/svn/!svn/ver/28/trunk
+END
+math_modf.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/25/trunk/math_modf.c
+END
+math_sqrtfv.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/25/trunk/math_sqrtfv.c
+END
+math_logf.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/25/trunk/math_logf.c
+END
+math_fmodf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/25/trunk/math_fmodf.c
+END
+math_sinf.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/25/trunk/math_sinf.c
+END
+math_vec2.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/28/trunk/math_vec2.c
+END
+math_tanhf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/26/trunk/math_tanhf.c
+END
+math_vec3.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/28/trunk/math_vec3.c
+END
+math_asinf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/27/trunk/math_asinf.c
+END
+math_vec4.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/28/trunk/math_vec4.c
+END
+math_expf.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/25/trunk/math_expf.c
+END
+math_coshf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/26/trunk/math_coshf.c
+END
+math_mat2.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/28/trunk/math_mat2.c
+END
+math_neon.h
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/28/trunk/math_neon.h
+END
+math_mat3.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/28/trunk/math_mat3.c
+END
+math_mat4.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/28/trunk/math_mat4.c
+END
+math_sinhf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/26/trunk/math_sinhf.c
+END
+math_powf.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/28/trunk/math_powf.c
+END
+COPYING
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/!svn/ver/20/trunk/COPYING
+END
+math_fabsf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/25/trunk/math_fabsf.c
+END
+math_ldexpf.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/25/trunk/math_ldexpf.c
+END
+math_runfast.c
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/22/trunk/math_runfast.c
+END
+math_sinfv.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/14/trunk/math_sinfv.c
+END
+math_debug.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/28/trunk/math_debug.c
+END
+math_floorf.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/25/trunk/math_floorf.c
+END
+math_tanf.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/25/trunk/math_tanf.c
+END
+math_log10f.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/25/trunk/math_log10f.c
+END
+math_atanf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/25/trunk/math_atanf.c
+END
+math_cosf.c
+K 25
+svn:wc:ra_dav:version-url
+V 34
+/svn/!svn/ver/25/trunk/math_cosf.c
+END
+math_frexpf.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/25/trunk/math_frexpf.c
+END
+math_acosf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/25/trunk/math_acosf.c
+END
+math_sqrtf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/25/trunk/math_sqrtf.c
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 29
+/svn/!svn/ver/24/trunk/README
+END
+math_sincosf.c
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/25/trunk/math_sincosf.c
+END
+math_atan2f.c
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/25/trunk/math_atan2f.c
+END
+math_invsqrtf.c
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/25/trunk/math_invsqrtf.c
+END
+math_ceilf.c
+K 25
+svn:wc:ra_dav:version-url
+V 35
+/svn/!svn/ver/25/trunk/math_ceilf.c
+END
