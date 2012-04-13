@@ -1,5 +1,6 @@
 package com.starlon.starvisuals;
 
+import android.app.ActivityManager;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
+import android.content.pm.ConfigurationInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -46,6 +48,8 @@ import java.io.FileDescriptor;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.lang.Process;
+
+import com.openglesbook.particlesystem.ParticleSystemRenderer;
 
 public class StarVisuals extends Activity implements OnClickListener, OnSharedPreferenceChangeListener
 {
@@ -111,7 +115,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public HashMap<String, Bitmap> mAlbumMap = new HashMap<String, Bitmap>();
     private SharedPreferences mPrefs;
     private SharedPreferences.Editor mEditor;
-    private StarVisualsRenderer mRendererGL;
+    private StarVisualsRenderer mRendererGLVis;
+    private ParticleSystemRenderer mRendererGLPS;
 
     private static int SWIPE_MIN_DISTANCE = 120;
     private static int SWIPE_MAX_OFF_PATH = 250;
@@ -155,6 +160,14 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
         mView.setKeepScreenOn(truth);
         mViewGL.setKeepScreenOn(truth);
+    }
+
+    private boolean detectGL20()
+    {
+        ActivityManager am =
+            (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        ConfigurationInfo info = am.getDeviceConfigurationInfo();
+        return (info.reqGlEsVersion >= 0x20000);
     }
 
     /** Called when the activity is first created. */
@@ -377,6 +390,10 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         super.onResume();
 
+/*
+        if(detectGL20())
+            mViewGL.onResume();
+*/
     }
 
     // follows onCreate() and onResume()
@@ -385,11 +402,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {   
         super.onStart();
 
-        mRendererGL = new StarVisualsRenderer(this);
+        //mRendererGLPS = new ParticleSystemRenderer(this);//StarVisualsRenderer(this);
+        mRendererGLVis = new StarVisualsRenderer(this);
 
         mViewGL = new StarVisualsViewGL(this);
 
-        mViewGL.setRenderer(mRendererGL);
+        mViewGL.setRenderer(mRendererGLVis);
 
         mView = new StarVisualsView(this);
 
@@ -413,6 +431,10 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
         super.onPause();
 
+/*
+        if(detectGL20())
+            mViewGL.onPause();
+*/
         releaseAlbumArt();
 
         mEditor.putString("prefs_actor_selection", mActor);
