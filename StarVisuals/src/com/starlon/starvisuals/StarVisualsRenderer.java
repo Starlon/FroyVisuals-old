@@ -222,6 +222,8 @@ final class Visual {
     public void initGl(int surfaceWidth, int surfaceHeight) {
         if(glInited || mGL10 == null) return;
 
+        mGL10.glViewport(0, 0, surfaceWidth, surfaceHeight);
+
         mGL10.glShadeModel(GL10.GL_FLAT);
         mGL10.glFrontFace(GL10.GL_CCW);
         mGL10.glEnable(GL10.GL_TEXTURE_2D);
