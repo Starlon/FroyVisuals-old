@@ -7,7 +7,7 @@ export RANLIB=$TOOL_PREFIX-ranlib
 export CC=$TOOL_PREFIX-gcc
 export LD=$TOOL_PREFIX-ld
 
-export CCFLAGS="-march=armv7-a -mtune=cortex-a8 -mfpu=vfp -mfpu=neon -std=c99"
+export CCFLAGS="-march=armv7-a -mcpu=cortex-a8 mfloat-abi=softfp -mfpu=neon -ftree-vectorize"
 export ARM_TARGET_LIB=/CodeSourcery/Sourcery_CodeBench_Lite_for_ARM_EABI/arm-none-eabi/lib
 
 scons wordsize=32 snapshot=off arch=arm sample=shell
