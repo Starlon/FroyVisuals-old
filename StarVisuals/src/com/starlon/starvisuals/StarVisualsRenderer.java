@@ -54,14 +54,49 @@ public class StarVisualsRenderer implements Renderer {
     private NativeHelper mNativeHelper;
     private boolean mInited = false;
 
+    // Particles
+    // Handle to a program object
+    private int mProgramObject;
+
+    // Attribute locations
+    private int mLifetimeLoc;
+    private int mStartPositionLoc;
+    private int mEndPositionLoc;
+
+    // Uniform location
+    private int mTimeLoc;
+    private int mColorLoc;
+    private int mCenterPositionLoc;
+    private int mSamplerLoc;
+
+    // Texture handle
+    private int mTextureId;
+
+    // Update time
+    private float mTime;
+    private long mLastTime;
+
+    // Additional member variables
+    private int mWidth;
+    private int mHeight;
+    private FloatBuffer mParticles;
+    private Context mContext;
+
+    private final int NUM_PARTICLES = 1000;
+    private final int PARTICLE_SIZE = 7;
+
+    private final float[] mParticleData = new float[NUM_PARTICLES * PARTICLE_SIZE];
+
     public StarVisualsRenderer(Context context) {
         vis = new Visual((StarVisuals)context);
         mStats = new Stats();
         mStats.statsInit();
         mActivity = (StarVisuals)context;
         mInited = true;
+        mContext = context;
     }
 
+/*
     public void destroy()
     {
         if(!mInited) return;
@@ -70,6 +105,7 @@ public class StarVisualsRenderer implements Renderer {
         mStats = null;
         mActivity = null;
     }
+*/
 
     ///
     //  Load texture from resource
@@ -107,8 +143,50 @@ public class StarVisualsRenderer implements Renderer {
         return textureId[0];
     }
 
+/*
+    private void update()
+    {
+        if (mLastTime == 0)
+            mLastTime = SystemClock.uptimeMillis();
+        long curTime = SystemClock.uptimeMillis();
+        long elapsedTime = curTime - mLastTime;
+        float deltaTime = elapsedTime / 1000.0f;
+        mLastTime = curTime;
+
+        mTime += deltaTime;
+
+        if ( mTime >= 1.0f )
+        {
+            Random generator = new Random();
+            float[] centerPos = new float[3];
+            float[] color = new float[4];
+
+            mTime = 0.0f;
+
+            // Pick a new start location and color
+            centerPos[0] = generator.nextFloat() * 1.0f - 0.5f;
+            centerPos[1] = generator.nextFloat() * 1.0f - 0.5f;
+            centerPos[2] = generator.nextFloat() * 1.0f - 0.5f;
+
+            GLES20.glUniform3f ( mCenterPositionLoc, centerPos[0], centerPos[1], centerPos[2]);
+
+            // Random color
+            color[0] = generator.nextFloat() * 0.5f + 0.5f;
+            color[1] = generator.nextFloat() * 0.5f + 0.5f;
+            color[2] = generator.nextFloat() * 0.5f + 0.5f;
+            color[3] = 0.5f;
+
+            GLES20.glUniform4f ( mColorLoc, color[0], color[1], color[2], color[3] );
+        }
+
+        // Load uniform time variable
+        GLES20.glUniform1f ( mTimeLoc, mTime );
+    }
+*/
+
     @Override
     public void onDrawFrame(GL10 gl10) {
+/*
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
 
         GLES20.glUseProgram(mProgramObject);
@@ -147,12 +225,11 @@ public class StarVisualsRenderer implements Renderer {
         GLES20.glUniform1i ( mSamplerLoc, 0 );
 
         GLES20.glDrawArrays( GLES20.GL_POINTS, 0, NUM_PARTICLES );
-
+*/
 
         mStats.startFrame();
         vis.performFrame(gl10, mSurfaceWidth, mSurfaceHeight);
         mStats.endFrame();
-
     }
 
     @Override
@@ -176,7 +253,7 @@ public class StarVisualsRenderer implements Renderer {
         };
 
         timer.scheduleAtFixedRate(task, delay, period);
-
+/*
        String vShaderStr =
             "uniform float u_time;                                \n" +
             "uniform vec3 u_centerPosition;                       \n" +
@@ -257,41 +334,9 @@ public class StarVisualsRenderer implements Renderer {
 
         // Load particle texture
         mTextureId = loadTexture ( mContext.getResources().openRawResource( R.raw.smoke ) );
-
+*/
     }
 
-    // Particles
-    // Handle to a program object
-    private int mProgramObject;
-
-    // Attribute locations
-    private int mLifetimeLoc;
-    private int mStartPositionLoc;
-    private int mEndPositionLoc;
-
-    // Uniform location
-    private int mTimeLoc;
-    private int mColorLoc;
-    private int mCenterPositionLoc;
-    private int mSamplerLoc;
-
-    // Texture handle
-    private int mTextureId;
-
-    // Update time
-    private float mTime;
-    private long mLastTime;
-
-    // Additional member variables
-    private int mWidth;
-    private int mHeight;
-    private FloatBuffer mParticles;
-    private Context mContext;
-
-    private final int NUM_PARTICLES = 1000;
-    private final int PARTICLE_SIZE = 7;
-
-    private final float[] mParticleData = new float[NUM_PARTICLES * PARTICLE_SIZE];
 
 
 }
