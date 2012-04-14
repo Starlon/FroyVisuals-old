@@ -51,6 +51,12 @@ import java.lang.Process;
 
 import com.openglesbook.particlesystem.ParticleSystemRenderer;
 
+import org.libvisual.android.VisVideo;
+import org.libvisual.android.VisBin;
+import org.libvisual.android.VisActor;
+import org.libvisual.android.VisInput;
+import org.libvisual.android.VisMorph;
+
 public class StarVisuals extends Activity implements OnClickListener, OnSharedPreferenceChangeListener
 {
     private final static String TAG = "StarVisuals/StarVisualsActivity";
@@ -64,23 +70,25 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
-    private final String MORPH = "alphablend";
-    private final String INPUT = "dummy";
-    private final String ACTOR = "lv_analyzer";
-    private final boolean DOBEAT = false;
-    private final boolean DOSWAP = true;
-    private final boolean DOMORPH = false;
-    private final int MORPHSTEPS = 3;
-    private final int MAXFPS = 40;
-    private final boolean SHOWFPS = true;
-    private final boolean SHOWART = true;
-    private final boolean SHOWTEXT = true;
-    private final boolean ISACTIVE = false;
-    private final int MINBEAT = 0;
-    private final boolean STUCKBEAT = false;
-    private final int BEATHOLD = 10;
-    private final String DISPLAYTEXT = "Please wait...";
-    private final boolean USEGL = true;
+    private String MORPH = "alphablend";
+    private String INPUT = "dummy";
+    private String ACTOR = "lv_analyzer";
+    private boolean DOBEAT = false;
+    private boolean DOSWAP = true;
+    private boolean DOMORPH = false;
+    private int MORPHSTEPS = 3;
+    private int MAXFPS = 40;
+    private boolean SHOWFPS = true;
+    private boolean SHOWART = true;
+    private boolean SHOWTEXT = true;
+    private boolean ISACTIVE = false;
+    private int MINBEAT = 0;
+    private boolean STUCKBEAT = false;
+    private int BEATHOLD = 10;
+    private String DISPLAYTEXT = "Please wait...";
+    private boolean USEGL = true;
+    private int WIDTH = 128;
+    private int HEIGHT = 128;
 
     public String mMorph = MORPH;
     public String mInput = INPUT;
@@ -95,6 +103,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public boolean mShowText = SHOWTEXT;
     public boolean mIsActive = ISACTIVE;
     public boolean mUseGL = USEGL;
+    public int mWidth = WIDTH;
+    public int mHeight = HEIGHT;
     public String mDisplayText = DISPLAYTEXT;
     public short mMicData[] = null;
 
@@ -126,6 +136,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     private StarVisualsView mView = null;
     private StarVisualsViewGL mViewGL = null;
+
+    public static VisualObject mVisualObject;
 
     private Stats mStats = new Stats();
 
@@ -209,19 +221,21 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Left swipe
                             Log.w(TAG, "Left swipe...");
-                            actor = NativeHelper.cycleActor(-1);
+                            //actor = NativeHelper.cycleActor(-1);
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Right swipe
                             Log.w(TAG, "Right swipe...");
-                            actor = NativeHelper.cycleActor(1);
+                            //actor = NativeHelper.cycleActor(1);
                         }
+/*
                         if(actor >= 0)
                         {
                             mActor = NativeHelper.actorGetName(actor);
                             mEditor.putString("prefs_actor_selection", mActor);
                             mEditor.commit();
                         }
+*/
                     } catch (Exception e) {
                         Log.w(TAG, "Failure in onFling: " + e.toString());
                         // nothing
@@ -332,18 +346,69 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
             mUseGL = truth;
     }
 
-    public void setPlugins(boolean now)
+    public void getPrefs()
     {
         mActor = mPrefs.getString("prefs_actor_selection", ACTOR);
-        NativeHelper.actorSetCurrentByName(mActor, now);
         mInput = mPrefs.getString("prefs_input_selection", INPUT);
-        NativeHelper.inputSetCurrentByName(mInput, now);
         mMorph = mPrefs.getString("prefs_morph_selection", MORPH);
-        NativeHelper.morphSetCurrentByName(mInput, now);
         mDoMorph = mPrefs.getBoolean("prefs_morph_enabled", DOMORPH);
-        NativeHelper.setMorphStyle(mDoMorph);
-        enableMic(mInput);
-        NativeHelper.finalizeSwitch(0);
+        mDoBeat = mPrefs.getBoolean("prefs_do_beat", DOBEAT);
+        mDoSwap = mPrefs.getBoolean("prefs_do_swap", DOSWAP);
+        mDoMorph = mPrefs.getBoolean("prefs_do_morph", DOMORPH);
+        mMorphSteps = mPrefs.getInt("prefs_morph_steps", MORPHSTEPS);
+        mMaxFPS = mPrefs.getInt("prefs_max_fps", MAXFPS);
+        mShowFPS = mPrefs.getBoolean("prefs_show_fps", SHOWFPS);
+        mShowArt = mPrefs.getBoolean("prefs_show_art", SHOWART);
+        mShowText = mPrefs.getBoolean("prefs_show_text", SHOWTEXT);
+        mIsActive = mPrefs.getBoolean("prefs_is_active", ISACTIVE);
+        mUseGL = mPrefs.getBoolean("prefs_use_gl", USEGL);
+    }
+
+    public void setPrefs()
+    {
+        mEditor.putString("prefs_actor_selection", mActor);
+        mEditor.putString("prefs_input_selection", mInput);
+        mEditor.putString("prefs_morph_selection", mMorph);
+        mEditor.putBoolean("prefs_do_beat", mDoBeat);
+        mEditor.putBoolean("prefs_do_swap", mDoSwap);
+        mEditor.putBoolean("prefs_do_morph", mDoMorph);
+        mEditor.putBoolean("prefs_do_beat", mDoBeat);
+        mEditor.putInt("prefs_morph_steps", mMorphSteps);
+        mEditor.putInt("prefs_max_fps", mMaxFPS);
+        mEditor.putBoolean("prefs_show_fps", mShowFPS);
+        mEditor.putBoolean("prefs_show_art", mShowArt);
+        mEditor.putBoolean("prefs_show_text", mShowText);
+        mEditor.putBoolean("prefs_is_active", mIsActive);
+        mEditor.putBoolean("prefs_use_gl", mUseGL);
+
+        mEditor.commit();
+    }
+
+    public void createVis()
+    {
+        getPrefs();
+
+        mVisualObject = new VisualObject(mWidth, mHeight, mActor, mInput, mMorph);
+        mRendererGLVis = new StarVisualsRenderer(this, mVisualObject);
+
+        mViewGL = new StarVisualsViewGL(this);
+
+        mViewGL.setRenderer(mRendererGLVis);
+
+        mView = new StarVisualsView(this);
+
+        
+        if(detectGL20())
+        {
+            mViewGL.setOnClickListener(StarVisuals.this);
+            mViewGL.setOnTouchListener(mGestureListener);
+        }
+        else
+        {
+            mView.setOnClickListener(StarVisuals.this);
+            mView.setOnTouchListener(mGestureListener);
+        }
+
     }
 
     public BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -398,6 +463,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         if(detectGL20())
             mViewGL.onResume();
 
+
+       /* screen dimming */
+       // v.setScreenDimming();
+
+        getPrefs();
+            
     }
 
     // follows onCreate() and onResume()
@@ -406,27 +477,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {   
         super.onStart();
 
-        //mRendererGLPS = new ParticleSystemRenderer(this);//StarVisualsRenderer(this);
-        mRendererGLVis = new StarVisualsRenderer(this);
-
-        mViewGL = new StarVisualsViewGL(this);
-
-        mViewGL.setRenderer(mRendererGLVis);
-
-        mView = new StarVisualsView(this);
-
-        keepScreenOn(true);
-
-        if(detectGL20())
-        {
-            mViewGL.setOnClickListener(StarVisuals.this);
-            mViewGL.setOnTouchListener(mGestureListener);
-        }
-        else
-        {
-            mView.setOnClickListener(StarVisuals.this);
-            mView.setOnTouchListener(mGestureListener);
-        }
+        createVis();
 
         enableMic(mInput);
 
@@ -435,6 +486,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         setUseGL(mUseGL);
 
         registerReceiver(mReceiver, mIntentFilter);
+
     }
 
     // another activity comes to foreground
@@ -443,16 +495,13 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
         super.onPause();
 
+
         if(detectGL20())
             mViewGL.onPause();
 
         releaseAlbumArt();
 
-        mEditor.putString("prefs_actor_selection", mActor);
-        mEditor.putString("prefs_input_selection", mInput);
-        mEditor.putString("prefs_morph_selection", mMorph);
-
-        mEditor.commit();
+        setPrefs();
 
     }
 
@@ -548,8 +597,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     static {
         System.loadLibrary("gnustl_shared");
         System.loadLibrary("visual");
-        System.loadLibrary("common");
         System.loadLibrary("main");
+        System.loadLibrary("lvclient");
     }
 
     // Check for root privelege. This causes issues on rigid's phone. Find out why.

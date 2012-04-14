@@ -25,31 +25,31 @@ import java.nio.ShortBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import org.libvisual.android.VisVideo;
+import org.libvisual.android.VisBin;
+import org.libvisual.android.VisActor;
+import org.libvisual.android.VisInput;
+import org.libvisual.android.VisMorph;
+
 public class StarVisualsRenderer implements Renderer {
     private Visual vis;
     private int mSurfaceWidth;
     private int mSurfaceHeight;
     private Stats mStats;
-    private StarVisuals mActivity;
+    public StarVisuals mActivity;
     private NativeHelper mNativeHelper;
     private boolean mInited = false;
 
-    public StarVisualsRenderer(Context context) {
-        vis = new Visual((StarVisuals)context);
+    private static native void renderVisual(Bitmap bitmap, int binPtr, int videoPtr);
+
+    public StarVisualsRenderer(Context context, VisualObject obj) {
+        vis = new Visual(this, obj);
         mStats = new Stats();
         mStats.statsInit();
         mActivity = (StarVisuals)context;
         mInited = true;
     }
 
-    public void destroy()
-    {
-        if(!mInited) return;
-        vis.destroy();
-        vis = null;
-        mStats = null;
-        mActivity = null;
-    }
     @Override
     public void onDrawFrame(GL10 gl10) {
         mStats.startFrame();
@@ -94,11 +94,13 @@ final class Visual {
     private int[] textureCrop = new int[4]; 
     private boolean glInited = false;
     private NativeHelper mNativeHelper;
-    private StarVisuals mActivity;
     private Bitmap mBitmap;
     private Paint mPaint;
     private Canvas mCanvas;
     private GL10 mGL10 = null;
+    private VisBin mBin;
+    private VisVideo mVideo;
+    private StarVisualsRenderer mRenderer;
 
     private FloatBuffer mVertexBuffer;   // buffer holding the vertices
     private float vertices[] = {
@@ -117,8 +119,11 @@ final class Visual {
             1.0f, 0.0f      // bottom right (V3)
     };
 
-    public Visual(StarVisuals activity) {
-        mActivity = activity;
+    public Visual(StarVisualsRenderer renderer, VisualObject obj) {
+
+        mRenderer = renderer;
+        mBin = obj.mBin;
+        mVideo = obj.mVideo;
 
         // a float has 4 bytes so we allocate for each coordinate 4 bytes
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -139,9 +144,6 @@ final class Visual {
         mTextureBuffer.put(texture);
         mTextureBuffer.position(0);
 
-        mNativeHelper.initApp(mTextureWidth, mTextureHeight);
-
-        mActivity.setPlugins(true);
     }
 
     public void initialize(GL10 gl, int surfaceWidth, int surfaceHeight) {
@@ -246,11 +248,11 @@ final class Visual {
         mBitmap.eraseColor(Color.BLACK);
 
         // Pass bitmap to be rendered by native function.
-        mNativeHelper.renderBitmap(mBitmap, mActivity.getDoSwap());
+        //mNativeHelper.renderBitmap(mBitmap, mActivity.getDoSwap());
 
 
         // If StarVisuals has text to display, then use a canvas and paint brush to display it.
-        String text = mActivity.getDisplayText();
+        String text = mRenderer.mActivity.getDisplayText();
         if(text != null)
         {
             // Give the bitmap a canvas so we can draw on it.
@@ -363,22 +365,22 @@ final class Visual {
 
     }
 
-    public static int makeTexture(Bitmap bitmap)
+    public int makeTexture(Bitmap bitmap)
     {
         int[] textures = new int[1];
-        gl.glGenTextures(1, textures, 0);
+        mGL10.glGenTextures(1, textures, 0);
 
         int id = textures[0];
 
-        gl.glBindTexture(GL10.GL_TEXTURE_2D, id); 
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
+        mGL10.glBindTexture(GL10.GL_TEXTURE_2D, id); 
+        mGL10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER,
                  GL10.GL_NEAREST);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
+        mGL10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S,
                 GL10.GL_CLAMP_TO_EDGE);
-        gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
+        mGL10.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T,
                 GL10.GL_CLAMP_TO_EDGE);
 
-        gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
+        mGL10.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE,
                 GL10.GL_REPLACE);
 
         GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0); 

@@ -87,6 +87,7 @@ static void my_log_handler (VisLogSeverity severity, const char *msg, const VisL
 
 static void v_cycleActor (int prev)
 {
+/*
     const char *name = v.actor_name;
     if(prev > 0)
     {
@@ -123,6 +124,7 @@ static void v_cycleActor (int prev)
     if(!v.actor_name)
         v.actor_name = name;
     visual_log(VISUAL_LOG_CRITICAL, "actor ---------------------------- %s", v.actor_name);
+*/
 }
 
 static void v_cycleMorph (int prev)
@@ -186,7 +188,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_getIsActive
 
 static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
 {
-
+/*
     static VisTimer *timer = NULL;
     static VisTime *then;
     static VisTime *now;
@@ -213,7 +215,6 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
     visual_buffer_init( &buf, pcm_ref.pcm_data, pcm_ref.size, NULL );
     visual_audio_samplepool_input( audio->samplepool, &buf, pcm_ref.rate, pcm_ref.encoding, pcm_ref.channels);
 
-/*
     if(paramcontainer != NULL && pcm_ref.do_beat)
     {
         VisParamEntry *entry = visual_param_container_get(paramcontainer, "isBeat");
@@ -247,7 +248,7 @@ static int v_upload_callback (VisInput* input, VisAudio *audio, void* unused)
             pcm_ref.is_beat = FALSE;
         }
     }
-    */
+*/
     return 0;
 }
 
@@ -269,6 +270,7 @@ VisPluginRef *get_input(int index)
 
 int get_input_index()
 {
+/*
     VisList *list = visual_input_get_list();
     int count = visual_list_count(list), i;
     for(i = 0; i < count; i++)
@@ -278,7 +280,7 @@ int get_input_index()
             return i;
     }
     return -1;
-
+*/
 }
 
 void finalizeInput(const char *input)
@@ -331,6 +333,7 @@ JNIEXPORT jint JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetCurrent
 // This name could change between calling this function and an actual plugin change!
 JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCurrent(JNIEnv *env, jobject obj, jint index, jboolean now)
 {
+/*
     VisList *list = visual_input_get_list();
     int count = visual_list_count(list);
 
@@ -343,6 +346,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCur
 
     if(now)
         finalizeInput(v.input_name);
+*/
 
     return TRUE;
 }
@@ -350,6 +354,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCur
 // Set the current input plugin by its name. Do nothing and return false if the plugin doesn't exist.
 JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCurrentByName(JNIEnv *env, jobject obj, jstring name, jboolean now)
 {
+/*
     jboolean iscopy;
     const char *input = (*env)->GetStringUTFChars(env, name, &iscopy);
     if(visual_input_valid_by_name(input))
@@ -359,11 +364,13 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputSetCur
             finalizeInput(input);
         return TRUE;
     }
+*/
     return FALSE;
 }
 
 
 // Get the input's plugin name.
+/*
 JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetName(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
@@ -372,6 +379,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetName
 
     return ((*env)->NewStringUTF(env, ref->info->plugname));
 }
+*/
 
 // Get the input's plugin longname.
 JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetLongName(JNIEnv *env, jobject obj, jint index)
@@ -414,6 +422,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetAbou
 }
 
 // Get the input's plugin help string.
+/*
 JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetHelp(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
@@ -422,8 +431,10 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetHelp
 
     return ((*env)->NewStringUTF(env, ref->info->help));
 }
+*/
 
 // Get the input's plugin license string.
+/*
 JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetLicense(JNIEnv *env, jobject obj, jint index)
 {
     VisPluginRef *ref = get_input(index);
@@ -448,6 +459,7 @@ JNIEXPORT jstring JNICALL Java_com_starlon_starvisuals_NativeHelper_inputGetLice
     return ((*env)->NewStringUTF(env, text));
 
 }
+*/
 
 VisParamEntry *get_input_param_entry(int index)
 {
@@ -656,6 +668,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_inputParamS
 // ------ MORPH ------
 
 // Get the VisMorph at the requested index.
+/*
 VisPluginRef *get_morph(int index)
 {
     VisList *list = visual_morph_get_list();
@@ -665,8 +678,11 @@ VisPluginRef *get_morph(int index)
     visual_return_val_if_fail(index >= 0 && index < count, NULL);
 
     return visual_list_get(list, index);
-}
 
+}
+*/
+
+/*
 int get_morph_index()
 {
     VisList *list = visual_morph_get_list();
@@ -680,7 +696,9 @@ int get_morph_index()
     return -1;
 
 }
+*/
 
+#if 0
 static void finalizeMorph(const char *morph)
 {
     VisMorph *old = visual_bin_get_morph(v.bin);
@@ -1057,9 +1075,11 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_morphParamS
 
     return !ret;
 }
+#endif
 
 // ------ ACTORS ------
 
+#if 0
 // Get the VisActor at the requested index.
 VisPluginRef *get_actor(int index)
 {
@@ -1463,7 +1483,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_actorParamS
     return !ret;
 }
 
-
+#endif
 
 /* End of plugin and parameter getters and setters. */
 
@@ -1526,6 +1546,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_resizePCM(jint 
     // According to documentation 16BIT sample size is guaranteed to be supported.
     pcm_ref.encoding = VISUAL_AUDIO_SAMPLE_FORMAT_S16;
 }
+*/
 
 // Increment or decrement actor and morph
 // Variable 'prev' is used to shift morph plugin around. 

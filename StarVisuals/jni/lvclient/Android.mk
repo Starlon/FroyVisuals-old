@@ -11,9 +11,9 @@ LOCAL_LDLIBS            += $(LV_LDLIBS)
 LOCAL_SHARED_LIBRARIES  += $(LV_SHARED_LIBRARIES)
 LOCAL_STATIC_LIBRARIES  += $(LV_STATIC_LIBRARIES)
 
-LOCAL_MODULE            := main
+LOCAL_MODULE            := lvclient
 LOCAL_SRC_FILES         := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
 LOCAL_SHARED_LIBRARIES  += visual
 LOCAL_LDLIBS            += -lm -llog -ljnigraphics
 
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
