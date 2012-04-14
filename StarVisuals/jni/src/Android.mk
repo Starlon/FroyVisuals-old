@@ -13,5 +13,5 @@ LOCAL_STATIC_LIBRARIES := tinyalsa
 
 LOCAL_LDLIBS := -lm -llog -ljnigraphics
 
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
