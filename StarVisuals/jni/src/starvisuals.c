@@ -14,8 +14,6 @@
 #include <android/log.h>
 #include <android/bitmap.h>
 #include <libvisual/libvisual.h>
-#include <tinyalsa/asoundlib.h>
-#include <asound.h>
 #include <math.h>
 #include <sys/types.h>
 
