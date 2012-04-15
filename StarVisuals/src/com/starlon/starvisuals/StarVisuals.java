@@ -72,7 +72,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     private String MORPH = "alphablend";
     private String INPUT = "debug";
-    private String ACTOR = "lv_analyzer";
+    private String ACTOR = "oinksie";
     private boolean DOBEAT = false;
     private boolean DOSWAP = true;
     private boolean DOMORPH = false;

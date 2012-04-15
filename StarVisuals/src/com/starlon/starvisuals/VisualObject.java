@@ -62,6 +62,7 @@ class VisualObject {
 
     public void dispose()
     {
+/*
         if(mDisposed)
             return;
         mBitmap.recycle();
@@ -78,6 +79,7 @@ class VisualObject {
         //mMorph.finalize();
         mMorph = null;
         deinit();
+*/
     }
 
     /** initialize VisVideo for actor + buffer bitmap */
