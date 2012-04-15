@@ -71,8 +71,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
     private String MORPH = "alphablend";
-    private String INPUT = "dummy";
-    private String ACTOR = "starscope";
+    private String INPUT = "debug";
+    private String ACTOR = "lv_analyzer";
     private boolean DOBEAT = false;
     private boolean DOSWAP = true;
     private boolean DOMORPH = false;

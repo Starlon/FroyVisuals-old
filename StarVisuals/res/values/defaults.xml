@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="prefs_defaults_input_selection">mic</string>
+    <string name="prefs_defaults_input_selection">debug</string>
     <string name="prefs_defaults_morph_selection">alphablend</string>
     <string name="prefs_defaults_actor_selection">lv_analyzer</string>
     <string name="prefs_defaults_do_beat">false</string>

@@ -159,10 +159,6 @@ final class Visual {
 
         mCanvas = new Canvas();
         
-        mBitmap = Bitmap.createBitmap(mTextureWidth, mTextureHeight, Bitmap.Config.ARGB_8888);
-
-        mCanvas.setBitmap(mBitmap);
-
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
         mPaint.setTextSize(10);
@@ -206,8 +202,6 @@ final class Visual {
 
         resetGl();
 
-        mBitmap.recycle();
-        mBitmap = null;
         mPixelBuffer = null;
         mPaint = null;
         mCanvas = null;
@@ -245,6 +239,8 @@ final class Visual {
         mVisualObject.draw();
 
         mBitmap = mVisualObject.getBitmap();
+
+        mCanvas.setBitmap(mBitmap);
 
         // Fill the bitmap with black.
         mBitmap.eraseColor(Color.BLACK);

@@ -18,7 +18,8 @@ class VisualObject {
     public VisMorph mMorph = null;
     public Bitmap mBitmap;
     private boolean mDisposed = false;
-    private static boolean inited = false;
+    private boolean inited = false;
+    private boolean mVideoInitialized;
 
     private static native void renderVisual(Bitmap bitmap, int binPtr, int videoPtr);
     private static native void fpsInit();
@@ -36,14 +37,12 @@ class VisualObject {
         mVideo = new VisVideo();
         mBin = new VisBin();
         mInput = new VisInput(input);
-        mActor = new VisActor("oinksie");
+        mActor = new VisActor(actor);
         //mMorph = new VisMorph(morph);
 
         mBin.setSupportedDepth(VisVideo.VISUAL_VIDEO_DEPTH_ALL);
         mBin.setPreferredDepth(VisVideo.VISUAL_VIDEO_DEPTH_32BIT);
         //mBin.setMorph(morph);
-
-        mBin.setVideo(mVideo.VisVideo);
 
         mBin.connect(mActor.VisActor, mInput.VisInput);
 
@@ -55,15 +54,18 @@ class VisualObject {
             return; 
         }
 
-        initVideo(w, h, mBitmap.getRowBytes());
-
         fpsInit();
+
+        // We initialize VisBin here.
+        onSizeChanged(w, h, w, h);
     }
 
     public void dispose()
     {
         if(mDisposed)
             return;
+        mBitmap.recycle();
+        mBitmap = null;
         mDisposed = true;
         mVideo.finalize();
         mVideo = null;
@@ -143,4 +145,49 @@ class VisualObject {
             return null;
         return mBitmap;
     }
+
+    public void onSizeChanged(int w, int h, int oldw, int oldh)
+    {
+        /* free previous Bitmap */
+        if(mBitmap != null)
+        {
+            mBitmap.recycle();
+            mBitmap = null;
+        }
+
+        /* create bitmap */
+        mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+
+        /* validate bitmap */
+        if(mBitmap.getConfig() != Bitmap.Config.ARGB_8888)
+        {
+            Log.e(TAG, "Bitmap format is not RGBA_8888 !");
+            return;
+        }
+
+        Log.i(TAG, "onSizeChanged(): "+w+"x"+h+" stride: "+mBitmap.getRowBytes()+" (prev: "+oldw+"x"+oldh+")");
+
+        if(!mVideoInitialized)
+        {
+            initVideo(w, h, mBitmap.getRowBytes());
+            mVideoInitialized = true;
+        }
+        else
+        {
+            mVideo.setAttributes(w, h,
+                                    mBitmap.getRowBytes(),
+                                    VisVideo.VISUAL_VIDEO_DEPTH_32BIT);
+
+            /* create new VisVideo object for this bitmap */
+            mBin.setVideo(mVideo.VisVideo);
+            mActor.videoNegotiate(VisVideo.VISUAL_VIDEO_DEPTH_32BIT, false, false);
+        }
+
+        /* realize bin */
+        mBin.realize();
+        mBin.sync(false);
+        mBin.depthChanged();
+
+    }
+
 }
