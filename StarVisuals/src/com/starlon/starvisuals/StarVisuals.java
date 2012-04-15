@@ -72,7 +72,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     private String MORPH = "alphablend";
     private String INPUT = "dummy";
-    private String ACTOR = "lv_analyzer";
+    private String ACTOR = "starscope";
     private boolean DOBEAT = false;
     private boolean DOSWAP = true;
     private boolean DOMORPH = false;
@@ -389,7 +389,9 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
         getPrefs();
 
-        mVisualObject = new VisualObject(mWidth, mHeight, mActor, mInput, mMorph);
+        mVisualObject = new VisualObject(WIDTH, HEIGHT, ACTOR, INPUT, MORPH);
+        //mVisualObject = new VisualObject(mWidth, mHeight, mActor, mInput, mMorph);
+
         mRendererGLVis = new StarVisualsRenderer(this, mVisualObject);
 
         mViewGL = new StarVisualsViewGL(this);
@@ -598,7 +600,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     static {
         System.loadLibrary("gnustl_shared");
         System.loadLibrary("visual");
-        System.loadLibrary("main");
         System.loadLibrary("lvclient");
     }
 

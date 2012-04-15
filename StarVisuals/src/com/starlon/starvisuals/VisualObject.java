@@ -18,21 +18,30 @@ class VisualObject {
     public VisMorph mMorph = null;
     public Bitmap mBitmap;
     private boolean mDisposed = false;
+    private static boolean inited = false;
 
     private static native void renderVisual(Bitmap bitmap, int binPtr, int videoPtr);
     private static native void fpsInit();
+    private static native void init();
+    private static native void deinit();
 
     public VisualObject(int w, int h, String actor, String input, String morph)
     {
+        if(!inited)
+        {
+            init();
+            inited=true;
+        }
+
         mVideo = new VisVideo();
         mBin = new VisBin();
-        mActor = new VisActor(actor);
         mInput = new VisInput(input);
-        mMorph = new VisMorph(morph);
+        mActor = new VisActor("oinksie");
+        //mMorph = new VisMorph(morph);
 
         mBin.setSupportedDepth(VisVideo.VISUAL_VIDEO_DEPTH_ALL);
         mBin.setPreferredDepth(VisVideo.VISUAL_VIDEO_DEPTH_32BIT);
-        mBin.setMorph(morph);
+        //mBin.setMorph(morph);
 
         mBin.setVideo(mVideo.VisVideo);
 
@@ -64,8 +73,9 @@ class VisualObject {
         mActor = null;
         mInput.finalize();
         mInput = null;
-        mMorph.finalize();
+        //mMorph.finalize();
         mMorph = null;
+        deinit();
     }
 
     /** initialize VisVideo for actor + buffer bitmap */

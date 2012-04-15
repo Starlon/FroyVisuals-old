@@ -45,7 +45,7 @@ static struct
 
 
 /** VisualObject.init() */
-JNIEXPORT jboolean JNICALL Java_org_libvisual_android_VisualObject_fpsInit(JNIEnv * env, 
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_fpsInit(JNIEnv * env, 
                                                                          jobject  obj)
 {
     fps_init(&_v.fps);
@@ -54,7 +54,7 @@ JNIEXPORT jboolean JNICALL Java_org_libvisual_android_VisualObject_fpsInit(JNIEn
 
 
 /** VisualObject.renderVisual() */
-JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_renderVisual(JNIEnv * env, 
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_VisualObject_renderVisual(JNIEnv * env, 
                                                                                    jobject  obj, 
                                                                                    jobject bitmap,
                                                                                    jint bin,
@@ -102,4 +102,78 @@ JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_renderVisual(JNIE
     /* stop fps timing */
     fps_endFrame(&_v.fps);
 }
+
+/** VisLog -> android Log glue */
+static void _log_handler(VisLogSeverity severity, const char *msg, const VisLogSource *source, void *priv)
+{
+
+    switch(severity)
+    {
+        case VISUAL_LOG_DEBUG:
+            LOGI("(debug) %s(): %s", source->func, msg);
+            break;
+        case VISUAL_LOG_INFO:
+            LOGI("(info) %s", msg);
+            break;
+        case VISUAL_LOG_WARNING:
+            LOGW("(WARNING) %s", msg);
+            break;
+        case VISUAL_LOG_ERROR:
+            LOGE("(ERROR) (%s:%d) %s(): %s", source->file, source->line, source->func, msg);
+            break;
+        case VISUAL_LOG_CRITICAL:
+            LOGE("(CRITICAL) (%s:%d) %s(): %s", source->file, source->line, source->func, msg);
+            break;
+    }
+}
+
+
+/******************************************************************************
+ ******************************************************************************/
+
+/** LibVisual.init() */
+JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_init(JNIEnv * env, jobject  obj)
+{
+    if(visual_is_initialized())
+                return JNI_TRUE;
+
+    LOGI("LibVisual.init(): %s", visual_get_version());
+
+#ifndef NDEBUG
+    /* endless loop to wait for debugger to attach */
+    int foo = 1;
+    while(foo);
+#endif
+       
+    /* register VisLog handler to make it log to android logcat */
+    visual_log_set_handler(VISUAL_LOG_DEBUG, _log_handler, NULL);
+    visual_log_set_handler(VISUAL_LOG_INFO, _log_handler, NULL);
+    visual_log_set_handler(VISUAL_LOG_WARNING, _log_handler, NULL);
+    visual_log_set_handler(VISUAL_LOG_CRITICAL, _log_handler, NULL);
+    visual_log_set_handler(VISUAL_LOG_ERROR, _log_handler, NULL);
+    visual_log_set_verbosity(VISUAL_LOG_DEBUG);
+
+
+    /* initialize libvisual */
+    char *v[] = { "lvclient", NULL };
+    char **argv = v;
+    int argc=1;
+    visual_init(&argc,  &argv);
+
+     /* add our plugin search path */
+    visual_plugin_registry_add_path("/data/data/org.libvisual.android/lib");
+
+    return JNI_TRUE;
+}
+
+
+/** LibVisual.deinit() */
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_VisualObject_deinit(JNIEnv * env, jobject  obj)
+{
+    LOGI("LibVisual.deinit()");
+        
+    if(visual_is_initialized())
+        visual_quit();
+}
+
 

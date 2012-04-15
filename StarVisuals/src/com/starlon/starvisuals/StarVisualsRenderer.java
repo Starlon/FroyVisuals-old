@@ -40,8 +40,6 @@ public class StarVisualsRenderer implements Renderer {
     private NativeHelper mNativeHelper;
     private boolean mInited = false;
 
-    private static native void renderVisual(Bitmap bitmap, int binPtr, int videoPtr);
-
     public StarVisualsRenderer(Context context, VisualObject obj) {
         vis = new Visual(this, obj);
         mStats = new Stats();
@@ -101,6 +99,7 @@ final class Visual {
     private VisBin mBin;
     private VisVideo mVideo;
     private StarVisualsRenderer mRenderer;
+    private VisualObject mVisualObject;
 
     private FloatBuffer mVertexBuffer;   // buffer holding the vertices
     private float vertices[] = {
@@ -122,8 +121,7 @@ final class Visual {
     public Visual(StarVisualsRenderer renderer, VisualObject obj) {
 
         mRenderer = renderer;
-        mBin = obj.mBin;
-        mVideo = obj.mVideo;
+        mVisualObject = obj;
 
         // a float has 4 bytes so we allocate for each coordinate 4 bytes
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -244,6 +242,10 @@ final class Visual {
 
     public void updatePixels()
     {
+        mVisualObject.draw();
+
+        mBitmap = mVisualObject.getBitmap();
+
         // Fill the bitmap with black.
         mBitmap.eraseColor(Color.BLACK);
 
@@ -252,7 +254,7 @@ final class Visual {
 
 
         // If StarVisuals has text to display, then use a canvas and paint brush to display it.
-        String text = mRenderer.mActivity.getDisplayText();
+        String text = "hmmmmmmmmmmm....";//mRenderer.mActivity.getDisplayText();
         if(text != null)
         {
             // Give the bitmap a canvas so we can draw on it.

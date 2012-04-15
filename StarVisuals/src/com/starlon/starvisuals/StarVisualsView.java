@@ -128,7 +128,7 @@ public class StarVisualsView extends View {
             }
     
     
-            NativeHelper.initApp(WIDTH, HEIGHT);
+            //NativeHelper.initApp(WIDTH, HEIGHT);
         }
         mLock.unlock();
     }
