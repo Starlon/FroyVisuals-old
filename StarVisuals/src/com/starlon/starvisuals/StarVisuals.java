@@ -141,46 +141,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     private Stats mStats = new Stats();
 
-    private void makeFile(String file, int id)
-    {
-        InputStream inputStream = getResources().openRawResource(id);
-     
-        FileOutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return;
-        }
-        
-     
-        int i;
-        try {
-            i = inputStream.read();
-            while (i != -1)
-            {
-                outputStream.write(i);
-                i = inputStream.read();
-            }
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void keepScreenOn(boolean truth)
-    {
-        mView.setKeepScreenOn(truth);
-        mViewGL.setKeepScreenOn(truth);
-    }
-
-    private boolean detectGL20()
-    {
-        ActivityManager am =
-            (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        ConfigurationInfo info = am.getDeviceConfigurationInfo();
-        return (info.reqGlEsVersion >= 0x20000 && mUseGL);
-    }
 
     /** Called when the activity is first created. */
     @Override
@@ -344,6 +304,47 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 mView.startThread();
             }
             mUseGL = truth;
+    }
+
+    private void makeFile(String file, int id)
+    {
+        InputStream inputStream = getResources().openRawResource(id);
+     
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        
+     
+        int i;
+        try {
+            i = inputStream.read();
+            while (i != -1)
+            {
+                outputStream.write(i);
+                i = inputStream.read();
+            }
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void keepScreenOn(boolean truth)
+    {
+        mView.setKeepScreenOn(truth);
+        mViewGL.setKeepScreenOn(truth);
+    }
+
+    private boolean detectGL20()
+    {
+        ActivityManager am =
+            (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        ConfigurationInfo info = am.getDeviceConfigurationInfo();
+        return (info.reqGlEsVersion >= 0x20000 && mUseGL);
     }
 
     public void getPrefs()
