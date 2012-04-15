@@ -18,7 +18,7 @@ class VisualObject {
     public VisMorph mMorph = null;
     public Bitmap mBitmap;
     private boolean mDisposed = false;
-    private boolean inited = false;
+    private static boolean inited = false;
     private boolean mVideoInitialized;
 
     private static native void renderVisual(Bitmap bitmap, int binPtr, int videoPtr);

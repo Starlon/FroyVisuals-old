@@ -134,7 +134,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private GestureDetector mGestureDetector = null;
     OnTouchListener mGestureListener;
 
-    private StarVisualsView mView = null;
     private StarVisualsViewGL mViewGL = null;
 
     public static VisualObject mVisualObject;
@@ -171,7 +170,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         class MyGestureDetector extends SimpleOnGestureListener {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                synchronized(mView.mSynch)
+                synchronized(mViewGL)
                 {
                     int actor = -1;
                     try {
@@ -229,34 +228,34 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         if(key.equals("prefs_actor_selection"))
         {
             mActor = mPrefs.getString(key, ACTOR);
-            NativeHelper.actorSetCurrentByName(mActor, true);
+            //NativeHelper.actorSetCurrentByName(mActor, true);
 
         }
         else if(key.equals("prefs_input_selection"))
         {
             mInput = mPrefs.getString(key, INPUT);
-            NativeHelper.inputSetCurrentByName(mInput, true);
+            //NativeHelper.inputSetCurrentByName(mInput, true);
             enableMic(mInput);
         } 
         else if(key.equals("prefs_morph_selection"))
         {
             mMorph = mPrefs.getString(key, MORPH);
-            NativeHelper.morphSetCurrentByName(mInput, true);
+            //NativeHelper.morphSetCurrentByName(mInput, true);
         } 
         else if(key.equals("prefs_do_beat"))
         {
             mDoBeat = mPrefs.getBoolean(key, DOBEAT);
-            NativeHelper.setMorphStyle(mDoMorph);
+            //NativeHelper.setMorphStyle(mDoMorph);
         }        
         else if(key.equals("prefs_do_morph"))
         {
             mDoMorph = mPrefs.getBoolean(key, DOMORPH);
-            NativeHelper.setMorphStyle(mDoMorph);
+            //NativeHelper.setMorphStyle(mDoMorph);
         }        
         else if(key.equals("prefs_morph_steps"))
         {
             mMorphSteps = mPrefs.getInt(key, MORPHSTEPS);
-            NativeHelper.setMorphSteps(mMorphSteps);
+            //NativeHelper.setMorphSteps(mMorphSteps);
         }        
         else if(key.equals("prefs_max_fps"))
         {
@@ -293,15 +292,14 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
             if(truth)
             {
-                mView.stopThread();
                 setContentView(mViewGL);
-                //mViewGL.startThread();
+                //mView.stopThread();
             }
             else
             {
                 //mViewGL.stopThread();
-                setContentView(mView);
-                mView.startThread();
+                //setContentView(mView);
+                //mView.startThread();
             }
             mUseGL = truth;
     }
@@ -335,7 +333,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     public void keepScreenOn(boolean truth)
     {
-        mView.setKeepScreenOn(truth);
+        //mView.setKeepScreenOn(truth);
         mViewGL.setKeepScreenOn(truth);
     }
 
@@ -398,7 +396,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mViewGL.setRenderer(mRendererGLVis);
 
-        mView = new StarVisualsView(this);
+        //mView = new StarVisualsView(this);
 
         
         if(detectGL20())
@@ -408,8 +406,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         }
         else
         {
-            mView.setOnClickListener(StarVisuals.this);
-            mView.setOnTouchListener(mGestureListener);
+            //mView.setOnClickListener(StarVisuals.this);
+            //mView.setOnTouchListener(mGestureListener);
         }
 
     }
@@ -436,7 +434,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 mSongTrack = intent.getStringExtra("track");
                 mSongChanged = System.currentTimeMillis();
                 mAlbumArt = mAlbumMap.get(mSongAlbum);
-                NativeHelper.newSong();
+                //NativeHelper.newSong();
                 warn("(" + mSongTrack + ")", 5000, true);
             }
             else if(action.equals("com.android.music.playbackcomplete"))
@@ -447,7 +445,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 mSongTrack = null;
                 mSongChanged = 0l;
                 mAlbumArt = null;
-                NativeHelper.newSong();
+                //NativeHelper.newSong();
                 warn("Ended playback...", true);
             }
         }
@@ -561,6 +559,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 return true;
             }
 
+/*
             case R.id.menu_about_plugins:
             {
                 startActivity(new Intent(this, AboutPluginsActivity.class));
@@ -569,9 +568,9 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
             case R.id.menu_close_app:
             {
-                synchronized(mView.mSynch)
+                synchronized(mViewGL)
                 {
-                    NativeHelper.visualsQuit();
+                    //NativeHelper.visualsQuit();
                     this.finish();
                 }
                 return true;
@@ -581,6 +580,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 startActivity(new Intent(this, EditSettingsActivity.class));
                 return true;
             }
+*/
 /*
             case R.id.menu_use_gl:
             {
@@ -1073,16 +1073,16 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         if(mAudio == null)
             mAudio = findAudioRecord();
 
-        if(mAudio != null && mView != null)
+        if(mAudio != null)
         {
             if(mAudio.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING)
                 mAudio.stop();
 
             mMicData = new short[PCM_SIZE * 2];
 
-            synchronized(mView.mSynch)
+            synchronized(mViewGL)
             {
-                NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
+                //NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
                 mAudioThread = new Thread(new Runnable() 
                 {
                     public void run() {

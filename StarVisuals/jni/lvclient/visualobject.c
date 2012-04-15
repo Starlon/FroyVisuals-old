@@ -100,7 +100,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_init(JNIEnv
     visual_init(&argc,  &argv);
 
      /* add our plugin search path */
-    visual_plugin_registry_add_path("/data/data/org.libvisual.android/lib");
+    visual_plugin_registry_add_path("/data/data/com.starlon.starvisuals/lib");
 
     return JNI_TRUE;
 }
@@ -136,7 +136,6 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_VisualObject_renderVisual(JN
                                                                                    jint bin,
                                                                                    jint video)
 {
-    return;
     VisBin *b = (VisBin *) bin;
     VisVideo *bvideo = (VisVideo *) video;
         

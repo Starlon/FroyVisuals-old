@@ -37,7 +37,6 @@ public class StarVisualsRenderer implements Renderer {
     private int mSurfaceHeight;
     private Stats mStats;
     public StarVisuals mActivity;
-    private NativeHelper mNativeHelper;
     private boolean mInited = false;
 
     public StarVisualsRenderer(Context context, VisualObject obj) {
@@ -91,7 +90,6 @@ final class Visual {
     private int mTextureId = -1;
     private int[] textureCrop = new int[4]; 
     private boolean glInited = false;
-    private NativeHelper mNativeHelper;
     private Bitmap mBitmap;
     private Paint mPaint;
     private Canvas mCanvas;
@@ -241,12 +239,6 @@ final class Visual {
         mBitmap = mVisualObject.getBitmap();
 
         mCanvas.setBitmap(mBitmap);
-
-        // Fill the bitmap with black.
-        mBitmap.eraseColor(Color.BLACK);
-
-        // Pass bitmap to be rendered by native function.
-        //mNativeHelper.renderBitmap(mBitmap, mActivity.getDoSwap());
 
 
         // If StarVisuals has text to display, then use a canvas and paint brush to display it.
