@@ -47,7 +47,6 @@ SET(libvisual_HEADERS
   lv_rectangle.h
   lv_ringbuffer.h
   lv_buffer.h
-  lv_config.h
   lv_collection.h
   lv_os.h
   lv_math.h
@@ -79,7 +78,6 @@ SET(libvisual_SOURCES
   lv_cpu.c
   lv_error.c
   lv_object.c
-  lv_config.c
   lv_ringbuffer.c
   lv_buffer.c
   lv_collection.c
@@ -134,7 +132,8 @@ IF(NOT VISUAL_OS_WIN32)
   LIST(APPEND LINK_LIBS dl rt)
 
   LIST(APPEND libvisual_SOURCES
-	private/posix/lv_module_dlfcn.cpp
+    private/posix/lv_module_dlfcn.cpp
+    private/posix/lv_mem_posix.cpp
   )
 
   IF(ENABLE_THREADS)
@@ -150,11 +149,12 @@ IF(NOT VISUAL_OS_WIN32)
 ELSE(NOT VISUAL_OS_WIN32)
 
   LIST(APPEND libvisual_SOURCES
-	private/windows/lv_module_win32.cpp
+    private/windows/lv_module_win32.cpp
+    private/windows/lv_mem_win32.cpp
   )
 
   IF(ENABLE_THREADS)
-	LIST(APPEND libvisual_SOURCES
+    LIST(APPEND libvisual_SOURCES
       private/windows/lv_thread_win32.c
     )
   ELSE(ENABLE_THREADS)
@@ -173,6 +173,7 @@ SET_TARGET_PROPERTIES(libvisual
   OUTPUT_NAME visual-${LV_VERSION_SUFFIX}
   VERSION ${LV_VERSION}
   SOVERSION ${LV_VERSION_SUFFIX}
+  COMPILE_FLAGS -fvisibility=hidden
   LINK_FLAGS -Wl,--no-undefined
 )
 
