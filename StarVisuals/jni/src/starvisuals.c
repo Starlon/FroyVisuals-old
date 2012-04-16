@@ -19,6 +19,10 @@
 #include <math.h>
 #include <sys/types.h>
 
+#ifdef HAVE_NEON
+#   include <arm_neon.h>
+#endif
+
 #define DEVICE_DEPTH VISUAL_VIDEO_DEPTH_32BIT
 
 #define  LOG_TAG    "StarVisuals"
@@ -1795,14 +1799,14 @@ VisVideo *new_video(int w, int h, VisVideoDepth depth)
 
 void swap_video_BGR(VisVideo *vid1, VisVideo *vid2)
 {
-    int8_t *d = visual_video_get_pixels(vid1);
-    int8_t *s = visual_video_get_pixels(vid2);
+    uint8_t *d = visual_video_get_pixels(vid1);
+    uint8_t *s = visual_video_get_pixels(vid2);
     int i;
 
     for(i = 0; i < vid1->width * vid1->height * sizeof(int32_t); i+=4)
     {
         d[i] = s[i+2];
-        d[i+1] = s[i+1];
+        //d[i+1] = s[i+1];
         d[i+2] = s[i];
         d[i+3] = 0xff;
     }
@@ -1874,7 +1878,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
 
     visual_video_depth_transform(vid, v.video);
 
-/*
     if(do_swap)
     {
         int32_t data[vid->pitch * vid->height];
@@ -1884,7 +1887,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
 
         swap_video_BGR(vid, swap);
     }
-*/
+
     AndroidBitmap_unlockPixels(env, bitmap);
 
     visual_mutex_unlock(v.mutex);

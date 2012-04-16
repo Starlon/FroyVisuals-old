@@ -39,6 +39,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define ALIGN(A)
 #endif
 
+#define asm __asm
+
 #ifndef _MATH_H
 #define M_PI		3.14159265358979323846	/* pi */
 #define M_PI_2		1.57079632679489661923	/* pi/2 */

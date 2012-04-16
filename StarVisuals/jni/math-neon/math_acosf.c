@@ -43,7 +43,7 @@ float acosf_neon_hfp(float x)
 	asm volatile (
 	"vdup.f32	 	d1, %0					\n\t"	//d1 = {pi/2, pi/2};
 	"vsub.f32	 	d0, d1, d0				\n\t"	//d0 = d1 - d0;
-	::"r"(__acosf_pi_2):
+	::"r"(__acosf_pi_2)
 	);
 #endif
 }
