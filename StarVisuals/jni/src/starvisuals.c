@@ -1803,13 +1803,24 @@ void swap_video_BGR(VisVideo *vid1, VisVideo *vid2)
     uint8_t *s = visual_video_get_pixels(vid2);
     int i;
 
+#ifdef HAVE_NEON
+    uint8x4_t col;
+
+    for(i = 0; i < vid1->pitch * vid1->height; i+=vid1->bpp)
+    {
+
+    }
+
+#else
     for(i = 0; i < vid1->width * vid1->height * sizeof(int32_t); i+=4)
     {
+
         d[i] = s[i+2];
         //d[i+1] = s[i+1];
         d[i+2] = s[i];
         d[i+3] = 0xff;
     }
+#endif
 }
 
 // Render the view's bitmap image.
