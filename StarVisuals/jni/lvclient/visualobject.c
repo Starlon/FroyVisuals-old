@@ -92,6 +92,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_init(JNIEnv
     visual_log_set_handler(VISUAL_LOG_ERROR, _log_handler, NULL);
     visual_log_set_verbosity(VISUAL_LOG_DEBUG);
 
+    visual_init_path_add("/data/data/com.starlon.starvisuals/lib");
 
     /* initialize libvisual */
     char *v[] = { "lvclient", NULL };
@@ -100,7 +101,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_init(JNIEnv
     visual_init(&argc,  &argv);
 
      /* add our plugin search path */
-    visual_plugin_registry_add_path("/data/data/com.starlon.starvisuals/lib");
+    //visual_plugin_registry_add_path("/data/data/com.starlon.starvisuals/lib");
 
     return JNI_TRUE;
 }

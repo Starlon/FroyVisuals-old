@@ -54,7 +54,8 @@ JNIEXPORT jint JNICALL Java_org_libvisual_android_VisInput_inputNew(JNIEnv * env
     const char *inputName = (*env)->GetStringUTFChars(env, name, &isCopy);  
 
     /* plugin valid ? */
-    if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_INPUT, inputName)))
+    if(!visual_actor_valid_by_name(inputName))
+    //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_INPUT, inputName)))
     {
             LOGE("Invalid input-plugin: \"%s\"", inputName);
             goto _vin_exit;

@@ -83,7 +83,8 @@ JNIEXPORT jint JNICALL Java_org_libvisual_android_VisActor_actorNew(JNIEnv * env
     const char *actorName = (*env)->GetStringUTFChars(env, name, &isCopy);  
 
     /* actor valid ? */
-    if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_ACTOR, actorName)))
+    //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_ACTOR, actorName)))
+    if(!visual_actor_valid_by_name(actorName))
     {
             LOGE("Invalid actor-plugin: \"%s\"", actorName);
             goto _van_exit;

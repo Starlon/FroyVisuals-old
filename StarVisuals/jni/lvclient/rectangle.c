@@ -55,12 +55,3 @@ JNIEXPORT jint JNICALL Java_org_libvisual_android_VisRectangle_rectangleNew(JNIE
 }
 
 
-
-JNIEXPORT jint JNICALL Java_org_libvisual_android_VisRectangle_rectangleFree(JNIEnv * env, jobject  obj, jint rect)
-{
-    LOGI("VisRectangle.rectangleFree()");
-
-    visual_rectangle_free((VisRectangle *)rect);
-
-    return VISUAL_OK;
-}

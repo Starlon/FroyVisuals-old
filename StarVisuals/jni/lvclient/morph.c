@@ -55,7 +55,8 @@ JNIEXPORT jint JNICALL Java_org_libvisual_android_VisMorph_morphNew(JNIEnv * env
     const char *morphName = (*env)->GetStringUTFChars(env, name, &isCopy);  
 
     /* plugin valid ? */
-    if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_MORPH, morphName)))
+    if(!visual_actor_valid_by_name(morphName))
+    //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_MORPH, morphName)))
     {
             LOGE("Invalid morph-plugin: \"%s\"", morphName);
             goto _vin_exit;
