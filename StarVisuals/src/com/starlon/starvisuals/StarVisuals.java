@@ -180,6 +180,64 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         return (info.reqGlEsVersion >= 0x20000 && mUseGL);
     }
 
+    public void getPrefs()
+    {
+        mActor = mPrefs.getString("prefs_actor_selection", ACTOR);
+        mInput = mPrefs.getString("prefs_input_selection", INPUT);
+        mMorph = mPrefs.getString("prefs_morph_selection", MORPH);
+        mDoMorph = mPrefs.getBoolean("prefs_morph_enabled", DOMORPH);
+        mDoBeat = mPrefs.getBoolean("prefs_do_beat", DOBEAT);
+        mDoSwap = mPrefs.getBoolean("prefs_do_swap", DOSWAP);
+        mDoMorph = mPrefs.getBoolean("prefs_do_morph", DOMORPH);
+        mMorphSteps = mPrefs.getInt("prefs_morph_steps", MORPHSTEPS);
+        mMaxFPS = mPrefs.getInt("prefs_max_fps", MAXFPS);
+        mShowFPS = mPrefs.getBoolean("prefs_show_fps", SHOWFPS);
+        mShowArt = mPrefs.getBoolean("prefs_show_art", SHOWART);
+        mShowText = mPrefs.getBoolean("prefs_show_text", SHOWTEXT);
+        mIsActive = mPrefs.getBoolean("prefs_is_active", ISACTIVE);
+        mUseGL = mPrefs.getBoolean("prefs_use_gl", USEGL);
+    }
+
+    public void setPrefs()
+    {
+        mEditor.putString("prefs_actor_selection", mActor);
+        mEditor.putString("prefs_input_selection", mInput);
+        mEditor.putString("prefs_morph_selection", mMorph);
+        mEditor.putBoolean("prefs_do_beat", mDoBeat);
+        mEditor.putBoolean("prefs_do_swap", mDoSwap);
+        mEditor.putBoolean("prefs_do_morph", mDoMorph);
+        mEditor.putBoolean("prefs_do_beat", mDoBeat);
+        mEditor.putInt("prefs_morph_steps", mMorphSteps);
+        mEditor.putInt("prefs_max_fps", mMaxFPS);
+        mEditor.putBoolean("prefs_show_fps", mShowFPS);
+        mEditor.putBoolean("prefs_show_art", mShowArt);
+        mEditor.putBoolean("prefs_show_text", mShowText);
+        mEditor.putBoolean("prefs_is_active", mIsActive);
+        mEditor.putBoolean("prefs_use_gl", mUseGL);
+
+        mEditor.commit();
+    }
+
+    public void resetPrefs()
+    {
+        mEditor.putString("prefs_actor_selection", ACTOR);
+        mEditor.putString("prefs_input_selection", INPUT);
+        mEditor.putString("prefs_morph_selection", MORPH);
+        mEditor.putBoolean("prefs_do_beat", DOBEAT);
+        mEditor.putBoolean("prefs_do_swap", DOSWAP);
+        mEditor.putBoolean("prefs_do_morph", DOMORPH);
+        mEditor.putBoolean("prefs_do_beat", DOBEAT);
+        mEditor.putInt("prefs_morph_steps", MORPHSTEPS);
+        mEditor.putInt("prefs_max_fps", MAXFPS);
+        mEditor.putBoolean("prefs_show_fps", SHOWFPS);
+        mEditor.putBoolean("prefs_show_art", SHOWART);
+        mEditor.putBoolean("prefs_show_text", SHOWTEXT);
+        mEditor.putBoolean("prefs_is_active", ISACTIVE);
+        mEditor.putBoolean("prefs_use_gl", USEGL);
+
+        mEditor.commit();
+    }
+
     /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle state)
@@ -213,6 +271,10 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 {
                     int actor = -1;
                     try {
+                        if(velocityX > velocityY)
+                        {
+                            if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                                return false;
                             if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && 
                                     Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                                 // Left swipe
@@ -226,13 +288,16 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 NativeHelper.finalizeSwitch(1);
                                 actor = NativeHelper.actorGetCurrent();
                             }
-                            if(e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE &&
+                        } else {
+                            if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MAX_OFF_PATH)
+                                return false;
+                            if(actor == -1 && e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE &&
                                 Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                                 // Up swipe
                                 Log.w(TAG, "Up swipe...");
                                 NativeHelper.finalizeSwitch( -2 );
                                 actor = NativeHelper.actorGetCurrent();
-                            } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE &&
+                            } else if (actor == -1 && e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE &&
                                 Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                                 // Down swipe
 
@@ -240,6 +305,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 NativeHelper.finalizeSwitch( 2 );
                                 actor = NativeHelper.actorGetCurrent();
                             }
+                        }
                         if(actor >= 0)
                         {
                             mActor = NativeHelper.actorGetName(actor);

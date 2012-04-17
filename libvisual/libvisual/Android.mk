@@ -24,6 +24,10 @@ PRIV := private/lv_video_convert.c  private/lv_video_fill.c  private/lv_video_sc
 LOCAL_SRC_FILES := $(PRIV) $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildcard $(LOCAL_PATH)/*.cpp)))
 LOCAL_CFLAGS    += $(ARCH_CFLAGS)
 
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+    LOCAL_ARM_NEON  := true
+endif
+
 LOCAL_SHARED_LIBRARIES := cpufeatures
 
 include $(BUILD_SHARED_LIBRARY)
