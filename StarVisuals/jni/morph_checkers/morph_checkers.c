@@ -104,7 +104,7 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
 
     if(visual_timer_elapsed_msecs(priv->time) > 300)
     {
-        priv->flip = !priv->flip;
+        priv->flip++;
         visual_timer_reset(priv->time);
         visual_timer_start(priv->time);
     }
@@ -113,7 +113,8 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
     
     int flip = priv->flip;
     int col, row;
-    int size = 2;
+    int x, y;
+    int size = dest->width / 20.0;
     VisRectangle drect;
     VisRectangle srect;
     VisVideo *inter;
@@ -124,15 +125,15 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
     visual_video_set_buffer(sub, data); 
     visual_video_get_boundary(sub, &drect);
 
-    for(col = 0; col < dest->width; col+=size)
+    for(col = 0, x = 0; col < dest->width; col+=size, x++)
     {
-        for(row = 0; row < dest->height; row+=size)
+        for(row = 0, y = 0; row < dest->height; row+=size, y++)
         {
-            if(flip)
+            if(flip % 2)
             {
-                if(col % 2)
+                if(x % 2)
                 {
-                    if(row % 2)
+                    if(y % 2)
                     {
                         inter = src1;
                     }
@@ -143,7 +144,7 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
                 }
                 else
                 {
-                    if(row % 2)
+                    if(y % 2)
                     {
                         inter = src2;
                     }
@@ -155,9 +156,9 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
             }
             else
             {
-                if(col % 2)
+                if(x % 2)
                 {
-                    if(row % 2)
+                    if(y % 2)
                     {
                         inter = src2;
                     }
@@ -168,7 +169,7 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
                 }
                 else
                 {
-                    if(row % 2)
+                    if(y % 2)
                     {
                         inter = src1;
                     }
