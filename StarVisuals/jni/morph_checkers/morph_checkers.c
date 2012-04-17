@@ -113,9 +113,16 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
     
     int flip = priv->flip;
     int col, row;
-    int size = 4;
-    VisRectangle rect;
+    int size = 2;
+    VisRectangle drect;
+    VisRectangle srect;
     VisVideo *inter;
+    VisVideo *sub = visual_video_new();
+    visual_video_clone(sub, dest);
+    visual_video_set_dimension(sub, size, size);
+    int32_t data[size * size * dest->bpp];
+    visual_video_set_buffer(sub, data); 
+    visual_video_get_boundary(sub, &drect);
 
     for(col = 0; col < dest->width; col+=size)
     {
@@ -172,10 +179,14 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
                 }
 
             }
-            visual_rectangle_set(&rect, col, row, size, size);
-            visual_video_blit_overlay_rectangle(dest, &rect, inter, &rect, TRUE);
+            visual_rectangle_set(&srect, col, row, size, size);
+            visual_video_region_sub(sub, inter, &srect);
+
+            visual_video_blit_overlay_rectangle(dest, &srect, sub, &drect, FALSE);
         }
     }
+
+    visual_video_free_buffer(sub);
 
 	return 0;
 }
