@@ -1558,6 +1558,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
 
     visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
+    v.morph_name = "checkers";
     visual_mutex_lock(v.mutex);
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
     v_cycleActor((int)prev);
