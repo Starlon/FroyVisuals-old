@@ -1,6 +1,7 @@
 package com.starlon.starvisuals;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.util.Log;
 
 import org.libvisual.android.VisVideo;
@@ -134,11 +135,13 @@ class VisualObject {
         mBin.setVideo(avideo.VisVideo);
     }
 
-    public void draw()
+    public Bitmap run()
     {
         if(mDisposed)
-            return;
+            return null;
+        mBitmap.eraseColor(Color.BLACK);
         renderVisual(mBitmap, mBin.VisBin, mVideo.VisVideo);
+        return mBitmap;
     }
 
     public Bitmap getBitmap()

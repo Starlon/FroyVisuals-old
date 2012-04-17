@@ -31,7 +31,7 @@
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 // Initial plugins. Preferences should override these.
-#define MORPH "alphablend"
+#define MORPH "checkers"
 #define ACTOR "lv_analyzer"
 #define INPUT "mic"
 

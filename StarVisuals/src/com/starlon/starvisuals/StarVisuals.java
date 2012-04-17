@@ -55,6 +55,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 {
     private final static String TAG = "StarVisuals/StarVisualsActivity";
     private final static String PREFS = "StarVisualsPrefs";
+    private final static int WIDTH = 128;
+    private final static int HEIGHT = 128;
     private final static int ARTWIDTH = 100;
     private final static int ARTHEIGHT = 100;
     private AudioRecord mAudio = null;
@@ -64,13 +66,13 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private static int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_STEREO;
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
-    private final String MORPH = "alphablend";
+    private final String MORPH = "checkers";
     private final String INPUT = "dummy";
     private final String ACTOR = "lv_analyzer";
     private final boolean DOBEAT = false;
     private final boolean DOSWAP = true;
-    private final boolean DOMORPH = false;
-    private final int MORPHSTEPS = 3;
+    private final boolean DOMORPH = true;
+    private final int MORPHSTEPS = 30;
     private final int MAXFPS = 40;
     private final boolean SHOWFPS = true;
     private final boolean SHOWART = true;
@@ -95,6 +97,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public boolean mShowText = SHOWTEXT;
     public boolean mIsActive = ISACTIVE;
     public boolean mUseGL = USEGL;
+    public int mWidth = WIDTH;
+    public int mHeight = HEIGHT;
     public String mDisplayText = DISPLAYTEXT;
     public short mMicData[] = null;
 
@@ -128,6 +132,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private StarVisualsViewGL mViewGL = null;
 
     private Stats mStats = new Stats();
+    private VisualObject mVisualObject;
+
+    public VisualObject getVisualObject()
+    {
+        return mVisualObject;
+    }
 
     private void makeFile(String file, int id)
     {
@@ -209,13 +219,17 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Left swipe
                             Log.w(TAG, "Left swipe...");
-                            actor = NativeHelper.cycleActor(-1);
+                            NativeHelper.finalizeSwitch(0);
+                            actor = NativeHelper.actorGetCurrent();
                         }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                                 Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                             // Right swipe
                             Log.w(TAG, "Right swipe...");
-                            actor = NativeHelper.cycleActor(1);
+                            NativeHelper.finalizeSwitch(1);
+                            actor = NativeHelper.actorGetCurrent();
                         }
+
+
                         if(actor >= 0)
                         {
                             mActor = NativeHelper.actorGetName(actor);
@@ -272,7 +286,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         else if(key.equals("prefs_do_beat"))
         {
             mDoBeat = mPrefs.getBoolean(key, DOBEAT);
-            NativeHelper.setMorphStyle(mDoMorph);
         }        
         else if(key.equals("prefs_do_morph"))
         {
@@ -435,6 +448,10 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         setUseGL(mUseGL);
 
         registerReceiver(mReceiver, mIntentFilter);
+
+        mVisualObject = new VisualObject(mWidth, mHeight, mActor, mInput, mMorph);
+
+        //setPlugins(true);
     }
 
     // another activity comes to foreground
@@ -549,6 +566,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         System.loadLibrary("gnustl_shared");
         System.loadLibrary("visual");
         System.loadLibrary("common");
+        System.loadLibrary("lvclient");
         System.loadLibrary("main");
     }
 
