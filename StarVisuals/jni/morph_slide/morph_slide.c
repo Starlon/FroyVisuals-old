@@ -112,7 +112,7 @@ const VisPluginInfo *get_plugin_info (int *count)
 	{
 		.type = VISUAL_PLUGIN_TYPE_MORPH,
 
-		.plugname = "slide_upper",
+		.plugname = "slide_top",
 		.name = "Slide upper morph",
 		.author = "Dennis Smit <ds@nerds-incorporated.org>",
 		.version = "0.1",

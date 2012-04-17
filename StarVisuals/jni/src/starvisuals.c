@@ -31,7 +31,7 @@
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 // Initial plugins. Preferences should override these.
-#define MORPH "checkers"
+#define MORPH "alphablend"
 #define ACTOR "lv_analyzer"
 #define INPUT "mic"
 
@@ -1546,37 +1546,23 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
     if(bin_morph && !visual_morph_is_done(bin_morph))
         return FALSE;
 
-    if(prev == 1) {
-        v.morph_name = "slide_left";
-    }
-    else if(prev == -1)
+    switch(prev)
     {
-        v.morph_name = "slide_right";
-    }
-    else if(prev == 2)
-    {
-        v.morph_name = "slide_up";
-    }
-    else if(prev == -2)
-    {
-        v.morph_name = "slide_down";
-    } 
-    else if(prev == 0)
-    {
-        v.morph_name = v.morph_name;
-    }
-    else
-    {
-        v.morph_name = MORPH;
+        case 1: v.morph_name = "slide_left"; break;
+        case -1: v.morph_name = "slide_right"; break;
+        case 2: v.morph_name = "slide_top"; break;
+        case -2: v.morph_name = "slide_bottom"; break;
+        case 0: prev = 1; break;
+        default: v.morph_name = MORPH; break;
     }
 
     visual_log(VISUAL_LOG_INFO, "Switching actors %s -> %s", morph, v.morph_name);
 
+    visual_mutex_lock(v.mutex);
     visual_bin_set_morph_by_name (v.bin, (char *)v.morph_name);
-
     v_cycleActor((int)prev);
     visual_bin_switch_actor_by_name(v.bin, (char *)v.actor_name);
-
+    visual_mutex_unlock(v.mutex);
     return TRUE;
 }
 
@@ -1762,7 +1748,7 @@ void app_main(int w, int h)
     visual_video_allocate_buffer(v.video);
     visual_bin_set_video(v.bin, v.video);
 
-    visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_DIRECT);
+    visual_bin_switch_set_style (v.bin, VISUAL_SWITCH_STYLE_MORPH);
     visual_bin_switch_set_automatic (v.bin, 1);
     visual_bin_switch_set_steps (v.bin, 3);
 
