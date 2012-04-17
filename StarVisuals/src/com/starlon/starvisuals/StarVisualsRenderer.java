@@ -25,6 +25,8 @@ import java.nio.ShortBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import com.openglesbook.particlesystem.Particles;
+
 public class StarVisualsRenderer implements Renderer {
     private Visual vis;
     private int mSurfaceWidth;
@@ -32,14 +34,16 @@ public class StarVisualsRenderer implements Renderer {
     private Stats mStats;
     private StarVisuals mActivity;
     private NativeHelper mNativeHelper;
+    public Particles mParticles;
     private boolean mInited = false;
 
     public StarVisualsRenderer(Context context) {
-        vis = new Visual((StarVisuals)context);
+        vis = new Visual((StarVisuals)context, this);
         mStats = new Stats();
         mStats.statsInit();
         mActivity = (StarVisuals)context;
         mInited = true;
+        mParticles  = new Particles(context);
     }
 
     public void destroy()
@@ -60,6 +64,7 @@ public class StarVisualsRenderer implements Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
         vis.initialize(gl10, width, height);
+        mParticles.onSurfaceChanged(gl10, width, height);
         mSurfaceWidth = width;
         mSurfaceHeight = height;
     }
@@ -79,6 +84,7 @@ public class StarVisualsRenderer implements Renderer {
 
         timer.scheduleAtFixedRate(task, delay, period);
 
+        mParticles.onSurfaceCreated(gl10, eglconfig);
     }
 
 
@@ -95,6 +101,7 @@ final class Visual {
     private boolean glInited = false;
     private NativeHelper mNativeHelper;
     private StarVisuals mActivity;
+    private StarVisualsRenderer mRenderer;
     private Bitmap mBitmap;
     private Paint mPaint;
     private Canvas mCanvas;
@@ -117,8 +124,9 @@ final class Visual {
             1.0f, 0.0f      // bottom right (V3)
     };
 
-    public Visual(StarVisuals activity) {
+    public Visual(StarVisuals activity, StarVisualsRenderer renderer) {
         mActivity = activity;
+        mRenderer = renderer;
 
         // a float has 4 bytes so we allocate for each coordinate 4 bytes
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -335,7 +343,6 @@ final class Visual {
 
         if(mGL10 == null)
             return;
-
         // Draw
         updatePixels();
 
@@ -362,6 +369,7 @@ final class Visual {
         mGL10.glTexSubImage2D(GL10.GL_TEXTURE_2D, 0, 0, 0, mTextureWidth, mTextureHeight, 
                            GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, mPixelBuffer);
         
+
         // Draw the vertices as triangle strip
         mGL10.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, vertices.length / 3);
 
@@ -369,6 +377,7 @@ final class Visual {
         mGL10.glDisableClientState(GL10.GL_VERTEX_ARRAY);
         mGL10.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
+        mRenderer.mParticles.onDrawFrame(gl);
     }
 }
 

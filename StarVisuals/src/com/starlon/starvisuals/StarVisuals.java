@@ -72,7 +72,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private final boolean DOBEAT = false;
     private final boolean DOSWAP = true;
     private final boolean DOMORPH = true;
-    private final int MORPHSTEPS = 30;
+    private final int MORPHSTEPS = 8;
     private final int MAXFPS = 40;
     private final boolean SHOWFPS = true;
     private final boolean SHOWART = true;

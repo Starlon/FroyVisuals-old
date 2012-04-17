@@ -16,7 +16,7 @@ ifeq ($(TARGET_ARCH_ABI),armeabi)
 endif
         
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-    LV_CFLAGS += -DHAVE_NEON=1 -mfloat-abi=softfp -mfpu=neon -ftree-vectorize
+    LV_CFLAGS += -DHAVE_NEON=1 -mfloat-abi=softfp -mfpu=neon -ftree-vectorize -ftree-vectorizer-verbose=5
 endif
             
 ifeq ($(TARGET_ARCH_ABI),x86)
