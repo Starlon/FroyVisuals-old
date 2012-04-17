@@ -114,7 +114,7 @@ int lv_morph_checkers_apply (VisPluginData *plugin, float rate, VisAudio *audio,
     int flip = priv->flip;
     int col, row;
     int x, y;
-    int size = dest->width / 20.0;
+    int size = dest->width / 5.0;
     VisRectangle drect;
     VisRectangle srect;
     VisVideo *inter;
