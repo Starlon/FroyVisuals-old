@@ -375,7 +375,7 @@ final class Visual {
         mGL10.glDisableClientState(GL10.GL_VERTEX_ARRAY);
         mGL10.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
-        mRenderer.mParticles.onDrawFrame(gl);
+        //mRenderer.mParticles.onDrawFrame(gl);
     }
 }
 
