@@ -29,21 +29,21 @@ package org.libvisual.android;
 /** VisBin wrapper */
 public class VisBin
 {
-    public int VisBin;
+    public CPtr VisBin;
 
     /** implemented by visual.c */
-    private native int binNew();
-    private native int binUnref(int binPtr);
-    private native int binSetDepth(int binPtr, int depth);
-    private native int binSetSupportedDepth(int binPtr, int depth);
-    private native int binSetPreferredDepth(int binPtr, int depth);
-    private native int binSetVideo(int binPtr, int videoPtr);
-    private native int binRealize(int binPtr);
-    private native int binSync(int binPtr, boolean noevent);
-    private native int binDepthChanged(int binPtr);
-    private native int binConnect(int binPtr, int actorPtr, int inputPtr);
-    private native int binSetMorphByName(int binPtr, String name);
-    private native int binSwitchActorByName(int binPtr, String name);
+    private native CPtr binNew();
+    private native int binUnref(CPtr binPtr);
+    private native int binSetDepth(CPtr binPtr, int depth);
+    private native int binSetSupportedDepth(CPtr binPtr, int depth);
+    private native int binSetPreferredDepth(CPtr binPtr, int depth);
+    private native int binSetVideo(CPtr binPtr, CPtr videoPtr);
+    private native int binRealize(CPtr binPtr);
+    private native int binSync(CPtr binPtr, boolean noevent);
+    private native int binDepthChanged(CPtr binPtr);
+    private native int binConnect(CPtr binPtr, CPtr actorPtr, CPtr inputPtr);
+    private native int binSetMorphByName(CPtr binPtr, String name);
+    private native int binSwitchActorByName(CPtr binPtr, String name);
                 
         
     public VisBin()
@@ -66,7 +66,7 @@ public class VisBin
         binSetPreferredDepth(VisBin, depth);
     }
 
-    public void setVideo(int videoPtr)
+    public void setVideo(CPtr videoPtr)
     {
         binSetVideo(VisBin, videoPtr);
     }
@@ -86,7 +86,7 @@ public class VisBin
         binDepthChanged(VisBin);
     }
 
-    public void connect(int actorPtr, int inputPtr)
+    public void connect(CPtr actorPtr, CPtr inputPtr)
     {
         binConnect(VisBin, actorPtr, inputPtr);
     }

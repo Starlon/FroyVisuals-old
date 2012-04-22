@@ -48,45 +48,42 @@ public class VisVideo
         
 
     /** implemented by visual.c */
-    private native int videoNew();
-    private native void videoUnref(int videoPtr);
-    private native void videoAllocateBuffer(int videoPtr);
-    private native void videoSetAttributes(int videoPtr, int width, int height, int stride, int depth); 
+    private native CPtr videoNew();
+    private native void videoUnref(CPtr videoPtr);
+    private native void videoAllocateBuffer(CPtr videoPtr);
+    private native void videoSetAttributes(CPtr videoPtr, int width, int height, int stride, int depth); 
     private static native int videoGetHighestDepth(int depth);
     private static native int videoGetHighestDepthNoGl(int depth);    
     private static native int videoBppFromDepth(int depth);
     private static native int videoGetBoundary();
     private static native int videoEnumFromValue(int depthvalue);
-    private static native int videoRegionSub(int src, int rect);
+    private static native int videoRegionSub(CPtr src, CPtr rect);
     private static native int videoRegionSubByValues(int x, int y, int width, int height);
     private static native int videoRegionSubAll(int src);
-    private static native int videoRegionSubWithBoundary(int drect, int src, int srect);
+    private static native int videoRegionSubWithBoundary(CPtr drect, CPtr src, CPtr srect);
      
     private static native int videoCompositeSetType(int type);
     private static native int videoSetColorkey(int color);
     private static native int videoSetSurface(int alpha);
-    private static native int videoBlitOverlayRectangle(int drect, int src, int srect, int alpha);
-    private static native int videoBlitOverlayRectangleScale(int drect, int src, int srect);
-    private static native int videoBlitOverlay(int src, int x, int y, int alpha);
+    private static native int videoBlitOverlayRectangle(CPtr drect, CPtr src, CPtr srect, int alpha);
+    private static native int videoBlitOverlayRectangleScale(CPtr drect, CPtr src, CPtr srect);
+    private static native int videoBlitOverlay(CPtr src, int x, int y, int alpha);
 
     private static native int videoFillAlphaColor(int color, int density);
     private static native int videoFillAlpha(int density);
     private static native int videoFillAlphaRectangle(int density, int rectangle);
     private static native int videoFillColor(int color);
     private static native int videoFillColorRectangle(int color, int rectangle);
-    private static native int videoFlipPixelBytes(int src);
-    private static native int videoRotate(int src, int degrees);
-    private static native int videoRotateNew(int src, int degrees);
-    private static native int videoMirror(int src, int degrees);
-    private static native int videoMirrorNew(int src, int orient);
-    private static native int videoDepthTransform(int src);
-    private static native int videoZoomNew(int src, int scale_method, float zoom_factor);
+    private static native int videoFlipPixelBytes(CPtr src);
+    private static native int videoRotate(CPtr src, int degrees);
+    private static native int videoRotateNew(CPtr src, int degrees);
+    private static native int videoMirror(CPtr src, int degrees);
+    private static native int videoMirrorNew(CPtr src, int orient);
+    private static native int videoDepthTransform(CPtr src);
+    private static native int videoZoomNew(int CPtr, int scale_method, float zoom_factor);
 
     /* current VisVideo object */
-    public int VisVideo;    
-
-
-
+    public CPtr VisVideo;    
         
     public VisVideo()
     {

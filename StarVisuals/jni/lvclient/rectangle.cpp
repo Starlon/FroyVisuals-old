@@ -43,15 +43,24 @@ static struct
 
 
 /** VisRectangle.rectangleNew() */
-JNIEXPORT jint JNICALL Java_org_libvisual_android_VisRectangle_rectangleNew(JNIEnv * env, jobject  obj, jint x, jint y, jint width, jint height)
+JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisRectangle_rectangleNew(JNIEnv * env, jobject  jobj, jint x, jint y, jint width, jint height)
 {
-    VisRectangle *rect = NULL;
-
     LOGI("VisRectangle.rectangleNew()");
 
-    rect = visual_rectangle_new(x, y, width, height);
+    VisRectangle *rect = visual_rectangle_new(x, y, width, height);
 
-    return (jint) rect;
+    jobject obj;
+    jclass tempClass;
+
+    tempClass = env->FindClass("org/libvisual/android/CPtr");
+
+    obj = env->AllocObject( tempClass );
+    if (obj)
+    {
+        env->SetLongField( obj, env->GetFieldID( tempClass, "peer", "J" ), (jlong)rect);
+    }
+    return obj;
+
 }
 
 

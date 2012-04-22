@@ -48,7 +48,7 @@ class LibVisualBitmapView extends LibVisualView
         
     /* implementend by liblvclient.so */
     private static native boolean fpsInit();
-    private static native void renderVisual(Bitmap bitmap, int binPtr, int videoPtr);
+    private static native void renderVisual(Bitmap bitmap, CPtr binPtr, CPtr videoPtr);
 
 
 

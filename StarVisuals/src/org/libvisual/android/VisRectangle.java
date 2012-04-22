@@ -29,11 +29,11 @@ package org.libvisual.android;
 /** VisRectangle wrapper */
 public class VisRectangle
 {
-    public int VisRectangle;
+    public CPtr VisRectangle;
 
     /** implemented by visual.c */
-    private native int rectangleNew(int x, int y, int width, int height);
-    private native int rectangleUnref(int rectanglePtr);
+    private native CPtr rectangleNew(int x, int y, int width, int height);
+    private native int rectangleUnref(CPtr rectanglePtr);
     private native int rectangleSet(int x, int y, int width, int height);
     private native int rectangleCopy(int dest, int src);
     private native int rectangleSetX(int x);

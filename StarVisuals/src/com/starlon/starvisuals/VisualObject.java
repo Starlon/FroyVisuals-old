@@ -9,6 +9,7 @@ import org.libvisual.android.VisBin;
 import org.libvisual.android.VisActor;
 import org.libvisual.android.VisInput;
 import org.libvisual.android.VisMorph;
+import org.libvisual.android.CPtr;
 
 class VisualObject {
     private final String TAG = "StarVisuals/VisualObject";
@@ -22,7 +23,7 @@ class VisualObject {
     private static boolean inited = false;
     private boolean mVideoInitialized;
 
-    private static native void renderVisual(Bitmap bitmap, int binPtr, int videoPtr);
+    private static native void renderVisual(Bitmap bitmap, CPtr binPtr, CPtr videoPtr);
     private static native void fpsInit();
     private static native void init();
     private static native void deinit();

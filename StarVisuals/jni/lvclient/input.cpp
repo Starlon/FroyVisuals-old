@@ -39,48 +39,58 @@ static struct
 
 }_l;
 
+/******************************************************************************/
 
+namespace LVCLIENT {
 
-
-/** VisMorph.morphNew() */
-JNIEXPORT jint JNICALL Java_org_libvisual_android_VisMorph_morphNew(JNIEnv * env, jobject  obj, jstring name)
+/** VisInput.inputNew() */
+JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisInput_inputNew(JNIEnv * env, jobject  jobj, jstring name)
 {
-    LOGI("VisMorph.morphNew()");
+    LOGI("VisInput.inputNew()");
 
     /* result */
-    VisMorph *m = NULL;
+    VisInput *i = NULL;
         
     /* get name string */
     jboolean isCopy;  
-    const char *morphName = (*env)->GetStringUTFChars(env, name, &isCopy);  
+    const char *inputName = env->GetStringUTFChars( name, &isCopy);  
 
     /* plugin valid ? */
-    if(!visual_actor_valid_by_name(morphName))
-    //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_MORPH, morphName)))
+    if(!visual_actor_valid_by_name(inputName))
+    //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_INPUT, inputName)))
     {
-            LOGE("Invalid morph-plugin: \"%s\"", morphName);
+            LOGE("Invalid input-plugin: \"%s\"", inputName);
             goto _vin_exit;
     }
 
-    /* create new morph */
-    m = visual_morph_new(morphName);
+    /* create new input */
+    i = visual_input_new(inputName);
         
 _vin_exit:
-    (*env)->ReleaseStringUTFChars(env, name, morphName);
-    return (jint) m;
+    env->ReleaseStringUTFChars(name, inputName);
+
+    jobject obj;
+    jclass tempClass;
+
+    tempClass = env->FindClass("org/libvisual/android/CPtr");
+
+    obj = env->AllocObject( tempClass );
+    if (obj)
+    {
+        env->SetLongField( obj, env->GetFieldID(tempClass, "peer", "J" ), (jlong)i);
+    }
+    return obj;
 }
 
 
-/** VisMorph.morphUnref() */
-JNIEXPORT void JNICALL Java_org_libvisual_android_VisMorph_morphUnref(JNIEnv * env, jobject  obj, jint morph)
+/** VisInput.inputUnref() */
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisInput_inputUnref(JNIEnv * env, jobject  obj, jobject input)
 {
-    LOGI("VisMorph.morphUnref()");
+    LOGI("VisInput.inputUnref()");
 
-    VisMorph *m = (VisMorph *) morph;
-    visual_object_unref(VISUAL_OBJECT(morph));        
+    VisInput *i = getObjectFromCPtr<VisInput *>(env, input);
+    visual_object_unref(VISUAL_OBJECT(i));        
 }
 
 
-/******************************************************************************/
-
-
+}

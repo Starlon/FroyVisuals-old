@@ -29,13 +29,13 @@ package org.libvisual.android;
 /** VisActor wrapper */
 public class VisActor
 {
-    public int VisActor;
+    public CPtr VisActor;
 
     /** implemented by visual.c */
-    private native int actorNew(String name);
-    private native int actorUnref(int actorPtr);
-    private native int actorGetSupportedDepth(int actorPtr);
-    private native int actorVideoNegotiate(int actorPtr, int rundepth, boolean noevent, boolean forced);
+    private native CPtr actorNew(String name);
+    private native int actorUnref(CPtr actorPtr);
+    private native int actorGetSupportedDepth(CPtr actorPtr);
+    private native int actorVideoNegotiate(CPtr actorPtr, int rundepth, boolean noevent, boolean forced);
         
         
     public VisActor(String name)

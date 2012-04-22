@@ -24,6 +24,7 @@
 #ifndef _VISUAL_H
 #define _VISUAL_H
 
+#include <jni.h>
 
 #define  LOG_TAG    "libvisual"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -39,6 +40,11 @@
 #define DEBUG 1
 #endif
 
+namespace LVCLIENT {
 
+template <class T>
+T getObjectFromCPtr( JNIEnv *env, jobject cptr );
+
+}
 
 #endif /* _VISUAL_H */

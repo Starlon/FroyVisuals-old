@@ -29,11 +29,11 @@ package org.libvisual.android;
 /** VisMorph wrapper */
 public class VisMorph
 {
-    public int VisMorph;
+    public CPtr VisMorph;
 
     /** implemented by visual.c */
-    private native int morphNew(String name);
-    private native int morphUnref(int morphPtr);
+    private native CPtr morphNew(String name);
+    private native int morphUnref(CPtr morphPtr);
         
     public VisMorph(String name)
     {

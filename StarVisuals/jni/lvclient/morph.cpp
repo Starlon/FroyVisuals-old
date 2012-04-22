@@ -39,45 +39,49 @@ static struct
 
 }_l;
 
-/******************************************************************************/
 
-/** VisInput.inputNew() */
-JNIEXPORT jint JNICALL Java_org_libvisual_android_VisInput_inputNew(JNIEnv * env, jobject  obj, jstring name)
+
+namespace LVCLIENT {
+
+/** VisMorph.morphNew() */
+JNIEXPORT jint JNICALL Java_org_libvisual_android_VisMorph_morphNew(JNIEnv * env, jobject  obj, jstring name)
 {
-    LOGI("VisInput.inputNew()");
+    LOGI("VisMorph.morphNew()");
 
     /* result */
-    VisInput *i = NULL;
+    VisMorph *m = NULL;
         
     /* get name string */
     jboolean isCopy;  
-    const char *inputName = (*env)->GetStringUTFChars(env, name, &isCopy);  
+    const char *morphName = env->GetStringUTFChars(name, &isCopy);  
 
     /* plugin valid ? */
-    if(!visual_actor_valid_by_name(inputName))
-    //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_INPUT, inputName)))
+    if(!visual_actor_valid_by_name(morphName))
+    //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_MORPH, morphName)))
     {
-            LOGE("Invalid input-plugin: \"%s\"", inputName);
+            LOGE("Invalid morph-plugin: \"%s\"", morphName);
             goto _vin_exit;
     }
 
-    /* create new input */
-    i = visual_input_new(inputName);
+    /* create new morph */
+    m = visual_morph_new(morphName);
         
 _vin_exit:
-    (*env)->ReleaseStringUTFChars(env, name, inputName);
-    return (jint) i;
+    env->ReleaseStringUTFChars(name, morphName);
+    return (jint) m;
 }
 
 
-/** VisInput.inputUnref() */
-JNIEXPORT void JNICALL Java_org_libvisual_android_VisInput_inputUnref(JNIEnv * env, jobject  obj, jint input)
+/** VisMorph.morphUnref() */
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisMorph_morphUnref(JNIEnv * env, jobject  obj, jobject morph)
 {
-    LOGI("VisInput.inputUnref()");
+    LOGI("VisMorph.morphUnref()");
 
-    VisInput *i = (VisInput *) input;
-    visual_object_unref(VISUAL_OBJECT(input));        
+    VisMorph *m = getObjectFromCPtr<VisMorph *>(env, morph);
+    visual_object_unref(VISUAL_OBJECT(m));        
 }
 
 
+/******************************************************************************/
 
+}

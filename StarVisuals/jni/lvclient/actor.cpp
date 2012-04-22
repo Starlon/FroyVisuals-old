@@ -39,48 +39,24 @@ static struct
 
 }_l;
 
-
-
-/** VisLog -> android Log glue */
-static void _log_handler(VisLogSeverity severity, const char *msg, const VisLogSource *source, void *priv)
-{
-
-    switch(severity)
-    {
-        case VISUAL_LOG_DEBUG:
-            LOGI("(debug) %s(): %s", source->func, msg);
-            break;
-        case VISUAL_LOG_INFO:
-            LOGI("(info) %s", msg);
-            break;
-        case VISUAL_LOG_WARNING:
-            LOGW("(WARNING) %s", msg);
-            break;
-        case VISUAL_LOG_ERROR:
-            LOGE("(ERROR) (%s:%d) %s(): %s", source->file, source->line, source->func, msg);
-            break;
-        case VISUAL_LOG_CRITICAL:
-            LOGE("(CRITICAL) (%s:%d) %s(): %s", source->file, source->line, source->func, msg);
-            break;
-    }
-}
-
-
 /******************************************************************************
  ******************************************************************************/
 
+namespace LVCLIENT {
 /** VisActor.actorNew() */
-JNIEXPORT jint JNICALL Java_org_libvisual_android_VisActor_actorNew(JNIEnv * env, jobject  obj, jstring name)
+JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisActor_actorNew(JNIEnv * env, jobject  jobj, jstring name)
 {
     LOGI("VisActor.actorNew()");
 
 
     /* result */
     VisActor *a = NULL;
+    VisPluginData *plugin_data;
+    VisRandomContext *r_context;
 
     /* get name string */
     jboolean isCopy;  
-    const char *actorName = (*env)->GetStringUTFChars(env, name, &isCopy);  
+    const char *actorName = env->GetStringUTFChars(name, &isCopy);  
 
     /* actor valid ? */
     //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_ACTOR, actorName)))
@@ -94,40 +70,50 @@ JNIEXPORT jint JNICALL Java_org_libvisual_android_VisActor_actorNew(JNIEnv * env
     a = visual_actor_new(actorName);
 
     /* set random seed */
-    VisPluginData    *plugin_data = visual_actor_get_plugin(a);
-    VisRandomContext *r_context   = visual_plugin_get_random_context (plugin_data);
+    plugin_data = visual_actor_get_plugin(a);
+    r_context   = visual_plugin_get_random_context (plugin_data);
     visual_random_context_set_seed(r_context, time(NULL));
 
 _van_exit:
-    (*env)->ReleaseStringUTFChars(env, name, actorName);
-    return (jint) a;
+    env->ReleaseStringUTFChars(name, actorName);
+
+    jobject obj;
+    jclass tempClass;
+    
+    tempClass = env->FindClass("org/libvisual/android/CPtr");
+
+    obj = env->AllocObject(tempClass );
+    if (obj)
+    {
+        env->SetLongField(obj, env->GetFieldID(tempClass, "peer", "3" ), (jlong)a);
+    }
+    
+    return obj;
 }
 
 
 /** VisActor.actorUnref() */
-JNIEXPORT void JNICALL Java_org_libvisual_android_VisActor_actorUnref(JNIEnv * env, jobject  obj, jint actor)
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisActor_actorUnref(JNIEnv * env, jobject  obj, jobject actor)
 {
     LOGI("VisActor.actorUnref()");
 
-    VisActor *a = (VisActor *) actor;
-    visual_object_unref(VISUAL_OBJECT(actor));
+    VisActor *a = getObjectFromCPtr<VisActor *>(env, actor);
+    visual_object_unref(VISUAL_OBJECT(a));
 }
 
 
 /** VisActor.actorGetSupportedDepth() */
-JNIEXPORT jint JNICALL Java_org_libvisual_android_VisActor_actorGetSupportedDepth(JNIEnv * env, jobject  obj, jint actor)
+JNIEXPORT jint JNICALL Java_org_libvisual_android_VisActor_actorGetSupportedDepth(JNIEnv * env, jobject  obj, jobject actor)
 {
-    VisActor *a = (VisActor *) actor;
+    VisActor *a = getObjectFromCPtr<VisActor *>(env, actor);
     return visual_actor_get_supported_depth(a);
 }
 
 /** VisActor.videoNegotiate() */
-JNIEXPORT int JNICALL Java_org_libvisual_android_VisActor_actorVideoNegotiate(JNIEnv * env, jobject  obj, jint actor, jint rundepth, jboolean noevent, jboolean forced)
+JNIEXPORT int JNICALL Java_org_libvisual_android_VisActor_actorVideoNegotiate(JNIEnv * env, jobject  obj, jobject actor, jint rundepth, jboolean noevent, jboolean forced)
 {
-    VisActor *a = (VisActor *) actor;
+    VisActor *a = getObjectFromCPtr<VisActor *>(env, actor);
             
     return visual_actor_video_negotiate(a, rundepth, noevent, forced);
 }
-
-
-
+}

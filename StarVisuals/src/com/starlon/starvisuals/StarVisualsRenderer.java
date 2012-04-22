@@ -25,8 +25,6 @@ import java.nio.ShortBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.openglesbook.particlesystem.Particles;
-
 public class StarVisualsRenderer implements Renderer {
     private Visual vis;
     private int mSurfaceWidth;

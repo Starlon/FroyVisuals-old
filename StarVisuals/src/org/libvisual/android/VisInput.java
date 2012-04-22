@@ -29,11 +29,11 @@ package org.libvisual.android;
 /** VisInput wrapper */
 public class VisInput
 {
-    public int VisInput;
+    public CPtr VisInput;
 
     /** implemented by visual.c */
-    private native int inputNew(String name);
-    private native int inputUnref(int inputPtr);
+    private native CPtr inputNew(String name);
+    private native int inputUnref(CPtr inputPtr);
         
     public VisInput(String name)
     {

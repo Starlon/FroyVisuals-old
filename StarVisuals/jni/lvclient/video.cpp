@@ -40,59 +40,58 @@ static struct
 }_l;
 
 
+namespace LVCLIENT {
 
-/** VisLog -> android Log glue */
-static void _log_handler(VisLogSeverity severity, const char *msg, const VisLogSource *source, void *priv)
+VisVideo *getObjectFromCPtr( JNIEnv *env, jobject cptr )
 {
+    VisVideo *vid;
+    jclass classPtr = env->GetObjectClass(cptr );
+    jfieldID CPtr_peer_ID = env->GetFieldID(classPtr, "peer", "3" );
+    jbyte *peer = (jbyte *) env->GetLongField(cptr, CPtr_peer_ID );
 
-    switch(severity)
-    {
-        case VISUAL_LOG_DEBUG:
-            LOGI("(debug) %s(): %s", source->func, msg);
-            break;
-        case VISUAL_LOG_INFO:
-            LOGI("(info) %s", msg);
-            break;
-        case VISUAL_LOG_WARNING:
-            LOGW("(WARNING) %s", msg);
-            break;
-        case VISUAL_LOG_ERROR:
-            LOGE("(ERROR) (%s:%d) %s(): %s", source->file, source->line, source->func, msg);
-            break;
-        case VISUAL_LOG_CRITICAL:
-            LOGE("(CRITICAL) (%s:%d) %s(): %s", source->file, source->line, source->func, msg);
-            break;
-    }
+    vid = ( VisVideo *) peer;
+
+    return vid;
 }
-
-
 
 
 /******************************************************************************/
 
 /** VisVideo.videoNew() */
-JNIEXPORT jint JNICALL Java_org_libvisual_android_VisVideo_videoNew(JNIEnv * env, jobject  obj)
+JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisVideo_videoNew(JNIEnv * env, jobject  jobj)
 {
     LOGI("VisVideo.videoNew()");
 
-    return (jint) visual_video_new();
+    VisVideo *vid = visual_video_new();
+
+    jobject obj;
+    jclass tempClass;
+
+    tempClass = env->FindClass("org/libvisual/android/CPtr");
+    
+    obj = env->AllocObject( tempClass );
+    if (obj)
+    {
+        env->SetLongField( obj, env->GetFieldID( tempClass, "peer", "J" ), (jlong)vid);
+    }
+    return obj;
 }
 
 
 /** VisVideo.videoUnref() */
-JNIEXPORT void JNICALL Java_org_libvisual_android_VisVideo_videoUnref(JNIEnv * env, jobject  obj, jint video)
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisVideo_videoUnref(JNIEnv * env, jobject  obj, jobject cptr)
 {
     LOGI("VisVideo.videoUnref()");
 
-    VisVideo *v = (VisVideo *) video;
-    visual_object_unref(VISUAL_OBJECT(video));        
+    VisVideo *v = getObjectFromCPtr<VisVideo *>(env, cptr);
+    visual_object_unref(VISUAL_OBJECT(v));        
 }
 
 
 /** VisVideo.setAttributes() */
 JNIEXPORT void JNICALL Java_org_libvisual_android_VisVideo_videoSetAttributes(JNIEnv * env, 
                                                                               jobject  obj, 
-                                                                              jint video, 
+                                                                              jobject cptr, 
                                                                               jint width, 
                                                                               jint height, 
                                                                               jint stride, 
@@ -100,8 +99,9 @@ JNIEXPORT void JNICALL Java_org_libvisual_android_VisVideo_videoSetAttributes(JN
 {
     LOGI("VisVideo.videoSetAttributes()");
         
-    VisVideo *v = (VisVideo *) video;
-    visual_video_set_attributes(v, width, height, stride, depth);
+    VisVideo *v = getObjectFromCPtr<VisVideo *>(env, cptr);
+
+    visual_video_set_attributes(v, width, height, stride, (VisVideoDepth)depth);
 }
 
 
@@ -127,14 +127,15 @@ JNIEXPORT jint JNICALL Java_org_libvisual_android_VisVideo_videoGetHighestDepthN
 JNIEXPORT jint JNICALL Java_org_libvisual_android_VisVideo_videoBppFromDepth(JNIEnv * env, jobject  obj, jint depth)
 {
     LOGI("VisVideo.videoBppFromDepth()");
-    return visual_video_bpp_from_depth(depth);
+    return visual_video_bpp_from_depth((VisVideoDepth)depth);
 }
 
 
 /** VisVideo.videoAllocateBuffer() */
-JNIEXPORT void JNICALL Java_org_libvisual_android_VisVideo_videoAllocateBuffer(JNIEnv * env, jobject  obj, int videoPtr)
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisVideo_videoAllocateBuffer(JNIEnv * env, jobject  obj, jobject videoPtr)
 {
     LOGI("VisVideo.videoAllocateBuffer()");
-    VisVideo *v = (VisVideo *) videoPtr;
+    VisVideo *v = getObjectFromCPtr<VisVideo *>(env, videoPtr);
     visual_video_allocate_buffer(v);
+}
 }

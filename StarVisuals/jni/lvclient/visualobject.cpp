@@ -67,10 +67,7 @@ static void _log_handler(VisLogSeverity severity, const char *msg, const VisLogS
 }
 
 
-
 // Native calls
-
-
 
 /** LibVisual.init() */
 JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_init(JNIEnv * env, jobject  obj)
