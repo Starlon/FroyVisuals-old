@@ -42,7 +42,8 @@ static struct
 /******************************************************************************
  ******************************************************************************/
 
-namespace LVCLIENT {
+extern "C" {
+
 /** VisActor.actorNew() */
 JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisActor_actorNew(JNIEnv * env, jobject  jobj, jstring name)
 {
@@ -85,7 +86,7 @@ _van_exit:
     obj = env->AllocObject(tempClass );
     if (obj)
     {
-        env->SetLongField(obj, env->GetFieldID(tempClass, "peer", "3" ), (jlong)a);
+        env->SetLongField(obj, env->GetFieldID(tempClass, "peer", "J" ), (jlong)a);
     }
     
     return obj;

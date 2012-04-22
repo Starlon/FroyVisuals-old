@@ -133,8 +133,8 @@ public class VisualObject {
     {
         if(mDisposed)
             return null;
-        mBitmap.eraseColor(Color.BLACK);
-        renderVisual(mBitmap, mBin.VisBin, mVideo.VisVideo);
+        mBitmap.eraseColor(Color.RED);
+        //renderVisual(mBitmap, mBin.VisBin, mVideo.VisVideo);
         return mBitmap;
     }
 

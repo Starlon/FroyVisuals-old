@@ -42,6 +42,7 @@ static struct
     Fps fps;
 }_v;
 
+extern "C" {
 /** VisLog -> android Log glue */
 static void _log_handler(VisLogSeverity severity, const char *msg, const VisLogSource *source, void *priv)
 {
@@ -66,14 +67,10 @@ static void _log_handler(VisLogSeverity severity, const char *msg, const VisLogS
     }
 }
 
-
-// Native calls
-
-/** LibVisual.init() */
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_init(JNIEnv * env, jobject  obj)
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_init(JNIEnv * env, jclass obj)
 {
     if(visual_is_initialized())
-                return JNI_TRUE;
+                return;
 
     LOGI("LibVisual.init(): %s", visual_get_version());
 
@@ -96,16 +93,11 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_init(JNIEnv
     char **argv = v;
     int argc=1;
     visual_init(&argc,  &argv);
-
-     /* add our plugin search path */
-    //visual_plugin_registry_add_path("/data/data/com.starlon.starvisuals/lib");
-
-    return JNI_TRUE;
 }
 
 
 /** LibVisual.deinit() */
-JNIEXPORT void JNICALL Java_com_starlon_starvisuals_VisualObject_deinit(JNIEnv * env, jobject  obj)
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_deinit(JNIEnv * env, jclass clazz)
 {
     LOGI("LibVisual.deinit()");
         
@@ -119,17 +111,16 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_VisualObject_deinit(JNIEnv *
 
 
 /** VisualObject.fpsInit() */
-JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_VisualObject_fpsInit(JNIEnv * env, 
-                                                                         jobject  obj)
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_fpsInit(JNIEnv * env, 
+                                                                         jclass clazz)
 {
     fps_init(&_v.fps);
-    return JNI_TRUE;
 }
 
 
 /** VisualObject.renderVisual() */
-JNIEXPORT void JNICALL Java_com_starlon_starvisuals_VisualObject_renderVisual(JNIEnv * env, 
-                                                                                   jobject  obj, 
+JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_renderVisual(JNIEnv * env, 
+                                                                                   jclass clazz, 
                                                                                    jobject bitmap,
                                                                                    jint bin,
                                                                                    jint video)
@@ -177,4 +168,4 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_VisualObject_renderVisual(JN
     fps_endFrame(&_v.fps);
 }
 
-
+}

@@ -41,6 +41,7 @@ static struct
 
 
 
+extern "C" {
 
 /** VisRectangle.rectangleNew() */
 JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisRectangle_rectangleNew(JNIEnv * env, jobject  jobj, jint x, jint y, jint width, jint height)
@@ -64,3 +65,5 @@ JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisRectangle_rectangleNew(J
 }
 
 
+
+}

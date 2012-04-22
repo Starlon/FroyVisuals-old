@@ -41,7 +41,7 @@ static struct
 
 
 
-namespace LVCLIENT {
+extern "C" {
 
 /** VisMorph.morphNew() */
 JNIEXPORT jint JNICALL Java_org_libvisual_android_VisMorph_morphNew(JNIEnv * env, jobject  obj, jstring name)

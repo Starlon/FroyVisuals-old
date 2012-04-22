@@ -25,14 +25,16 @@ import java.nio.ShortBuffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import org.libvisual.android.VisualObject;
+
 public class StarVisualsRenderer implements Renderer {
     private Visual vis;
+    public VisualObject mVisualObject;
     private int mSurfaceWidth;
     private int mSurfaceHeight;
     private Stats mStats;
     private StarVisuals mActivity;
-    private NativeHelper mNativeHelper;
-    public Particles mParticles;
+    //public Particles mParticles;
     private boolean mInited = false;
 
     public StarVisualsRenderer(Context context) {
@@ -40,8 +42,9 @@ public class StarVisualsRenderer implements Renderer {
         mStats = new Stats();
         mStats.statsInit();
         mActivity = (StarVisuals)context;
+        //mVisualObject = mActivity.getVisualObject();
         mInited = true;
-        mParticles  = new Particles(context);
+        //mParticles  = new Particles(context);
     }
 
     public void destroy()
@@ -62,7 +65,8 @@ public class StarVisualsRenderer implements Renderer {
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
         vis.initialize(gl10, width, height);
-        mParticles.onSurfaceChanged(gl10, width, height);
+        //mParticles.onSurfaceChanged(gl10, width, height);
+        //mVisualObject.onSizeChanged(width, height, mSurfaceWidth, mSurfaceHeight);
         mSurfaceWidth = width;
         mSurfaceHeight = height;
     }
@@ -82,7 +86,7 @@ public class StarVisualsRenderer implements Renderer {
 
         timer.scheduleAtFixedRate(task, delay, period);
 
-        mParticles.onSurfaceCreated(gl10, eglconfig);
+        //mParticles.onSurfaceCreated(gl10, eglconfig);
     }
 
 
@@ -90,6 +94,7 @@ public class StarVisualsRenderer implements Renderer {
 }
 
 final class Visual {
+    private VisualObject mVisualObject;
     private int mTextureWidth;
     private int mTextureHeight;
     private ByteBuffer mPixelBuffer;
@@ -97,7 +102,6 @@ final class Visual {
     private int mTextureId = -1;
     private int[] textureCrop = new int[4]; 
     private boolean glInited = false;
-    private NativeHelper mNativeHelper;
     private StarVisuals mActivity;
     private StarVisualsRenderer mRenderer;
     private Bitmap mBitmap;
@@ -125,6 +129,7 @@ final class Visual {
     public Visual(StarVisuals activity, StarVisualsRenderer renderer) {
         mActivity = activity;
         mRenderer = renderer;
+        //mVisualObject = mActivity.getVisualObject();
 
         // a float has 4 bytes so we allocate for each coordinate 4 bytes
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(vertices.length * 4);
@@ -145,7 +150,7 @@ final class Visual {
         mTextureBuffer.put(texture);
         mTextureBuffer.position(0);
 
-        mNativeHelper.initApp(mTextureWidth, mTextureHeight);
+        NativeHelper.initApp(mTextureWidth, mTextureHeight);
 
         mActivity.setPlugins(true);
     }
@@ -252,13 +257,13 @@ final class Visual {
 
         if(false)
         {
-            mBitmap = mActivity.getVisualObject().run();
+            mBitmap = mVisualObject.run();
             mCanvas.setBitmap(mBitmap);
         }
         else
         {
             mBitmap.eraseColor(Color.BLACK);
-            mNativeHelper.renderBitmap(mBitmap, mActivity.getDoSwap());
+            NativeHelper.renderBitmap(mBitmap, mActivity.getDoSwap());
         }
 
 
@@ -274,7 +279,7 @@ final class Visual {
             float textWidth = mPaint.measureText(text);
             float startPositionX = (canvasWidth - textWidth / 2) / 2;
     
-            mCanvas.drawText(text, startPositionX, mTextureWidth-12, mPaint);
+            mCanvas.drawText(text, startPositionX, mTextureHeight-18, mPaint);
         }
 
         // Copy bitmap pixels into buffer.

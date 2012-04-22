@@ -41,7 +41,7 @@ static struct
 
 /******************************************************************************/
 
-namespace LVCLIENT {
+extern "C" {
 
 /** VisInput.inputNew() */
 JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisInput_inputNew(JNIEnv * env, jobject  jobj, jstring name)

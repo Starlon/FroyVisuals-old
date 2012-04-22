@@ -39,18 +39,7 @@ static struct
 
 }_l;
 
-namespace LVCLIENT {
-VisBin *getVideoFromCPtr( JNIEnv *env, jobject cptr )
-{
-    VisBin *bin;
-    jclass classPtr = env->GetObjectClass(cptr );
-    jfieldID CPtr_peer_ID = env->GetFieldID( classPtr, "peer", "3" );
-    jbyte *peer = (jbyte *) env->GetLongField( cptr, CPtr_peer_ID );
-
-    bin = ( VisBin *) peer;
-
-    return bin;
-}
+extern "C" {
 
 /******************************************************************************/
 

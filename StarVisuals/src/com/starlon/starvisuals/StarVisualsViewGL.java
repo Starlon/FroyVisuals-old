@@ -40,7 +40,6 @@ import java.nio.ShortBuffer;
 
 class StarVisualsViewGL extends GLSurfaceView {
     private static final String TAG = "StarVisuals/StarVisualsView";
-    private NativeHelper mNativeHelper;
     private StarVisuals mActivity;
     private Stats mStats;
     private float mLastX = -1.0f;
@@ -97,7 +96,7 @@ class StarVisualsViewGL extends GLSurfaceView {
                 Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y);
 
                 mLock.lock();
-                mNativeHelper.mouseMotion(x, y);
+                //NativeHelper.mouseMotion(x, y);
                 mLock.unlock();
             break;
         }
