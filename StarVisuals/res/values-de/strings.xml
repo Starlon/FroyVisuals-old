@@ -7,18 +7,17 @@
     <string name="prefs_text_title_actor">Actor Plugin</string>
     <string name="prefs_text_title_input">Input Plugin</string>
     <string name="prefs_text_title_morph">Morph Plugin</string>
-    <string name="prefs_text_summary_morph_enabled">Morphs für Übergänge verwenden</string>
     <string name="prefs_text_actor_selection">Actor Plugin</string>
     <string name="prefs_text_input_selection">Input Plugin</string>
     <string name="prefs_text_morph_selection">Morph Plugin</string>
 
 
     <string name="prefs_text_forced_beat">Enforced Beat</string>
-    <string name="prefs_text_do_beat">Do Beat</string>
-    <string name="prefs_text_do_swap">Do Swap</string>
-    <string name="prefs_text_do_morph">Do Morph</string>
+    <string name="prefs_text_do_beat">Beat detection</string>
+    <string name="prefs_text_do_swap">Swap BGR/RGB</string>
+    <string name="prefs_text_do_morph">Morphs für Übergänge verwenden</string>
     <string name="prefs_text_morph_steps">Morph steps</string>
-    <string name="prefs_text_max_fps">Max FPS</string>
+    <string name="prefs_text_max_fps">Maximum FPS</string>
     <string name="prefs_text_show_fps">Show FPS</string>
     <string name="prefs_text_show_art">Show Art</string>
     <string name="prefs_text_show_text">Show Text</string>

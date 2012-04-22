@@ -51,6 +51,8 @@ import java.lang.Process;
 
 import com.openglesbook.particlesystem.ParticleSystemRenderer;
 
+import org.libvisual.android.VisualObject;
+
 public class StarVisuals extends Activity implements OnClickListener, OnSharedPreferenceChangeListener
 {
     private final static String TAG = "StarVisuals/StarVisualsActivity";

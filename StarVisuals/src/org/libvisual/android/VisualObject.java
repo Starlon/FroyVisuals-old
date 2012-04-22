@@ -1,18 +1,11 @@
-package com.starlon.starvisuals;
+package org.libvisual.android;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.util.Log;
 
-import org.libvisual.android.VisVideo;
-import org.libvisual.android.VisBin;
-import org.libvisual.android.VisActor;
-import org.libvisual.android.VisInput;
-import org.libvisual.android.VisMorph;
-import org.libvisual.android.CPtr;
-
-class VisualObject {
-    private final String TAG = "StarVisuals/VisualObject";
+public class VisualObject {
+    private final String TAG = "LibVisual/VisualObject";
     public VisVideo mVideo = null;
     public VisBin mBin = null;
     public VisActor mActor = null;
