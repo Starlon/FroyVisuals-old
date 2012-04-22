@@ -42,19 +42,6 @@ static struct
 
 namespace LVCLIENT {
 
-VisVideo *getObjectFromCPtr( JNIEnv *env, jobject cptr )
-{
-    VisVideo *vid;
-    jclass classPtr = env->GetObjectClass(cptr );
-    jfieldID CPtr_peer_ID = env->GetFieldID(classPtr, "peer", "3" );
-    jbyte *peer = (jbyte *) env->GetLongField(cptr, CPtr_peer_ID );
-
-    vid = ( VisVideo *) peer;
-
-    return vid;
-}
-
-
 /******************************************************************************/
 
 /** VisVideo.videoNew() */

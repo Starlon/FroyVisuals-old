@@ -16,4 +16,4 @@ LOCAL_SRC_FILES         := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c)
 LOCAL_SHARED_LIBRARIES  += visual
 LOCAL_LDLIBS            += -lm -llog -ljnigraphics
 
-#include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_SHARED_LIBRARY)
