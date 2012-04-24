@@ -73,10 +73,11 @@ JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_init(JNIEnv * env
                 return;
 
     LOGI("LibVisual.init(): %s", visual_get_version());
-
-#ifdef USLEEP
-    usleep(USLEEP);
-#endif
+    
+/*
+    int foo = 1;
+    while(foo);
+*/
        
     /* register VisLog handler to make it log to android logcat */
     visual_log_set_handler(VISUAL_LOG_DEBUG, _log_handler, NULL);
@@ -89,10 +90,12 @@ JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_init(JNIEnv * env
     visual_init_path_add("/data/data/com.starlon.starvisuals/lib");
 
     /* initialize libvisual */
-    char *v[] = { "lvclient", NULL };
+    char *v[] = { (char *)"lvclient", NULL };
     char **argv = v;
     int argc=1;
     visual_init(&argc,  &argv);
+
+    //visual_plugin_registry_add_path("/data/data/org.libvisual.android/lib");
 }
 
 
@@ -117,16 +120,15 @@ JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_fpsInit(JNIEnv * 
     fps_init(&_v.fps);
 }
 
-
 /** VisualObject.renderVisual() */
 JNIEXPORT void JNICALL Java_org_libvisual_android_VisualObject_renderVisual(JNIEnv * env, 
                                                                                    jclass clazz, 
                                                                                    jobject bitmap,
-                                                                                   jint bin,
-                                                                                   jint video)
+                                                                                   jobject bin,
+                                                                                   jobject video)
 {
-    VisBin *b = (VisBin *) bin;
-    VisVideo *bvideo = (VisVideo *) video;
+    VisBin *b = getObjectFromCPtr<VisBin *>(env, bin);
+    VisVideo *bvideo = getObjectFromCPtr<VisVideo *>(env, video);
         
     if(!visual_is_initialized() ||
        !bvideo ||

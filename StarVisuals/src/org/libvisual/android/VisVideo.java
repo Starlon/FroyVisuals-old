@@ -51,6 +51,7 @@ public class VisVideo
     private native CPtr videoNew();
     private native void videoUnref(CPtr videoPtr);
     private native void videoAllocateBuffer(CPtr videoPtr);
+    private native void videoFreeBuffer(CPtr videoPtr);
     private native void videoSetAttributes(CPtr videoPtr, int width, int height, int stride, int depth); 
     private static native int videoGetHighestDepth(int depth);
     private static native int videoGetHighestDepthNoGl(int depth);    
@@ -116,6 +117,11 @@ public class VisVideo
         videoAllocateBuffer(VisVideo);
     }
         
+    public void freeBuffer()
+    {
+        videoFreeBuffer(VisVideo);
+    }
+
     @Override
     public void finalize()
     {

@@ -28,7 +28,6 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.util.Log;
-import com.starlon.starvisuals.R;
 
 
 /** LibVisualView class to implement different drawing methods */

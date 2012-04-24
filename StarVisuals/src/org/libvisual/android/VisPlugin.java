@@ -26,50 +26,59 @@ package org.libvisual.android;
 
 
 
-/** VisActor wrapper */
-public class VisActor
+/** VisPlugin wrapper */
+public class VisPlugin
 {
-    public CPtr VisActor;
-    public VisPlugin plugin;
+    public CPtr VisPlugin;
 
     /** implemented by visual.c */
-    private native CPtr actorNew(String name);
-    private native int actorUnref(CPtr actorPtr);
-    private native int actorGetSupportedDepth(CPtr actorPtr);
-    private native int actorVideoNegotiate(CPtr actorPtr, int rundepth, boolean noevent, boolean forced);
-    private native CPtr actorGetPlugin(CPtr actorPtr);
+    private native String pluginGetName(CPtr pluginPtr);
+    private native String pluginGetPlugname(CPtr pluginPtr);
+    private native String pluginGetAuthor(CPtr pluginPtr);
+    private native String pluginGetVersion(CPtr pluginPtr);
+    private native String pluginGetAbout(CPtr pluginPtr);
+    private native String pluginGetHelp(CPtr pluginPtr);
+    private native String pluginGetLicense(CPtr pluginPtr);
         
         
-    public VisActor(CPtr actorPtr)
+    public VisPlugin(CPtr pluginPtr)
     {
-        VisActor = actorPtr;
-
-        plugin = new VisPlugin(actorGetPlugin(VisActor));
+        VisPlugin = pluginPtr;
     }
 
-    public VisActor(String name)
+    public String getName()
     {
-        VisActor = actorNew(name);
-
-        plugin = new VisPlugin(actorGetPlugin(VisActor));
+        return pluginGetName(VisPlugin);
+    }
+        
+    public String getPlugname()
+    {
+        return pluginGetPlugname(VisPlugin);
     }
 
-        
-    public int getSupportedDepth()
+    public String getAuthor()
     {
-        return actorGetSupportedDepth(VisActor);
+        return pluginGetAuthor(VisPlugin);
     }
 
-        
-    public void videoNegotiate(int rundepth, boolean noevent, boolean forced)
+    public String getVersion()
     {
-        actorVideoNegotiate(VisActor, rundepth, noevent, forced);
+        return pluginGetVersion(VisPlugin);
     }
 
-        
-    @Override
-    public void finalize()
+    public String getAbout()
     {
-        actorUnref(VisActor);
+        return pluginGetAbout(VisPlugin);
+    }
+
+    public String getHelp()
+    {
+        return pluginGetHelp(VisPlugin);
+    }
+
+    public String getLicense()
+    {
+        return pluginGetLicense(VisPlugin);
     }
 }
+

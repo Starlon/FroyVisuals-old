@@ -56,7 +56,7 @@ JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisInput_inputNew(JNIEnv * 
     const char *inputName = env->GetStringUTFChars( name, &isCopy);  
 
     /* plugin valid ? */
-    if(!visual_actor_valid_by_name(inputName))
+    if(!visual_input_valid_by_name(inputName))
     //if(!(visual_plugin_registry_has_plugin(VISUAL_PLUGIN_TYPE_INPUT, inputName)))
     {
             LOGE("Invalid input-plugin: \"%s\"", inputName);
@@ -92,5 +92,23 @@ JNIEXPORT void JNICALL Java_org_libvisual_android_VisInput_inputUnref(JNIEnv * e
     visual_object_unref(VISUAL_OBJECT(i));        
 }
 
+JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisInput_inputGetPlugin(JNIEnv *env, jclass clazz, jobject input)
+{
+    VisInput *i = getObjectFromCPtr<VisInput *>(env, input);
+    const VisPluginInfo *info = i->plugin->info;
+
+    jobject obj;
+    jclass tempClass;
+
+    tempClass = env->FindClass("org/libvisual/android/CPtr");
+
+    obj = env->AllocObject( tempClass );
+    if (obj)
+    {
+        env->SetLongField( obj, env->GetFieldID(tempClass, "peer", "J" ), (jlong)info);
+    }
+    return obj;
 
 }
+}
+

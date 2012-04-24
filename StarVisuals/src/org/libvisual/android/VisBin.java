@@ -30,6 +30,9 @@ package org.libvisual.android;
 public class VisBin
 {
     public CPtr VisBin;
+    public VisActor actor;
+    public VisInput input;
+    public VisMorph morph;
 
     /** implemented by visual.c */
     private native CPtr binNew();
@@ -44,6 +47,8 @@ public class VisBin
     private native int binConnect(CPtr binPtr, CPtr actorPtr, CPtr inputPtr);
     private native int binSetMorphByName(CPtr binPtr, String name);
     private native int binSwitchActorByName(CPtr binPtr, String name);
+    private native CPtr binGetMorph(CPtr binPtr);
+    private native CPtr binGetActor(CPtr binPtr);
                 
         
     public VisBin()
@@ -89,6 +94,9 @@ public class VisBin
     public void connect(CPtr actorPtr, CPtr inputPtr)
     {
         binConnect(VisBin, actorPtr, inputPtr);
+        actor = new VisActor(actorPtr);
+        input = new VisInput(inputPtr); 
+        //morph = new VisMorph(morphPtr);
     }
 
     public void setMorph(String name)
@@ -99,6 +107,21 @@ public class VisBin
     public void switchActor(String name)
     {
         binSwitchActorByName(VisBin, name);
+    }
+
+    public VisActor getActor()
+    {
+        return actor;
+    }
+
+    public VisInput getInput()
+    {
+        return input;
+    }
+
+    public VisMorph getMorph()
+    {
+        return morph;
     }
         
     @Override

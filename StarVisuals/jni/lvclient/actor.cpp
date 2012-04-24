@@ -115,6 +115,26 @@ JNIEXPORT int JNICALL Java_org_libvisual_android_VisActor_actorVideoNegotiate(JN
 {
     VisActor *a = getObjectFromCPtr<VisActor *>(env, actor);
             
-    return visual_actor_video_negotiate(a, rundepth, noevent, forced);
+    return visual_actor_video_negotiate(a, (VisVideoDepth)rundepth, noevent, forced);
 }
+
+JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisActor_actorGetPlugin(JNIEnv *env, jclass clazz, jobject actor)
+{
+    VisActor *a = getObjectFromCPtr<VisActor *>(env, actor);
+    const VisPluginInfo *info = a->plugin->info;
+
+    jobject obj;
+    jclass tempClass;
+
+    tempClass = env->FindClass("org/libvisual/android/CPtr");
+
+    obj = env->AllocObject( tempClass );
+    if (obj)
+    {
+        env->SetLongField( obj, env->GetFieldID(tempClass, "peer", "J" ), (jlong)info);
+    }
+    return obj;
+
+}
+
 }

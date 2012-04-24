@@ -81,6 +81,25 @@ JNIEXPORT void JNICALL Java_org_libvisual_android_VisMorph_morphUnref(JNIEnv * e
     visual_object_unref(VISUAL_OBJECT(m));        
 }
 
+JNIEXPORT jobject JNICALL Java_org_libvisual_android_VisMorph_morphGetPlugin(JNIEnv *env, jclass clazz, jobject morph)
+{
+    VisMorph *m = getObjectFromCPtr<VisMorph *>(env, morph);
+    const VisPluginInfo *info = m->plugin->info;
+
+    jobject obj;
+    jclass tempClass;
+
+    tempClass = env->FindClass("org/libvisual/android/CPtr");
+
+    obj = env->AllocObject( tempClass );
+    if (obj)
+    {
+        env->SetLongField( obj, env->GetFieldID(tempClass, "peer", "J" ), (jlong)info);
+    }
+    return obj;
+
+}
+
 
 /******************************************************************************/
 

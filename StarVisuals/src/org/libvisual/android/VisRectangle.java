@@ -31,7 +31,6 @@ public class VisRectangle
 {
     public CPtr VisRectangle;
 
-    /** implemented by visual.c */
     private native CPtr rectangleNew(int x, int y, int width, int height);
     private native int rectangleUnref(CPtr rectanglePtr);
     private native int rectangleSet(int x, int y, int width, int height);

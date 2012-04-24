@@ -12,7 +12,6 @@ public class VisualObject {
     public VisInput mInput = null;
     public VisMorph mMorph = null;
     public Bitmap mBitmap;
-    private boolean mDisposed = false;
     private static boolean inited = false;
     private boolean mVideoInitialized;
 
@@ -37,9 +36,6 @@ public class VisualObject {
 
         mBin.setSupportedDepth(VisVideo.VISUAL_VIDEO_DEPTH_ALL);
         mBin.setPreferredDepth(VisVideo.VISUAL_VIDEO_DEPTH_32BIT);
-        //mBin.setMorph(morph);
-
-        mBin.connect(mActor.VisActor, mInput.VisInput);
 
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 
@@ -55,33 +51,9 @@ public class VisualObject {
         onSizeChanged(w, h, w, h);
     }
 
-    public void dispose()
-    {
-/*
-        if(mDisposed)
-            return;
-        mBitmap.recycle();
-        mBitmap = null;
-        mDisposed = true;
-        mVideo.finalize();
-        mVideo = null;
-        mBin.finalize();
-        mBin = null;
-        mActor.finalize();
-        mActor = null;
-        mInput.finalize();
-        mInput = null;
-        //mMorph.finalize();
-        mMorph = null;
-        deinit();
-*/
-    }
-
     /** initialize VisVideo for actor + buffer bitmap */
     void initVideo(int width, int height, int stride)
     {
-        if(mDisposed)
-            return;
         /* get depth of current actor */
         int depth;
         int depthflag = mActor.getSupportedDepth();
@@ -101,7 +73,6 @@ public class VisualObject {
         mBin.connect(mActor.VisActor, mInput.VisInput);
 
         /* create new VisVideo object for this bitmap */
-        mVideo = new VisVideo();
         mVideo.setAttributes(width, height,
                              stride,
                              VisVideo.VISUAL_VIDEO_DEPTH_32BIT);
@@ -131,17 +102,13 @@ public class VisualObject {
 
     public Bitmap run()
     {
-        if(mDisposed)
-            return null;
         mBitmap.eraseColor(Color.RED);
-        //renderVisual(mBitmap, mBin.VisBin, mVideo.VisVideo);
+        renderVisual(mBitmap, mBin.VisBin, mVideo.VisVideo);
         return mBitmap;
     }
 
     public Bitmap getBitmap()
     {
-        if(mDisposed)
-            return null;
         return mBitmap;
     }
 
@@ -173,9 +140,12 @@ public class VisualObject {
         }
         else
         {
+            mVideo.freeBuffer();
+
             mVideo.setAttributes(w, h,
                                     mBitmap.getRowBytes(),
                                     VisVideo.VISUAL_VIDEO_DEPTH_32BIT);
+            mVideo.allocateBuffer();
 
             /* create new VisVideo object for this bitmap */
             mBin.setVideo(mVideo.VisVideo);
