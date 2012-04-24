@@ -29,7 +29,7 @@ class Evaluator {
     {
         std::string val;
         try {
-            mScript->exec("function __wrap__() " + val + " end; __out__ = __wrap__()");
+            mScript->exec("function __wrap__() " + str + " end; __out__ = __wrap__()");
             val = mScript->get_variable<lua::string_arg_t>("__out__").value();
         } catch (lua::exception &e)
         {

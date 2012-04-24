@@ -52,6 +52,7 @@ import java.lang.Process;
 import com.openglesbook.particlesystem.ParticleSystemRenderer;
 
 import org.libvisual.android.VisualObject;
+import com.starlon.libscriptable.UtilsEvaluator;
 
 public class StarVisuals extends Activity implements OnClickListener, OnSharedPreferenceChangeListener
 {
@@ -135,6 +136,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     private Stats mStats = new Stats();
     private VisualObject mVisualObject;
+    private UtilsEvaluator mEvaluator;
 
     public VisualObject getVisualObject()
     {
@@ -253,6 +255,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+
+        mEvaluator = new UtilsEvaluator();
 
         mPrefs = getSharedPreferences(PREFS, 0);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
@@ -643,7 +647,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         System.loadLibrary("visual");
         System.loadLibrary("common");
         System.loadLibrary("lvclient");
-        System.loadLibrary("libscriptable");
+        System.loadLibrary("luascript");
+        System.loadLibrary("scriptable");
         System.loadLibrary("main");
     }
 
