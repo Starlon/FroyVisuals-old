@@ -66,9 +66,11 @@ JNIEXPORT jstring JNICALL Java_com_starlon_libscriptable_UtilsEvaluator_evaluate
     Evaluator *eval = getObjectFromCPtr<Evaluator *>( env, obj );
 
     jboolean isCopy;
-    std::string _str = env->GetStringUTFChars(str, &isCopy);
+    const char * _str = env->GetStringUTFChars(str, &isCopy);
 
-    std::string val = eval->eval(_str);
+    std::string val = eval->eval((std::string)_str);
+
+    env->ReleaseStringUTFChars(str, _str);
 
     return env->NewStringUTF(val.c_str());
 }
