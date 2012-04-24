@@ -96,7 +96,7 @@ class StarVisualsViewGL extends GLSurfaceView {
                 Log.w(TAG, "MotionEvent.ACTION_MOVE x=" + x + " y=" + y);
 
                 mLock.lock();
-                //NativeHelper.mouseMotion(x, y);
+                NativeHelper.mouseMotion(x, y);
                 mLock.unlock();
             break;
         }

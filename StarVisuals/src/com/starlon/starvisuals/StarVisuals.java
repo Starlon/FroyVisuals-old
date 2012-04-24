@@ -281,14 +281,14 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                     Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                                 // Left swipe
                                 Log.w(TAG, "Left swipe...");
-                                //NativeHelper.finalizeSwitch(-1);
-                                //actor = NativeHelper.actorGetCurrent();
+                                NativeHelper.finalizeSwitch(-1);
+                                actor = NativeHelper.actorGetCurrent();
                             }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && 
                                     Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                                 // Right swipe
                                 Log.w(TAG, "Right swipe...");
-                                //NativeHelper.finalizeSwitch(1);
-                                //actor = NativeHelper.actorGetCurrent();
+                                NativeHelper.finalizeSwitch(1);
+                                actor = NativeHelper.actorGetCurrent();
                             }
                         } else {
                             if (Math.abs(e1.getX() - e2.getX()) > SWIPE_MAX_OFF_PATH)
@@ -297,24 +297,22 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                                 Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                                 // Up swipe
                                 Log.w(TAG, "Up swipe...");
-                                //NativeHelper.finalizeSwitch( -2 );
-                                //actor = NativeHelper.actorGetCurrent();
+                                NativeHelper.finalizeSwitch( -2 );
+                                actor = NativeHelper.actorGetCurrent();
                             } else if (actor == -1 && e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE &&
                                 Math.abs(velocityY) > SWIPE_THRESHOLD_VELOCITY) {
                                 // Down swipe
 
                                 Log.w(TAG, "Down swipe...");
-                                //NativeHelper.finalizeSwitch( 2 );
-                                //actor = NativeHelper.actorGetCurrent();
+                                NativeHelper.finalizeSwitch( 2 );
+                                actor = NativeHelper.actorGetCurrent();
                             }
                         }
                         if(actor >= 0)
                         {
-/*
                             mActor = NativeHelper.actorGetName(actor);
                             mEditor.putString("prefs_actor_selection", mActor);
                             mEditor.commit();
-*/
                         }
                     } catch (Exception e) {
                         Log.w(TAG, "Failure in onFling: " + e.toString());
@@ -349,19 +347,19 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         if(key.equals("prefs_actor_selection"))
         {
             mActor = mPrefs.getString(key, ACTOR);
-            //NativeHelper.actorSetCurrentByName(mActor, true);
+            NativeHelper.actorSetCurrentByName(mActor, true);
 
         }
         else if(key.equals("prefs_input_selection"))
         {
             mInput = mPrefs.getString(key, INPUT);
-            //NativeHelper.inputSetCurrentByName(mInput, true);
+            NativeHelper.inputSetCurrentByName(mInput, true);
             enableMic(mInput);
         } 
         else if(key.equals("prefs_morph_selection"))
         {
             mMorph = mPrefs.getString(key, MORPH);
-            //NativeHelper.morphSetCurrentByName(mInput, true);
+            NativeHelper.morphSetCurrentByName(mInput, true);
         } 
         else if(key.equals("prefs_do_beat"))
         {
@@ -370,12 +368,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         else if(key.equals("prefs_do_morph"))
         {
             mDoMorph = mPrefs.getBoolean(key, DOMORPH);
-            //NativeHelper.setMorphStyle(mDoMorph);
+            NativeHelper.setMorphStyle(mDoMorph);
         }        
         else if(key.equals("prefs_morph_steps"))
         {
             mMorphSteps = mPrefs.getInt(key, MORPHSTEPS);
-            //NativeHelper.setMorphSteps(mMorphSteps);
+            NativeHelper.setMorphSteps(mMorphSteps);
         }        
         else if(key.equals("prefs_max_fps"))
         {
