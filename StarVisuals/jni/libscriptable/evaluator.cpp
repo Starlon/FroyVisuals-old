@@ -5,6 +5,7 @@
 #include "PluginCpuinfo.h"
 #include "PluginLoadavg.h"
 #include "PluginProcStat.h"
+#include "PluginUptime.h"
 
 namespace LCD {
 
@@ -14,6 +15,7 @@ class Evaluator {
     PluginCpuinfo *mCpuinfo;
     PluginLoadavg *mLoadavg;
     PluginProcStat *mProcStat;
+    PluginUptime  *mUptime;
     
     public:
     Evaluator()
@@ -22,6 +24,7 @@ class Evaluator {
         mCpuinfo = new PluginCpuinfo(mScript);
         mLoadavg = new PluginLoadavg(mScript);
         mProcStat = new PluginProcStat(mScript);
+        mUptime = new PluginUptime(mScript);
     }
 
     ~Evaluator()
@@ -30,6 +33,7 @@ class Evaluator {
         delete mCpuinfo;
         delete mLoadavg;
         delete mProcStat;
+        delete mUptime;
     }
 
     std::string eval(std::string str)

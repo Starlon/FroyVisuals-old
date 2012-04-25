@@ -81,7 +81,8 @@ public class StarVisualsRenderer implements Renderer {
         TimerTask task = new TimerTask() {
             public void run() {
                 //mActivity.warn(mStats.getText(), true);
-                mActivity.warn("CPU: " + mActivity.getEvaluator().eval("return LCD.cpu('user', 500);") + "%", true);
+                String val = mActivity.getEvaluator().eval("return LCD.Uptime('%d d %H:%M:%S')");
+                mActivity.warn("Uptime: " + val, true);
             }
         };
 
