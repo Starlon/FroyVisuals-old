@@ -3,6 +3,8 @@
 #include <luascript/luascript.h>
 #include <libvisual/libvisual.h>
 #include "PluginCpuinfo.h"
+#include "PluginLoadavg.h"
+#include "PluginProcStat.h"
 
 namespace LCD {
 
@@ -10,19 +12,24 @@ class Evaluator {
     private:
     lua *mScript;
     PluginCpuinfo *mCpuinfo;
+    PluginLoadavg *mLoadavg;
+    PluginProcStat *mProcStat;
     
     public:
     Evaluator()
     {
         mScript = new lua();
         mCpuinfo = new PluginCpuinfo(mScript);
-        
+        mLoadavg = new PluginLoadavg(mScript);
+        mProcStat = new PluginProcStat(mScript);
     }
 
     ~Evaluator()
     {
-        delete mCpuinfo;
         delete mScript;
+        delete mCpuinfo;
+        delete mLoadavg;
+        delete mProcStat;
     }
 
     std::string eval(std::string str)
