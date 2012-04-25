@@ -1,3 +1,6 @@
+#include <exception>
+#include <cstdlib>
+
 #include <string>
 #include <jni.h>
 #include <luascript/luascript.h>
@@ -88,6 +91,8 @@ JNIEXPORT jstring JNICALL Java_com_starlon_libscriptable_UtilsEvaluator_evaluate
 JNIEXPORT jobject JNICALL Java_com_starlon_libscriptable_UtilsEvaluator_evaluatorNew(
     JNIEnv *env, jclass clazz)
 {
+    std::set_terminate(std::abort);
+
     Evaluator *eval = new Evaluator();
 
     jclass tempClass;

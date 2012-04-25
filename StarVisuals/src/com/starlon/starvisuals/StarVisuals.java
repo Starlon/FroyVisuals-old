@@ -265,6 +265,11 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mEvaluator = new UtilsEvaluator();
 
+/*
+        String val = mEvaluator.eval("return LCD.uptime('%d d %H:%M:%S')");
+        Log.w(TAG, "HAH " + val);
+*/
+
         mPrefs = getSharedPreferences(PREFS, 0);
         mPrefs.registerOnSharedPreferenceChangeListener(this);
 

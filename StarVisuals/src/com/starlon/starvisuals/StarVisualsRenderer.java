@@ -81,7 +81,8 @@ public class StarVisualsRenderer implements Renderer {
         TimerTask task = new TimerTask() {
             public void run() {
                 //mActivity.warn(mStats.getText(), true);
-                String val = mActivity.getEvaluator().eval("return LCD.Uptime('%d d %H:%M:%S')");
+                //String val = mActivity.getEvaluator().eval("return LCD.uptime('%d d %H:%M:%S')");
+                String val = mActivity.getEvaluator().eval("return LCD.uptime()");
                 mActivity.warn("Uptime: " + val, true);
             }
         };

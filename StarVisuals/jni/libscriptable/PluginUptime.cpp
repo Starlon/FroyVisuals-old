@@ -219,8 +219,8 @@ class uptime1_t {
 
     static void calc(const lua::args_t& in, lua::args_t &out)
     {
-        std::string key = dynamic_cast<lua::string_arg_t&>(*in[0]).value();
-        std::string str = mUptime->Uptime(key);
+        std::string fmt = dynamic_cast<lua::string_arg_t&>(*in[0]).value();
+        std::string str = mUptime->Uptime(fmt);
         dynamic_cast<lua::string_arg_t&>(*out[0]).value() = str;
     }
 };
