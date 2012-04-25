@@ -71,22 +71,24 @@ JNIEXPORT jstring JNICALL Java_com_starlon_libscriptable_UtilsEvaluator_evaluate
     std::string val = eval->eval((std::string)_str);
 
     env->ReleaseStringUTFChars(str, _str);
-
     return env->NewStringUTF(val.c_str());
 }
 
 JNIEXPORT jobject JNICALL Java_com_starlon_libscriptable_UtilsEvaluator_evaluatorNew(
     JNIEnv *env, jclass clazz)
 {
-
     Evaluator *eval = new Evaluator();
 
-    jobject obj;
     jclass tempClass;
+    jmethodID mid;
+    jobject obj;
 
     tempClass = env->FindClass("com/starlon/libscriptable/CPtr");
 
-    obj = env->AllocObject( tempClass );
+    mid = env->GetMethodID(tempClass, "<init>", "()V");
+
+    obj = env->NewObject(tempClass, mid);
+
     if (obj)
     {
         env->SetLongField( obj, env->GetFieldID( tempClass, "peer", "J" ), (jlong)eval);

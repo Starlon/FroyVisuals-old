@@ -105,8 +105,8 @@ class cpuinfo_t {
     public:
     static const lua::args_t *in_args()
     {
-        const lua::args_t *args = new lua::args_t();
-        //args->add(new lua::string_arg_t());
+        lua::args_t *args = new lua::args_t();
+        args->add(new lua::string_arg_t());
         return args;
     }
 

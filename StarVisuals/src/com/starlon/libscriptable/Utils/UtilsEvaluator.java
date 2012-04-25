@@ -3,12 +3,12 @@ package com.starlon.libscriptable;
 public class UtilsEvaluator {
     private CPtr Evaluator;
 
-    public static native CPtr newEvaluator();
-    public static native void delEvaluator(CPtr eval);
+    public static native CPtr evaluatorNew();
+    public static native void evaluatorDel(CPtr eval);
     public static native String evaluate(CPtr eval, String str);
 
-    public void UtilsEvaluator() {
-        Evaluator = newEvaluator();
+    public UtilsEvaluator() {
+        Evaluator = evaluatorNew();
     }
 
     public String eval(String str)
@@ -19,6 +19,6 @@ public class UtilsEvaluator {
     @Override
     public void finalize()
     {
-        delEvaluator(Evaluator);
+        evaluatorDel(Evaluator);
     }
 }

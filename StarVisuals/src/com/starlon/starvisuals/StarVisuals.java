@@ -27,6 +27,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewConfiguration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.widget.Toast;
 import android.media.MediaRecorder;
 import android.media.AudioRecord;
 import android.media.AudioFormat;
@@ -48,6 +49,7 @@ import java.io.FileDescriptor;
 import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.lang.Process;
+import java.lang.CharSequence;
 
 import com.openglesbook.particlesystem.ParticleSystemRenderer;
 
@@ -141,6 +143,11 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     public VisualObject getVisualObject()
     {
         return mVisualObject;
+    }
+
+    public UtilsEvaluator getEvaluator()
+    {
+        return mEvaluator;
     }
 
     private void makeFile(String file, int id)
@@ -399,10 +406,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         {
             mIsActive = mPrefs.getBoolean(key, ISACTIVE);
         }        
-        else if(key.equals("prefs_display_text"))
-        {
-            mDisplayText = mPrefs.getString(key, DISPLAYTEXT);
-        }        
     }
 
     public void onClick(View v)
@@ -464,7 +467,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 mSongChanged = System.currentTimeMillis();
                 mAlbumArt = mAlbumMap.get(mSongAlbum);
                 NativeHelper.newSong();
-                warn("(" + mSongTrack + ")", 5000, true);
+                //warn("(" + mSongTrack + ")", 5000, true);
             }
             else if(action.equals("com.android.music.playbackcomplete"))
             {
@@ -475,7 +478,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
                 mSongChanged = 0l;
                 mAlbumArt = null;
                 NativeHelper.newSong();
-                warn("Ended playback...", true);
+                //warn("Ended playback...", true);
             }
         }
     };
@@ -967,11 +970,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {
         mIsActive = isactive;
         mEditor.putBoolean("prefs_is_active", mIsActive);
-    }
-    public void setDisplayText(String displaytext)
-    {
-        mDisplayText = displaytext;
-        mEditor.putString("prefs_display_text", mDisplayText);
     }
     public void setStuckBeat(boolean stuckbeat)
     {

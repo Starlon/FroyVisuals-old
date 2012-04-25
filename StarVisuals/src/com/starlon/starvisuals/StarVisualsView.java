@@ -80,7 +80,7 @@ public class StarVisualsView extends View {
                 return val;
             }
             public void run() {
-                mActivity.warn(roundTwoDecimals((mStatsCanvas.mAvgFrame + mStatsNative.mAvgFrame) / 2) + "fps");
+                //mActivity.warn(roundTwoDecimals((mStatsCanvas.mAvgFrame + mStatsNative.mAvgFrame) / 2) + "fps");
             }
         };
 
