@@ -1,0 +1,7 @@
+
+env = Environment()
+env.Append(CPPFLAGS = ['-I../../include', '-std=gnu++0x', '-I/usr/include/luajit-2.0'])
+env.Append(LIBS = ['luajit-5.1'])
+env.Program(target='test_ls', source=['PluginUptime.cpp', 
+    '../luascript/luascript.cpp', 'debug.c', 'main.cpp'])
+
