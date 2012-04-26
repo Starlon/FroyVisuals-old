@@ -39,6 +39,7 @@ class PluginUptime {
 
     public:
     PluginUptime(lua *script);
+    PluginUptime();
     ~PluginUptime();
 
     double Uptime();

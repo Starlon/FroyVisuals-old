@@ -190,7 +190,7 @@ std::string PluginUptime::Uptime(std::string fmt) {
             return "Error";
         }
 
-        last_value = now;
+        memcpy(&last_value, &now, sizeof(timeval));
     }
 
     char *buffer = struptime(uptime, fmt.c_str());
@@ -215,7 +215,7 @@ class uptime1_t {
     }
 
     static const std::string ns() { return "LCD"; }
-    static const std::string name() { return "uptime"; }
+    static const std::string name() { return "uptime_fmt"; }
 
     static void calc(const lua::args_t& in, lua::args_t &out)
     {
@@ -237,7 +237,7 @@ double PluginUptime::Uptime() {
             return 0;
         }
 
-        last_value = now;
+        memcpy(&last_value, &now, sizeof(timeval));
     }
 
     return uptime;
@@ -267,6 +267,11 @@ class uptime2_t {
         dynamic_cast<lua::int_arg_t&>(*out[0]).value() = val;
     }
 };
+
+PluginUptime::PluginUptime() {
+    fd = -2;
+    uptime = 0;
+}
 
 PluginUptime::PluginUptime(lua *script) {
     script->register_function<uptime1_t>();
