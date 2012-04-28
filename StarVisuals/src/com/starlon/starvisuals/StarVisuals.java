@@ -437,13 +437,13 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     public void setPlugins(boolean now)
     {
-        mActor = mPrefs.getString("prefs_actor_selection", ACTOR);
+        mActor = ACTOR;//mPrefs.getString("prefs_actor_selection", ACTOR);
         NativeHelper.actorSetCurrentByName(mActor, now);
-        mInput = mPrefs.getString("prefs_input_selection", INPUT);
+        mInput = INPUT;//mPrefs.getString("prefs_input_selection", INPUT);
         NativeHelper.inputSetCurrentByName(mInput, now);
-        mMorph = mPrefs.getString("prefs_morph_selection", MORPH);
+        mMorph = MORPH;//mPrefs.getString("prefs_morph_selection", MORPH);
         NativeHelper.morphSetCurrentByName(mInput, now);
-        mDoMorph = mPrefs.getBoolean("prefs_morph_enabled", DOMORPH);
+        mDoMorph = DOMORPH;//mPrefs.getBoolean("prefs_morph_enabled", DOMORPH);
         NativeHelper.setMorphStyle(mDoMorph);
         enableMic(mInput);
         NativeHelper.finalizeSwitch(0);
@@ -509,6 +509,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     {   
         super.onStart();
 
+        getPrefs();
+
         //mVisualObject = new VisualObject(mWidth, mHeight, mActor, mInput, mMorph);
 
         mRendererGLVis = new StarVisualsRenderer(this);
@@ -559,6 +561,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mEditor.commit();
 
+
     }
 
     // user navigates back to the activity. onRestart() -> onStart() -> onResume()
@@ -578,7 +581,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         unregisterReceiver(mReceiver);
 
-
     }
 
     // Last method before shut down. Clean up LibVisual from here.
@@ -586,6 +588,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     protected void onDestroy()
     {
         super.onDestroy();
+
+        setPrefs();
     }
 
     // Create options menu.

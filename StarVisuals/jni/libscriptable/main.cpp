@@ -7,6 +7,16 @@
 
 using namespace LCD;
 
+class Main {
+    Main()
+    {
+
+    }
+};
+
+extern "C" {
+
+/*
 int main(int argc, char **argv)
 {
     lua *state = new lua();
@@ -26,4 +36,6 @@ int main(int argc, char **argv)
 
     return 0;
 
+}
+*/
 }

@@ -9,3 +9,6 @@ LOCAL_SHARED_LIBRARIES := gnustl luascript visual
 LOCAL_ARM_MODE := arm
 include $(BUILD_SHARED_LIBRARY)
 
+LOCAL_PATH := $(call my-dir)
+
+
