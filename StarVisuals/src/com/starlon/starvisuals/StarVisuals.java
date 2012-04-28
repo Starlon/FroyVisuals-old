@@ -660,6 +660,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         System.loadLibrary("common");
         System.loadLibrary("lvclient");
         System.loadLibrary("luascript");
+        System.loadLibrary("json");
         System.loadLibrary("scriptable");
         System.loadLibrary("main");
     }
