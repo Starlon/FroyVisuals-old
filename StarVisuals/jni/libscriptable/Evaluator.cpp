@@ -33,6 +33,7 @@
 #include "Evaluator.h"
 #include "SpecialChar.h"
 #include "debug.h"
+#include "CPtr.h"
 
 using namespace LCD;
 
@@ -90,19 +91,6 @@ std::string Evaluator::Eval(std::string str)
 }
 
 /////////////////////// JNI glue
-
-template <class T>
-T getObjectFromCPtr( JNIEnv *env, jobject cptr )
-{
-    T obj;
-    jclass classPtr = env->GetObjectClass( cptr );
-    jfieldID CPtr_peer_ID = env->GetFieldID( classPtr, "peer", "J" );
-    jlong *peer = (jlong *) env->GetLongField( cptr, CPtr_peer_ID );
-
-    obj = ( T ) peer;
-
-    return obj;
-}
 
 extern "C" {
 

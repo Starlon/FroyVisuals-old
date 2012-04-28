@@ -39,9 +39,9 @@ class LCDGraphic;
 class Property {
     bool is_valid;
     LCDCore *visitor_;
-    //QScriptValue result_;
     Json::Value *expression_;
     std::string name_;
+    std::string result_;
 
     public:
     Property(const Property &prop);

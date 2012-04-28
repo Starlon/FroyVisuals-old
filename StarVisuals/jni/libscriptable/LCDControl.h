@@ -40,23 +40,29 @@ class Evaluator;
 class LCDControl : public CFG {
 
     bool active_;
+    LCDCore *device_;
     std::map<std::string, LCDCore *> devices_;
     std::vector<std::string> display_keys_;
     LCDTimerBin *timers_;
+    VisEventQueue *eventqueue_;
     void ConfigSetup();
 
     public:
     VisMutex mutex_;
     void *priv_;
-    LCDControl(void *priv);
+    LCDControl(void *priv, VisEventQueue *eventqueue);
     ~LCDControl();
     int Start();
     void Stop();
+    void Lock();
+    void Unlock();
+    void TryLock();
     void Shutdown();
     LCDCore *FindDisplay(std::string name);
     void ProcessVariables(Json::Value *config, Evaluator *ev);
     bool IsActive() { return active_; }
     LCDTimerBin *GetTimers(){ return timers_; }
+    VisVideo *GetVideo();
 };
 
 }; // End namespace

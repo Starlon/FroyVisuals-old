@@ -19,25 +19,25 @@
  * along with LCDControl.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "DrvFB.h"
+#include "DrvVideo.h"
 
 using namespace LCD;
 
 // LCDGraphic RealBlit
-void DrvFBBlit(LCDGraphic *lcd, const int row, const int col,
+void DrvVideoBlit(LCDGraphic *lcd, const int row, const int col,
     const int height, const int width) {
-    ((DrvFB *)lcd)->DrvBlit(row, col, height, width);
+    ((DrvVideo *)lcd)->DrvBlit(row, col, height, width);
 }
 
 
 // Constructor
-DrvFB::DrvFB(std::string name, LCDControl *v,
-    Json::Value *config, int layers) :
-    LCDCore(v, name, config, LCD_GRAPHIC, (LCDGraphic *)this),
+DrvVideo::DrvVideo(std::string name, LCDControl *v,
+    Json::Value *config, int layers, VisEventQueue *eventqueue) :
+    LCDCore(v, name, config, LCD_GRAPHIC, eventqueue, (LCDGraphic *)this),
     LCDGraphic((LCDCore *)this) {
-    LCDError("DrvFB");
+    LCDError("DrvVideo");
 
-    GraphicRealBlit = DrvFBBlit;
+    GraphicRealBlit = DrvVideoBlit;
 
     Json::Value *val = CFG_Fetch(config, name + ".cols", new Json::Value(SCREEN_W));
     cols_ = val->asInt();
@@ -53,33 +53,33 @@ DrvFB::DrvFB(std::string name, LCDControl *v,
 
     GraphicInit(rows_, cols_, 8, 8, layers);
 
-    drvFB = new RGBA[rows_*cols_];
-
+    video_ = visual_video_new_with_buffer(cols_, rows_, VISUAL_VIDEO_DEPTH_32BIT);
 }
 
 // Destructor
-DrvFB::~DrvFB() {
-    delete []drvFB;
+DrvVideo::~DrvVideo() {
+    visual_video_free_buffer(video_);
+    visual_object_unref(VISUAL_OBJECT(video_));
 }
 
 // Initialize device and libusb
-void DrvFB::SetupDevice() {
+void DrvVideo::SetupDevice() {
     if(update_ < 0)
         return;
 }
 
 // Deinit driver
-void DrvFB::TakeDown() {
+void DrvVideo::TakeDown() {
     Disconnect();
 }
 
 // Configuration setup
-void DrvFB::CFGSetup() {
+void DrvVideo::CFGSetup() {
     LCDCore::CFGSetup();
 }
 
 // Connect -- generic method called from main code
-void DrvFB::Connect() {
+void DrvVideo::Connect() {
     if(update_ < 0)
         return;
     connected_ = true;
@@ -88,36 +88,33 @@ void DrvFB::Connect() {
 }
 
 // Disconnect -- deinit
-void DrvFB::Disconnect() {
+void DrvVideo::Disconnect() {
     connected_ = false;
 }
 
-void DrvFB::DrvUpdateImg() {
-        unsigned int size = cols_*rows_*4;
-        uint8_t data[size];
+void DrvVideo::DrvUpdateImg() {
+    unsigned int size = visual_video_get_size(video_);
+    uint8_t *data = (uint8_t *)visual_video_get_pixels(video_);
+
     
-        for(unsigned int i = 0; i < size; i+=4) {
-                data[i*4] = drvFB[i].R;
-                data[i*4+1] = drvFB[i].G;
-                data[i*4+2] = drvFB[i].B;
-                data[i*4+2] = 0xff;
-        }
-        
-        //visual_mem_copy(app_->priv_->pixels, data, size);    
 }
 
 // Driver-side blit method
-void DrvFB::DrvBlit(const int row, const int col, 
+void DrvVideo::DrvBlit(const int row, const int col, 
     const int height, const int width) {
+    uint32_t *pixels = (uint32_t *)visual_video_get_pixels(video_);
+
     for(int r = row; r < row + height; r++) {
         for(int c = col; c < col + width; c++) {
-            drvFB[r * cols_ + c] = GraphicRGB(r, c);
+            RGBA rgb = GraphicRGB(r, c);
+            pixels[r * cols_ + c] = GraphicRGB(r, c).ToInt();
         }
     }
+    
 }
 
 // Clear the LCD
-void DrvFB::DrvClear() {
-    memset(drvFB, 0, cols_*rows_*sizeof(RGBA));
+void DrvVideo::DrvClear() {
+    
 }
 

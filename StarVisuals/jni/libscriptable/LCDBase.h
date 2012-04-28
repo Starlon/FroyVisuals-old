@@ -33,6 +33,7 @@ class LCDBase {
     virtual void SignalTransitionStart(std::string layout) = 0;
     virtual void SignalTransitionEnd() = 0;
     virtual int ResizeLCD(int rows, int cols) = 0;
+    virtual VisVideo *GetVideo() = 0;
     int XRES;
     int YRES;
     int LROWS;

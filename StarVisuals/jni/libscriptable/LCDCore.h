@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <iostream>
 
+#include <libvisual/libvisual.h>
+
 #include "CFG.h"
 #include "Evaluator.h"
 #include "LCDBase.h"
@@ -43,6 +45,7 @@
 
 #include "Widget.h"
 #include "Generator.h"
+#include "LCDTimer.h"
 
 #define TRANSITION_RIGHT 0
 #define TRANSITION_LEFT 1
@@ -79,6 +82,9 @@ class LCDCore: public virtual Evaluator, public CFG {
     bool is_transitioning_;
     bool clear_on_layout_change_;
     bool transitions_off_;
+    LCDTimer *timer_;
+    LCDTimer *transition_timer_;
+    VisEventQueue *eventqueue_;
 
     //PluginLCD *pluginLCD;
 
@@ -89,7 +95,7 @@ class LCDCore: public virtual Evaluator, public CFG {
 
     public:
     LCDCore(LCDControl *app, std::string name, Json::Value *config, 
-        int type, LCDBase *lcd = (LCDBase *)NULL);
+        int type, VisEventQueue *eventqueue, LCDBase *lcd = (LCDBase *)NULL);
     virtual ~LCDCore();
     virtual void CFGSetup();
     void BuildLayouts();
@@ -99,6 +105,7 @@ class LCDCore: public virtual Evaluator, public CFG {
     virtual void Connect(){};
     virtual void SetupDevice(){};
     virtual void TakeDown(){};
+    VisVideo *GetVideo(){ return lcd_->GetVideo(); };
     std::map<std::string, Widget *> GetWidgets();
     std::string CFG_Key();
     std::vector<std::string> GetLayouts() { return layouts_; }

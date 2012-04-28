@@ -26,16 +26,6 @@
 
 #include "RGBA.h"
 
-bool LCD::RGBA::operator==(const RGBA &rhv) {
-    if(R == rhv.R && G == rhv.G && B == rhv.B && A == rhv.A)
-        return true;
-    return false;
-}
-
-bool LCD::RGBA::operator!=(const RGBA &rhv) {
-    return !(*this == rhv);
-}
-
 int LCD::color2RGBA(const char *color, RGBA * C)
 {
     char *e;

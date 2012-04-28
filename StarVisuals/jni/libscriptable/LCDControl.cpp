@@ -28,19 +28,20 @@
 #include "LCDControl.h"
 #include "Evaluator.h"
 #include "debug.h"
-#include "DrvFB.h"
+#include "DrvVideo.h"
 
 using namespace LCD;
 
-LCDControl::LCDControl(void *priv) {
+LCDControl::LCDControl(void *priv, VisEventQueue *eventqueue) {
     priv_ = priv;
-    //timers_ = new LCDTimerBin(priv->events);
     visual_mutex_init(&mutex_);
     active_ = false;
+    visual_object_ref(VISUAL_OBJECT(eventqueue));
+    eventqueue_ = eventqueue;
 }
 
 LCDControl::~LCDControl() {
-    active_ = false;
+    visual_object_unref(VISUAL_OBJECT(eventqueue_));
 /*
     Shutdown();
     for(std::vector<std::string>::iterator it = display_keys_.begin();
@@ -70,6 +71,21 @@ int LCDControl::Start() {
 
 void LCDControl::Stop() {
     active_ = false;
+}
+
+void LCDControl::Lock() {
+    visual_mutex_lock(&mutex_);
+}
+
+void LCDControl::Unlock() {
+    visual_mutex_unlock(&mutex_);
+}
+
+VisVideo *LCDControl::GetVideo() {
+    return device_->GetVideo();
+}
+void LCDControl::TryLock() {
+    // FIXME
 }
 
 /*
@@ -157,58 +173,11 @@ void LCDControl::ConfigSetup() {
                 continue;
             }
             Json::Value *rows = CFG_Fetch(display, "rows", new Json::Value(0));
-            /*if(!rows->isNumeric() || rows->asInt() == -1) {
-                LCDError("Display <%s> requires number of rows to initialize.", it->c_str());
-                delete display;
-                delete driver;
-                continue;
-            }*/
             Json::Value *cols = CFG_Fetch(display, "cols", new Json::Value(0));
-            /*if(!cols->isNumeric() || rows->asInt() == -1) {
-                LCDError("Display <%s> requires number of columns to initialize.", it->c_str());
-                delete display;
-                delete driver;
-                delete rows;
-                continue;
-            }*/
             Json::Value *layers = CFG_Fetch(display, "layers", new Json::Value(1));
-
             Json::Value *model = CFG_Fetch_Raw(display, "model");
-            if(driver->asString() == "crystalfontz") {
-/*
-                if(model) {
-                    devices_[*it] = DrvCrystalfontz::Get(*it, this, 
-                        CFG_Get_Root(), model->asString(), layers->asInt());
-                } else {
-                    LCDError("Device <%s> requires a model.", it->c_str());
-                    delete display;
-                    delete driver;
-                    delete rows;
-                    delete cols;
-                    continue;
-                }
-*/
-            } else if(driver->asString() == "fb") {
-                devices_[*it] = new DrvFB(*it, this, CFG_Get_Root(), layers->asInt());
-/*
-            } else if(driver->asString() == "qt") {
-                devices_[*it] = new DrvQt(*it, this, CFG_Get_Root(), 
-                    rows->asInt(), cols->asInt(), layers->asInt());
-            } else if(driver->asString() == "qtgraphic") {
-                devices_[*it] = new DrvQtGraphic(*it, this, CFG_Get_Root(),
-                    rows->asInt(), cols->asInt(), layers->asInt());
-            } else if(driver->asString() == "pertelian") {
-                devices_[*it] = new DrvPertelian(*it, this, CFG_Get_Root(), 
-                    layers->asInt());
-            } else if(driver->asString() == "picographic") {
-                devices_[*it] = new DrvPicoGraphic(*it, this, CFG_Get_Root(), 
-                    layers->asInt());
-            } else if(driver->asString() == "sdl") {
-                devices_[*it] = new DrvSDL(*it, this, CFG_Get_Root(),
-                    layers->asInt());
-            } else if(driver->asString() == "lcdproc") {
-                devices_[*it] = new DrvLCDProc(*it, this, CFG_Get_Root(), layers->asInt());
-            */
+            if(driver->asString() == "fb") {
+                devices_[*it] = new DrvVideo(*it, this, CFG_Get_Root(), layers->asInt(), eventqueue_);
             } else {
                 continue;
             }
@@ -217,6 +186,7 @@ void LCDControl::ConfigSetup() {
             delete driver;
             delete rows;
             delete cols;
+            device_ = devices_[*it];
         }
         
     }

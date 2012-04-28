@@ -111,6 +111,7 @@ LCDGraphic::LCDGraphic(LCDCore *v) :
     transition_tick_ = 0;
     transitioning_ = false;
 
+
     //QObject::connect(&wrapper_, SIGNAL(_GraphicUpdate(int, int, int, int)),
     //    &wrapper_, SLOT(GraphicUpdate(int, int, int, int)));
 
@@ -142,6 +143,29 @@ LCDGraphic::~LCDGraphic() {
     free(TransitionFB);
 }
 
+VisVideo *LCDGraphic::GetVideo()
+{
+    char *pixels = (char *)visual_video_get_pixels(video_);
+    memset(pixels, 0, visual_video_get_size(video_));
+    for(int layer = 0; layer < LAYERS; layer++)
+    {
+        for(int row = 0; row < LROWS; row++)
+        {
+            for(int col = 0; col < LCOLS; col++)
+            {
+                int n = row * video_->pitch + col * 4;
+                RGBA rgb =  GraphicBlend(row, col);
+                pixels[n] = rgb.A;
+                pixels[n+1] = rgb.R;
+                pixels[n+2] = rgb.G;
+                pixels[n+3] = rgb.B;
+    
+            }
+        }
+    }
+    return video_;
+}
+
 void LCDGraphic::LayoutChangeBefore() {
 	//GraphicClear();
 }
@@ -163,6 +187,9 @@ cout << "rows " << rows << " cols " << cols << "-----------=====================
     XRES = xres;
     LAYERS = layers;
     clear_on_layout_change_ = clear_on_layout_change;
+
+    video_ = visual_video_new_with_buffer(LCOLS, LROWS, VISUAL_VIDEO_DEPTH_32BIT);
+    visual_video_set_pitch(video_, LCOLS * sizeof(int));
 
     DisplayFB = (RGBA **)malloc(sizeof(RGBA) * layers * rows * cols);
 

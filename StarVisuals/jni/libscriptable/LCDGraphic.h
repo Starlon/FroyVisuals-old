@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <sys/time.h>
+#include <libvisual/libvisual.h>
 
 #include "RGBA.h"
 #include "LCDBase.h"
@@ -97,6 +98,8 @@ class LCDGraphic : public LCDBase {
 
     bool is_resizing_;
 
+    VisVideo *video_;
+
 
     void Transition();
     void TransitionLeftRight();
@@ -151,6 +154,7 @@ class LCDGraphic : public LCDBase {
     RGBA GraphicRGB(const int row, const int col);
     unsigned char GraphicGray(const int row, const int col);
     unsigned char GraphicBlack(const int row, const int col);
+    VisVideo *GetVideo();
     void GraphicRender(int layer, int row, int col, RGBA fg, RGBA bg, const char *txt, bool bold, int offset, std::string layout);
     bool IsTransitioning() { return transitioning_; }
     void SignalTransitionStart(std::string layout) { transitioning_ = true; transition_layout_ = layout;}

@@ -69,6 +69,7 @@ WidgetText::WidgetText(LCDCore *v, std::string name, Json::Value *config,
     else if (lcd_type_ == LCD_GRAPHIC)
         Draw = GraphicDraw;
 
+
     string_ = "";
     offset_ = 0;
 

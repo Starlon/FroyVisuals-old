@@ -24,9 +24,9 @@
 #ifndef _RGB_H_
 #define _RGB_H_
 
+#include <libvisual/libvisual.h>
 
 namespace LCD {
-//#include <libvisual/libvisual.h>
 /*
 typedef struct {
     unsigned char R;
@@ -37,26 +37,37 @@ typedef struct {
 */
 class RGBA {
     public:
+    VisColor rgb;
     RGBA() {}
     RGBA(unsigned char r, unsigned char g, unsigned char b, unsigned char a = 255) {
         R = r; G = g; B = b; A = a;
+        rgb.a = a;
+        rgb.r = r;
+        rgb.g = g;
+        rgb.b = b;
     }
     RGBA(int val) {
-/*	VisColor col;
-	visual_color_from_uint32(&col, val);
-	R = col.r;
-	G = col.g;
-	B = col.b;
-	A = 1;
-*/
+	    visual_color_from_uint32(&rgb, val);
+    	R = rgb.r;
+	    G = rgb.g;
+    	B = rgb.b;
+	    A = rgb.a;
+    }
+    uint32_t ToInt()
+    {
+        return visual_color_to_uint32(&rgb);
     }
     unsigned char R;
     unsigned char G;
     unsigned char B;
     unsigned char A;
 
-    bool operator==(const RGBA &rhv);
-    bool operator!=(const RGBA &rhv);
+    bool operator==(const RGBA &rhv) {
+        return R == rhv.R && G == rhv.G && B == rhv.B && A == rhv.A;
+    }
+    bool operator!=(const RGBA &rhv) {
+        return R != rhv.R || G != rhv.G || B != rhv.B || A != rhv.A;
+    }
 };
 
 int color2RGBA(const char *color, RGBA * C);

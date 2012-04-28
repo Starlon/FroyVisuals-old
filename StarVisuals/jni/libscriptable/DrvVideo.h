@@ -3,6 +3,7 @@
 #define __DRV_NIFTY_H__
 
 #include <string>
+#include <libvisual/libvisual.h>
 
 #include "LCDGraphic.h"
 #include "LCDCore.h"
@@ -15,9 +16,9 @@
 
 namespace LCD {
 
-class DrvFB : public LCDCore, public LCDGraphic {
+class DrvVideo : public LCDCore, public LCDGraphic {
 
-    RGBA *drvFB;
+    VisVideo *video_;
 
     bool connected_;
     int update_;
@@ -31,9 +32,9 @@ class DrvFB : public LCDCore, public LCDGraphic {
     void DrvUpdate();
 
     public:
-    DrvFB(std::string name, LCDControl *v,
-        Json::Value *config, int layers);
-    ~DrvFB();    
+    DrvVideo(std::string name, LCDControl *v,
+        Json::Value *config, int layers, VisEventQueue *eventqueue);
+    ~DrvVideo();    
     void SetupDevice();
     void TakeDown();
     void CFGSetup();

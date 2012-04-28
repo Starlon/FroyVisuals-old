@@ -16,7 +16,6 @@ class LCDTimer
     private:
     LCDEvent *mEvent;
     
-    int mID;
     int mDuration;
     int mStartTime;
     bool mRepeating;
@@ -27,10 +26,9 @@ class LCDTimer
     
     public:
 
-    LCDTimer(VisEventQueue *queue, int id, LCDEventFunc func, void *data, int duration, bool repeating)
+    LCDTimer(VisEventQueue *queue, LCDEventFunc func, void *data, int duration, bool repeating)
     {
 
-        mID = id;
         mEvent = new LCDEvent(queue, func, data);
         mDuration = duration;
         mRepeating = repeating;
@@ -46,11 +44,6 @@ class LCDTimer
     {
         delete mEvent;
         visual_object_unref(VISUAL_OBJECT(mEvents));
-    }
-
-    int GetID()
-    {
-        return mID;
     }
 
     void Start(int duration, void *data, LCDEventFunc func)
@@ -83,7 +76,7 @@ class LCDTimer
 
 class LCDTimerBin {
     private:
-    std::vector<LCDTimer> mTimers;
+    std::vector<LCDTimer *> mTimers;
     VisTime mTime;
     VisEventQueue *mEvents;
     
@@ -99,13 +92,11 @@ class LCDTimerBin {
         visual_object_unref(VISUAL_OBJECT(mEvents));
     }
 
-    int AddTimer(LCDEventFunc func, void *data, int duration, bool repeating)
+    LCDTimer *AddTimer(LCDEventFunc func, void *data, int duration, bool repeating)
     {
-        visual_time_get(&mTime);
-        visual_random_set_seed(visual_time_get_msecs(&mTime));
-        int rand = visual_random_int();
-        mTimers[mTimers.size()] = LCDTimer(mEvents, rand, func, data, duration, repeating);
-        return rand;
+        int n = mTimers.size();
+        mTimers[n] = new LCDTimer(mEvents, func, data, duration, repeating);
+        return mTimers[n];
     }
 
     void Tick()
@@ -113,7 +104,7 @@ class LCDTimerBin {
         unsigned int i;
         for(i = 0; i < mTimers.size(); i++)
         {
-            mTimers[i].Tick();
+            mTimers[i]->Tick();
         }
     }
 
@@ -122,17 +113,7 @@ class LCDTimerBin {
         unsigned int i;
         for(i = 0; i < mTimers.size(); i++)
         {
-            mTimers[i].Stop();
-        }
-    }
-
-    void Stop(int id)
-    {
-        unsigned int i;
-        for(i = 0; i < mTimers.size(); i++)
-        {
-            if(id == mTimers[i].GetID())
-                mTimers[i].Stop();
+            mTimers[i]->Stop();
         }
     }
 };

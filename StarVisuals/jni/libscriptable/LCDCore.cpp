@@ -50,16 +50,34 @@
 
 using namespace LCD;
 
-LCDCore::LCDCore(LCDControl *app, std::string name, Json::Value *config, int t, LCDBase *lcd) : 
+void change_layout(void *data)
+{
+    LCDCore *core = (LCDCore *)data;
+    core->ChangeLayout();
+}
+
+void layout_transition(void *data)
+{
+    LCDCore *core = (LCDCore *)data;
+    core->LayoutTransition();
+}
+
+LCDCore::LCDCore(LCDControl *app, std::string name, Json::Value *config, int t, VisEventQueue *eventqueue, LCDBase *lcd) : 
     CFG(config), gen_(0, this, true) {
     app_ = app;
     type_ = t;
+    eventqueue_ = eventqueue;
     lcd_ = lcd;
     name_ = name;
     layout_timeout_ = 0;
     transitions_off_ = false;
     // initialize true so property initialization doesn't trigger transitions
     is_transitioning_ = false;
+
+    timers_ = new LCDTimerBin(visual_event_queue_new());
+    timer_ = timers_->AddTimer(change_layout, this, 12000, true);
+    transition_timer_ = timers_->AddTimer(layout_transition, this, 100, true);
+
 /*
     wrapper_ = new LCDWrapper((LCDInterface *)this, (QObject *)NULL);
     timer_ = new QTimer();
@@ -93,6 +111,7 @@ LCDCore::~LCDCore() {
         w != widgets_.end(); w++) {
         delete w->second;
     }
+    delete timers_;
 }
 
 bool LCDCore::IsActive() {
@@ -298,6 +317,7 @@ void LCDCore::BuildLayouts() {
            if(type->asString() == "text") {
                widget = (Widget *) new WidgetText(this, name, widget_v, 
                    widgets[i].row, widgets[i].col, widgets[i].layer);
+/*
            } else if (type->asString() == "bar") {
                widget = (Widget *) new WidgetBar(this, name, widget_v,
                    widgets[i].row, widgets[i].col, widgets[i].layer);
@@ -318,6 +338,7 @@ void LCDCore::BuildLayouts() {
                widget = (Widget *) new WidgetScript(this, name, widget_v);
            } else {
                    //LCDError("Unknown widget type: %s", type->asCString());
+*/
            }
            if(widget) {
                widgets_[name] = widget;
