@@ -30,5 +30,7 @@ endif
 
 LOCAL_SHARED_LIBRARIES := cpufeatures
 
+LOCAL_ARM_MODE := arm
+
 include $(BUILD_SHARED_LIBRARY)
 $(call import-module,cpufeatures) 
