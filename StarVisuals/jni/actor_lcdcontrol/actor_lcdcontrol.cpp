@@ -177,6 +177,7 @@ int lcdcontrol_dimension (VisPluginData *plugin, VisVideo *video, int width, int
 
 int lcdcontrol_events (VisPluginData *plugin, VisEventQueue *events)
 {
+	LCDPrivate *priv = (LCDPrivate *)visual_object_get_private (VISUAL_OBJECT (plugin));
 	VisEvent ev;
 
 	while (visual_event_queue_poll (events, &ev)) {
@@ -191,8 +192,10 @@ int lcdcontrol_events (VisPluginData *plugin, VisEventQueue *events)
             }
             case VISUAL_EVENT_GENERIC:
             {
+                priv->control->Lock();
                 LCDEvent *lcd_event = (LCDEvent *)ev.event.generic.data_ptr;
                 lcd_event->mFunc(lcd_event->mData);
+                priv->control->Unlock();
                 
                 break;
             }
