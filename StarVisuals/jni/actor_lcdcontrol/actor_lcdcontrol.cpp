@@ -31,9 +31,10 @@
 #include <math.h>
 
 #include <libvisual/libvisual.h>
+#include <libscriptable/LCDEvent.h>
+#include <libscriptable/LCDControl.h>
 
-#include "LCDControl.h"
-#include "LCDEvent.h"
+#include "actor_lcdcontrol.h"
 
 
 extern "C" const VisPluginInfo *get_plugin_info (int *count);
@@ -110,11 +111,7 @@ int lcdcontrol_init (VisPluginData *plugin)
 
     priv->thread = visual_thread_create(my_thread_func, priv, TRUE);
 
-    priv->events = &plugin->eventqueue;
-
-    visual_object_ref(VISUAL_OBJECT(priv->events));
-
-    priv->control = new LCDControl(priv);
+    priv->control = new LCDControl(priv, &plugin->eventqueue);
 
 	return 0;
 }
@@ -127,7 +124,6 @@ int lcdcontrol_cleanup (VisPluginData *plugin)
 	visual_palette_free_colors (&priv->pal);
 
 	visual_object_unref (VISUAL_OBJECT (&priv->pcm));
-	visual_object_unref (VISUAL_OBJECT (&priv->events));
 
 	visual_mem_free (priv);
 
@@ -139,11 +135,6 @@ int lcdcontrol_cleanup (VisPluginData *plugin)
 
     if(priv->control != NULL)
         delete priv->control;
-
-    if(priv->pixels != NULL)
-        delete priv->pixels;
-
-    visual_object_unref(VISUAL_OBJECT(priv->events));
 
 	return 0;
 }
@@ -176,12 +167,10 @@ int lcdcontrol_requisition (VisPluginData *plugin, int *width, int *height)
 int lcdcontrol_dimension (VisPluginData *plugin, VisVideo *video, int width, int height)
 {
 	LCDPrivate *priv = (LCDPrivate *)visual_object_get_private (VISUAL_OBJECT (plugin));
+
 	visual_video_set_dimension (video, width, height);
 
-    if(priv->pixels != NULL)
-        delete priv->pixels;
-
-    priv->pixels = new uint32_t[width * height]; 
+    visual_video_set_pitch(video, width * sizeof(int));
 
 	return 0;
 }
@@ -246,10 +235,9 @@ int lcdcontrol_render (VisPluginData *plugin, VisVideo *video, VisAudio *audio)
 
 	uint8_t *buf = (uint8_t *) visual_video_get_pixels (video);
 
-    visual_mutex_lock(&priv->control->mutex_);
-    visual_mem_copy(priv->control->pcm, pcmbuf, PCM_SIZE * sizeof(float));
-    visual_mem_copy(buf, priv->pixels, video->height * video->pitch);
-    visual_mutex_unlock(&priv->control->mutex_);
+    priv->control->Lock();
+    visual_video_scale(video, priv->control->GetVideo(), VISUAL_VIDEO_SCALE_BILINEAR);
+    priv->control->Unlock();
 
 	return 0;
 }

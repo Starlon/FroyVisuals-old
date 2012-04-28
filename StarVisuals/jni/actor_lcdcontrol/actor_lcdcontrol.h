@@ -14,7 +14,6 @@ typedef struct {
     VisTimer timer;
     VisThread *thread;
     LCDControl *control;
-    VisEventQueue *events;
     uint32_t *pixels;
 } LCDPrivate;
 
