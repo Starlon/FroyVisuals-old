@@ -53,7 +53,7 @@ LCDControl::~LCDControl() {
 }
 
 int LCDControl::Start() {
-    CFG_Init("config.js");
+    CFG_Init("libscriptable_config.js");
     ConfigSetup();
     active_ = true;
     while(active_)
