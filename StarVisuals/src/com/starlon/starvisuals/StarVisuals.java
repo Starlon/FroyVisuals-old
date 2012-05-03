@@ -72,8 +72,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
     private final String MORPH = "checkers";
-    private final String INPUT = "dummy";
-    private final String ACTOR = "lv_analyzer";
+    private final String INPUT = "opensl";
+    private final String ACTOR = "starscope";
     private final boolean DOBEAT = false;
     private final boolean DOSWAP = true;
     private final boolean DOMORPH = true;
@@ -140,6 +140,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private VisualObject mVisualObject;
     private UtilsEvaluator mEvaluator;
 
+    public final Object mSynch = new Object();
+
     public VisualObject getVisualObject()
     {
         return mVisualObject;
@@ -179,8 +181,8 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     public void keepScreenOn(boolean truth)
     {
-        mView.setKeepScreenOn(truth);
-        mViewGL.setKeepScreenOn(truth);
+        if(mView != null) mView.setKeepScreenOn(truth);
+        if(mViewGL != null) mViewGL.setKeepScreenOn(truth);
     }
 
     private boolean detectGL20()
@@ -209,6 +211,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         mUseGL = mPrefs.getBoolean("prefs_use_gl", USEGL);
     }
 
+/* This causes all sorts of issues. Leaving it for now.
     public void setPrefs()
     {
         mEditor.putString("prefs_actor_selection", mActor);
@@ -228,6 +231,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mEditor.commit();
     }
+*/
 
     public void resetPrefs()
     {
@@ -275,7 +279,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         mEditor = mPrefs.edit();
 
-
         final ViewConfiguration vc = ViewConfiguration.get((Context)this);
 
         SWIPE_MIN_DISTANCE = vc.getScaledTouchSlop();
@@ -285,7 +288,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         class MyGestureDetector extends SimpleOnGestureListener {
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                synchronized(mView.mSynch)
+                synchronized(mViewGL)
                 {
                     int actor = -1;
                     try {
@@ -420,17 +423,44 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
     public void setUseGL(boolean truth)
     {
+        if(detectGL20())
+        {
+            mRendererGLVis = new StarVisualsRenderer(this);
+    
+            mViewGL = new StarVisualsViewGL(this);
+    
+            mViewGL.setRenderer(mRendererGLVis);
+
+            mViewGL.setOnClickListener(StarVisuals.this);
+            mViewGL.setOnTouchListener(mGestureListener);
+        }
+        else
+        {
+            mView = new StarVisualsView(this);
+            mView.setOnClickListener(StarVisuals.this);
+            mView.setOnTouchListener(mGestureListener);
+        }
+
             if(truth)
             {
-                mView.stopThread();
-                setContentView(mViewGL);
-                //mViewGL.startThread();
+                if(mView != null) mView.stopThread();
+                if(mViewGL != null) 
+                {
+                    //mViewGL.startThread();
+                    setContentView(mViewGL);
+                } else
+                {
+                    mView.startThread();
+                    setContentView(mView);
+                }
             }
             else
             {
-                //mViewGL.stopThread();
-                setContentView(mView);
-                mView.startThread();
+                if(mView != null) 
+                {
+                    setContentView(mView);
+                    mView.startThread();
+                }
             }
             mUseGL = truth;
     }
@@ -513,26 +543,9 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
         //mVisualObject = new VisualObject(mWidth, mHeight, mActor, mInput, mMorph);
 
-        mRendererGLVis = new StarVisualsRenderer(this);
-
-        mViewGL = new StarVisualsViewGL(this);
-
-        mViewGL.setRenderer(mRendererGLVis);
-
-        mView = new StarVisualsView(this);
 
         keepScreenOn(true);
 
-        if(detectGL20())
-        {
-            mViewGL.setOnClickListener(StarVisuals.this);
-            mViewGL.setOnTouchListener(mGestureListener);
-        }
-        else
-        {
-            mView.setOnClickListener(StarVisuals.this);
-            mView.setOnTouchListener(mGestureListener);
-        }
 
         enableMic(mInput);
 
@@ -588,8 +601,6 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     protected void onDestroy()
     {
         super.onDestroy();
-
-        setPrefs();
     }
 
     // Create options menu.
@@ -626,7 +637,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
             case R.id.menu_close_app:
             {
-                synchronized(mView.mSynch)
+                synchronized(mSynch)
                 {
                     NativeHelper.visualsQuit();
                     this.finish();
@@ -1137,7 +1148,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
 
             mMicData = new short[PCM_SIZE * 2];
 
-            synchronized(mView.mSynch)
+            synchronized(mSynch)
             {
                 NativeHelper.resizePCM(PCM_SIZE, RECORDER_SAMPLERATE, RECORDER_CHANNELS, RECORDER_AUDIO_ENCODING);
                 mAudioThread = new Thread(new Runnable() 

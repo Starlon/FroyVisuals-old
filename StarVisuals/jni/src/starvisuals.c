@@ -31,9 +31,9 @@
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 // Initial plugins. Preferences should override these.
-#define MORPH "alphablend"
-#define ACTOR "lv_analyzer"
-#define INPUT "mic"
+#define MORPH "checkers"
+#define ACTOR "starscope"
+#define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
 #define URL_GPLv3 "http://www.gnu.org/licenses/gpl-3.0.txt"
@@ -1672,7 +1672,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_visualsQuit(JNI
         visual_quit();
 }
 
-void app_main(int w, int h)
+void app_main(int w, int h, const char *actor_, const char *input_, const char *morph_)
 {
 
 #if defined(USLEEP)
@@ -1696,10 +1696,6 @@ void app_main(int w, int h)
         memset(&v, 0, sizeof(v));
         memset(&pcm_ref, 0, sizeof(pcm_ref));
 
-        v.morph_name = MORPH;
-        v.actor_name = ACTOR;
-        v.input_name = INPUT;
-        pcm_ref.min_beat = 100;
     } else {
         visual_video_free_buffer(v.video);
         visual_object_unref(VISUAL_OBJECT(v.video));
@@ -1710,6 +1706,10 @@ void app_main(int w, int h)
         //FIXME We need valgrind pronto... 
         //visual_object_unref(VISUAL_OBJECT(v.bin));
     }
+
+    v.morph_name = morph_;
+    v.actor_name = actor_;
+    v.input_name = input_;
 
     v.bin    = visual_bin_new ();
 
@@ -1770,9 +1770,9 @@ void app_main(int w, int h)
 }
 
 // Initialize the application's view and libvisual.
-JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h)
+JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h, jstring actor, jstring input, jstring morph)
 {
-    app_main(w, h);
+    app_main(w, h, ACTOR, INPUT, MORPH);
 }
 
 VisVideo *new_video(int w, int h, VisVideoDepth depth)

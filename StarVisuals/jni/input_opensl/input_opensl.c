@@ -33,7 +33,7 @@
 #define RECORDING_STATE_STOPPING 3
 
 #define SAMPLES 1024
-#define BUFFERS 1
+#define BUFFERS 2
 
 typedef struct {
     VisMutex *mutex;
@@ -234,7 +234,7 @@ static int inp_opensl_upload (VisPluginData *plugin, VisAudio *audio)
 
     visual_buffer_init (&buffer, priv->pcm_data, SAMPLES, NULL);
     visual_audio_samplepool_input (audio->samplepool, &buffer, 
-        VISUAL_AUDIO_SAMPLE_RATE_48000,
+        VISUAL_AUDIO_SAMPLE_RATE_44100,
         VISUAL_AUDIO_SAMPLE_FORMAT_S16, 
         VISUAL_AUDIO_SAMPLE_CHANNEL_STEREO);
 
@@ -258,10 +258,10 @@ void bqRecorderCallback(SLAndroidSimpleBufferQueueItf bq, void *context)
 
     visual_return_if_fail(bq == priv->recorderBufferQueue);
 
-    visual_mutex_lock(priv->mutex);
-
     (*priv->recorderBufferQueue)->Enqueue(priv->recorderBufferQueue,
         priv->recordBuffer + frame(priv, FALSE) * SAMPLES, SAMPLES * sizeof(short));
+
+    visual_mutex_lock(priv->mutex);
 
     memcpy(priv->pcm_data, priv->recordBuffer + frame(priv, TRUE) * SAMPLES, SAMPLES * sizeof(short));
 

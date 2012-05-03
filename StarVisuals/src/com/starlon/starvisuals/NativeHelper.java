@@ -113,7 +113,7 @@ public class NativeHelper
 
     /* Init and quit libvisual */
     public static native void visualsQuit();
-    public static native void initApp(int w, int h);
+    public static native void initApp(int w, int h, String actor, String input, String morph);
     public static native boolean getIsActive();
     public static native int setIsActive(boolean isactive);
 

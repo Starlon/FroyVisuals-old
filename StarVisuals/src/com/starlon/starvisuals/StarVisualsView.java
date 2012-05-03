@@ -40,7 +40,6 @@ public class StarVisualsView extends View {
     //private Display mDisplay = null;
     public Thread mThread = null;
     private final ReentrantLock mLock = new ReentrantLock();
-    public final Object mSynch = new Object();
 
     public StarVisualsView(Context context) {
         super(context);
@@ -110,7 +109,7 @@ public class StarVisualsView extends View {
     {
         stopThread();
         mLock.lock();
-        synchronized(mSynch)
+        synchronized(mActivity.mSynch)
         {
     
             if(mBitmap != null) 
@@ -128,7 +127,11 @@ public class StarVisualsView extends View {
             }
     
     
-            NativeHelper.initApp(WIDTH, HEIGHT);
+            String actor = mActivity.getActor();
+            String input = mActivity.getInput();
+            String morph = mActivity.getMorph();
+
+            NativeHelper.initApp(WIDTH, HEIGHT, actor, input, morph);
         }
         mLock.unlock();
     }
@@ -180,7 +183,7 @@ public class StarVisualsView extends View {
                         double delta;
                         double avg;
                         double diff;
-                        synchronized(mSynch)
+                        synchronized(mActivity.mSynch)
                         {
                             then = mStatsCanvas.nowMil();
                             mStatsNative.startFrame();

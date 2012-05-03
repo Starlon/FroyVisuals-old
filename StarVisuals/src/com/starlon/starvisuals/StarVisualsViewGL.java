@@ -47,7 +47,6 @@ class StarVisualsViewGL extends GLSurfaceView {
     private int mSize = 0;
     private int direction = -1;
     private final ReentrantLock mLock = new ReentrantLock();
-    public final Object mSynch = new Object();
 
     //AudioRecord recorder = findAudioRecord();
     public StarVisualsViewGL(Context context) {

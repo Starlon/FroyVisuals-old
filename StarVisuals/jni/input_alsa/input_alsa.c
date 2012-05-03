@@ -32,6 +32,9 @@
 
 #include <tinyalsa/asoundlib.h>
 
+#define RATE 44100
+#define CHANNELS 2
+
 typedef struct {
     struct pcm *pcmstream;
     struct pcm_config config;
@@ -80,8 +83,8 @@ int inp_alsa_init (VisPluginData *plugin)
 {
     visual_log(VISUAL_LOG_CRITICAL, "inp_alsa_init biiiiiiiiiiiiiiitch");
     alsaPrivate *priv = visual_mem_new0 (alsaPrivate, 1);
-    unsigned int channels = 2;
-    unsigned int rate = 44100;
+    unsigned int channels = CHANNELS;
+    unsigned int rate = RATE;
 
     visual_return_val_if_fail(priv != NULL, -1);
     visual_return_val_if_fail(plugin != NULL, -1);

@@ -95,8 +95,8 @@ public class StarVisualsRenderer implements Renderer {
 
 final class Visual {
     private VisualObject mVisualObject;
-    private int mTextureWidth;
-    private int mTextureHeight;
+    private int mTextureWidth = 128;
+    private int mTextureHeight = 128;
     private ByteBuffer mPixelBuffer;
     private static final int bytesPerPixel = 4;
     private int mTextureId = -1;
@@ -150,19 +150,18 @@ final class Visual {
         mTextureBuffer.put(texture);
         mTextureBuffer.position(0);
 
-        NativeHelper.initApp(mTextureWidth, mTextureHeight);
+        String actor = mActivity.getActor();
+        String input = mActivity.getInput();
+        String morph = mActivity.getMorph();
+
+        NativeHelper.initApp(mTextureWidth, mTextureHeight, actor, input, morph );
 
         mActivity.setPlugins(true);
-
     }
 
     public void initialize(GL10 gl, int surfaceWidth, int surfaceHeight) {
 
         mGL10 = gl;
-
-        mTextureWidth = 128;
-        mTextureHeight = 128;
-
 
         textureCrop[0] = 0;
         textureCrop[1] = 0;
