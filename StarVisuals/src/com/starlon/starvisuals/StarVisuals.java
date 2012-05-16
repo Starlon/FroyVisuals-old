@@ -72,12 +72,12 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
     private static int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_16BIT;
 
     private final String MORPH = "checkers";
-    private final String INPUT = "opensl";
+    private final String INPUT = "debug";
     private final String ACTOR = "starscope";
     private final boolean DOBEAT = false;
     private final boolean DOSWAP = true;
     private final boolean DOMORPH = true;
-    private final int MORPHSTEPS = 8;
+    private final int MORPHSTEPS = 3;
     private final int MAXFPS = 40;
     private final boolean SHOWFPS = true;
     private final boolean SHOWART = true;
@@ -260,6 +260,7 @@ public class StarVisuals extends Activity implements OnClickListener, OnSharedPr
         super.onCreate(state);
         makeFile("/data/data/com.starlon.starvisuals/libstub.lua", R.raw.libstub);
         makeFile("/data/data/com.starlon.starvisuals/pluginmath.lua", R.raw.pluginmath);
+        makeFile("/data/data/com.starlon.starvisuals/libscriptable_config.js", R.raw.libscriptable_config);
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 

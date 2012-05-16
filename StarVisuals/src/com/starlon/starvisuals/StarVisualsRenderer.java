@@ -156,7 +156,6 @@ final class Visual {
 
         NativeHelper.initApp(mTextureWidth, mTextureHeight, actor, input, morph );
 
-        mActivity.setPlugins(true);
     }
 
     public void initialize(GL10 gl, int surfaceWidth, int surfaceHeight) {

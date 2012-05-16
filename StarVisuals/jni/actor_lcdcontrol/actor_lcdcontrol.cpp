@@ -133,8 +133,7 @@ int lcdcontrol_cleanup (VisPluginData *plugin)
 
     visual_thread_free(priv->thread);
 
-    if(priv->control != NULL)
-        delete priv->control;
+    delete priv->control;
 
 	return 0;
 }

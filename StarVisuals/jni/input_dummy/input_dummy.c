@@ -39,33 +39,33 @@ typedef struct {
     VisTimer timer;
     void *data;
     long size;
-} alsaPrivate;
+} dummyPrivate;
 
-static int inp_alsa_init (VisPluginData *plugin);
-static int inp_alsa_cleanup (VisPluginData *plugin);
-static int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio);
+static int inp_dummy_init (VisPluginData *plugin);
+static int inp_dummy_cleanup (VisPluginData *plugin);
+static int inp_dummy_upload (VisPluginData *plugin, VisAudio *audio);
 
 VISUAL_PLUGIN_API_VERSION_VALIDATOR
 
 const VisPluginInfo *get_plugin_info (int *count)
 {
     static VisInputPlugin input[] = {{
-        .upload = inp_alsa_upload
+        .upload = inp_dummy_upload
     }};
 
     static VisPluginInfo info[] = {{
         .type = VISUAL_PLUGIN_TYPE_INPUT,
 
-        .plugname = "dummy",
-        .name = "dummy",
+        .plugname = "debug",
+        .name = "debug",
         .author = "Scott Sibley <sisibley@gmail.com>",
         .version = "0.1",
-        .about = ("DUMMY input plugin for libvisual"),
+        .about = ("Debug input plugin for libvisual"),
         .help = ("This plugin generates a randomly generated supply of \"sound\" data - just random shorts."),
         .license = VISUAL_PLUGIN_LICENSE_LGPL,
 
-        .init = inp_alsa_init,
-        .cleanup = inp_alsa_cleanup,
+        .init = inp_dummy_init,
+        .cleanup = inp_dummy_cleanup,
 
         .plugin = VISUAL_OBJECT (&input[0])
     }};
@@ -75,9 +75,9 @@ const VisPluginInfo *get_plugin_info (int *count)
     return info;
 }
 
-int inp_alsa_init (VisPluginData *plugin)
+int inp_dummy_init (VisPluginData *plugin)
 {
-    alsaPrivate *priv = visual_mem_new0 (alsaPrivate, 1);
+    dummyPrivate *priv = visual_mem_new0 (dummyPrivate, 1);
 
     visual_return_val_if_fail(priv != NULL, -1);
     visual_return_val_if_fail(plugin != NULL, -1);
@@ -92,9 +92,9 @@ int inp_alsa_init (VisPluginData *plugin)
     return 0;
 }
 
-int inp_alsa_cleanup (VisPluginData *plugin)
+int inp_dummy_cleanup (VisPluginData *plugin)
 {
-    alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    dummyPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
     visual_return_val_if_fail(priv != NULL, -1);
     visual_return_val_if_fail(plugin != NULL, -1);
@@ -105,7 +105,7 @@ int inp_alsa_cleanup (VisPluginData *plugin)
     return 0;
 }
 
-int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
+int inp_dummy_upload (VisPluginData *plugin, VisAudio *audio)
 {
     static double time = 0;
     int freq = FREQUENCY;
@@ -113,7 +113,7 @@ int inp_alsa_upload (VisPluginData *plugin, VisAudio *audio)
     VisBuffer buffer;
     int16_t data[PCM_BUF_SIZE], i;
     int val1, val2;
-    alsaPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
+    dummyPrivate *priv = visual_object_get_private (VISUAL_OBJECT (plugin));
 
     visual_return_val_if_fail(audio != NULL, -1);
     visual_return_val_if_fail(plugin != NULL, -1);

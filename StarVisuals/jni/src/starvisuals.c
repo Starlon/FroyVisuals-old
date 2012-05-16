@@ -32,7 +32,7 @@
 
 // Initial plugins. Preferences should override these.
 #define MORPH "checkers"
-#define ACTOR "starscope"
+#define ACTOR "lcdcontrol"
 #define INPUT "dummy"
 
 #define URL_GPLv2 "http://www.gnu.org/licenses/gpl-2.0.txt"
@@ -1535,7 +1535,7 @@ JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_resizePCM(jint 
 
 // Increment or decrement actor and morph
 // Variable 'prev' is used to shift morph plugin around. 
-// 0=left, 1=right, 2=up, 3=down, 4=cycle.. Any other and the current value is used.
+// -1=left, 1=right, -2=up, 2=down, 0=cycle, default=preset.. 
 JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwitch(JNIEnv * env, jobject  obj, jint prev)
 {
 
@@ -1552,7 +1552,6 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_finalizeSwi
         case -1: v.morph_name = "slide_right"; break;
         case 2: v.morph_name = "slide_top"; break;
         case -2: v.morph_name = "slide_bottom"; break;
-        case 0: prev = 1; break;
         default: v.morph_name = MORPH; break;
     }
 
@@ -1703,18 +1702,17 @@ void app_main(int w, int h, const char *actor_, const char *input_, const char *
 
         visual_object_unref(VISUAL_OBJECT(v.bin->input));
         visual_object_unref(VISUAL_OBJECT(v.bin->actor));
-        //FIXME We need valgrind pronto... 
-        //visual_object_unref(VISUAL_OBJECT(v.bin));
+        //FIXME visual_object_unref(VISUAL_OBJECT(v.bin));
     }
 
-    v.morph_name = morph_;
-    v.actor_name = actor_;
-    v.input_name = input_;
+    v.actor_name = ACTOR;//actor_;
+    v.input_name = INPUT;//input_;
+    v.morph_name = MORPH;//morph_;
 
     v.bin    = visual_bin_new ();
 
     if (!visual_actor_valid_by_name (v.actor_name)) {
-        v_cycleActor(1);
+        v_cycleActor(0);
         visual_log(VISUAL_LOG_CRITICAL, ("Actor plugin not found! Choosing %s instead."), v.actor_name);
     }
 
@@ -1772,7 +1770,14 @@ void app_main(int w, int h, const char *actor_, const char *input_, const char *
 // Initialize the application's view and libvisual.
 JNIEXPORT void JNICALL Java_com_starlon_starvisuals_NativeHelper_initApp(JNIEnv * env, jobject  obj, jint w, jint h, jstring actor, jstring input, jstring morph)
 {
-    app_main(w, h, ACTOR, INPUT, MORPH);
+    jboolean iscopy1;
+    const char *actor_ = ((*env)->GetStringUTFChars(env, actor, &iscopy1));
+    jboolean iscopy2;
+    const char *input_ = ((*env)->GetStringUTFChars(env, input, &iscopy2));
+    jboolean iscopy3;
+    const char *morph_ = ((*env)->GetStringUTFChars(env, morph, &iscopy3));
+
+    app_main(w, h, actor_, input_, morph_);
 }
 
 VisVideo *new_video(int w, int h, VisVideoDepth depth)
@@ -1818,21 +1823,7 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
         return FALSE;
     }
 
-    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
-        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
-        return FALSE;
-    }
 
-    if(swap == NULL)
-        swap = visual_video_new();
-
-    if(vid == NULL || vid->width != info.width || vid->height != info.height)
-    {
-        vid = new_video(info.width, info.height, DEVICE_DEPTH);
-        visual_video_clone(swap, vid);
-    }
-
-    visual_video_set_buffer(vid, pixels);
 
     if(visual_bin_depth_changed(v.bin) || 
         (info.width != v.video->width || 
@@ -1863,6 +1854,22 @@ JNIEXPORT jboolean JNICALL Java_com_starlon_starvisuals_NativeHelper_renderBitma
 
         visual_bin_run (v.bin);
     }
+
+    if(swap == NULL)
+        swap = visual_video_new();
+
+    if(vid == NULL || vid->width != info.width || vid->height != info.height)
+    {
+        vid = new_video(info.width, info.height, DEVICE_DEPTH);
+        visual_video_clone(swap, vid);
+    }
+
+    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+        return FALSE;
+    }
+
+    visual_video_set_buffer(vid, pixels);
 
     visual_video_depth_transform(vid, v.video);
 

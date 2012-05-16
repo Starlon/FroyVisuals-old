@@ -7,7 +7,7 @@ LOCAL_SRC_FILES := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildc
 LOCAL_CFLAGS    += $(ARCH_CFLAGS) -fexceptions -frtti
 LOCAL_SHARED_LIBRARIES := gnustl luascript visual json
 LOCAL_ARM_MODE := arm
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
 
 

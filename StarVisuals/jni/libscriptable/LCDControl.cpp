@@ -53,7 +53,7 @@ LCDControl::~LCDControl() {
 }
 
 int LCDControl::Start() {
-    CFG_Init("libscriptable_config.js");
+    CFG_Init("/data/data/com.starlon.starvisuals/libscriptable_config.js");
     ConfigSetup();
     active_ = true;
     while(active_)
@@ -191,7 +191,6 @@ void LCDControl::ConfigSetup() {
         
     }
 
-/*
     for(std::map<std::string, LCDCore *>::iterator it = 
         devices_.begin(); it != devices_.end(); it++) {
         display_keys_.push_back(it->first);
@@ -203,7 +202,6 @@ void LCDControl::ConfigSetup() {
         device->BuildLayouts();
         device->StartLayout();
     }
-*/
 }
 
 void LCDControl::Shutdown() {

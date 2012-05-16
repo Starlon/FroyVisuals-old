@@ -23,6 +23,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <json/json.h>
+#include <libvisual/libvisual.h>
 
 #include "CFG.h"
 #include "debug.h"
@@ -57,7 +58,10 @@ bool CFG::CFG_Init( std::string path ) {
         return true;
     FILE *file = fopen( path.c_str(), "rb" );
     if( !file ) 
+    {
+        visual_log(VISUAL_LOG_DEBUG, "Can't open %s", path.c_str());
         return false;
+    }
     fseek( file, 0, SEEK_END );
     long size = ftell( file);
     fseek( file, 0, SEEK_SET );
@@ -131,44 +135,12 @@ Json::Value *CFG::CFG_Fetch(Json::Value *section, std::string key,
     if(!val)
         return defval;
 
-    //if(defval && val->type() != defval->type())
-    //    LCDError("CFG_Fetch: Value was not the expected type (Key: %s)", key.c_str());
-
-    if(key == "speed") {
-        
-    }
-
     if( val->isNumeric() ) {
         if( defval ) delete defval;
         return val;
     } else if ( val->isString() ) {
-        //QScriptValue val2(engine_->evaluate(val->asCString()));
-        Json::Value *val3 = NULL;
-/*
-        if(val2.isError()) {
-            QScriptValue error = engine_->uncaughtException();
-            LCDError("CFG: Uncaught exception in '%s': %s", key.c_str(), error.toString().toStdString().c_str());
-            return defval;
-        }
-
-        if(!val2.isValid() || val2.isUndefined()) {
-            return defval;
-        }
-
-        if(val2.isString()) {
-            val3 = new Json::Value(val2.toString().toStdString());
-            if(defval) delete defval;
-        } else if(val2.isNumber()) {
-            val3 = new Json::Value((double)val2.toNumber());
-            if(defval) delete defval;
-        } else if(val2.isBool()) {
-            val3 = new Json::Value(val2.toBool());
-            if(defval) delete defval;
-        } else if(val2.isNull()) {
-            val3 = defval;
-        }
-*/
-        return val3 ? val3 : defval;
+        Json::Value *val2 = new Json::Value(Eval(val->asCString()));
+        return val2 ? val2 : defval;
     }
     return defval;
 }

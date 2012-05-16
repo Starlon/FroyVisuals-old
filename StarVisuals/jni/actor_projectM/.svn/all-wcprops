@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svnroot/projectm/!svn/ver/974/trunk/src/projectM-libvisual
+END
+libvisual-plugins.spec
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svnroot/projectm/!svn/ver/362/trunk/src/projectM-libvisual/libvisual-plugins.spec
+END
+AUTHORS
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/projectm/!svn/ver/362/trunk/src/projectM-libvisual/AUTHORS
+END
+ConfigFile.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/projectm/!svn/ver/364/trunk/src/projectM-libvisual/ConfigFile.cpp
+END
+INSTALL
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/projectm/!svn/ver/567/trunk/src/projectM-libvisual/INSTALL
+END
+ChangeLog
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svnroot/projectm/!svn/ver/567/trunk/src/projectM-libvisual/ChangeLog
+END
+FindPkgConfig.cmake
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/projectm/!svn/ver/533/trunk/src/projectM-libvisual/FindPkgConfig.cmake
+END
+COPYING
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/projectm/!svn/ver/362/trunk/src/projectM-libvisual/COPYING
+END
+ConfigFile.h
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svnroot/projectm/!svn/ver/364/trunk/src/projectM-libvisual/ConfigFile.h
+END
+NEWS
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svnroot/projectm/!svn/ver/362/trunk/src/projectM-libvisual/NEWS
+END
+actor_projectM.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svnroot/projectm/!svn/ver/925/trunk/src/projectM-libvisual/actor_projectM.cpp
+END
+CMakeLists.txt
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/projectm/!svn/ver/974/trunk/src/projectM-libvisual/CMakeLists.txt
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svnroot/projectm/!svn/ver/567/trunk/src/projectM-libvisual/README
+END
+lvtoprojectM.h
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svnroot/projectm/!svn/ver/362/trunk/src/projectM-libvisual/lvtoprojectM.h
+END

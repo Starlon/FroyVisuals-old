@@ -7,5 +7,5 @@ LOCAL_SRC_FILES := $(addprefix /, $(notdir $(wildcard $(LOCAL_PATH)/*.c) $(wildc
 LOCAL_CFLAGS    += $(ARCH_CFLAGS) -fexceptions -frtti
 LOCAL_SHARED_LIBRARIES := gnustl libvisual libscriptable
 
-include $(BUILD_SHARED_LIBRARY)
+#include $(BUILD_SHARED_LIBRARY)
 
