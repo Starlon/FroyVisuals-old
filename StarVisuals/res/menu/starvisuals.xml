@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:visible="true" android:id="@+id/menu_edit_settings" android:enabled="true" android:title="@string/menu_edit_settings" android:icon="@android:drawable/ic_menu_edit"></item>
+
+    <item android:visible="true" android:id="@+id/menu_about" android:enabled="true" android:title="@string/menu_about" android:icon="@android:drawable/ic_menu_info_details"></item>
+
+    <item android:visible="true" android:id="@+id/menu_close_app" android:enabled="true" android:title="@string/menu_close_app" android:icon="@android:drawable/ic_menu_info_details"></item>
+
+
+    <item android:visible="true" android:id="@+id/menu_about_plugins" android:enabled="true" android:title="@string/menu_about_plugins" android:icon="@android:drawable/ic_menu_info_details"></item>
+
+<!--
+    <item android:visible="true" android:id="@+id/menu_use_gl" android:enabled="true" android:title="@string/menu_use_gl" android:icon="@android:drawable/ic_menu_edit"></item>
+-->
+
+</menu>

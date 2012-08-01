@@ -1,0 +1,11 @@
+*.so
+obj/
+gen/
+bin/
+libs/armeabi
+libs/armeabi-v7a
+libs/x86
+proguard.cfg
+project.properties
+local.properties
+my.keystore

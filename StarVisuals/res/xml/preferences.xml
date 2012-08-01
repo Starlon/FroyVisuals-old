@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        <PreferenceCategory
+                android:title="@string/preferences_name">
+                    <CheckBoxPreference
+                        android:key="prefs_do_beat"
+                        android:title="@string/prefs_text_do_beat"
+                        android:summary="@string/prefs_text_summary_do_beat"
+                        android:defaultValue="@string/prefs_defaults_do_beat"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_do_swap"
+                        android:title="@string/prefs_text_do_swap"
+                        android:summary="@string/prefs_text_summary_do_swap"
+                        android:defaultValue="@string/prefs_defaults_do_swap"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_do_morph"
+                        android:title="@string/prefs_text_do_morph"
+                        android:summary="@string/prefs_text_summary_do_morph"
+                        android:defaultValue="@string/prefs_defaults_do_morph"
+                        android:enabled="true"/>
+
+                    <EditTextPreference
+                        android:key="prefs_morph_steps"
+                        android:title="@string/prefs_text_morph_steps"
+                        android:summary="@string/prefs_text_morph_steps"
+                        android:defaultValue="@integer/prefs_defaults_morph_steps"
+                        android:inputType="number"
+                        android:enabled="true"/>
+
+                    <EditTextPreference
+                        android:key="prefs_max_fps"
+                        android:title="@string/prefs_text_max_fps"
+                        android:summary="@string/prefs_text_max_fps"
+                        android:defaultValue="@integer/prefs_defaults_max_fps"
+                        android:inputType="number"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_show_fps"
+                        android:title="@string/prefs_text_show_fps"
+                        android:summary="@string/prefs_text_summary_show_fps"
+                        android:defaultValue="@string/prefs_defaults_show_fps"
+                        android:enabled="true"/>
+
+
+                    <CheckBoxPreference
+                        android:key="prefs_show_art"
+                        android:title="@string/prefs_text_show_art"
+                        android:summary="@string/prefs_text_summary_show_art"
+                        android:defaultValue="@string/prefs_defaults_show_art"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_show_text"
+                        android:title="@string/prefs_text_show_text"
+                        android:summary="@string/prefs_text_summary_show_text"
+                        android:defaultValue="@string/prefs_defaults_show_text"
+                        android:enabled="true"/>
+
+                    <EditTextPreference
+                        android:key="prefs_display_text"
+                        android:title="@string/prefs_text_display_text"
+                        android:summary="@string/prefs_text_display_text"
+                        android:defaultValue="@string/prefs_defaults_display_text"
+                        android:inputType="text"
+                        android:enabled="true"/>
+
+                    <CheckBoxPreference
+                        android:key="prefs_stuck_beat"
+                        android:title="@string/prefs_text_stuck_beat"
+                        android:summary="@string/prefs_text_summary_stuck_beat"
+                        android:defaultValue="@string/prefs_defaults_stuck_beat"
+                        android:enabled="true"/>
+
+                    <EditTextPreference
+                        android:key="prefs_min_beat"
+                        android:title="@string/prefs_text_min_beat"
+                        android:summary="@string/prefs_text_min_beat"
+                        android:defaultValue="@integer/prefs_defaults_min_beat"
+                        android:inputType="text"
+                        android:enabled="true"/>
+
+        </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,27 @@
+This is ae, a general purpose arithmetic expression package for C programs.
+It evaluates all arithmetic expressions, including nested parentheses and
+all the elementary functions.
+
+The need to evaluate arithmetic expressions at run time comes up every so often
+and it's not the simple task it seems at first because of the subtleties of
+operator precedence and symbol table. This package solves this need by using
+Lua as the engine behind the scenes. Lua is an extension language that has a
+very small footprint; it's available available at http://www.lua.org/ .
+
+You can use ae while your needs are simply the evaluation of arithmetic
+expressions. When things get more complicated (and they will!), you'll be
+ready to use the full power of Lua, with complete statements, flow control,
+and fully fleged user-defined functions.
+
+To build, edit Makefile to reflect your installation of Lua. Then run "make".
+To test, run "make test" and "make xy".
+
+Here is a brief explanation of the files in this package:
+  ae.c          source code for ae library
+  ae.h          header file for ae library; includes a simple reference manual.
+  tae.c         a simple test program
+  test.ae       sample input for tae.c
+  xy.c          a simple example of using ae to tabulate a quadratic function
+
+This code is hereby placed in the public domain.
+Please send comments, suggestions, and bug reports to lhf@tecgraf.puc-rio.br .

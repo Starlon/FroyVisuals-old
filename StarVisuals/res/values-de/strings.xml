@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Preferences -->
+    <string name="preferences_name">Einstellungen</string>
+    <string name="prefs_text_title_general">Allgemein</string>
+    <string name="prefs_text_title_actor">Actor Plugin</string>
+    <string name="prefs_text_title_input">Input Plugin</string>
+    <string name="prefs_text_title_morph">Morph Plugin</string>
+    <string name="prefs_text_actor_selection">Actor Plugin</string>
+    <string name="prefs_text_input_selection">Input Plugin</string>
+    <string name="prefs_text_morph_selection">Morph Plugin</string>
+
+
+    <string name="prefs_text_forced_beat">Enforced Beat</string>
+    <string name="prefs_text_do_beat">Beat detection</string>
+    <string name="prefs_text_do_swap">Swap BGR/RGB</string>
+    <string name="prefs_text_do_morph">Morphs für Übergänge verwenden</string>
+    <string name="prefs_text_morph_steps">Morph steps</string>
+    <string name="prefs_text_max_fps">Maximum FPS</string>
+    <string name="prefs_text_show_fps">Show FPS</string>
+    <string name="prefs_text_show_art">Show Art</string>
+    <string name="prefs_text_show_text">Show Text</string>
+    <string name="prefs_text_is_active">Is Active</string>
+    <string name="prefs_text_display_text">Display Text</string>
+
+    <string name="prefs_text_actor_selection_summary">Actor Plugin für Visualisierung</string>
+    <string name="prefs_text_input_selection_summary">Input Plugin für Audio Aufnahme</string>
+    <string name="prefs_text_morph_selection_summary">Morph Plugin für Übergänge bei Actor Wechsel</string>
+
+
+    <string name="prefs_text_summary_forced_beat">Enter an arbitrary beat interval.</string>
+    <string name="prefs_text_summary_do_beat">Whether to detect beats.</string>
+    <string name="prefs_text_summary_do_swap">Whether to perform endian swap.</string>
+    <string name="prefs_text_summary_do_morph">Whether to morph at all</string>
+    <string name="prefs_text_summary_morph_steps">Morphing will take this many steps.</string>
+    <string name="prefs_text_summary_max_fps">Max frames per second.</string>
+    <string name="prefs_text_summary_show_fps">Whether to show FPS or not.</string>
+    <string name="prefs_text_summary_show_art">Whether to show art or not.</string>
+    <string name="prefs_text_summary_show_text">Whether to show text or not.</string>
+    <string name="prefs_text_summary_is_active">Whether the app is active or not.</string>
+    <string name="prefs_text_summary_display_text">Provide text you would like shown.</string>
+
+    <!-- Info -->
+    <string name="title_plugin_singular">Plugin Info</string>
+
+    <!-- Input -->
+    <string name="title_actor_singular">Actor Plugin</string>
+
+    <!-- Morph -->
+    <string name="title_input_singular">Input Plugin</string>
+
+    <!-- Actor -->
+    <string name="title_morph_singular">Morph Plugin</string>
+
+    <!-- Plugin header titles -->
+    <string name="title_plugin_name">Name</string>
+    <string name="title_plugin_long_name">Name (lang)</string>
+    <string name="title_plugin_author">Autor</string>
+    <string name="title_plugin_version">Version</string>
+    <string name="title_plugin_about">Über</string>
+    <string name="title_plugin_help">Hilfe</string>
+    <string name="title_plugin_license">Lizenz</string>
+
+    <!-- Menu -->
+    <string name="menu_settings">Einstellungen</string>
+    <string name="menu_about">Über</string>
+    <string name="menu_plugins">Plugins</string>
+    <string name="menu_close_app">Beenden</string>
+    <string name="menu_about_plugins">Über Plugins</string>
+    <string name="menu_edit_plugins">Plugins bearbeiten</string>
+
+    <!-- Plugin Information -->
+    <string name="info_button_actor">Actor</string>
+    <string name="info_button_input">Input</string>
+    <string name="info_button_morph">Morph</string>
+
+    <!-- About Menu -->
+    <string name="about_name">Über StarVisuals</string>
+    <string name="about_description">
+        Verschiedene konfigurierbare Audio-Visualisierungen.
+    </string>
+    <string name="about_title">StarVisuals v0.1</string>
+    <string name="about_copyright">2012 (c) Scott Sibley</string>
+    <string name="about_url">sisibley@gmail.com</string>
+    <string name="about_changes">
+        * v0.1 beta - initial beta release
+    </string>
+    
+    <!-- Plugin info -->
+    <string name="plugin_name">Plugin Name</string>
+    <string name="plugin_long_name">Plugin Name (lang)</string>
+    <string name="plugin_author">Autor</string>
+    <string name="plugin_version">Version</string>
+    <string name="plugin_about">Über</string>
+    <string name="plugin_help">Hilfe</string>
+    <string name="plugin_license">Lizenz</string>
+
+
+</resources>

@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../../../../../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../../../../../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsBuffer-1.0/LibScriptableUtilsBuffer-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsBuffer-1.0/LibScriptableUtilsBuffer-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsCFG-1.0/LibScriptableUtilsCFG-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsCFG-1.0/LibScriptableUtilsCFG-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsError-1.0/LibScriptableUtilsError-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsError-1.0/LibScriptableUtilsError-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsEvaluator-1.0/LibScriptableUtilsEvaluator-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsEvaluator-1.0/LibScriptableUtilsEvaluator-1.0.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsHook-1.0/LibScriptableUtilsHook-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsHook-1.0/LibScriptableUtilsHook-1.0.lua</a>
+	</li>
+
+	<li><strong>../../LibScriptableUtils-1.0/LibScriptableUtilsProperty-1.0/LibScriptableUtilsProperty-1.0.lua</strong></li>
+	
+	<li>
+		<a href="../../../../../files/../../LibScriptableUtils-1.0/LibScriptableUtilsTimer-1.0/LibScriptableUtilsTimer-1.0.html">../../LibScriptableUtils-1.0/LibScriptableUtilsTimer-1.0/LibScriptableUtilsTimer-1.0.lua</a>
+	</li>
+
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>../../LibScriptableUtils-1.0/LibScriptableUtilsProperty-1.0/LibScriptableUtilsProperty-1.0.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#LibProperty:Del">LibProperty:Del</a>&nbsp;()</td>
+	<td class="summary">Delete a property </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibProperty:Eval">LibProperty:Eval</a>&nbsp;(unit)</td>
+	<td class="summary">Evaluate a property's code </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibProperty:New">LibProperty:New</a>&nbsp;(widget, visitor, name, expression, defval, errorLevel)</td>
+	<td class="summary">Create a new LibScriptableProperty object </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibProperty:P2N">LibProperty:P2N</a>&nbsp;()</td>
+	<td class="summary">Return the property's value as a number </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#LibProperty:P2S">LibProperty:P2S</a>&nbsp;()</td>
+	<td class="summary">Return the property's value as a string </td>
+	</tr>
+
+</table>
+
+
+
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="LibProperty:Del"></a><strong>LibProperty:Del</strong>&nbsp;()</dt>
+<dd>
+Delete a property
+
+
+
+
+
+<h3>Usage:</h3>
+LibProperty:Del()
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibProperty:Eval"></a><strong>LibProperty:Eval</strong>&nbsp;(unit)</dt>
+<dd>
+Evaluate a property's code
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  unit: 
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+object:Eval()
+
+
+
+<h3>Return value:</h3>
+Nothing
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibProperty:New"></a><strong>LibProperty:New</strong>&nbsp;(widget, visitor, name, expression, defval, errorLevel)</dt>
+<dd>
+Create a new LibScriptableProperty object
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  widget: The parent widget
+	</li>
+	
+	<li>
+	  visitor: A LibCore object, or provide your own.
+	</li>
+	
+	<li>
+	  name: Give your property a name.
+	</li>
+	
+	<li>
+	  expression: The lua script for this property.
+	</li>
+	
+	<li>
+	  defval: The default value for this property.
+	</li>
+	
+	<li>
+	  errorLevel: 
+	</li>
+	
+</ul>
+
+
+
+
+<h3>Usage:</h3>
+LibProperty:New(widget, visitor, name, expression, defval, errorLevel)
+
+
+
+<h3>Return value:</h3>
+A new LibScriptableProperty object
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibProperty:P2N"></a><strong>LibProperty:P2N</strong>&nbsp;()</dt>
+<dd>
+Return the property's value as a number
+
+
+
+
+
+<h3>Usage:</h3>
+object:P2N()
+
+
+
+<h3>Return value:</h3>
+The property as a number value
+
+
+
+</dd>
+
+
+
+
+<dt><a name="LibProperty:P2S"></a><strong>LibProperty:P2S</strong>&nbsp;()</dt>
+<dd>
+Return the property's value as a string
+
+
+
+
+
+<h3>Usage:</h3>
+object:P2S()
+
+
+
+<h3>Return value:</h3>
+The property as a string value
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>

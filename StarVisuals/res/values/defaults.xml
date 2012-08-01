@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefs_defaults_input_selection">mic</string>
+    <string name="prefs_defaults_morph_selection">alphablend</string>
+    <string name="prefs_defaults_actor_selection">lv_analyzer</string>
+    <string name="prefs_defaults_do_beat">false</string>
+    <string name="prefs_defaults_do_swap">true</string>
+    <string name="prefs_defaults_do_morph">false</string>
+    <integer name="prefs_defaults_morph_steps">3</integer>
+    <integer name="prefs_defaults_max_fps">40</integer>
+    <string name="prefs_defaults_show_fps">true</string>
+    <string name="prefs_defaults_show_art">true</string>
+    <string name="prefs_defaults_show_text">true</string>
+    <string name="prefs_defaults_display_text">Please wait...</string>
+    <string name="prefs_defaults_stuck_beat">true</string>
+    <integer name="prefs_defaults_min_beat">120</integer>
+    <integer name="prefs_defaults_beat_hold">10</integer>
+</resources>

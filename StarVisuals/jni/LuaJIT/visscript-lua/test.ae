@@ -1,0 +1,31 @@
+# test ae
+x=rad(30)
+sin(x)
+cos(x)
+x=rad(60)
+sin(x)^2+cos(x)^2
+x=rad(123)
+sin(x)^2+cos(x)^2
+4*atan(1)
+pi
+a=1
+b=-5
+c=6
+x1=(-b+sqrt(b^2-4*a*c))/(2*a)
+x2=(-b-sqrt(b^2-4*a*c))/(2*a)
+x1+x2
+x1*x2
+# now some errors
+sin
+sin+2
+z+2
+z
+z="hello"
+z
+z="0.23"
+z
+z=45
+z
+"bye"
+"bye"+a
+# end
